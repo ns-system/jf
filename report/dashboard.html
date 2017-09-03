@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for C:\xampp\htdocs\cvs\app</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/nv.d3.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <!--[if lt IE 9]>
+  <script src="js/html5shiv.min.js"></script>
+  <script src="js/respond.min.js"></script>
+  <![endif]-->
+ </head>
+ <body>
+  <header>
+   <div class="container">
+    <div class="row">
+     <div class="col-md-12">
+      <ol class="breadcrumb">
+        <li><a href="index.html">C:\xampp\htdocs\cvs\app</a></li>
+        <li class="active">(Dashboard)</li>
+
+      </ol>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Prefecture.php.html#7">Prefecture</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/AcceptProvider.php.html#7">AcceptProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#7">CalendarProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#7">JsonImportProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Jifuri.php.html#7">Jifuri</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UserRequest/UserName.php.html#7">UserName</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Middleware/Authenticate.php.html#8">Authenticate</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/CsvFile.php.html#7">CsvFile</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UserRequest/Password.php.html#7">Password</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UserRequest/UserIcon.php.html#7">UserIcon</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/RosterProvider.php.html#7">RosterProvider</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Roster.php.html#7">Roster</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Store.php.html#7">Store</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SuisinUser.php.html#7">SuisinUser</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ZenonCsv.php.html#7">ZenonCsv</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ZenonStatus.php.html#7">ZenonStatus</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SmallStore.php.html#7">SmallStore</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SinrenUser.php.html#7">SinrenUser</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#5">CsvService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/UserService.php.html#7">UserService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SinrenDivision.php.html#7">SinrenDivision</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Consignor.php.html#7">Consignor</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/WorkTypeController.php.html#9">WorkTypeController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#7">Customer</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UserRequest/Division.php.html#7">Division</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/Handler.php.html#11">Handler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Holiday.php.html#7">Holiday</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ControlStore.php.html#7">ControlStore</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ControlDivision.php.html#7">ControlDivision</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ConsignorGroup.php.html#7">ConsignorGroup</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#7">ImportCsv</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/Commands/Inspire.php.html#8">Inspire</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#10">UserController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#9">AcceptController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RestController.php.html#9">RestController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#10">RosterController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/SampleController.php.html#9">SampleController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/SinrenUserController.php.html#9">SinrenUserController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/HolidayController.php.html#9">HolidayController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DivisionController.php.html#10">DivisionController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/PasswordController.php.html#8">PasswordController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/ChiefController.php.html#9">ChiefController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#7">SuisinCsvConfigService</a></td><td class="text-right">6%</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#8">TableEditService</a></td><td class="text-right">16%</td></tr>
+       <tr><td><a href="Http/Controllers/SuisinAdminController.php.html#9">SuisinAdminController</a></td><td class="text-right">30%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/AuthController.php.html#11">AuthController</a></td><td class="text-right">53%</td></tr>
+       <tr><td><a href="Http/Controllers/SuperUserController.php.html#9">SuperUserController</a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Services/SuperUserService.php.html#5">SuperUserService</a></td><td class="text-right">75%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Services/CsvService.php.html#5">CsvService</a></td><td class="text-right">2862</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#7">JsonImportProvider</a></td><td class="text-right">2550</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#7">ImportCsv</a></td><td class="text-right">1332</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#7">CalendarProvider</a></td><td class="text-right">650</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#9">AcceptController</a></td><td class="text-right">650</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#10">RosterController</a></td><td class="text-right">506</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#10">UserController</a></td><td class="text-right">420</td></tr>
+       <tr><td><a href="Http/Controllers/SampleController.php.html#9">SampleController</a></td><td class="text-right">420</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#8">TableEditService</a></td><td class="text-right">254</td></tr>
+       <tr><td><a href="Services/UserService.php.html#7">UserService</a></td><td class="text-right">210</td></tr>
+       <tr><td><a href="Http/Controllers/SinrenUserController.php.html#9">SinrenUserController</a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="Providers/AcceptProvider.php.html#7">AcceptProvider</a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Roster.php.html#7">Roster</a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Http/Controllers/DivisionController.php.html#10">DivisionController</a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Http/Controllers/HolidayController.php.html#9">HolidayController</a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Http/Controllers/WorkTypeController.php.html#9">WorkTypeController</a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Http/Controllers/RestController.php.html#9">RestController</a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Services/SuperUserService.php.html#5">SuperUserService</a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Http/Controllers/SuisinAdminController.php.html#9">SuisinAdminController</a></td><td class="text-right">29</td></tr>
+       <tr><td><a href="Http/Controllers/ChiefController.php.html#9">ChiefController</a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Http/Middleware/Authenticate.php.html#8">Authenticate</a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Http/Controllers/SuperUserController.php.html#9">SuperUserController</a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Exceptions/Handler.php.html#11">Handler</a></td><td class="text-right">12</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Providers/RosterProvider.php.html#44"><abbr title="RosterProvider::planEdit">planEdit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/RosterProvider.php.html#32"><abbr title="RosterProvider::planEditValidate">planEditValidate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/RosterProvider.php.html#98"><abbr title="RosterProvider::anonymous function">anonymous function</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/RosterProvider.php.html#62"><abbr title="RosterProvider::planDelete">planDelete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/RosterProvider.php.html#76"><abbr title="RosterProvider::planDeleteValidate">planDeleteValidate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/RosterProvider.php.html#28"><abbr title="RosterProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/RosterProvider.php.html#24"><abbr title="RosterProvider::register">register</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#192"><abbr title="JsonImportProvider::convertValue">convertValue</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#217"><abbr title="JsonImportProvider::splitSpace">splitSpace</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#222"><abbr title="JsonImportProvider::convertDate">convertDate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/RosterProvider.php.html#15"><abbr title="RosterProvider::boot">boot</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/RosterProvider.php.html#84"><abbr title="RosterProvider::actualEditValidate">actualEditValidate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Roster.php.html#14"><abbr title="Roster::scopeUser">scopeUser</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#12"><abbr title="CsvService::exportCsv">exportCsv</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#8"><abbr title="CsvService::getFileName">getFileName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#46"><abbr title="CsvService::importCsv">importCsv</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#87"><abbr title="CsvService::setKeys">setKeys</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#101"><abbr title="CsvService::reflectToDb">reflectToDb</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Roster.php.html#42"><abbr title="Roster::ActualRest">ActualRest</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Roster.php.html#38"><abbr title="Roster::PlanRest">PlanRest</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Roster.php.html#18"><abbr title="Roster::scopeMonth">scopeMonth</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Roster.php.html#26"><abbr title="Roster::getPlanAccept">getPlanAccept</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Roster.php.html#30"><abbr title="Roster::PlanType">PlanType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Roster.php.html#34"><abbr title="Roster::ActualType">ActualType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#172"><abbr title="JsonImportProvider::convertAccount">convertAccount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#101"><abbr title="JsonImportProvider::setCsvSplitRow">setCsvSplitRow</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#30"><abbr title="CalendarProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#26"><abbr title="CalendarProvider::register">register</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#41"><abbr title="CalendarProvider::getMonthId">getMonthId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#45"><abbr title="CalendarProvider::getDate">getDate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#50"><abbr title="CalendarProvider::makeRoster">makeRoster</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#17"><abbr title="CalendarProvider::boot">boot</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/AcceptProvider.php.html#58"><abbr title="AcceptProvider::anonymous function">anonymous function</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Consignor.php.html#14"><abbr title="Consignor::JifuriDatas">JifuriDatas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/AcceptProvider.php.html#30"><abbr title="AcceptProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/AcceptProvider.php.html#34"><abbr title="AcceptProvider::accepts">accepts</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/AcceptProvider.php.html#48"><abbr title="AcceptProvider::accepts_where">accepts_where</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#64"><abbr title="CalendarProvider::getHoliday">getHoliday</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#79"><abbr title="CalendarProvider::makeList">makeList</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#50"><abbr title="JsonImportProvider::setCsvFile">setCsvFile</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#62"><abbr title="JsonImportProvider::getCsvFile">getCsvFile</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#66"><abbr title="JsonImportProvider::getMaxRow">getMaxRow</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#74"><abbr title="JsonImportProvider::setCsvAllRow">setCsvAllRow</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#34"><abbr title="JsonImportProvider::getJsonFile">getJsonFile</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#30"><abbr title="JsonImportProvider::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#146"><abbr title="CalendarProvider::makeCalendar">makeCalendar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#196"><abbr title="CalendarProvider::getWeekName">getWeekName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#17"><abbr title="JsonImportProvider::boot">boot</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#26"><abbr title="JsonImportProvider::register">register</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#158"><abbr title="CsvService::getCount">getCount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#165"><abbr title="CsvService::swapColumnRow">swapColumnRow</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/UserService.php.html#56"><abbr title="UserService::isPasswordMatch">isPasswordMatch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/UserService.php.html#41"><abbr title="UserService::editUserPassword">editUserPassword</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/UserService.php.html#69"><abbr title="UserService::editUserDivision">editUserDivision</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SinrenDivision.php.html#14"><abbr title="SinrenDivision::SinrenUsers">SinrenUsers</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SinrenUser.php.html#14"><abbr title="SinrenUser::scopeUser">scopeUser</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/UserService.php.html#24"><abbr title="UserService::editUserIcon">editUserIcon</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/UserService.php.html#10"><abbr title="UserService::editUserName">editUserName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#117"><abbr title="TableEditService::getImportConfig">getImportConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#129"><abbr title="TableEditService::exportRow">exportRow</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#139"><abbr title="TableEditService::updatePost">updatePost</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#155"><abbr title="TableEditService::getIndexRoute">getIndexRoute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SinrenUser.php.html#18"><abbr title="SinrenUser::scopeDivision">scopeDivision</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SinrenUser.php.html#27"><abbr title="SinrenUser::RosterUser">RosterUser</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SuisinUser.php.html#14"><abbr title="SuisinUser::Users">Users</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ZenonCsv.php.html#14"><abbr title="ZenonCsv::scopeActive">scopeActive</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ZenonStatus.php.html#14"><abbr title="ZenonStatus::ZenonCsv">ZenonCsv</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ZenonStatus.php.html#18"><abbr title="ZenonStatus::joinZenonCsv">joinZenonCsv</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Store.php.html#16"><abbr title="Store::SmallStores">SmallStores</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Store.php.html#13"><abbr title="Store::Prefecture">Prefecture</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SinrenUser.php.html#33"><abbr title="SinrenUser::SinrenDivision">SinrenDivision</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SinrenUser.php.html#36"><abbr title="SinrenUser::User">User</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SmallStore.php.html#13"><abbr title="SmallStore::Store">Store</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="SmallStore.php.html#16"><abbr title="SmallStore::ControlStore">ControlStore</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#97"><abbr title="TableEditService::getValidate">getValidate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#82"><abbr title="TableEditService::getImportParameter">getImportParameter</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#311"><abbr title="SuisinCsvConfigService::getIndustry">getIndustry</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#260"><abbr title="SuisinCsvConfigService::getSubject">getSubject</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#367"><abbr title="SuisinCsvConfigService::getQualification">getQualification</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#424"><abbr title="SuisinCsvConfigService::getPersonality">getPersonality</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#475"><abbr title="SuisinCsvConfigService::getPrefecture">getPrefecture</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#156"><abbr title="SuisinCsvConfigService::getDepositBankbookType">getDepositBankbookType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#90"><abbr title="SuisinCsvConfigService::getDepositCategory">getDepositCategory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#190"><abbr title="CsvService::convertTypes">convertTypes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#238"><abbr title="CsvService::setUpdateFlags">setUpdateFlags</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#258"><abbr title="CsvService::setPrimaryKey">setPrimaryKey</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#271"><abbr title="CsvService::getRows">getRows</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#526"><abbr title="SuisinCsvConfigService::getStore">getStore</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#597"><abbr title="SuisinCsvConfigService::getSmallStore">getSmallStore</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#39"><abbr title="TableEditService::getColumnName">getColumnName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#43"><abbr title="TableEditService::getKanjiColumns">getKanjiColumns</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#47"><abbr title="TableEditService::getTitle">getTitle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#52"><abbr title="TableEditService::importCsv">importCsv</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#1293"><abbr title="SuisinCsvConfigService::getZenonType">getZenonType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#1216"><abbr title="SuisinCsvConfigService::getZenonTable">getZenonTable</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#700"><abbr title="SuisinCsvConfigService::getArea">getArea</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#802"><abbr title="SuisinCsvConfigService::getControlStore">getControlStore</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#941"><abbr title="SuisinCsvConfigService::getConsignorGroup">getConsignorGroup</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#1012"><abbr title="SuisinCsvConfigService::getZenonCsv">getZenonCsv</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/AcceptProvider.php.html#17"><abbr title="AcceptProvider::boot">boot</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Providers/AcceptProvider.php.html#26"><abbr title="AcceptProvider::register">register</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#150"><abbr title="AcceptController::plan_accept">plan_accept</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#114"><abbr title="AcceptController::editUnit">editUnit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#167"><abbr title="AcceptController::actual_accept">actual_accept</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/AuthController.php.html#56"><abbr title="AuthController::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/Auth/PasswordController.php.html#28"><abbr title="PasswordController::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#133"><abbr title="AcceptController::anonymous function">anonymous function</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#81"><abbr title="AcceptController::editAll">editAll</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/Handler.php.html#43"><abbr title="Handler::render">render</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Holiday.php.html#14"><abbr title="Holiday::scopeCurrent">scopeCurrent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#12"><abbr title="AcceptController::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#16"><abbr title="AcceptController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/ChiefController.php.html#12"><abbr title="ChiefController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/ChiefController.php.html#39"><abbr title="ChiefController::edit">edit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/HolidayController.php.html#50"><abbr title="HolidayController::export">export</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/HolidayController.php.html#67"><abbr title="HolidayController::import">import</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/HolidayController.php.html#116"><abbr title="HolidayController::upload">upload</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Consignor.php.html#18"><abbr title="Consignor::Group">Group</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/HolidayController.php.html#20"><abbr title="HolidayController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DivisionController.php.html#109"><abbr title="DivisionController::uploadDivision">uploadDivision</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/ChiefController.php.html#51"><abbr title="ChiefController::anonymous function">anonymous function</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DivisionController.php.html#20"><abbr title="DivisionController::showDivision">showDivision</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DivisionController.php.html#47"><abbr title="DivisionController::exportDivision">exportDivision</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/DivisionController.php.html#62"><abbr title="DivisionController::importDivision">importDivision</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Exceptions/Handler.php.html#31"><abbr title="Handler::report">report</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UserRequest/Division.php.html#24"><abbr title="Division::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#176"><abbr title="ImportCsv::inputMonth">inputMonth</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#167"><abbr title="ImportCsv::getLastTraded">getLastTraded</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#195"><abbr title="ImportCsv::exitConfirm">exitConfirm</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#203"><abbr title="ImportCsv::csvCheck">csvCheck</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#224"><abbr title="ImportCsv::insertToDb">insertToDb</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#159"><abbr title="ImportCsv::getCount">getCount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#38"><abbr title="ImportCsv::handle">handle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ConsignorGroup.php.html#14"><abbr title="ConsignorGroup::Consignors">Consignors</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ConsignorGroup.php.html#18"><abbr title="ConsignorGroup::CreateUser">CreateUser</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ConsignorGroup.php.html#22"><abbr title="ConsignorGroup::ModifyUser">ModifyUser</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#29"><abbr title="ImportCsv::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#267"><abbr title="ImportCsv::updateStatus">updateStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Console/Commands/Inspire.php.html#29"><abbr title="Inspire::handle">handle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#21"><abbr title="Customer::scopeStore">scopeStore</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#24"><abbr title="Customer::scopeSmallStore">scopeSmallStore</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#27"><abbr title="Customer::scopeArea">scopeArea</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UserRequest/Division.php.html#15"><abbr title="Division::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#18"><abbr title="Customer::scopePref">scopePref</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#14"><abbr title="Customer::JifuriDatas">JifuriDatas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ControlDivision.php.html#13"><abbr title="ControlDivision::scopeUsers">scopeUsers</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ControlDivision.php.html#17"><abbr title="ControlDivision::Division">Division</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ControlStore.php.html#13"><abbr title="ControlStore::SmallStores">SmallStores</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ControlStore.php.html#17"><abbr title="ControlStore::scopeOrderAsc">scopeOrderAsc</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RestController.php.html#20"><abbr title="RestController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Prefecture.php.html#14"><abbr title="Prefecture::Stores">Stores</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#76"><abbr title="UserController::division">division</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#178"><abbr title="UserController::password">password</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#201"><abbr title="UserController::isSuperUserOrMe">isSuperUserOrMe</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/WorkTypeController.php.html#20"><abbr title="WorkTypeController::showWorkType">showWorkType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#60"><abbr title="UserController::userIcon">userIcon</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#44"><abbr title="UserController::name">name</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Jifuri.php.html#13"><abbr title="Jifuri::Month">Month</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RestController.php.html#47"><abbr title="RestController::export">export</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#16"><abbr title="UserController::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#26"><abbr title="UserController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/WorkTypeController.php.html#52"><abbr title="WorkTypeController::exportWorkType">exportWorkType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/WorkTypeController.php.html#71"><abbr title="WorkTypeController::importWorkType">importWorkType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/CsvFile.php.html#24"><abbr title="CsvFile::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UserRequest/Password.php.html#15"><abbr title="Password::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UserRequest/Password.php.html#24"><abbr title="Password::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UserRequest/UserIcon.php.html#15"><abbr title="UserIcon::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/CsvFile.php.html#14"><abbr title="CsvFile::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UserRequest/UserName.php.html#25"><abbr title="UserName::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/WorkTypeController.php.html#122"><abbr title="WorkTypeController::uploadWorkType">uploadWorkType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Middleware/Authenticate.php.html#23"><abbr title="Authenticate::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Middleware/Authenticate.php.html#35"><abbr title="Authenticate::handle">handle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Jifuri.php.html#17"><abbr title="Jifuri::Consignor">Consignor</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UserRequest/UserName.php.html#16"><abbr title="UserName::authorize">authorize</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#122"><abbr title="RosterController::showForm">showForm</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#159"><abbr title="RosterController::editPlan">editPlan</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#236"><abbr title="RosterController::anonymous function">anonymous function</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#209"><abbr title="RosterController::editActual">editActual</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#55"><abbr title="RosterController::editTimes">editTimes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#17"><abbr title="RosterController::showCalendar">showCalendar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RestController.php.html#62"><abbr title="RestController::import">import</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RestController.php.html#109"><abbr title="RestController::upload">upload</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#13"><abbr title="RosterController::showIndex">showIndex</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#268"><abbr title="RosterController::showList">showList</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/SampleController.php.html#12"><abbr title="SampleController::setGroupCount">setGroupCount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/SuisinAdminController.php.html#43"><abbr title="SuisinAdminController::export">export</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/SuisinAdminController.php.html#60"><abbr title="SuisinAdminController::import">import</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/SuisinAdminController.php.html#86"><abbr title="SuisinAdminController::upload">upload</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Jifuri.php.html#21"><abbr title="Jifuri::Customer">Customer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Requests/UserRequest/UserIcon.php.html#24"><abbr title="UserIcon::rules">rules</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/SinrenUserController.php.html#79"><abbr title="SinrenUserController::getCheckBox">getCheckBox</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/SampleController.php.html#31"><abbr title="SampleController::exportSample">exportSample</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/SampleController.php.html#127"><abbr title="SampleController::showSample">showSample</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/SinrenUserController.php.html#12"><abbr title="SinrenUserController::showRosterRegisterUser">showRosterRegisterUser</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Http/Controllers/SinrenUserController.php.html#18"><abbr title="SinrenUserController::createRosterRegisterUser">createRosterRegisterUser</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Services/SuisinCsvConfigService.php.html#20"><abbr title="SuisinCsvConfigService::getDepositGist">getDepositGist</abbr></a></td><td class="text-right">1%</td></tr>
+       <tr><td><a href="Services/SuperUserService.php.html#124"><abbr title="SuperUserService::editUser">editUser</abbr></a></td><td class="text-right">36%</td></tr>
+       <tr><td><a href="Http/Controllers/SuperUserController.php.html#59"><abbr title="SuperUserController::edit">edit</abbr></a></td><td class="text-right">60%</td></tr>
+       <tr><td><a href="Http/Controllers/SuperUserController.php.html#24"><abbr title="SuperUserController::show">show</abbr></a></td><td class="text-right">62%</td></tr>
+       <tr><td><a href="Http/Controllers/SuperUserController.php.html#36"><abbr title="SuperUserController::search">search</abbr></a></td><td class="text-right">62%</td></tr>
+       <tr><td><a href="Http/Middleware/RedirectIfAuthenticated.php.html#35"><abbr title="RedirectIfAuthenticated::handle">handle</abbr></a></td><td class="text-right">66%</td></tr>
+       <tr><td><a href="Services/SuperUserService.php.html#33"><abbr title="SuperUserService::setNull">setNull</abbr></a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Http/Controllers/IndexController.php.html#12"><abbr title="IndexController::show">show</abbr></a></td><td class="text-right">78%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#38"><abbr title="ImportCsv::handle">handle</abbr></a></td><td class="text-right">182</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#101"><abbr title="JsonImportProvider::setCsvSplitRow">setCsvSplitRow</abbr></a></td><td class="text-right">182</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#192"><abbr title="JsonImportProvider::convertValue">convertValue</abbr></a></td><td class="text-right">156</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#190"><abbr title="CsvService::convertTypes">convertTypes</abbr></a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#101"><abbr title="CsvService::reflectToDb">reflectToDb</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="Http/Controllers/SampleController.php.html#31"><abbr title="SampleController::exportSample">exportSample</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#46"><abbr title="CsvService::importCsv">importCsv</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#196"><abbr title="CalendarProvider::getWeekName">getWeekName</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#55"><abbr title="RosterController::editTimes">editTimes</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#172"><abbr title="JsonImportProvider::convertAccount">convertAccount</abbr></a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#114"><abbr title="AcceptController::editUnit">editUnit</abbr></a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#165"><abbr title="CsvService::swapColumnRow">swapColumnRow</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Http/Controllers/SinrenUserController.php.html#18"><abbr title="SinrenUserController::createRosterRegisterUser">createRosterRegisterUser</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#238"><abbr title="CsvService::setUpdateFlags">setUpdateFlags</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Services/SuperUserService.php.html#124"><abbr title="SuperUserService::editUser">editUser</abbr></a></td><td class="text-right">35</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#81"><abbr title="AcceptController::editAll">editAll</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#224"><abbr title="ImportCsv::insertToDb">insertToDb</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#203"><abbr title="ImportCsv::csvCheck">csvCheck</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#146"><abbr title="CalendarProvider::makeCalendar">makeCalendar</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#176"><abbr title="ImportCsv::inputMonth">inputMonth</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#16"><abbr title="AcceptController::show">show</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Http/Controllers/SampleController.php.html#127"><abbr title="SampleController::showSample">showSample</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Http/Controllers/SampleController.php.html#12"><abbr title="SampleController::setGroupCount">setGroupCount</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Providers/CalendarProvider.php.html#79"><abbr title="CalendarProvider::makeList">makeList</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#122"><abbr title="RosterController::showForm">showForm</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#52"><abbr title="TableEditService::importCsv">importCsv</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Http/Controllers/DivisionController.php.html#62"><abbr title="DivisionController::importDivision">importDivision</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#74"><abbr title="JsonImportProvider::setCsvAllRow">setCsvAllRow</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#178"><abbr title="UserController::password">password</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Http/Controllers/WorkTypeController.php.html#71"><abbr title="WorkTypeController::importWorkType">importWorkType</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Http/Controllers/HolidayController.php.html#67"><abbr title="HolidayController::import">import</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Http/Controllers/RestController.php.html#62"><abbr title="RestController::import">import</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Services/UserService.php.html#41"><abbr title="UserService::editUserPassword">editUserPassword</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#97"><abbr title="TableEditService::getValidate">getValidate</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Services/UserService.php.html#56"><abbr title="UserService::isPasswordMatch">isPasswordMatch</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#34"><abbr title="JsonImportProvider::getJsonFile">getJsonFile</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Services/UserService.php.html#24"><abbr title="UserService::editUserIcon">editUserIcon</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Services/UserService.php.html#10"><abbr title="UserService::editUserName">editUserName</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#258"><abbr title="CsvService::setPrimaryKey">setPrimaryKey</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#87"><abbr title="CsvService::setKeys">setKeys</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Services/CsvService.php.html#12"><abbr title="CsvService::exportCsv">exportCsv</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Services/TableEditService.php.html#82"><abbr title="TableEditService::getImportParameter">getImportParameter</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#60"><abbr title="UserController::userIcon">userIcon</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#44"><abbr title="UserController::name">name</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#26"><abbr title="UserController::show">show</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#133"><abbr title="AcceptController::anonymous function">anonymous function</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#201"><abbr title="UserController::isSuperUserOrMe">isSuperUserOrMe</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Http/Controllers/UserController.php.html#76"><abbr title="UserController::division">division</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Http/Middleware/Authenticate.php.html#35"><abbr title="Authenticate::handle">handle</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Http/Controllers/IndexController.php.html#12"><abbr title="IndexController::show">show</abbr></a></td><td class="text-right">7</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#159"><abbr title="RosterController::editPlan">editPlan</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#167"><abbr title="AcceptController::actual_accept">actual_accept</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/ChiefController.php.html#12"><abbr title="ChiefController::show">show</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/AcceptController.php.html#150"><abbr title="AcceptController::plan_accept">plan_accept</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#17"><abbr title="RosterController::showCalendar">showCalendar</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#195"><abbr title="ImportCsv::exitConfirm">exitConfirm</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Services/UserService.php.html#69"><abbr title="UserService::editUserDivision">editUserDivision</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#159"><abbr title="ImportCsv::getCount">getCount</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Console/Commands/ImportCsv.php.html#167"><abbr title="ImportCsv::getLastTraded">getLastTraded</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#209"><abbr title="RosterController::editActual">editActual</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Exceptions/Handler.php.html#43"><abbr title="Handler::render">render</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/SuisinAdminController.php.html#43"><abbr title="SuisinAdminController::export">export</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#66"><abbr title="JsonImportProvider::getMaxRow">getMaxRow</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#50"><abbr title="JsonImportProvider::setCsvFile">setCsvFile</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Providers/AcceptProvider.php.html#58"><abbr title="AcceptProvider::anonymous function">anonymous function</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Providers/AcceptProvider.php.html#48"><abbr title="AcceptProvider::accepts_where">accepts_where</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/RosterController.php.html#268"><abbr title="RosterController::showList">showList</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Providers/JsonImportProvider.php.html#222"><abbr title="JsonImportProvider::convertDate">convertDate</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/SuisinAdminController.php.html#60"><abbr title="SuisinAdminController::import">import</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/SinrenUserController.php.html#79"><abbr title="SinrenUserController::getCheckBox">getCheckBox</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Roster.php.html#18"><abbr title="Roster::scopeMonth">scopeMonth</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Http/Controllers/SuperUserController.php.html#59"><abbr title="SuperUserController::edit">edit</abbr></a></td><td class="text-right">3</td></tr>
+       <tr><td><a href="Http/Controllers/SuperUserController.php.html#24"><abbr title="SuperUserController::show">show</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Http/Controllers/SuperUserController.php.html#36"><abbr title="SuperUserController::search">search</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Http/Middleware/RedirectIfAuthenticated.php.html#35"><abbr title="RedirectIfAuthenticated::handle">handle</abbr></a></td><td class="text-right">2</td></tr>
+       <tr><td><a href="Services/SuperUserService.php.html#33"><abbr title="SuperUserService::setNull">setNull</abbr></a></td><td class="text-right">2</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="http://github.com/sebastianbergmann/php-code-coverage" target="_top">PHP_CodeCoverage 2.2.4</a> using <a href="https://secure.php.net/" target="_top">PHP 5.6.30</a> and <a href="https://phpunit.de/">PHPUnit 4.8.36</a> at Fri Aug 25 13:16:46 JST 2017.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="js/jquery.min.js" type="text/javascript"></script>
+  <script src="js/bootstrap.min.js" type="text/javascript"></script>
+  <script src="js/holder.min.js" type="text/javascript"></script>
+  <script src="js/d3.min.js" type="text/javascript"></script>
+  <script src="js/nv.d3.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([42,1,1,0,1,0,1,1,1,3,0,32], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([195,1,0,0,1,0,0,4,2,1,1,30], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(key, y, e, graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[100,0,"<a href=\"Area.php.html#7\">Area<\/a>"],[0,2,"<a href=\"Consignor.php.html#7\">Consignor<\/a>"],[0,3,"<a href=\"ConsignorGroup.php.html#7\">ConsignorGroup<\/a>"],[0,36,"<a href=\"Console\/Commands\/ImportCsv.php.html#7\">ImportCsv<\/a>"],[0,1,"<a href=\"Console\/Commands\/Inspire.php.html#8\">Inspire<\/a>"],[100,0,"<a href=\"Http\/Kernel.php.html#7\">Kernel<\/a>"],[0,2,"<a href=\"ControlDivision.php.html#7\">ControlDivision<\/a>"],[0,2,"<a href=\"ControlStore.php.html#7\">ControlStore<\/a>"],[0,5,"<a href=\"Customer.php.html#7\">Customer<\/a>"],[100,1,"<a href=\"DatabaseLog.php.html#7\">DatabaseLog<\/a>"],[100,0,"<a href=\"DepositAuxiliary.php.html#7\">DepositAuxiliary<\/a>"],[100,0,"<a href=\"DepositBankbookCode.php.html#7\">DepositBankbookCode<\/a>"],[100,0,"<a href=\"DepositBankbookType.php.html#7\">DepositBankbookType<\/a>"],[100,0,"<a href=\"DepositCategory.php.html#7\">DepositCategory<\/a>"],[100,0,"<a href=\"DepositGist.php.html#7\">DepositGist<\/a>"],[100,0,"<a href=\"DepositTermLedger.php.html#7\">DepositTermLedger<\/a>"],[0,2,"<a href=\"Http\/Requests\/UserRequest\/Division.php.html#7\">Division<\/a>"],[100,0,"<a href=\"Events\/Event.php.html#5\">Event<\/a>"],[0,3,"<a href=\"Exceptions\/Handler.php.html#11\">Handler<\/a>"],[0,1,"<a href=\"Holiday.php.html#7\">Holiday<\/a>"],[0,25,"<a href=\"Http\/Controllers\/AcceptController.php.html#9\">AcceptController<\/a>"],[53.846153846154,3,"<a href=\"Http\/Controllers\/Auth\/AuthController.php.html#11\">AuthController<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Auth\/PasswordController.php.html#8\">PasswordController<\/a>"],[0,4,"<a href=\"Http\/Controllers\/ChiefController.php.html#9\">ChiefController<\/a>"],[100,0,"<a href=\"Http\/Controllers\/Controller.php.html#10\">Controller<\/a>"],[0,7,"<a href=\"Http\/Controllers\/DivisionController.php.html#10\">DivisionController<\/a>"],[0,7,"<a href=\"Http\/Controllers\/HolidayController.php.html#9\">HolidayController<\/a>"],[80,8,"<a href=\"Http\/Controllers\/IndexController.php.html#9\">IndexController<\/a>"],[0,7,"<a href=\"Http\/Controllers\/RestController.php.html#9\">RestController<\/a>"],[0,22,"<a href=\"Http\/Controllers\/RosterController.php.html#10\">RosterController<\/a>"],[0,20,"<a href=\"Http\/Controllers\/SampleController.php.html#9\">SampleController<\/a>"],[0,9,"<a href=\"Http\/Controllers\/SinrenUserController.php.html#9\">SinrenUserController<\/a>"],[30.769230769231,8,"<a href=\"Http\/Controllers\/SuisinAdminController.php.html#9\">SuisinAdminController<\/a>"],[66.666666666667,9,"<a href=\"Http\/Controllers\/SuperUserController.php.html#9\">SuperUserController<\/a>"],[0,20,"<a href=\"Http\/Controllers\/UserController.php.html#10\">UserController<\/a>"],[0,7,"<a href=\"Http\/Controllers\/WorkTypeController.php.html#9\">WorkTypeController<\/a>"],[0,4,"<a href=\"Http\/Middleware\/Authenticate.php.html#8\">Authenticate<\/a>"],[100,0,"<a href=\"Http\/Middleware\/EncryptCookies.php.html#7\">EncryptCookies<\/a>"],[80,3,"<a href=\"Http\/Middleware\/RedirectIfAuthenticated.php.html#8\">RedirectIfAuthenticated<\/a>"],[80,4,"<a href=\"Http\/Middleware\/SuisinMiddleware.php.html#7\">SuisinMiddleware<\/a>"],[100,2,"<a href=\"Http\/Middleware\/SuperUserMiddleware.php.html#7\">SuperUserMiddleware<\/a>"],[100,0,"<a href=\"Http\/Middleware\/VerifyCsrfToken.php.html#7\">VerifyCsrfToken<\/a>"],[0,2,"<a href=\"Http\/Requests\/CsvFile.php.html#7\">CsvFile<\/a>"],[100,0,"<a href=\"Http\/Requests\/Request.php.html#7\">Request<\/a>"],[0,2,"<a href=\"Http\/Requests\/UserRequest\/Password.php.html#7\">Password<\/a>"],[0,2,"<a href=\"Http\/Requests\/UserRequest\/UserIcon.php.html#7\">UserIcon<\/a>"],[0,2,"<a href=\"Http\/Requests\/UserRequest\/UserName.php.html#7\">UserName<\/a>"],[100,0,"<a href=\"Industry.php.html#7\">Industry<\/a>"],[0,3,"<a href=\"Jifuri.php.html#7\">Jifuri<\/a>"],[100,0,"<a href=\"Jobs\/Job.php.html#7\">Job<\/a>"],[100,0,"<a href=\"Month.php.html#7\">Month<\/a>"],[100,0,"<a href=\"Personality.php.html#7\">Personality<\/a>"],[0,1,"<a href=\"Prefecture.php.html#7\">Prefecture<\/a>"],[0,8,"<a href=\"Providers\/AcceptProvider.php.html#7\">AcceptProvider<\/a>"],[100,2,"<a href=\"Providers\/AppServiceProvider.php.html#7\">AppServiceProvider<\/a>"],[100,1,"<a href=\"Providers\/AuthServiceProvider.php.html#8\">AuthServiceProvider<\/a>"],[0,25,"<a href=\"Providers\/CalendarProvider.php.html#7\">CalendarProvider<\/a>"],[100,1,"<a href=\"Providers\/EventServiceProvider.php.html#8\">EventServiceProvider<\/a>"],[0,50,"<a href=\"Providers\/JsonImportProvider.php.html#7\">JsonImportProvider<\/a>"],[0,10,"<a href=\"Providers\/RosterProvider.php.html#7\">RosterProvider<\/a>"],[100,3,"<a href=\"Providers\/RouteServiceProvider.php.html#8\">RouteServiceProvider<\/a>"],[100,0,"<a href=\"Qualification.php.html#7\">Qualification<\/a>"],[100,0,"<a href=\"Rest.php.html#7\">Rest<\/a>"],[0,8,"<a href=\"Roster.php.html#7\">Roster<\/a>"],[100,0,"<a href=\"RosterUser.php.html#7\">RosterUser<\/a>"],[0,53,"<a href=\"Services\/CsvService.php.html#5\">CsvService<\/a>"],[6.1111111111111,18,"<a href=\"Services\/SuisinCsvConfigService.php.html#7\">SuisinCsvConfigService<\/a>"],[75.555555555556,23,"<a href=\"Services\/SuperUserService.php.html#5\">SuperUserService<\/a>"],[16.25,20,"<a href=\"Services\/TableEditService.php.html#8\">TableEditService<\/a>"],[0,14,"<a href=\"Services\/UserService.php.html#7\">UserService<\/a>"],[0,1,"<a href=\"SinrenDivision.php.html#7\">SinrenDivision<\/a>"],[0,5,"<a href=\"SinrenUser.php.html#7\">SinrenUser<\/a>"],[0,2,"<a href=\"SmallStore.php.html#7\">SmallStore<\/a>"],[0,2,"<a href=\"Store.php.html#7\">Store<\/a>"],[100,0,"<a href=\"Subject.php.html#7\">Subject<\/a>"],[0,1,"<a href=\"SuisinUser.php.html#7\">SuisinUser<\/a>"],[100,3,"<a href=\"User.php.html#13\">User<\/a>"],[100,0,"<a href=\"WorkType.php.html#7\">WorkType<\/a>"],[0,1,"<a href=\"ZenonCsv.php.html#7\">ZenonCsv<\/a>"],[0,2,"<a href=\"ZenonStatus.php.html#7\">ZenonStatus<\/a>"],[100,0,"<a href=\"ZenonTable.php.html#7\">ZenonTable<\/a>"],[100,0,"<a href=\"ZenonType.php.html#7\">ZenonType<\/a>"],[100,0,"<a href=\"sample.php.html#7\">sample<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(key, y, e, graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[0,1,"<a href=\"Consignor.php.html#14\">Consignor::JifuriDatas<\/a>"],[0,1,"<a href=\"Consignor.php.html#18\">Consignor::Group<\/a>"],[0,1,"<a href=\"ConsignorGroup.php.html#14\">ConsignorGroup::Consignors<\/a>"],[0,1,"<a href=\"ConsignorGroup.php.html#18\">ConsignorGroup::CreateUser<\/a>"],[0,1,"<a href=\"ConsignorGroup.php.html#22\">ConsignorGroup::ModifyUser<\/a>"],[0,1,"<a href=\"Console\/Commands\/ImportCsv.php.html#29\">ImportCsv::__construct<\/a>"],[0,13,"<a href=\"Console\/Commands\/ImportCsv.php.html#38\">ImportCsv::handle<\/a>"],[0,2,"<a href=\"Console\/Commands\/ImportCsv.php.html#159\">ImportCsv::getCount<\/a>"],[0,2,"<a href=\"Console\/Commands\/ImportCsv.php.html#167\">ImportCsv::getLastTraded<\/a>"],[0,5,"<a href=\"Console\/Commands\/ImportCsv.php.html#176\">ImportCsv::inputMonth<\/a>"],[0,2,"<a href=\"Console\/Commands\/ImportCsv.php.html#195\">ImportCsv::exitConfirm<\/a>"],[0,5,"<a href=\"Console\/Commands\/ImportCsv.php.html#203\">ImportCsv::csvCheck<\/a>"],[0,5,"<a href=\"Console\/Commands\/ImportCsv.php.html#224\">ImportCsv::insertToDb<\/a>"],[0,1,"<a href=\"Console\/Commands\/ImportCsv.php.html#267\">ImportCsv::updateStatus<\/a>"],[0,1,"<a href=\"Console\/Commands\/Inspire.php.html#29\">Inspire::handle<\/a>"],[0,1,"<a href=\"ControlDivision.php.html#13\">ControlDivision::scopeUsers<\/a>"],[0,1,"<a href=\"ControlDivision.php.html#17\">ControlDivision::Division<\/a>"],[0,1,"<a href=\"ControlStore.php.html#13\">ControlStore::SmallStores<\/a>"],[0,1,"<a href=\"ControlStore.php.html#17\">ControlStore::scopeOrderAsc<\/a>"],[0,1,"<a href=\"Customer.php.html#14\">Customer::JifuriDatas<\/a>"],[0,1,"<a href=\"Customer.php.html#18\">Customer::scopePref<\/a>"],[0,1,"<a href=\"Customer.php.html#21\">Customer::scopeStore<\/a>"],[0,1,"<a href=\"Customer.php.html#24\">Customer::scopeSmallStore<\/a>"],[0,1,"<a href=\"Customer.php.html#27\">Customer::scopeArea<\/a>"],[100,1,"<a href=\"DatabaseLog.php.html#15\">DatabaseLog::User<\/a>"],[0,1,"<a href=\"Http\/Requests\/UserRequest\/Division.php.html#15\">Division::authorize<\/a>"],[0,1,"<a href=\"Http\/Requests\/UserRequest\/Division.php.html#24\">Division::rules<\/a>"],[0,1,"<a href=\"Exceptions\/Handler.php.html#31\">Handler::report<\/a>"],[0,2,"<a href=\"Exceptions\/Handler.php.html#43\">Handler::render<\/a>"],[0,1,"<a href=\"Holiday.php.html#14\">Holiday::scopeCurrent<\/a>"],[0,1,"<a href=\"Http\/Controllers\/AcceptController.php.html#12\">AcceptController::__construct<\/a>"],[0,5,"<a href=\"Http\/Controllers\/AcceptController.php.html#16\">AcceptController::show<\/a>"],[0,5,"<a href=\"Http\/Controllers\/AcceptController.php.html#81\">AcceptController::editAll<\/a>"],[0,3,"<a href=\"Http\/Controllers\/AcceptController.php.html#133\">AcceptController::anonymous function<\/a>"],[0,7,"<a href=\"Http\/Controllers\/AcceptController.php.html#114\">AcceptController::editUnit<\/a>"],[0,2,"<a href=\"Http\/Controllers\/AcceptController.php.html#150\">AcceptController::plan_accept<\/a>"],[0,2,"<a href=\"Http\/Controllers\/AcceptController.php.html#167\">AcceptController::actual_accept<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Auth\/AuthController.php.html#32\">AuthController::__construct<\/a>"],[100,1,"<a href=\"Http\/Controllers\/Auth\/AuthController.php.html#42\">AuthController::validator<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Auth\/AuthController.php.html#56\">AuthController::create<\/a>"],[0,1,"<a href=\"Http\/Controllers\/Auth\/PasswordController.php.html#28\">PasswordController::__construct<\/a>"],[0,2,"<a href=\"Http\/Controllers\/ChiefController.php.html#12\">ChiefController::show<\/a>"],[0,1,"<a href=\"Http\/Controllers\/ChiefController.php.html#39\">ChiefController::edit<\/a>"],[0,1,"<a href=\"Http\/Controllers\/ChiefController.php.html#51\">ChiefController::anonymous function<\/a>"],[0,1,"<a href=\"Http\/Controllers\/DivisionController.php.html#20\">DivisionController::showDivision<\/a>"],[0,1,"<a href=\"Http\/Controllers\/DivisionController.php.html#47\">DivisionController::exportDivision<\/a>"],[0,4,"<a href=\"Http\/Controllers\/DivisionController.php.html#62\">DivisionController::importDivision<\/a>"],[0,1,"<a href=\"Http\/Controllers\/DivisionController.php.html#109\">DivisionController::uploadDivision<\/a>"],[0,1,"<a href=\"Http\/Controllers\/HolidayController.php.html#20\">HolidayController::show<\/a>"],[0,1,"<a href=\"Http\/Controllers\/HolidayController.php.html#50\">HolidayController::export<\/a>"],[0,4,"<a href=\"Http\/Controllers\/HolidayController.php.html#67\">HolidayController::import<\/a>"],[0,1,"<a href=\"Http\/Controllers\/HolidayController.php.html#116\">HolidayController::upload<\/a>"],[78.571428571429,7,"<a href=\"Http\/Controllers\/IndexController.php.html#12\">IndexController::show<\/a>"],[100,1,"<a href=\"Http\/Controllers\/IndexController.php.html#34\">IndexController::permissionError<\/a>"],[0,1,"<a href=\"Http\/Controllers\/RestController.php.html#20\">RestController::show<\/a>"],[0,1,"<a href=\"Http\/Controllers\/RestController.php.html#47\">RestController::export<\/a>"],[0,4,"<a href=\"Http\/Controllers\/RestController.php.html#62\">RestController::import<\/a>"],[0,1,"<a href=\"Http\/Controllers\/RestController.php.html#109\">RestController::upload<\/a>"],[0,1,"<a href=\"Http\/Controllers\/RosterController.php.html#13\">RosterController::showIndex<\/a>"],[0,2,"<a href=\"Http\/Controllers\/RosterController.php.html#17\">RosterController::showCalendar<\/a>"],[0,8,"<a href=\"Http\/Controllers\/RosterController.php.html#55\">RosterController::editTimes<\/a>"],[0,4,"<a href=\"Http\/Controllers\/RosterController.php.html#122\">RosterController::showForm<\/a>"],[0,2,"<a href=\"Http\/Controllers\/RosterController.php.html#159\">RosterController::editPlan<\/a>"],[0,1,"<a href=\"Http\/Controllers\/RosterController.php.html#236\">RosterController::anonymous function<\/a>"],[0,2,"<a href=\"Http\/Controllers\/RosterController.php.html#209\">RosterController::editActual<\/a>"],[0,2,"<a href=\"Http\/Controllers\/RosterController.php.html#268\">RosterController::showList<\/a>"],[0,5,"<a href=\"Http\/Controllers\/SampleController.php.html#12\">SampleController::setGroupCount<\/a>"],[0,10,"<a href=\"Http\/Controllers\/SampleController.php.html#31\">SampleController::exportSample<\/a>"],[0,5,"<a href=\"Http\/Controllers\/SampleController.php.html#127\">SampleController::showSample<\/a>"],[0,1,"<a href=\"Http\/Controllers\/SinrenUserController.php.html#12\">SinrenUserController::showRosterRegisterUser<\/a>"],[0,6,"<a href=\"Http\/Controllers\/SinrenUserController.php.html#18\">SinrenUserController::createRosterRegisterUser<\/a>"],[0,2,"<a href=\"Http\/Controllers\/SinrenUserController.php.html#79\">SinrenUserController::getCheckBox<\/a>"],[100,1,"<a href=\"Http\/Controllers\/SuisinAdminController.php.html#14\">SuisinAdminController::__construct<\/a>"],[100,1,"<a href=\"Http\/Controllers\/SuisinAdminController.php.html#18\">SuisinAdminController::index<\/a>"],[100,1,"<a href=\"Http\/Controllers\/SuisinAdminController.php.html#29\">SuisinAdminController::show<\/a>"],[0,2,"<a href=\"Http\/Controllers\/SuisinAdminController.php.html#43\">SuisinAdminController::export<\/a>"],[0,2,"<a href=\"Http\/Controllers\/SuisinAdminController.php.html#60\">SuisinAdminController::import<\/a>"],[0,1,"<a href=\"Http\/Controllers\/SuisinAdminController.php.html#86\">SuisinAdminController::upload<\/a>"],[100,1,"<a href=\"Http\/Controllers\/SuperUserController.php.html#20\">SuperUserController::__construct<\/a>"],[62.5,2,"<a href=\"Http\/Controllers\/SuperUserController.php.html#24\">SuperUserController::show<\/a>"],[62.5,2,"<a href=\"Http\/Controllers\/SuperUserController.php.html#36\">SuperUserController::search<\/a>"],[100,1,"<a href=\"Http\/Controllers\/SuperUserController.php.html#48\">SuperUserController::user<\/a>"],[60,3,"<a href=\"Http\/Controllers\/SuperUserController.php.html#59\">SuperUserController::edit<\/a>"],[0,1,"<a href=\"Http\/Controllers\/UserController.php.html#16\">UserController::__construct<\/a>"],[0,3,"<a href=\"Http\/Controllers\/UserController.php.html#26\">UserController::show<\/a>"],[0,3,"<a href=\"Http\/Controllers\/UserController.php.html#44\">UserController::name<\/a>"],[0,3,"<a href=\"Http\/Controllers\/UserController.php.html#60\">UserController::userIcon<\/a>"],[0,3,"<a href=\"Http\/Controllers\/UserController.php.html#76\">UserController::division<\/a>"],[0,4,"<a href=\"Http\/Controllers\/UserController.php.html#178\">UserController::password<\/a>"],[0,3,"<a href=\"Http\/Controllers\/UserController.php.html#201\">UserController::isSuperUserOrMe<\/a>"],[0,1,"<a href=\"Http\/Controllers\/WorkTypeController.php.html#20\">WorkTypeController::showWorkType<\/a>"],[0,1,"<a href=\"Http\/Controllers\/WorkTypeController.php.html#52\">WorkTypeController::exportWorkType<\/a>"],[0,4,"<a href=\"Http\/Controllers\/WorkTypeController.php.html#71\">WorkTypeController::importWorkType<\/a>"],[0,1,"<a href=\"Http\/Controllers\/WorkTypeController.php.html#122\">WorkTypeController::uploadWorkType<\/a>"],[0,1,"<a href=\"Http\/Middleware\/Authenticate.php.html#23\">Authenticate::__construct<\/a>"],[0,3,"<a href=\"Http\/Middleware\/Authenticate.php.html#35\">Authenticate::handle<\/a>"],[100,1,"<a href=\"Http\/Middleware\/RedirectIfAuthenticated.php.html#23\">RedirectIfAuthenticated::__construct<\/a>"],[66.666666666667,2,"<a href=\"Http\/Middleware\/RedirectIfAuthenticated.php.html#35\">RedirectIfAuthenticated::handle<\/a>"],[80,4,"<a href=\"Http\/Middleware\/SuisinMiddleware.php.html#17\">SuisinMiddleware::handle<\/a>"],[100,2,"<a href=\"Http\/Middleware\/SuperUserMiddleware.php.html#17\">SuperUserMiddleware::handle<\/a>"],[0,1,"<a href=\"Http\/Requests\/CsvFile.php.html#14\">CsvFile::authorize<\/a>"],[0,1,"<a href=\"Http\/Requests\/CsvFile.php.html#24\">CsvFile::rules<\/a>"],[0,1,"<a href=\"Http\/Requests\/UserRequest\/Password.php.html#15\">Password::authorize<\/a>"],[0,1,"<a href=\"Http\/Requests\/UserRequest\/Password.php.html#24\">Password::rules<\/a>"],[0,1,"<a href=\"Http\/Requests\/UserRequest\/UserIcon.php.html#15\">UserIcon::authorize<\/a>"],[0,1,"<a href=\"Http\/Requests\/UserRequest\/UserIcon.php.html#24\">UserIcon::rules<\/a>"],[0,1,"<a href=\"Http\/Requests\/UserRequest\/UserName.php.html#16\">UserName::authorize<\/a>"],[0,1,"<a href=\"Http\/Requests\/UserRequest\/UserName.php.html#25\">UserName::rules<\/a>"],[0,1,"<a href=\"Jifuri.php.html#13\">Jifuri::Month<\/a>"],[0,1,"<a href=\"Jifuri.php.html#17\">Jifuri::Consignor<\/a>"],[0,1,"<a href=\"Jifuri.php.html#21\">Jifuri::Customer<\/a>"],[0,1,"<a href=\"Prefecture.php.html#14\">Prefecture::Stores<\/a>"],[0,1,"<a href=\"Providers\/AcceptProvider.php.html#17\">AcceptProvider::boot<\/a>"],[0,1,"<a href=\"Providers\/AcceptProvider.php.html#26\">AcceptProvider::register<\/a>"],[0,1,"<a href=\"Providers\/AcceptProvider.php.html#30\">AcceptProvider::__construct<\/a>"],[0,1,"<a href=\"Providers\/AcceptProvider.php.html#34\">AcceptProvider::accepts<\/a>"],[0,2,"<a href=\"Providers\/AcceptProvider.php.html#48\">AcceptProvider::accepts_where<\/a>"],[0,2,"<a href=\"Providers\/AcceptProvider.php.html#58\">AcceptProvider::anonymous function<\/a>"],[100,1,"<a href=\"Providers\/AppServiceProvider.php.html#14\">AppServiceProvider::boot<\/a>"],[100,1,"<a href=\"Providers\/AppServiceProvider.php.html#24\">AppServiceProvider::register<\/a>"],[100,1,"<a href=\"Providers\/AuthServiceProvider.php.html#25\">AuthServiceProvider::boot<\/a>"],[0,1,"<a href=\"Providers\/CalendarProvider.php.html#17\">CalendarProvider::boot<\/a>"],[0,1,"<a href=\"Providers\/CalendarProvider.php.html#26\">CalendarProvider::register<\/a>"],[0,1,"<a href=\"Providers\/CalendarProvider.php.html#30\">CalendarProvider::__construct<\/a>"],[0,1,"<a href=\"Providers\/CalendarProvider.php.html#41\">CalendarProvider::getMonthId<\/a>"],[0,1,"<a href=\"Providers\/CalendarProvider.php.html#45\">CalendarProvider::getDate<\/a>"],[0,1,"<a href=\"Providers\/CalendarProvider.php.html#50\">CalendarProvider::makeRoster<\/a>"],[0,1,"<a href=\"Providers\/CalendarProvider.php.html#64\">CalendarProvider::getHoliday<\/a>"],[0,5,"<a href=\"Providers\/CalendarProvider.php.html#79\">CalendarProvider::makeList<\/a>"],[0,5,"<a href=\"Providers\/CalendarProvider.php.html#146\">CalendarProvider::makeCalendar<\/a>"],[0,8,"<a href=\"Providers\/CalendarProvider.php.html#196\">CalendarProvider::getWeekName<\/a>"],[100,1,"<a href=\"Providers\/EventServiceProvider.php.html#27\">EventServiceProvider::boot<\/a>"],[0,1,"<a href=\"Providers\/JsonImportProvider.php.html#17\">JsonImportProvider::boot<\/a>"],[0,1,"<a href=\"Providers\/JsonImportProvider.php.html#26\">JsonImportProvider::register<\/a>"],[0,1,"<a href=\"Providers\/JsonImportProvider.php.html#30\">JsonImportProvider::__construct<\/a>"],[0,3,"<a href=\"Providers\/JsonImportProvider.php.html#34\">JsonImportProvider::getJsonFile<\/a>"],[0,2,"<a href=\"Providers\/JsonImportProvider.php.html#50\">JsonImportProvider::setCsvFile<\/a>"],[0,1,"<a href=\"Providers\/JsonImportProvider.php.html#62\">JsonImportProvider::getCsvFile<\/a>"],[0,2,"<a href=\"Providers\/JsonImportProvider.php.html#66\">JsonImportProvider::getMaxRow<\/a>"],[0,4,"<a href=\"Providers\/JsonImportProvider.php.html#74\">JsonImportProvider::setCsvAllRow<\/a>"],[0,13,"<a href=\"Providers\/JsonImportProvider.php.html#101\">JsonImportProvider::setCsvSplitRow<\/a>"],[0,7,"<a href=\"Providers\/JsonImportProvider.php.html#172\">JsonImportProvider::convertAccount<\/a>"],[0,12,"<a href=\"Providers\/JsonImportProvider.php.html#192\">JsonImportProvider::convertValue<\/a>"],[0,1,"<a href=\"Providers\/JsonImportProvider.php.html#217\">JsonImportProvider::splitSpace<\/a>"],[0,2,"<a href=\"Providers\/JsonImportProvider.php.html#222\">JsonImportProvider::convertDate<\/a>"],[0,1,"<a href=\"Providers\/RosterProvider.php.html#15\">RosterProvider::boot<\/a>"],[0,1,"<a href=\"Providers\/RosterProvider.php.html#24\">RosterProvider::register<\/a>"],[0,1,"<a href=\"Providers\/RosterProvider.php.html#28\">RosterProvider::__construct<\/a>"],[0,1,"<a href=\"Providers\/RosterProvider.php.html#32\">RosterProvider::planEditValidate<\/a>"],[0,1,"<a href=\"Providers\/RosterProvider.php.html#44\">RosterProvider::planEdit<\/a>"],[0,1,"<a href=\"Providers\/RosterProvider.php.html#98\">RosterProvider::anonymous function<\/a>"],[0,1,"<a href=\"Providers\/RosterProvider.php.html#62\">RosterProvider::planDelete<\/a>"],[0,1,"<a href=\"Providers\/RosterProvider.php.html#76\">RosterProvider::planDeleteValidate<\/a>"],[0,1,"<a href=\"Providers\/RosterProvider.php.html#84\">RosterProvider::actualEditValidate<\/a>"],[100,1,"<a href=\"Providers\/RosterProvider.php.html#97\">RosterProvider::actualEdit<\/a>"],[100,1,"<a href=\"Providers\/RouteServiceProvider.php.html#25\">RouteServiceProvider::boot<\/a>"],[100,1,"<a href=\"Providers\/RouteServiceProvider.php.html#38\">RouteServiceProvider::map<\/a>"],[100,1,"<a href=\"Providers\/RouteServiceProvider.php.html#40\">RouteServiceProvider::anonymous function<\/a>"],[0,1,"<a href=\"Roster.php.html#14\">Roster::scopeUser<\/a>"],[0,2,"<a href=\"Roster.php.html#18\">Roster::scopeMonth<\/a>"],[0,1,"<a href=\"Roster.php.html#26\">Roster::getPlanAccept<\/a>"],[0,1,"<a href=\"Roster.php.html#30\">Roster::PlanType<\/a>"],[0,1,"<a href=\"Roster.php.html#34\">Roster::ActualType<\/a>"],[0,1,"<a href=\"Roster.php.html#38\">Roster::PlanRest<\/a>"],[0,1,"<a href=\"Roster.php.html#42\">Roster::ActualRest<\/a>"],[0,1,"<a href=\"Services\/CsvService.php.html#8\">CsvService::getFileName<\/a>"],[0,3,"<a href=\"Services\/CsvService.php.html#12\">CsvService::exportCsv<\/a>"],[0,8,"<a href=\"Services\/CsvService.php.html#46\">CsvService::importCsv<\/a>"],[0,3,"<a href=\"Services\/CsvService.php.html#87\">CsvService::setKeys<\/a>"],[0,10,"<a href=\"Services\/CsvService.php.html#101\">CsvService::reflectToDb<\/a>"],[0,1,"<a href=\"Services\/CsvService.php.html#158\">CsvService::getCount<\/a>"],[0,6,"<a href=\"Services\/CsvService.php.html#165\">CsvService::swapColumnRow<\/a>"],[0,11,"<a href=\"Services\/CsvService.php.html#190\">CsvService::convertTypes<\/a>"],[0,6,"<a href=\"Services\/CsvService.php.html#238\">CsvService::setUpdateFlags<\/a>"],[0,3,"<a href=\"Services\/CsvService.php.html#258\">CsvService::setPrimaryKey<\/a>"],[0,1,"<a href=\"Services\/CsvService.php.html#271\">CsvService::getRows<\/a>"],[100,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#12\">SuisinCsvConfigService::getter<\/a>"],[1.8518518518519,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#20\">SuisinCsvConfigService::getDepositGist<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#90\">SuisinCsvConfigService::getDepositCategory<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#156\">SuisinCsvConfigService::getDepositBankbookType<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#260\">SuisinCsvConfigService::getSubject<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#311\">SuisinCsvConfigService::getIndustry<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#367\">SuisinCsvConfigService::getQualification<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#424\">SuisinCsvConfigService::getPersonality<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#475\">SuisinCsvConfigService::getPrefecture<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#526\">SuisinCsvConfigService::getStore<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#597\">SuisinCsvConfigService::getSmallStore<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#700\">SuisinCsvConfigService::getArea<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#802\">SuisinCsvConfigService::getControlStore<\/a>"],[100,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#870\">SuisinCsvConfigService::getConsignor<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#941\">SuisinCsvConfigService::getConsignorGroup<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#1012\">SuisinCsvConfigService::getZenonCsv<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#1216\">SuisinCsvConfigService::getZenonTable<\/a>"],[0,1,"<a href=\"Services\/SuisinCsvConfigService.php.html#1293\">SuisinCsvConfigService::getZenonType<\/a>"],[100,1,"<a href=\"Services\/SuperUserService.php.html#8\">SuperUserService::registerUsers<\/a>"],[100,1,"<a href=\"Services\/SuperUserService.php.html#18\">SuperUserService::getUsers<\/a>"],[75,2,"<a href=\"Services\/SuperUserService.php.html#33\">SuperUserService::setNull<\/a>"],[93.333333333333,7,"<a href=\"Services\/SuperUserService.php.html#41\">SuperUserService::searchUsers<\/a>"],[100,2,"<a href=\"Services\/SuperUserService.php.html#84\">SuperUserService::parameter<\/a>"],[36.666666666667,10,"<a href=\"Services\/SuperUserService.php.html#124\">SuperUserService::editUser<\/a>"],[100,1,"<a href=\"Services\/TableEditService.php.html#16\">TableEditService::setConfigs<\/a>"],[100,1,"<a href=\"Services\/TableEditService.php.html#22\">TableEditService::getModel<\/a>"],[100,1,"<a href=\"Services\/TableEditService.php.html#27\">TableEditService::getListConfig<\/a>"],[0,1,"<a href=\"Services\/TableEditService.php.html#39\">TableEditService::getColumnName<\/a>"],[0,1,"<a href=\"Services\/TableEditService.php.html#43\">TableEditService::getKanjiColumns<\/a>"],[0,1,"<a href=\"Services\/TableEditService.php.html#47\">TableEditService::getTitle<\/a>"],[0,4,"<a href=\"Services\/TableEditService.php.html#52\">TableEditService::importCsv<\/a>"],[0,3,"<a href=\"Services\/TableEditService.php.html#82\">TableEditService::getImportParameter<\/a>"],[0,3,"<a href=\"Services\/TableEditService.php.html#97\">TableEditService::getValidate<\/a>"],[0,1,"<a href=\"Services\/TableEditService.php.html#117\">TableEditService::getImportConfig<\/a>"],[0,1,"<a href=\"Services\/TableEditService.php.html#129\">TableEditService::exportRow<\/a>"],[0,1,"<a href=\"Services\/TableEditService.php.html#139\">TableEditService::updatePost<\/a>"],[0,1,"<a href=\"Services\/TableEditService.php.html#155\">TableEditService::getIndexRoute<\/a>"],[0,3,"<a href=\"Services\/UserService.php.html#10\">UserService::editUserName<\/a>"],[0,3,"<a href=\"Services\/UserService.php.html#24\">UserService::editUserIcon<\/a>"],[0,3,"<a href=\"Services\/UserService.php.html#41\">UserService::editUserPassword<\/a>"],[0,3,"<a href=\"Services\/UserService.php.html#56\">UserService::isPasswordMatch<\/a>"],[0,2,"<a href=\"Services\/UserService.php.html#69\">UserService::editUserDivision<\/a>"],[0,1,"<a href=\"SinrenDivision.php.html#14\">SinrenDivision::SinrenUsers<\/a>"],[0,1,"<a href=\"SinrenUser.php.html#14\">SinrenUser::scopeUser<\/a>"],[0,1,"<a href=\"SinrenUser.php.html#18\">SinrenUser::scopeDivision<\/a>"],[0,1,"<a href=\"SinrenUser.php.html#27\">SinrenUser::RosterUser<\/a>"],[0,1,"<a href=\"SinrenUser.php.html#33\">SinrenUser::SinrenDivision<\/a>"],[0,1,"<a href=\"SinrenUser.php.html#36\">SinrenUser::User<\/a>"],[0,1,"<a href=\"SmallStore.php.html#13\">SmallStore::Store<\/a>"],[0,1,"<a href=\"SmallStore.php.html#16\">SmallStore::ControlStore<\/a>"],[0,1,"<a href=\"Store.php.html#13\">Store::Prefecture<\/a>"],[0,1,"<a href=\"Store.php.html#16\">Store::SmallStores<\/a>"],[0,1,"<a href=\"SuisinUser.php.html#14\">SuisinUser::Users<\/a>"],[100,1,"<a href=\"User.php.html#43\">User::SuisinUser<\/a>"],[100,1,"<a href=\"User.php.html#55\">User::SinrenUser<\/a>"],[100,1,"<a href=\"User.php.html#59\">User::RosterUser<\/a>"],[0,1,"<a href=\"ZenonCsv.php.html#14\">ZenonCsv::scopeActive<\/a>"],[0,1,"<a href=\"ZenonStatus.php.html#14\">ZenonStatus::ZenonCsv<\/a>"],[0,1,"<a href=\"ZenonStatus.php.html#18\">ZenonStatus::joinZenonCsv<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>
