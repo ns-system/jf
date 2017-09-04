@@ -20,6 +20,14 @@ class RosterListController extends Controller
         return false;
     }
 
+    public function check() {
+        if (empty(\App\SinrenUser::user()))
+        {
+            return redirect(route('app::roster::user::show'));
+        }
+        return redirect(route('app::roster::division::index', ['div' => \App\SinrenUser::user()->first()->division_id]));
+    }
+
     /**
      * Display a listing of the resource.
      *

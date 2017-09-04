@@ -11,11 +11,12 @@
 <a
     role="presentation"
     class="list-group-item collapse list-second"
-    @if(\App\SinrenUser::user()->first() != null)
+    href="{{route('app::roster::division::check')}}"
+{{--     @if(\App\SinrenUser::user()->first() != null)
     href="{{route('app::roster::division::index', ['div'=>\App\SinrenUser::user()->first()->division_id])}}"
     @else
     href="{{route('app::roster::user::show')}}"
-    @endif
+    @endif --}}
     data-toggle="tooltip"
     title="部署内の勤務状況を確認します。"
     data-placement="right">部署内勤務データ確認</a><span></span>
