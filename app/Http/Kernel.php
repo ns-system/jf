@@ -41,6 +41,7 @@ class Kernel extends HttpKernel
          */
         'roster_user'     => \App\Http\Middleware\RosterUserMiddleware::class,
         'roster_proxy'     => \App\Http\Middleware\RosterProxyMiddleware::class,
+        'roster_chief'     => \App\Http\Middleware\RosterChiefMiddleware::class,
         'suisin'          => \App\Http\Middleware\SuisinMiddleware::class,
     ];
 

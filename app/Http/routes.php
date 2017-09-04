@@ -179,6 +179,15 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
 //                Route::post('/edit/actual/part//{id}', ['as' => 'actual_part', 'uses' => 'RosterAcceptController@actualPart']);
 //                Route::post('/edit/actual/all',              ['as' => 'actual_all',  'uses' => 'RosterAcceptController@actualAll']);
             });
+            /**
+             * Middleware : roster_proxy
+             * As         : accept::
+             * Prefix     : /accept
+             */
+            Route::group(['middleware'=>'roster_chief','as' => 'chief::', 'prefix' => '/chief'], function() {
+                Route::get('/home',    ['as' => 'index',    'uses' => 'RosterChiefController@index']);
+                Route::post('/update', ['as' => 'update',   'uses' => 'RosterChiefController@update']);
+            });
         });
     });
 });
