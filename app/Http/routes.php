@@ -96,6 +96,10 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
             Route::post('/edit',         ['as'=>'edit',   'uses'=>'RosterUserController@editAdmin']);
             Route::get('/delete/{id}', ['as'=>'delete', 'uses'=>'RosterUserController@deleteAdmin']);
         });
+        Route::group(['as' => 'csv::', 'prefix' => '/csv'], function() {
+            Route::get('/',              ['as'=>'index',  'uses'=>'RosterCsvExportController@index']);
+            Route::get('/list/{month}',  ['as'=>'show',   'uses'=>'RosterCsvExportController@show']);
+        });
     });
 });
 // ===========================================================================================================================
@@ -173,8 +177,11 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
              */
             Route::group(['middleware'=>'roster_proxy'], function() {
                 Route::group(['as' => 'accept::', 'prefix' => '/accept'], function() {
-                    Route::get('/home',                   ['as' => 'index',    'uses' => 'RosterAcceptController@index']);
-                    Route::get('/list/{ym}/{div}',        ['as' => 'list',     'uses' => 'RosterAcceptController@show']);
+                    Route::get('/home',                     ['as' => 'index',    'uses' => 'RosterAcceptController@index']);
+                    Route::get('/list/{ym}/{div}',          ['as' => 'list',     'uses' => 'RosterAcceptController@show']);
+                    Route::get('/calendar/{ym}/{div}',      ['as' => 'calendar', 'uses' => 'RosterAcceptController@calendar']);
+                    
+
                     Route::post('/edit/{type}/part/{id}', ['as' => 'part',     'uses' => 'RosterAcceptController@part']);
                     Route::post('/edit/{type}/all',       ['as' => 'all',      'uses' => 'RosterAcceptController@all']);
                 });
@@ -186,7 +193,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
                 });
             });
             /**
-             * Middleware : roster_proxy
+             * Middleware : roster_chief
              * As         : accept::
              * Prefix     : /accept
              */

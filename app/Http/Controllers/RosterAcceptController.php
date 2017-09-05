@@ -111,6 +111,66 @@ class RosterAcceptController extends Controller
         return view('roster.app.accept.index', $params);
     }
 
+    public function calendar($ym, $div) {
+        $obj      = new \App\Services\Roster\Calendar();
+        $cal      = $obj->setId($ym)->makeCalendar();
+        $cal      = $obj->convertCalendarToList($cal);
+        $calendar = [];
+        foreach ($cal as $c) {
+            $rows = \App\Roster::where('entered_on', '=', $c['date'])
+                    ->join('sinren_data_db.sinren_users', 'rosters.user_id', '=', 'sinren_users.user_id')
+                    ->join('sinren_data_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+                    ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
+                    ->where('sinren_users.division_id', '=', $div)
+                    ->get()
+            ;
+            $tmp  = [];
+            foreach ($rows as $r) {
+                $tmp[$r->user_id] = $r;
+            }
+            if (!empty($tmp))
+            {
+                $c['data'] = $tmp;
+            }
+            $calendar[] = $c;
+        }
+        $tmp_types = \App\WorkType::orderBy('work_type_id')->get();
+        $types     = [];
+        foreach ($tmp_types as $t) {
+            $types[$t->work_type_id] = [null,];
+            if ($t->work_start_time !== $t->work_end_time)
+            {
+                $types[$t->work_type_id] = date('G:i', strtotime($t->work_start_time)) . ' ～ ' . date('G:i', strtotime($t->work_end_time));
+            }
+        }
+        $rs    = \App\Rest::get();
+        $rests = [];
+        foreach ($rs as $r) {
+            $rests[$r->rest_reason_id] = $r->rest_reason_name;
+        }
+        $users = \DB::connection('mysql_sinren')
+                ->table('sinren_users')
+                ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
+                ->where('sinren_users.division_id', '=', $div)
+                ->get()
+        ;
+        $d     = date('Y-m-d', strtotime($ym . '01'));
+        $prev  = date('Ym', strtotime($d . ' -1 month'));
+        $next  = date('Ym', strtotime($d . ' +1 month'));
+
+        $param = [
+            'prev'  => $prev,
+            'next'  => $next,
+            'ym'    => $ym,
+            'div'   => $div,
+            'rests'=>$rests,
+            'types'=>$types,
+            'rows'  => $calendar,
+            'users' => $users,
+        ];
+        return view('roster.app.accept.calendar_list', $param);
+    }
+
     /**
      * Display the specified resource.
      *

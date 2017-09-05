@@ -1,4 +1,4 @@
-                <form method="POST" action="{{route('app::roster::calendar::form::actual_edit')}}" class="form-inline">
+                <form method="POST" action="{{route('app::roster::calendar::form::actual_edit')}}" class="form-inline" style="padding: 0px 30px;">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <input type="hidden" name="month_id" value="{{$id}}">
     <input type="hidden" name="entered_on" value="{{$date}}">

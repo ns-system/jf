@@ -125,6 +125,7 @@ class Calendar
         }
         $roster->user_id                  = \Auth::user()->id;
         $roster->is_plan_entry            = (int) true;
+        $roster->is_plan_reject           = (int) false;
         $roster->plan_overtime_reason     = $request['plan_overtime_reason'];
         $roster->plan_overtime_start_time = $start_time;
         $roster->plan_overtime_end_time   = $end_time;
@@ -165,6 +166,7 @@ class Calendar
         }
         $roster->user_id                = \Auth::user()->id;
         $roster->is_actual_entry        = (int) true;
+        $roster->is_actual_reject       = (int) false;
         $roster->actual_work_type_id    = $request['actual_work_type_id'];
         $roster->actual_overtime_reason = $request['actual_overtime_reason'];
         $roster->actual_entered_at      = date('Y-m-d H:i:s');
@@ -286,6 +288,18 @@ class Calendar
 //        exit();
 
         return $cal;
+    }
+
+    public function convertCalendarToList($calendar) {
+        $list = [];
+        foreach ($calendar as $c) {
+            if ($c['date'] == 0)
+            {
+                continue;
+            }
+            $list[] = $c;
+        }
+        return $list;
     }
 
     public function makeList($div) {

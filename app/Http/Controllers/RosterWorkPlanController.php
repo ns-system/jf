@@ -52,7 +52,7 @@ class RosterWorkPlanController extends Controller
         $date = date('Y-m-d', strtotime($month . '01'));
         $prev = date('Ym', strtotime($date . '-1 month'));
         $next = date('Ym', strtotime($date . '+1 month'));
-        return view('roster.app.work_plan.user_list', ['users' => $users, 'month' => $month, 'cnt' => $cnt,'next'=>$next,'prev'=>$prev,]);
+        return view('roster.app.work_plan.user_list', ['users' => $users, 'month' => $month, 'cnt' => $cnt, 'next' => $next, 'prev' => $prev,]);
     }
 
     public function userList($month, $id) {

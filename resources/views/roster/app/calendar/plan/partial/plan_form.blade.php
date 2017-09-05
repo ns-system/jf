@@ -1,4 +1,4 @@
-                <form method="POST" action="{{route('app::roster::calendar::form::plan_edit')}}" class="form-inline">
+                <form method="POST" action="{{route('app::roster::calendar::form::plan_edit')}}" class="form-inline" style="padding: 0px 30px;">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <input type="hidden" name="plan_rest_reason_id" value="{{$row->plan_rest_reason_id or ''}}">
     <input type="hidden" name="month_id" value="{{$id}}">
@@ -40,7 +40,7 @@
         <div class="col-md-10 col-md-offset-1">
             <div class="form-group">
                 <select class="form-control input-sm" name="plan_start_hour">
-                    <option value="null">時</option>
+                    <option>時</option>
                     @for($i = 0; $i < 24; $i++)
                     <option
                         value="{{$i}}"
@@ -49,7 +49,7 @@
                 </select>
                 :
                 <select class="form-control input-sm" name="plan_start_time">
-                    <option value="null">分</option>
+                    <option>分</option>
                     @for($i = 0; $i < 60; $i+=5)
                     <option
                         value="{{$i}}"
@@ -58,7 +58,7 @@
                 </select>
                 ～
                 <select class="form-control input-sm" name="plan_end_hour">
-                    <option value="null">時</option>
+                    <option value="">時</option>
                     @for($i = 0; $i < 24; $i++)
                     <option
                         value="{{$i}}"
@@ -67,7 +67,7 @@
                 </select>
                 :
                 <select class="form-control input-sm" name="plan_end_time">
-                    <option value="null">分</option>
+                    <option value="">分</option>
                     @for($i = 0; $i < 60; $i+=5)
                     <option
                         value="{{$i}}"

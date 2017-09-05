@@ -1,0 +1,7 @@
+/vendor
+/node_modules
+.env
+nbproject
+.vagrant/
+Homestead.yaml
+Vagrantfile

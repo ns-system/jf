@@ -78,42 +78,35 @@
 
     <div class="panel-body fix-or-wide" style="height: 175px; overflow-y: scroll; padding: 5px;">
 
-
-
-
         @if($day['data'] != [])
+            <div class="text-left">
+                {{-- Plan --}}
 
-        <div class="text-left">
-            {{-- Plan --}}
-            @if($r->is_plan_entry)
-                <span class="label label-info">予定</span>
-                @if(!empty($r->plan_overtime_start_time) && !empty($r->plan_overtime_end_time))
-                    <p class="small text-left">{{date('G:i',strtotime($r->plan_overtime_start_time))}} ～ {{date('G:i', strtotime($r->plan_overtime_end_time))}}</p>
+                @if($r->is_plan_entry)
+                    @if($r->is_plan_reject)     <span class="label label-danger">予定</span>
+                    @elseif($r->is_plan_accept) <span class="label label-success">予定</span>
+                    @else                       <span class="label label-warning">予定</span> @endif
+                @else
+                    <span class="label label-default">予定</span>
                 @endif
-                @if(!empty($r->plan_rest_reason_id))
-                    <p class="small text-left">{{$r->PlanRest->rest_reason_name or ''}}</p>
-                @endif
-                @if(!empty($r->plan_overtime_reason))
-                    <p class="small text-left">{{$r->plan_overtime_reason}}</p>
-                @endif
-            @endif
-            {{-- Actual --}}
-            @if($r->is_actual_entry)
-                <span class="label label-info">実績</span>
-                @if(!empty($r->actual_overtime_start_time) && !empty($r->actual_overtime_end_time))
-                    <p class="small text-left">{{date('G:i',strtotime($r->actual_overtime_start_time))}} ～ {{date('G:i', strtotime($r->actual_overtime_end_time))}}</p>
-                @endif
-                @if(!empty($r->actual_rest_reason_id))
-                    <p class="small text-left">{{$r->ActualRest->rest_reason_name or ''}}</p>
-                @endif
-                @if(!empty($r->actual_overtime_reason))
-                    <p class="small text-left">{{$r->actual_overtime_reason}}</p>
-                @endif
-            @endif
+                @if(!empty($r->plan_overtime_start_time) &&
+                    !empty($r->plan_overtime_end_time))     <p class="small">{{date('G:i', strtotime($r->plan_overtime_start_time))}} ～ {{date('G:i', strtotime($r->plan_overtime_end_time))}}</p>
+                @elseif(!empty($r->plan_work_type_id))      <p class="small">{{$types[$r->plan_work_type_id]['name']}} {{$types[$r->plan_work_type_id]['time']}}</p> @endif
+                @if(!empty($r->plan_rest_reason_id))        <p class="small">{{$rests[$r->plan_rest_reason_id]}}</p> @endif
+                @if(!empty($r->plan_overtime_reason))       <p class="small">{{$r->plan_overtime_reason}}</p> @endif
 
-        </div>
+                {{-- Actual --}}
+                @if($r->is_actual_entry)
+                    @if($r->is_actual_reject)     <span class="label label-danger">実績</span>
+                    @elseif($r->is_actual_accept) <span class="label label-success">実績</span>
+                    @else                         <span class="label label-warning">実績</span> @endif
+                    @if(!empty($r->actual_overtime_start_time) &&
+                        !empty($r->actual_overtime_end_time))     <p class="small">{{date('G:i',strtotime($r->actual_overtime_start_time))}} ～ {{date('G:i', strtotime($r->actual_overtime_end_time))}}</p> @endif
+                    @if(!empty($r->actual_rest_reason_id))        <p class="small">{{$rests[$r->actual_rest_reason_id]}}</p> @endif
+                    @if(!empty($r->actual_overtime_reason))       <p class="small">{{$r->actual_overtime_reason}}</p> @endif
+                @endif
+            </div>
         @endif
-
 
     </div>
 </div>

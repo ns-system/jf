@@ -30,10 +30,28 @@ class RosterController extends Controller
             \Session::flash('warn_message', '日付以外のデータがセットされました。');
             return back();
         }
-        $pages    = $this->service->setId($ym)->getPages();
-        $rosters  = \App\Roster::user()->month($ym)->plan()->get();
-        $types    = \App\WorkType::get();
-        $rests    = \App\Rest::get();
+        $pages     = $this->service->setId($ym)->getPages();
+        $rosters   = \App\Roster::user()->month($ym)->get();
+//        var_dump($rosters);
+        $tmp_types = \App\WorkType::get();
+        $tmp_rests = \App\Rest::get();
+        $types     = [];
+        $rests     = [];
+        foreach ($tmp_types as $t) {
+            $types[$t->work_type_id] = [
+                'name' => $t->work_type_name,
+                'time' => null,
+            ];
+            if ($t->work_start_time != $t->work_end_time)
+            {
+                $types[$t->work_type_id]['time'] = '（ ' . date('G:i', strtotime($t->work_start_time)) . ' ～ ' . date('G:i', strtotime($t->work_start_time)) . ' ）';
+            }
+        }
+        foreach ($rests as $r) {
+            $rests[$r->rest_reason_id] = $r->rest_reason_name;
+        }
+
+
         $calendar = $this->service->makeCalendar($rosters);
         $param    = [
             'ym'        => $ym,

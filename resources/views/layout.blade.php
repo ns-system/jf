@@ -74,7 +74,6 @@
             .user-name:hover{text-decoration: none;}
 
             .label{display: inline-block; padding: 5px 10px;}
-}
         </style>
     </head>
     <body class="no-thank-yu">

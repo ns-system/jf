@@ -51,9 +51,9 @@
             {{-- 承認済み→入力。削除不可 --}}
             @if($data->is_plan_accept || $data->is_actual_accept || $data->is_plan_entry || $data->is_actual_entry)
                 @if($data->is_plan_accept || $data->is_actual_accept)
-                    <td><span class="label label-success" data-tpggle="tooltip" title="データは承認されています。以降の修正は行えません。">勤務データ承認済</span></td>
+                    <td><span class="label label-success" data-toggle="tooltip" title="データは承認されています。以降の修正は行えません。">勤務データ承認済</span></td>
                 @else
-                   <td><span class="label label-warning" data-tpggle="tooltip" title="ユーザーが勤務データを入力しているため、修正は行えません。">勤務データ入力済</span></td>
+                   <td><span class="label label-warning" data-toggle="tooltip" title="ユーザーが勤務データを入力しているため、修正は行えません。">勤務データ入力済</span></td>
                 @endif
                 <td>
                     @if(!empty($types[$data->plan_work_type_id]))

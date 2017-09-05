@@ -76,19 +76,15 @@ class RosterListController extends Controller
         $div_name = \App\Division::where('division_id', '=', $div)->first()->division_name;
         $date     = date('Y年n月', strtotime($ym . '01'));
 
-        $rows  = \DB::connection('mysql_sinren')
-                ->table('sinren_users')
-//                ->select(\DB::Raw('month_id, COUNT(*) AS cnt'))
-                ->join('roster_data_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-                ->join('roster_data_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
-                ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
-                ->orderBy('rosters.user_id', 'asc')
-                ->orderBy('rosters.entered_on', 'asc')
-                ->where('sinren_users.division_id', '=', $div)
-                ->where('rosters.month_id', '=', $ym)
-                ->where('is_plan_entry', '=', true)
-                ->get()
-        ;
+        $tmp_types = \App\WorkType::orderBy('work_type_id')->get();
+        $types     = [];
+        foreach ($tmp_types as $t) {
+            $types[$t->work_type_id] = [null,];
+            if ($t->work_start_time !== $t->work_end_time)
+            {
+                $types[$t->work_type_id] = date('G:i', strtotime($t->work_start_time)) . ' ～ ' . date('G:i', strtotime($t->work_end_time));
+            }
+        }
         $rs    = \App\Rest::get();
         $rests = [];
         foreach ($rs as $r) {
@@ -102,30 +98,42 @@ class RosterListController extends Controller
         ;
 //        var_dump($rows);
         $obj      = new \App\Services\Roster\Calendar();
-        $calendar = $obj->setId($ym)->makeCalendar();
-        $tmp      = [];
-        foreach ($calendar as $key => $c) {
-            if ($c['day'] == 0)
-            {
-                continue;
-            }
-            $tmp[$key] = $c;
+        $cal      = $obj->setId($ym)->makeCalendar();
+        $cal      = $obj->convertCalendarToList($cal);
+        $calendar = [];
+        foreach ($cal as $c) {
+            $rows = \App\Roster::where('entered_on', '=', $c['date'])
+                    ->join('sinren_data_db.sinren_users', 'rosters.user_id', '=', 'sinren_users.user_id')
+                    ->join('sinren_data_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+                    ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
+                    ->where('sinren_users.division_id', '=', $div)
+                    ->get()
+            ;
+            $tmp  = [];
             foreach ($rows as $r) {
-                if ($r->entered_on == $c['date'])
-                {
-                    $tmp[$key]['data'][$r->user_id] = $r;
-                }
+                $tmp[$r->user_id] = $r;
             }
+            if (!empty($tmp))
+            {
+                $c['data'] = $tmp;
+            }
+            $calendar[] = $c;
         }
-//        var_dump($tmp);
+        $d     = date('Y-m-d', strtotime($ym . '01'));
+        $prev  = date('Ym', strtotime($d . ' -1 month'));
+        $next  = date('Ym', strtotime($d . ' +1 month'));
         $param = [
-            'rows'     => $tmp,
+//            'rows'     => $rows,
+            'rows'     => $calendar,
             'users'    => $users,
             'rests'    => $rests,
             'ym'       => $ym,
             'div'      => $div,
             'div_name' => $div_name,
             'date'     => $date,
+            'types'    => $types,
+            'prev'     => $prev,
+            'next'     => $next,
         ];
         return view('roster.app.divisions.list', $param);
     }

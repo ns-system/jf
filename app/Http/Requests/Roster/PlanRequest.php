@@ -29,14 +29,15 @@ class PlanRequest extends Request
             'entered_on' => 'required|date',
         ];
 
-        if (!isset($input['plan_rest_reason_id']) || $input['plan_rest_reason_id'] === '')
+        if (empty($input['plan_rest_reason_id']))
         {
             $rules['plan_start_hour'] = 'required|integer|min:0|max:23';
             $rules['plan_start_time'] = 'required|integer|min:0|max:55';
             $rules['plan_end_hour']   = 'required|integer|min:0|max:23';
             $rules['plan_end_time']   = 'required|integer|min:0|max:55';
         }
-//        var_dump($rules);
+        var_dump($rules);
+//        exit();
         return $rules;
     }
 

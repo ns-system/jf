@@ -40,6 +40,9 @@
                 @if(!empty($r->plan_overtime_start_time) &&
                     !empty($r->plan_overtime_end_time))     <p>{{date('G:i', strtotime($r->plan_overtime_start_time))}} ～ {{date('G:i', strtotime($r->plan_overtime_end_time))}}</p> @endif
                 @if(!empty($r->plan_overtime_reason))       <p>{{$r->plan_overtime_reason}}</p> @endif
+
+                {{-- input form load --}}
+                @if(!$r->is_plan_accept)                    @include('roster.app.accept.partial.calendar_plan') @endif
             @elseif(!empty($r->entered_on))
                 <p><span class="label label-default">予定</span></p>
                 @if(!empty($r->plan_rest_reason_id)) <p>{{$rests[$r->plan_rest_reason_id]}}</p> @endif
