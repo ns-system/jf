@@ -33,6 +33,15 @@
     title="（責任者・責任者代理用機能）勤務データの承認・却下を行います。"
     data-placement="right"><span class="text-success"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 勤務データ承認</span>
 </a><span></span>
+
+<a
+    role="presentation"
+    class="list-group-item collapse list-second"
+    href="{{route('app::roster::work_plan::index')}}"
+    data-toggle="tooltip"
+    title="（責任者・責任者代理用機能）ユーザーの勤務予定を作成します。"
+    data-placement="right"><span class="text-success"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 勤務予定データ作成</span>
+</a><span></span>
 @endif
 
 @if($s_user->is_chief)

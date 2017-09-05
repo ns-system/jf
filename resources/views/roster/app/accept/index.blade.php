@@ -29,26 +29,26 @@
             <div class="panel-body">
 
             <div class="col-md-10 col-md-offset-1" style="padding-top: 20px;">
-                <table class="table table-hover table-small">
+                <table class="table table-hover table-small"  data-toggle="tooltip" title="自分以外の全てのデータが表示されています。">
                     <thead>
                         <tr>
-                            <th class="info" width="20%"></th>
-                            <th class="info" width="20%">未承認</th>
-                            <th class="info" width="20%">却下</th>
-                            <th class="info" width="20%">承認済み</th>
-                            <th class="info" width="20%">合計</th>
+                            <th width="20%"></th>
+                            <th width="20%"><span class="label label-warning">未承認</span></th>
+                            <th width="20%"><span class="label label-danger" >却下</span></th>
+                            <th width="20%"><span class="label label-success">承認済み</span></th>
+                            <th width="20%"><span class="label label-info"   >合計</span></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="info">予定</td>
+                            <th>予定</th>
                             <td><span class="text-warning"><strong>{{$rows['plan_not_accepts'][$d->division_id][$m->month_id] or 0}}件</strong></span></td>
                             <td><span class="text-danger" ><strong>{{$rows['plan_rejects'][$d->division_id][$m->month_id] or 0}}件</strong></span></td>
                             <td><span class="text-success"><strong>{{$rows['plan_accepts'][$d->division_id][$m->month_id] or 0}}件</strong></span></td>
                             <td><span class="text-info"   ><strong>{{$rows['plan_entry'][$d->division_id][$m->month_id] or 0}}件</strong></span></td>
                         </tr>
                         <tr>
-                            <td class="info">実績</td>
+                            <th>実績</th>
                             <td><span class="text-warning"><strong>{{$rows['actual_not_accepts'][$d->division_id][$m->month_id] or 0}}件</strong></span></td>
                             <td><span class="text-danger" ><strong>{{$rows['actual_rejects'][$d->division_id][$m->month_id] or 0}}件</strong></span></td>
                             <td><span class="text-success"><strong>{{$rows['actual_accepts'][$d->division_id][$m->month_id] or 0}}件</strong></span></td>

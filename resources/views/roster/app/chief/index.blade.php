@@ -15,7 +15,7 @@
 
 
 @section('content')
-    <div class="col-md-9">
+    <div class="col-md-10">
 <div class="container-fluid">
         @include('partial.alert')
         <div class="border-bottom"><h2>責任者代理設定</h2></div>

@@ -11,8 +11,11 @@ class RosterUser extends Model
     protected $table      = 'roster_users';
     protected $guarded    = ['id'];
 
-    public function scopeUser($query) {
-        $user_id = \Auth::user()->id;
+    public function scopeUser($query, $user_id = '') {
+        if ($user_id === '')
+        {
+            $user_id = \Auth::user()->id;
+        }
         return $query->where('user_id', '=', $user_id);
     }
 

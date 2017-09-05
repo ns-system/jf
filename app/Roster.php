@@ -15,8 +15,12 @@ class Roster extends Model
     protected $table      = 'rosters';
     protected $guarded    = ['id'];
 
-    public function scopeUser($query) {
-        return $query->where('user_id', '=', \Auth::user()->id);
+    public function scopeUser($query, $user_id = null) {
+        if ($user_id === null)
+        {
+            $user_id = \Auth::user()->id;
+        }
+        return $query->where('user_id', '=', $user_id);
     }
 
     public function scopeMonth($query, $month = '') {
@@ -34,7 +38,7 @@ class Roster extends Model
     public function scopePlan($query) {
         return $query->where('is_plan_entry', '=', true);
     }
-    
+
     public function scopeActual($query) {
         return $query->where('is_actual_entry', '=', true);
     }

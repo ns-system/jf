@@ -10,7 +10,8 @@ class RosterAcceptController extends Controller
 {
 
     private function getQuery() {
-        $t = \DB::connection('mysql_sinren')
+        $id = \Auth::user()->id;
+        $t  = \DB::connection('mysql_sinren')
                 ->table('control_divisions')
                 // connect to sinren_users
                 ->join('sinren_data_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
@@ -21,8 +22,9 @@ class RosterAcceptController extends Controller
                 // connect to divisions
                 ->join('sinren_data_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->select(\DB::raw('COUNT(*) AS cnt, sinren_divisions.division_id, rosters.month_id')) //, rosters.is_plan_accept, rosters.is_plan_reject, rosters.is_actual_accept, rosters.is_actual_reject
-                ->where('control_divisions.user_id', '=', \Auth::user()->id)
+                ->where('control_divisions.user_id', '=', $id)
                 ->where('rosters.month_id', '<>', 0)
+                ->where('roster_users.user_id', '<>', $id)
                 ->groupBy('rosters.month_id')
                 ->orderBy('rosters.month_id', 'desc')
         ;
@@ -130,6 +132,12 @@ class RosterAcceptController extends Controller
                 ->orderBy('sinren_users.user_id', 'asc')
                 ->get()
         ;
+        /**
+         * 予定が承認済みであること
+         * かつ実績が入力されていること
+         * かつ実績が承認されていないこと
+         * かつ自分が入力したデータではないこと
+         */
         $actuals = \DB::connection('mysql_sinren')
                 ->table('sinren_users')
                 ->join('roster_data_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
@@ -137,6 +145,7 @@ class RosterAcceptController extends Controller
                 ->select(\DB::raw('*, rosters.id as form_id'))
                 ->where('rosters.month_id', '=', $ym)
                 ->where('sinren_users.division_id', '=', $div)
+                ->where('is_plan_accept', '=', true) // 予定承認済みのものだけ抽出
                 ->where('is_actual_entry', '=', true)
                 ->where('is_actual_accept', '<>', true)
                 ->where('sinren_users.user_id', '<>', \Auth::user()->id)
@@ -159,7 +168,7 @@ class RosterAcceptController extends Controller
             'ym'      => $ym,
             'display' => date('Y年n月', strtotime($ym . '01')),
             'div'     => $divs,
-            'rests'   => $rest,
+            'rests'   => $rests,
         ];
         return view('roster.app.accept.list', $params);
     }
@@ -206,7 +215,7 @@ class RosterAcceptController extends Controller
             $key          = "{$type}_accept_user_id";
             $roster->$key = \Auth::user()->id;
         }
-        exit();
+//        exit();
         $roster->reject_reason = $input['reject'];
         $roster->save();
         \Session::flash('flash_message', 'データの更新が完了しました。');

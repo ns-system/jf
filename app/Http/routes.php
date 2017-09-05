@@ -171,13 +171,19 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
              * As         : accept::
              * Prefix     : /accept
              */
-            Route::group(['middleware'=>'roster_proxy','as' => 'accept::', 'prefix' => '/accept'], function() {
-                Route::get('/home',                   ['as' => 'index',    'uses' => 'RosterAcceptController@index']);
-                Route::get('/list/{ym}/{div}',        ['as' => 'list',     'uses' => 'RosterAcceptController@show']);
-                Route::post('/edit/{type}/part/{id}', ['as' => 'part',     'uses' => 'RosterAcceptController@part']);
-                Route::post('/edit/{type}/all',       ['as' => 'all',      'uses' => 'RosterAcceptController@all']);
-//                Route::post('/edit/actual/part//{id}', ['as' => 'actual_part', 'uses' => 'RosterAcceptController@actualPart']);
-//                Route::post('/edit/actual/all',              ['as' => 'actual_all',  'uses' => 'RosterAcceptController@actualAll']);
+            Route::group(['middleware'=>'roster_proxy'], function() {
+                Route::group(['as' => 'accept::', 'prefix' => '/accept'], function() {
+                    Route::get('/home',                   ['as' => 'index',    'uses' => 'RosterAcceptController@index']);
+                    Route::get('/list/{ym}/{div}',        ['as' => 'list',     'uses' => 'RosterAcceptController@show']);
+                    Route::post('/edit/{type}/part/{id}', ['as' => 'part',     'uses' => 'RosterAcceptController@part']);
+                    Route::post('/edit/{type}/all',       ['as' => 'all',      'uses' => 'RosterAcceptController@all']);
+                });
+                Route::group(['as' => 'work_plan::', 'prefix' => '/work_plan'], function() {
+                    Route::get('',                         ['as' => 'index',    'uses' => 'RosterWorkPlanController@index']);
+                    Route::get('/{month}',                 ['as' => 'division', 'uses' => 'RosterWorkPlanController@division']);
+                    Route::get('/list/{month}/{id}',       ['as' => 'list',     'uses' => 'RosterWorkPlanController@userList']);
+                    Route::post('/list/edit/{month}/{id}', ['as' => 'edit',     'uses' => 'RosterWorkPlanController@edit']);
+                });
             });
             /**
              * Middleware : roster_proxy
