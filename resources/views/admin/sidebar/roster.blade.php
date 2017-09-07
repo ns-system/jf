@@ -47,5 +47,13 @@
         data-toggle="tooltip"
         title="祝日マスタの登録を行います。"
         data-placement="right">祝日マスタ</a><span></span>
+
+    <a
+        role="presentation"
+        class="list-group-item collapse list-second"
+        href="{{route('admin::roster::index', ['system'=>'Roster','category'=>'RosterUser'])}}"
+        data-toggle="tooltip"
+        title="社員番号の設定を行います。"
+        data-placement="right">社員番号</a><span></span>
 </div>
 

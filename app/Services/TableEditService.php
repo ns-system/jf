@@ -21,6 +21,12 @@ class TableEditService
 
     public function getModel() {
         $model = new $this->parameter['object'];
+        if (!empty($this->parameter['join']))
+        {
+            foreach ($this->parameter['join'] as $c) {
+                $model = $model->leftJoin($c['db'], $c['left'], '=', $c['right']); //TODO:そんなSQL文で大丈夫か？
+            }
+        }
         return $model;
     }
 
@@ -65,7 +71,6 @@ class TableEditService
     public function makeRowAndValidateRules($csv_file) {
         $column_titles   = $this->getColumnName();
         $obj             = new CsvService();
-//        $obj             = new \App\Providers\CsvServiceProvider();
         $csv_datas       = $obj->convertCsvFileToArray($csv_file, count($column_titles))->getCsvRows();
         $cnt             = $obj->getCsvLineCount();
         $file_name       = $obj->getFileName();
@@ -77,7 +82,13 @@ class TableEditService
         foreach ($csv_datas as $key => $line) {
             $row = [];
             foreach ($line as $i => $buf) {
-                $row[$column_titles[$i]] = $buf;
+                $title = $column_titles[$i];
+                // . の切り落とし
+                if (strpos($title, '.') !== false)
+                {
+                    $title = mb_substr(mb_strstr($title, '.'), 1);
+                }
+                $row[$title] = $buf;
             }
             foreach ($conf_rule as $k => $r) {
                 $rules["{$key}.{$k}"] = $r;
@@ -85,6 +96,9 @@ class TableEditService
 
             $rows[$key] = $row;
         }
+//        var_dump($rows);
+//        var_dump($rules);
+//        exit();
         $this->rows  = $rows;
         $this->rules = $rules;
 
@@ -153,17 +167,12 @@ class TableEditService
     public function updatePost($input) {
         $types = $this->parameter['import']['types'];
         $flags = $this->parameter['import']['flags'];
-//        $obj                      = new \App\Providers\CsvServiceProvider;
         $obj   = new CsvService();
-//        var_dump($input);
-//        exit();
         $rows  = $this
                 ->swapColumnRow($input)
                 ->setUpdateFlags($flags)
                 ->setPrimaryKey($this->parameter['import']['keys'])
                 ->getRows()
-//                ->reflectToDb($this->parameter['object'])
-//                ->getCount()
         ;
         $rows  = $obj->convertTypes($types, $rows);
 

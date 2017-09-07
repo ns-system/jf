@@ -29,13 +29,8 @@ class SuisinAdminController extends Controller
      */
     public function show($system, $category) {
         $service = $this->service;
-//        $rows    = $service->setConfigs("App\Services\\{$system}CsvConfigService", $category)->getModel()->paginate(25);
         $rows    = $service->setConfigs("App\Services\\{$system}CsvConfigService", $category)->getModel();
         $rows    = $service->order($rows)->paginate(25);
-//        var_dump(\Input::all());
-//        var_dump();
-//        
-//        exit();
         $conf    = $service->getListConfig();
         $view    = strtolower($system) . '.admin.list';
         return view($view, ['rows' => $rows, 'configs' => $conf]);
@@ -49,12 +44,13 @@ class SuisinAdminController extends Controller
      *   備考       ： Provider側でパラメータ生成処理を行っている
      */
     public function export($system, $category) {
-        try {
+        
+//        try {
             $service = $this->service;
             return $service->setConfigs("App\Services\\{$system}CsvConfigService", $category)->exportRow();
-        } catch (\Exception $e) {
-//            echo $exc->getTraceAsString();
-        }
+//        } catch (\Exception $e) {
+//            echo $e->getTraceAsString();
+//        }
     }
 
     /**

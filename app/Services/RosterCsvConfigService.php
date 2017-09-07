@@ -20,7 +20,8 @@ class RosterCsvConfigService
 
     public function getDivision() {
         $params      = [
-            'object'        => '\App\Division',
+            'object' => '\App\Division',
+            'join'   => [],
             'display'       => [
                 'title' => '部署マスタ',
                 'route' => $this->route . '/Division',
@@ -74,7 +75,8 @@ class RosterCsvConfigService
 
     public function getWorkType() {
         $params      = [
-            'object'        => '\App\WorkType',
+            'object' => '\App\WorkType',
+            'join'   => [],
             'display'       => [
                 'title' => '勤務時間マスタ',
                 'route' => $this->route . '/WorkType',
@@ -140,12 +142,13 @@ class RosterCsvConfigService
 
     public function getRest() {
         $params      = [
-            'object'        => '\App\Rest',
-            'display'       => [
+            'object'  => '\App\Rest',
+            'display' => [
                 'title' => '休暇マスタ',
                 'route' => $this->route . '/Rest',
                 'h2'    => '休暇マスタ',
             ],
+            'join'    => [],
             'table_columns' => [
                 ['row' => [['rest_reason_id', '休暇理由コード',]]],
                 ['row' => [['rest_reason_name', '休暇理由名', 'class' => 'text-left']]],
@@ -195,6 +198,7 @@ class RosterCsvConfigService
     public function getHoliday() {
         $params      = [
             'object'        => '\App\Holiday',
+            'join'          => [],
             'display'       => [
                 'title' => '休日マスタ',
                 'route' => $this->route . '/Holiday',
@@ -241,6 +245,75 @@ class RosterCsvConfigService
                     'holiday_name' => 1,
                 ],
                 'keys'          => ['holiday'],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getRosterUser() {
+        $params      = [
+            'object'        => '\App\RosterUser',
+            'join'          => [
+                ['db' => 'laravel_db.users', 'left' => 'roster_users.user_id', 'right' => 'users.id',],
+                ['db' => 'sinren_data_db.sinren_users', 'left' => 'roster_users.user_id', 'right' => 'sinren_users.user_id',],
+                ['db' => 'sinren_data_db.sinren_divisions', 'left' => 'sinren_users.division_id', 'right' => 'sinren_divisions.division_id',],
+            ],
+            'display'       => [
+                'title' => 'ユーザーマスタ',
+                'route' => $this->route . '/RosterUser',
+                'h2'    => '勤怠管理システム ユーザーマスタ',
+            ],
+            'table_columns' => [
+                ['row' => [['user_id', 'ユーザーID',]]],
+                ['row' => [['division_name', '部署名',]]],
+                ['row' => [['name', 'ユーザー名',]]],
+                ['row' => [['staff_number', '職員番号',]]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'sinren_users.division_id' => 'asc',
+                'roster_users.user_id'     => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'roster_users.user_id',
+                    'sinren_divisions.division_name',
+                    'users.name',
+                    'roster_users.staff_number',
+                ],
+                'kanji_columns' => [
+                    'ユーザーID',
+                    '部署名',
+                    'ユーザー名',
+                    '職員番号',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* display_flag, kanji_name, [format], [class] */
+                    [1, 'user_id', 'ユーザーID',],
+                    [1, 'division_name', '部署名',],
+                    [1, 'name', 'ユーザー名',],
+                    [1, 'staff_number', '職員番号', 'class' => 'text-left'],
+                ],
+                'rules'         => [
+                    'user_id'      => 'required|exists:mysql_roster.roster_users,user_id',
+                    'staff_number' => 'required|integer',
+                ],
+                'types'         => [
+                    'user_id'      => 'integer',
+                    'staff_number' => 'integer',
+                ],
+                'flags'         => [
+                    'user_id'      => 1,
+                    'staff_number' => 1,
+                ],
+                'keys'          => ['user_id'],
             ],
         ];
         $this->param = $params;
