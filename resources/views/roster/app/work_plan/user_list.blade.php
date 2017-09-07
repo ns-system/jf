@@ -54,13 +54,13 @@
         <span></span>
         <a
             href="{{route('app::roster::work_plan::division', ['month'=>$next])}}"
-            class="btn btn-primary"
+            class="btn btn-success"
             style="min-width: 125px;"
         ><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> 翌月へ</a>
         <span></span>
         <a
             href="{{route('app::roster::work_plan::division', ['month'=>$prev])}}"
-            class="btn btn-primary"
+            class="btn btn-warning"
             style="min-width: 125px;"
         ><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> 前月へ</a>
     </div>

@@ -29,7 +29,7 @@
             <div class="panel-body">
 
             <div class="col-md-10 col-md-offset-1" style="padding-top: 20px;">
-                <table class="table table-hover table-small"  data-toggle="tooltip" title="自分以外の全てのデータが表示されています。">
+                <table class="table table-hover table-small">
                     <thead>
                         <tr>
                             <th width="20%"></th>
@@ -55,7 +55,14 @@
                             <td><span class="text-info"   ><strong>{{$rows['actual_entry'][$d->division_id][$m->month_id] or 0}}件</strong></span></td>
                         </tr>
                         <tr>
-                            <td colspan="5"><a href="{{route('app::roster::accept::list', ['ym'=>$m->month_id, 'div'=>$d->division_id])}}" class="btn btn-success btn-block"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> 詳細を見る</a></td>
+                            <td colspan="5">
+                                    <a href="{{route('app::roster::accept::calendar', ['ym'=>$m->month_id, 'div'=>$d->division_id])}}" class="btn btn-success btn-block">
+                                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span> リストから承認
+                                    </a>
+{{--                                     <a href="{{route('app::roster::accept::list', ['ym'=>$m->month_id, 'div'=>$d->division_id])}}" class="btn btn-success">
+                                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 詳細から承認
+                                    </a> --}}
+                            </td>
                         </tr>
                     </tbody>
                 </table>

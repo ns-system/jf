@@ -74,6 +74,10 @@
             .user-name:hover{text-decoration: none;}
 
             .label{display: inline-block; padding: 5px 10px;}
+
+            .modal-dialog{ width: 650px; }
+
+            .pagination{ margin: 0; }
         </style>
     </head>
     <body class="no-thank-yu">

@@ -23,6 +23,14 @@ class Roster extends Model
         return $query->where('user_id', '=', $user_id);
     }
 
+    public function scopeNot_myself($query, $user_id = null) {
+        if ($user_id === null)
+        {
+            $user_id = \Auth::user()->id;
+        }
+        return $query->where('user_id', '<>', $user_id);
+    }
+
     public function scopeMonth($query, $month = '') {
         if ($month == '')
         {

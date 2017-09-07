@@ -25,9 +25,21 @@
     @foreach($months as $m)
     <div class="col-md-3">
         @if($m->month_id == $current)
-            <a href="{{route('admin::roster::csv::show', ['month'=>$m->month_id])}}" class="btn btn-warning btn-lg btn-block">{{date('Y年n月', strtotime($m->month_id . '01'))}}</a>
+            <a
+                href="{{route('admin::roster::csv::show', ['month'=>$m->month_id])}}"
+                class="btn btn-warning btn-lg btn-block"
+            >
+                {{date('Y年n月', strtotime($m->month_id . '01'))}}
+                <span class="badge">{{$m->cnt}}件</span>
+            </a>
         @else
-            <a href="{{route('admin::roster::csv::show', ['month'=>$m->month_id])}}" class="btn btn-success btn-lg btn-block">{{date('Y年n月', strtotime($m->month_id . '01'))}}</a>
+            <a
+                href="{{route('admin::roster::csv::show', ['month'=>$m->month_id])}}"
+                class="btn btn-primary btn-lg btn-block"
+            >
+                {{date('Y年n月', strtotime($m->month_id . '01'))}}
+                <span class="badge">{{$m->cnt}}件</span>
+            </a>
         @endif
     </div>
     @endforeach

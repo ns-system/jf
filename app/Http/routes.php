@@ -97,8 +97,12 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
             Route::get('/delete/{id}', ['as'=>'delete', 'uses'=>'RosterUserController@deleteAdmin']);
         });
         Route::group(['as' => 'csv::', 'prefix' => '/csv'], function() {
-            Route::get('/',              ['as'=>'index',  'uses'=>'RosterCsvExportController@index']);
-            Route::get('/list/{month}',  ['as'=>'show',   'uses'=>'RosterCsvExportController@show']);
+            Route::get('/',                   ['as'=>'index',  'uses'=>'RosterCsvExportController@index']);
+            Route::get('/list/{ym}',          ['as'=>'show',   'uses'=>'RosterCsvExportController@show']);
+            Route::get('/edit/{ym}/{id}',     ['as'=>'edit',   'uses'=>'RosterCsvExportController@edit']);
+            Route::post('/update/{ym}',       ['as'=>'update', 'uses'=>'RosterCsvExportController@update']);
+            Route::get('/search/{ym}',        ['as'=>'search', 'uses'=>'RosterCsvExportController@search']);
+            Route::get('/export/{ym}/{type}', ['as'=>'export', 'uses'=>'RosterCsvExportController@export']);
         });
     });
 });
@@ -177,9 +181,10 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
              */
             Route::group(['middleware'=>'roster_proxy'], function() {
                 Route::group(['as' => 'accept::', 'prefix' => '/accept'], function() {
-                    Route::get('/home',                     ['as' => 'index',    'uses' => 'RosterAcceptController@index']);
-                    Route::get('/list/{ym}/{div}',          ['as' => 'list',     'uses' => 'RosterAcceptController@show']);
-                    Route::get('/calendar/{ym}/{div}',      ['as' => 'calendar', 'uses' => 'RosterAcceptController@calendar']);
+                    Route::get('/home',                     ['as' => 'index',           'uses' => 'RosterAcceptController@index']);
+                    Route::get('/list/{ym}/{div}',          ['as' => 'list',            'uses' => 'RosterAcceptController@show']);
+                    Route::get('/calendar/{ym}/{div}',      ['as' => 'calendar',        'uses' => 'RosterAcceptController@calendar']);
+                    Route::post('/calendar/edit',      ['as' => 'calendar_accept', 'uses' => 'RosterAcceptController@calendarAccept']);
                     
 
                     Route::post('/edit/{type}/part/{id}', ['as' => 'part',     'uses' => 'RosterAcceptController@part']);

@@ -1,7 +1,7 @@
 <a
     role="presentation"
     class="list-group-item collapse list-second"
-    href="{{route('admin::roster::index', ['system'=>'Roster','category'=>'Holiday'])}}"
+    href="{{route('admin::roster::csv::index')}}"
     data-toggle="tooltip"
     title="祝日マスタの登録を行います。"
     data-placement="right">CSVファイル出力</a>

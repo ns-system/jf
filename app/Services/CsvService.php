@@ -21,6 +21,12 @@ class CsvService
         return $this->csv_line_count;
     }
 
+    /**
+     * @param type $export_datas
+     * @param string $file_name
+     * @param type $file_header
+     * @return type
+     */
     public function exportCsv($export_datas, $file_name, $file_header = []) {
         $this->file_name = $file_name;
         $file_name       = 'attachment; filename=' . $file_name;

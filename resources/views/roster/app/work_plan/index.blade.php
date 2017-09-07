@@ -23,7 +23,7 @@
 <div class="col-md-4" style="margin-bottom: 20px;">
     <a href="{{route('app::roster::work_plan::division', ['month'=>$month['id']])}}"
         @if($month['id'] == $current) class="btn btn-warning btn-block btn-lg"
-        @else                         class="btn btn-success btn-block btn-lg" @endif
+        @else                         class="btn btn-primary btn-block btn-lg" @endif
     >{{$month['display']}}</a>
 </div>
 @endforeach
