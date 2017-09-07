@@ -3,46 +3,56 @@
     {{-- CSRF対策--}}
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-    <div class="row margin-bottom">
-        <div class="col-md-6"></div>
-        <div class="col-md-6 text-right">
-            <div class="btn-group" style="display: block;">
-                <a
-                    class="btn btn-success btn-sm"
-                    href="{{$configs['export_route']}}"
-                    style="width: 25%"
-                    data-toggle="tooltip"
-                    title="表示されているデータをCSVファイルに出力します。"
-                    data-placement="top"
-                    >ExportCSV</a><span></span>
+<div class="text-right">
+<div data-spy="affix" style="top: 100px; right: 30px;" data-offset-top="110">
 
-                <label
-                    for="csv_file"
-                    class="btn btn-primary btn-sm"
-                    style="width: 50%;"
-                    data-toggle="tooltip"
-                    title="取り込みを行うCSVファイルを選択してください。データ件数が多すぎると取り込めないため、最大1,000件を目安に処理を行ってください。"
-                    data-placement="top"
-                    >
-                    <span id="file_name">ファイルを選択してください</span>
-                    <input type="file"
-                           name="csv_file"
-                           id="csv_file"
-                           onchange="setFileName(document.getElementById('csv_file').value);"
-                           >
-                </label><span></span>
-
-                <button type="submit"
-                        class="btn btn-warning btn-sm"
-                        style="width: 25%"
-                        data-toggle="tooltip"
-                        title="選択したCSVファイルを取り込みます。先に取り込むファイルを指定してください。"
-                        data-placement="top"
-                        onclick="return checkFile(document.getElementById('csv_file').value);"
-                        >ImportCSV</button><span></span>
-            </div>
-        </div>
+    @if(!$rows->isEmpty())
+    <div class="text-right" style="margin-bottom: 10px">
+        {!! $rows->render() !!}
     </div>
+    @endif
+
+
+    <div class="btn-group">
+        <a
+            class="btn btn-success btn-xs"
+            href="{{$configs['export_route']}}"
+            style="min-width: 100px;"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="表示されているデータをCSVファイルに出力します。"
+            data-placement="top"
+            >ExportCSV</a><span></span>
+
+        <label
+            for="csv_file"
+            class="btn btn-primary btn-xs"
+            style="min-width: 250px;"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="取り込みを行うCSVファイルを選択してください。データ件数が多すぎると取り込めないため、最大1,000件を目安に処理を行ってください。"
+            data-placement="top"
+            >
+            <span id="file_name">ファイルを選択してください</span>
+            <input type="file"
+                   name="csv_file"
+                   id="csv_file"
+                   onchange="setFileName(document.getElementById('csv_file').value);"
+                   >
+        </label><span></span>
+
+        <button type="submit"
+                class="btn btn-warning btn-xs"
+                style="min-width: 100px;"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                title="選択したCSVファイルを取り込みます。先に取り込むファイルを指定してください。"
+                data-placement="top"
+                onclick="return checkFile(document.getElementById('csv_file').value);"
+                >ImportCSV</button><span></span>
+    </div>
+</div>
+</div>
 </form>
 
 <script type="text/javascript">
@@ -67,7 +77,7 @@
 
     function setFileName(file_path) {
         var tmp = file_path.split('\\');
-        var file_name = tmp[tmp.length - 1]
+        var file_name = tmp[tmp.length - 1];
         $('#file_name').html(file_name);
     }
 </script>

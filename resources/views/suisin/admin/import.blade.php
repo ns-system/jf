@@ -21,12 +21,12 @@
         <form class="form-horizontal" role="form" method="POST" action="{!! $configs['form_route'] !!}">
             {{-- CSRF対策--}}
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
-            <div class="row">
-                <div class="col-sm-8"></div>
-                <div class="col-sm-4 text-right">
-                    <button type="sumbit" class="btn btn-success margin-bottom">更新する</button>
-                </div>
-            </div>
+<div class="text-right" data-spy="affix" style="right: 30px; top: 100px;" data-offset-top="150">
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary btn-sm margin-bottom" id="more">もっと見る</button>
+        <button type="sumbit" class="btn btn-success btn-sm margin-bottom">更新する</button>
+    </div>
+</div>
             <table class="table table-hover va-middle table-small">
                 <thead>
                     <tr>
@@ -37,13 +37,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($rows as $key => $row)
-                        <tr>
-
+                    @foreach($rows as $cnt => $row)
+                    <tr class="rows" data-count="{{$cnt}}" @if($cnt > 24) style="display: none;" data-hidden="true" @endif>
                             {{-- True  --}}
                             <th class="bg-primary">
                                 <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-                                {{$key + 1}}
+                                {{$cnt + 1}}
                             </th>
                             @foreach($configs['table_columns'] as $column_config)
                             <td class="@if(array_key_exists('class', $column_config)) {{$column_config['class']}} @endif">
@@ -81,7 +80,6 @@
                     @endforeach
                 </tbody>
             </table>
-            <p class="text-right"><button type="sumbit" class="btn btn-success">更新する</button></p>
         </form>
     </div><!-- .container-fluid -->
 </div>
@@ -89,4 +87,20 @@
 
 @section('footer')
 @parent
+<script type="text/javascript">
+$(function(){
+    $('#more').click(function(){
+        var i = 0;
+        $('.rows[data-hidden="true"]').each(function(){
+            i++;
+            $(this).show().removeAttr('data-hidden');
+            console.log(i);
+            if(i >= 25){ return false; }
+        });
+        if($('.rows[data-hidden="true"]').length == 0){
+            $('#more').attr('disabled', 'disabled');
+        }
+    });
+});
+</script>
 @endsection

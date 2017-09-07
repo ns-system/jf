@@ -23,9 +23,10 @@
     <div class="container-fluid">
         @include('partial.alert')
         <div class="border-bottom"><h2>{{$configs['h2']}}</h2></div>
-        @include('partial.csv_form.form')
 
-        <table class="table table-hover table-small va-middle table-striped margin-0">
+@include('partial.csv_form.form')
+@if(!$rows->isEmpty())
+        <table class="table table-hover table-small va-middle table-striped">
             <thead>
                 <tr>
                     <th class="bg-primary">No</th>
@@ -94,8 +95,10 @@
 
             </tbody>
         </table>
+@else
+<div class="alert alert-warning" role="alert">データが見つかりませんでした。</div>
+@endif
 
-        {!! $rows->render() !!}
     </div><!-- .container-fluid -->
 </div>
 @endsection
