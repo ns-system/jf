@@ -47,7 +47,7 @@ class RosterController extends Controller
                 $types[$t->work_type_id]['time'] = '（ ' . date('G:i', strtotime($t->work_start_time)) . ' ～ ' . date('G:i', strtotime($t->work_start_time)) . ' ）';
             }
         }
-        foreach ($rests as $r) {
+        foreach ($tmp_rests as $r) {
             $rests[$r->rest_reason_id] = $r->rest_reason_name;
         }
 

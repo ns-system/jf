@@ -1068,7 +1068,7 @@ class SuisinCsvConfigService
                     [1, 'group_name', 'グループ名', 'class' => 'text-left'],
                 ],
                 'rules'         => [
-                    'id'         => 'required|integer',
+                    'id'         => 'required|integer|min:1|max:100',
                     'group_name' => 'required|min:1',
                 ],
                 'types'         => [

@@ -236,6 +236,7 @@ Route::get('/strlen/{str?}', function() {
     $tmp   = $input['str'];
     $buf   = substr($tmp, 0, -3);
     var_dump($buf);
+    echo $buf;
 });
 
 //Route::get('/mysample',function(\App\Services\UserSample $test){

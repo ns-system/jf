@@ -20,17 +20,21 @@
     id="{{$i}}-{{$day['day']}}"
     width="16%"
     @if(!empty($r) && $r->is_plan_entry)
-        @if($r->is_plan_accept)     data-plan="false"
-        @elseif($r->is_plan_reject) data-plan="true"
-        @else                       data-plan="true" @endif
-    @else                           data-plan="false" @endif
+        @if($r->is_plan_accept)       data-plan="false"
+        @elseif($r->is_plan_reject)   data-plan="true"
+        @else                         data-plan="true" @endif
+    @else                             data-plan="false" @endif
     @if(!empty($r) && $r->is_actual_entry)
         @if($r->is_actual_accept)     data-actual="false"
         @elseif($r->is_actual_reject) data-actual="true"
         @else                         data-actual="true" @endif
     @else                             data-actual="false" @endif
+
+    @if($day['holiday'])       class="warning"
+    @elseif($day['week'] == 0) class="warning"
+    @elseif($day['week'] == 6) class="info" @endif
 >
-    <th class="bg-primary va-middle">
+    <th class="bg-primary-important va-middle">
         <p
             @if($day['holiday'])       class="text-danger-light" data-toggle="tooltip" data-placement="right" title="{{$day['holiday_name']}}"
             @elseif($day['week'] == 0) class="text-danger-light"
@@ -98,6 +102,7 @@
 </td>
 
 </tr>
+<?php unset($r); ?>
 @endforeach
 
     </tbody>

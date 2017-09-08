@@ -19,29 +19,22 @@
 @section('content')
 <div class="col-md-10">
 
-{{-- 検索用ボタン --}}
-<div
-    class="text-right"
-    data-spy="affix"
-    data-offset-top="5"
-    style="z-index: 1;  top: 120px; right: 15px;"
->
-<span style="background: rgba(0,0,0,0.4); padding: 20px; margin: 10px; border: 1px solid #fff; border-radius: 3px;">
-    <div class="btn-group">
-        <a class="btn btn-primary btn-xs" id="plan">予定</a>
-        <a class="btn btn-primary btn-xs" id="actual">実績</a>
-        <a class="btn btn-success btn-xs" id="reset">全て</a>
-        <a class="btn btn-warning btn-xs" href="#submit">更新ボタンへ</a>
-    </div>
-</span>
-</div>
-
 @include('partial.alert')
 
 <div class="border-bottom">
     <h2>
         予定データ承認 <small> - {{date('Y年n月', strtotime($ym.'01'))}}</small>
     </h2>
+</div>
+
+{{-- 検索用ボタン --}}
+<div class="text-right" data-spy="affix" data-offset-top="85" style="z-index: 1;  top: 120px; right: 15px;">
+    <div class="btn-group">
+        <a class="btn btn-primary btn-xs" id="plan">予定</a>
+        <a class="btn btn-primary btn-xs" id="actual">実績</a>
+        <a class="btn btn-success btn-xs" id="reset">全て</a>
+        <a class="btn btn-warning btn-xs" href="#submit">更新ボタンへ</a>
+    </div>
 </div>
 
 <form method="POST" action="{{route('app::roster::accept::calendar_accept')}}">

@@ -105,7 +105,7 @@ class RosterWorkPlanController extends Controller
     public function edit($month, $id, WorkPlan $request) {
 //        var_dump("edit");
         $in   = $request->input();
-        var_dump($in);
+//        var_dump($in);
         $name = \App\User::find($id)->name;
         \DB::connection('mysql_roster')->transaction(function () use($in, $month, $id) {
             foreach ($in['entered_on'] as $i => $key) {

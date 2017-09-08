@@ -106,7 +106,7 @@
 
 
                             <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" style="margin: 20px; padding: 0;">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
                                     <div class="media" style="height: 40px; width: 40px; border-radius: 20%; background: #eee;">
                                         <img style="width: 100%; height: 100%;" @if(\Auth::user()->user_icon != '') src="{{asset('/user_icon/' . \Auth::user()->user_icon)}}" @else src="{{asset('/user_icon/unset.png')}}" @endif>
                                     </div>
@@ -122,7 +122,7 @@
 {{--                                 <span class="caret"></span></a> --}}
 {{--                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">{{Auth::user()->name}}<small>さん</small> <span class="caret"></span></a> --}}
                                 <div class="dropdown-menu list-group" role="menu" style="font-size: 80%; padding: 0; border-radius: 5px;">
-                                    <span href="#" class="list-group-item user-name">{{Auth::user()->name}}<small>さん</small></span>
+                                    <span class="list-group-item user-name">{{Auth::user()->name}}<small>さん</small></span>
                                     <a href="{{route('app::user::show', ['id'=>\Auth::user()->id])}}" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ユーザー情報確認</a>
                                     <a href="/auth/logout" class="list-group-item"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> ログアウト</a>
                         </ul>
