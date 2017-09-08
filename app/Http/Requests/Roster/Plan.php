@@ -4,7 +4,7 @@ namespace App\Http\Requests\Roster;
 
 use App\Http\Requests\Request;
 
-class PlanRequest extends Request
+class Plan extends Request
 {
 
     /**
@@ -26,7 +26,7 @@ class PlanRequest extends Request
 //        var_dump($input);
 //        exit();
         $rules = [
-            'entered_on' => 'required|date',
+//            'entered_on' => 'required|date',
         ];
 
         if (empty($input['plan_rest_reason_id']))
@@ -36,7 +36,7 @@ class PlanRequest extends Request
             $rules['plan_end_hour']   = 'required|integer|min:0|max:23';
             $rules['plan_end_time']   = 'required|integer|min:0|max:55';
         }
-        var_dump($rules);
+//        var_dump($rules);
 //        exit();
         return $rules;
     }

@@ -54,7 +54,7 @@
             .close{opacity: 0.6; outline: none;}
             .tooltip-inner{min-width: 200px; max-width: 300px;}
 
-            .small{font-size: 75% !important; font-weight: bolder;}
+/*            .small{font-size: 75% !important; font-weight: bolder;}*/
 /*            .label-default{ background: #668; }*/
 
 

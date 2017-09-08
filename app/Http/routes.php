@@ -159,10 +159,10 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
                  * As         : form::
                  */
                 Route::group(['as' => 'form::'], function() {
-                    Route::get('/form/{ym}/{d}', ['as' => 'index', 'uses' => 'RosterController@form']);
-                    Route::get('/delete/{id}', ['as' => 'delete', 'uses' => 'RosterController@delete']);
-                    Route::post('/plan/edit', ['as' => 'plan_edit', 'uses' => 'RosterController@editPlan']);
-                    Route::post('/actual/edit', ['as' => 'actual_edit', 'uses' => 'RosterController@editActual']);
+                    Route::get('/form/{ym}/{d}',          ['as' => 'index', 'uses' => 'RosterController@form']);
+                    Route::get('/delete/{id}',            ['as' => 'delete', 'uses' => 'RosterController@delete']);
+                    Route::post('/plan/edit/{ym}/{id}',   ['as' => 'plan_edit', 'uses' => 'RosterController@editPlan']);
+                    Route::post('/actual/edit/{ym}/{id}', ['as' => 'actual_edit', 'uses' => 'RosterController@editActual']);
                 });
             });
             /**

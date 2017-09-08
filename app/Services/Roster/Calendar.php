@@ -6,6 +6,18 @@ class Calendar
 {
 
     protected $id;
+    protected $work_types;
+    protected $user;
+
+    public function __construct() {
+        $types      = [];
+        $tmp        = \App\WorkType::orderBy('work_type_id')->get();
+        $this->user = \App\RosterUser::user()->first();
+        foreach ($tmp as $t) {
+            $types[$t->id] = $t;
+        }
+        $this->work_types = $types;
+    }
 
     public function setId($id) {
         $this->id = $id;
@@ -13,83 +25,80 @@ class Calendar
     }
 
     public function setTimes(/* $type, */$row) {
-        $plan_start_hour   = null;
-        $plan_start_time   = null;
-        $plan_end_hour     = null;
-        $plan_end_time     = null;
-        $actual_start_hour = null;
-        $actual_start_time = null;
-        $actual_end_hour   = null;
-        $actual_end_time   = null;
-        $start             = null;
-        $end               = null;
+        $start           = null;
+        $end             = null;
+        $plan_start      = null;
+        $plan_end        = null;
+        $actual_start    = null;
+        $actual_end      = null;
+        $is_plan_entry   = false;
+        $is_actual_entry = false;
+        $plan_type       = null;
+        $actual_type     = null;
+
+        $types = $this->work_types;
+
+        if (isset($row->is_plan_entry))
+        {
+            $is_plan_entry = $row->is_plan_entry;
+        }
+
+        if (isset($row->is_actual_entry))
+        {
+            $is_actual_entry = $row->is_actual_entry;
+        }
+
+        if (!empty($this->user->work_type_id))
+        {
+            $plan_type   = $types[$this->user->work_type_id];
+            $actual_type = $types[$this->user->work_type_id];
+        }
 
         if (!empty($row->plan_work_type_id))
         {
-//            echo "!empty";
-            $type = \App\WorkType::where('work_type_id', '=', $row->plan_work_type_id);
+            $plan_type = $types[$row->plan_work_type_id];
+        }
+
+        if (!empty($row->actual_work_type_id))
+        {
+            $actual_type = $types[$row->actual_work_type_id];
+        }
+
+        if (!empty($row->plan_overtime_start_time) && $row->plan_overtime_start_time != '0000-00-00 00:00:00')
+        {
+            $plan_start = $row->plan_overtime_start_time;
+            $plan_end   = $row->plan_overtime_end_time;
         }
         else
         {
-//            echo "else";
-            $type = \App\WorkType::where('work_type_id', '=', \App\RosterUser::user()->first()->work_type_id);
+            $plan_start = $plan_type->work_start_time;
+            $plan_end   = $plan_type->work_end_time;
         }
 
-        if ($type->exists())
+        if (!empty($row->actual_overtime_start_time) && $row->actual_overtime_start_time != '0000-00-00 00:00:00')
         {
-//            var_dump($type->first());
-            $start = $type->first()->work_start_time;
-            $end   = $type->first()->work_end_time;
+            $actual_start = $row->actual_overtime_start_time;
+            $actual_end   = $row->actual_overtime_end_time;
         }
-
-
-        if ($start !== null && $end !== null)
+        else
         {
-            $plan_start_hour   = (int) date('H', strtotime($start));
-            $plan_start_time   = (int) date('i', strtotime($start));
-            $plan_end_hour     = (int) date('H', strtotime($end));
-            $plan_end_time     = (int) date('i', strtotime($end));
-            $actual_start_hour = (int) date('H', strtotime($start));
-            $actual_start_time = (int) date('i', strtotime($start));
-            $actual_end_hour   = (int) date('H', strtotime($end));
-            $actual_end_time   = (int) date('i', strtotime($end));
+            $actual_start = $actual_type->work_start_time;
+            $actual_end   = $actual_type->work_end_time;
         }
 
-//        var_dump($row);
-        if (!empty($row))
-//        {
-//            $row = [];
-//        }
-//        else
-        {
-//            echo "else";
-//            $row = $row->first();
 
-            if (!empty($row->plan_overtime_start_time))
-            {
-//                var_dump($row->plan_overtime_start_time);
-                $plan_start_hour = (int) date('H', strtotime($row->plan_overtime_start_time));
-                $plan_start_time = (int) date('i', strtotime($row->plan_overtime_start_time));
-            }
-            if (!empty($row->plan_overtime_end_time))
-            {
-                $plan_end_hour = (int) date('H', strtotime($row->plan_overtime_end_time));
-                $plan_end_time = (int) date('i', strtotime($row->plan_overtime_end_time));
-            }
-
-            if (!empty($row->actual_overtime_start_time))
-            {
-                $actual_start_hour = (int) date('H', strtotime($row->actual_overtime_start_time));
-                $actual_start_time = (int) date('i', strtotime($row->actual_overtime_start_time));
-            }
-            if (!empty($row->actual_overtime_end_time))
-            {
-                $actual_end_hour = (int) date('H', strtotime($row->actual_overtime_end_time));
-                $actual_end_time = (int) date('i', strtotime($row->actual_overtime_end_time));
-            }
-        }
+        $plan_start_hour   = (int) date('H', strtotime($plan_start));
+        $plan_start_time   = (int) date('i', strtotime($plan_start));
+        $plan_end_hour     = (int) date('H', strtotime($plan_end));
+        $plan_end_time     = (int) date('i', strtotime($plan_end));
+        $actual_start_hour = (int) date('H', strtotime($actual_start));
+        $actual_start_time = (int) date('i', strtotime($actual_start));
+        $actual_end_hour   = (int) date('H', strtotime($actual_end));
+        $actual_end_time   = (int) date('i', strtotime($actual_end));
 
         $times = [
+            'is_plan_entry'     => $is_plan_entry,
+            'is_actual_entry'   => $is_actual_entry,
             'plan_start_hour'   => $plan_start_hour,
             'plan_start_time'   => $plan_start_time,
             'plan_end_hour'     => $plan_end_hour,
@@ -104,8 +113,13 @@ class Calendar
         return $times;
     }
 
-    public function editPlan($request) {
-        $roster     = \App\Roster::user()->entered_on($request['entered_on']);
+    public function editPlan($id, $request) {
+//        $roster     = \App\Roster::user()->entered_on($request['entered_on']);
+        $roster = \App\Roster::find($id);
+        if (empty($roster))
+        {
+            throw new \Exception('ユーザーが見つかりませんでした。');
+        }
         $start_time = null;
         $end_time   = null;
         if (empty($request['plan_rest_reason_id']))
@@ -113,16 +127,16 @@ class Calendar
             $start_time = date('H:i:s', strtotime($request['plan_start_hour'] . ":" . $request['plan_start_time'] . ":00"));
             $end_time   = date('H:i:s', strtotime($request['plan_end_hour'] . ":" . $request['plan_end_time'] . ":00"));
         }
-        if (!$roster->exists())
-        {
-            $roster             = new \App\Roster();
-            $roster->entered_on = $request['entered_on'];
-            $roster->month_id   = (int) $request['month_id'];
-        }
-        else
-        {
-            $roster = $roster->first();
-        }
+//        if (!$roster->exists())
+//        {
+//            $roster             = new \App\Roster();
+//            $roster->entered_on = $request['entered_on'];
+//            $roster->month_id   = (int) $request['month_id'];
+//        }
+//        else
+//        {
+//            $roster = $roster->first();
+//        }
         $roster->user_id                  = \Auth::user()->id;
         $roster->is_plan_entry            = (int) true;
         $roster->is_plan_reject           = (int) false;
@@ -141,16 +155,12 @@ class Calendar
         return $pages;
     }
 
-    public function editActual($request) {
-//        var_dump(\Input::get());
-        $roster = \App\Roster::user()->entered_on($request['entered_on']);
-        if (!$roster->exists())
+    public function editActual($id, $request) {
+        $roster = \App\Roster::find($id);
+        if (empty($roster))
         {
             throw new \Exception('予定データが入力されていないようです。');
-//            \Session::flash('warn_message', '予定データが入力されていないようです。');
-//            return back();
         }
-        $roster     = $roster->first();
         $start_time = null;
         $end_time   = null;
         if (empty($request['actual_rest_reason_id']))
