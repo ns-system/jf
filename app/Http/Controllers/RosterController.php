@@ -86,42 +86,7 @@ class RosterController extends Controller
         return view('roster.app.calendar.index', $param);
     }
 
-    public function form($id, $day) {
-//        $d = \DateTime::createFromFormat('Ymd', $id . sprintf('%02d', (int) $day));
-//        if (!$d)
-//        {
-//            \Session::flash('warn_message', '日付以外のデータがセットされました。');
-//            return back();
-//        }
-//        $date  = $d->format('Ymd');
-//        $types = \App\WorkType::orderBy('work_type_id', 'asc')->get();
-//        $rests = \App\Rest::orderBy('rest_reason_id', 'asc')->get();
-//        $row   = \App\Roster::user()->where('entered_on', '=', $date)->first();
-////        var_dump($row);
-////        $type  = \App\WorkType::where('work_type_id', '=', \App\RosterUser::user()->first()->work_type_id);
-//
-//        $times = $this->service->setTimes($row);
-//        $param = [
-//            'id'                => $id,
-//            'row'               => $row,
-//            'date'              => $date,
-//            'types'             => $types,
-//            'rests'             => $rests,
-//            'plan_start_hour'   => $times['plan_start_hour'],
-//            'plan_start_time'   => $times['plan_start_time'],
-//            'plan_end_hour'     => $times['plan_end_hour'],
-//            'plan_end_time'     => $times['plan_end_time'],
-//            'actual_start_hour' => $times['actual_start_hour'],
-//            'actual_start_time' => $times['actual_start_time'],
-//            'actual_end_hour'   => $times['actual_end_hour'],
-//            'actual_end_time'   => $times['actual_end_time'],
-//        ];
-//        return view('roster.app.calendar.plan.index', $param);
-    }
-
     public function editPlan($ym, $id, Plan $request) {
-//        var_dump($id);
-//        exit();
         $this->service->editPlan($id, $request);
         \Session::flash('flash_message', '予定データを更新しました。');
         return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
@@ -134,7 +99,7 @@ class RosterController extends Controller
             \Session::flash('flash_message', "{$param['date']}のデータを削除しました。");
             return redirect(route('app::roster::calendar::show', ['ym' => $param['ym']]));
         } catch (\Exception $e) {
-            echo $e->getTraceAsString();
+//            echo $e->getTraceAsString();
             \Session::flash('warn_message', $e->getMessage());
             return back();
         }

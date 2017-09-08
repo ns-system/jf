@@ -10,7 +10,7 @@
         <div class="modal-content">
             <div class="modal-header bg-primary-important">
                 <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
-                <h4 class="modal-title">{{$r->id}}予定入力フォーム</h4>
+                <h4 class="modal-title">予定入力フォーム</h4>
             </div>
             <div class="modal-body" style="color: #444;">
                 <div class="row">

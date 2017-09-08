@@ -108,8 +108,9 @@
                                         <a
                                             href="{{route('app::roster::calendar::form::delete', ['id'=>$r->id])}}"
                                             class="btn btn-primary btn-xs"
-                                            @if(!$r->is_plan_entry && !$r->is_actual_entry) disabled onclick="return false;"
-                                            @else                                                    onclick="return confirm('予定・実績データが削除されますが本当によろしいですか？');" @endif
+                                            @if(!$r->is_plan_entry && !$r->is_actual_entry)     disabled onclick="return false;"
+                                            @elseif($r->is_plan_accept || $r->is_actual_accept) disabled onclick="alert('承認されているため、削除は行えません。'); return false;"
+                                            @else                                               onclick="return confirm('予定・実績データが削除されますが本当によろしいですか？');" @endif
                                         ><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>　</a>
                                     @else
                                         <button type="button" class="btn btn-primary btn-xs" disabled>予定</button>
