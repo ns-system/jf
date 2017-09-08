@@ -31,6 +31,9 @@
             >{{date('n月j日', strtotime($r->entered_on))}} （{{$day['week_name']}}）</p>
         </th>
         <td class="va-middle">
+            @if(!empty($r->staff_number))
+                <p>{{$r->staff_number}}</p>
+            @else <p class="text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> 職員番号が<a href="{{route('admin::roster::index', ['system'=>'Roster','category'=>'RosterUser'])}}">登録</a>されていません</p> @endif
             <p>{{$r->division_name}}</p>
             <p>{{$r->name}}さん</p>
         </td>

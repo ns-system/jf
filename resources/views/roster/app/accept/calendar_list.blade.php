@@ -21,23 +21,26 @@
 
 @include('partial.alert')
 
-<div class="border-bottom">
+<div class="border-bottom" id="top">
     <h2>
         予定データ承認 <small> - {{date('Y年n月', strtotime($ym.'01'))}}</small>
     </h2>
 </div>
 
+
+<form method="POST" action="{{route('app::roster::accept::calendar_accept')}}">
+
 {{-- 検索用ボタン --}}
 <div class="text-right" data-spy="affix" data-offset-top="85" style="z-index: 1;  top: 120px; right: 15px;">
     <div class="btn-group">
-        <a class="btn btn-primary btn-xs" id="plan">予定</a>
-        <a class="btn btn-primary btn-xs" id="actual">実績</a>
-        <a class="btn btn-success btn-xs" id="reset">全て</a>
-        <a class="btn btn-warning btn-xs" href="#submit">更新ボタンへ</a>
+        <a href="{{route('app::roster::accept::index')}}" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span> 戻る</a>
+        <a href="#top" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> トップへ</a>
+        <a class="btn btn-warning btn-sm" id="plan">未承認</a>
+        <a class="btn btn-success btn-sm" id="reset">全て</a>
+        <button type="submit" class="btn btn-info btn-sm" onclick="return confirm('チェックしたデータが一括で更新されますがよろしいですか？');"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 一括で更新する</button>
     </div>
 </div>
 
-<form method="POST" action="{{route('app::roster::accept::calendar_accept')}}">
 <input type="hidden" name="_token" value="{{ csrf_token() }}">
 <!-- タブメニュー -->
 <div style="margin-bottom: 20px;">
@@ -56,12 +59,13 @@
         </div>
     @endforeach
 </div>
-<div class="form-group text-right">
+{{-- <div class="form-group text-right">
     <div class="btn-group" id="submit">
         <a href="{{route('app::roster::accept::index')}}" class="btn btn-primary"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span> 戻る</a>
         <button type="submit" class="btn btn-warning" onclick="return confirm('チェックしたデータが一括で更新されますがよろしいですか？');"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 一括で更新する</button>
     </div>
 </div>
+ --}}
 </form>
 
 @endsection
@@ -72,7 +76,7 @@
 $(function(){
     $('#plan').click(function(){
         $('tr').show();
-        $('tr[data-plan="false"]').hide();
+        $('tr[data-plan="false"][data-actual="false"]').hide();
     });
     // $('#all').click(function(){
     //     $('tr[data-plan="false"][data-actual="false"]').hide();
@@ -83,6 +87,25 @@ $(function(){
     });
     $('#reset').click(function(){
         $('tr').show();
+    });
+
+    $('.activate').click(function(){
+        var trg = $(this).attr('data-target');
+        $(trg).show();
+    });
+    $('.inactivate').click(function(){
+        var trg = $(this).attr('data-target');
+//        alert(trg);
+        $(trg).find('input[type="checkbox"]').each(function(){
+            $(this).prop('checked', false);
+            var color = $(this).parent('.btn').attr('data-color');
+            $(this).parent('.btn').removeClass(color+' btn-default').addClass('btn-default');
+        });
+        $(trg).find('input[type="text"]').each(function(){
+            $(this).val('');
+        });
+        $(trg).hide();
+//        $(trg).hide();
     });
 });
 </script>

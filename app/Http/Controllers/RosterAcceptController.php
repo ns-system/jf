@@ -181,7 +181,6 @@ class RosterAcceptController extends Controller
     public function calendarAccept(CalendarAccept $request) {
         $in = $request->input();
 
-
         $debug = [];
         foreach ($in['id'] as $i => $id) {
             $r                   = \App\Roster::find($id);
