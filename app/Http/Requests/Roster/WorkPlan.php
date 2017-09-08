@@ -23,20 +23,20 @@ class WorkPlan extends Request
      */
     public function rules() {
         $in    = \Input::get();
-        var_dump($in);
+//        var_dump($in);
         $rules = [];
         foreach ($in['entered_on'] as $i => $day) {
             $rules["entered_on.{$i}"] = 'required|date';
-            if ($in['work_type'][$day] != 0)
+            if (!empty($in['work_type'][$day]) && $in['work_type'][$day] != 0)
             {
                 $rules["work_type.{$day}"] = 'required|exists:mysql_roster.work_types,work_type_id';
             }
-            if ($in['rest'][$day] != 0)
+            if (!empty($in['rest'][$day]) && $in['rest'][$day] != 0)
             {
                 $rules["rest.{$day}"] = 'required|exists:mysql_roster.rest_reasons,rest_reason_id';
             }
         }
-        var_dump($rules);
+//        var_dump($rules);
         return $rules;
     }
 

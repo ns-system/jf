@@ -109,12 +109,18 @@ class RosterWorkPlanController extends Controller
         $name = \App\User::find($id)->name;
         \DB::connection('mysql_roster')->transaction(function () use($in, $month, $id) {
             foreach ($in['entered_on'] as $i => $key) {
-                $r                      = \App\Roster::firstOrNew(['user_id' => $id, 'month_id' => $month, 'entered_on' => $key]);
+                $r          = \App\Roster::firstOrNew(['user_id' => $id, 'month_id' => $month, 'entered_on' => $key]);
 //                var_dump($r->id);
-                $r->user_id             = $id;
-                $r->plan_work_type_id   = $in['work_type'][$key];
-                $r->plan_rest_reason_id = $in['rest'][$key];
-                $r->entered_on          = $key;
+                $r->user_id = $id;
+                if (!empty($in['work_type'][$key]))
+                {
+                    $r->plan_work_type_id = $in['work_type'][$key];
+                }
+                if (!empty($in['rest'][$key]))
+                {
+                    $r->plan_rest_reason_id = $in['rest'][$key];
+                }
+                $r->entered_on = $key;
                 if ($r->id == null)
                 {
                     $r->create_user_id = \Auth::user()->id;
