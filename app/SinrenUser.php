@@ -12,7 +12,10 @@ class SinrenUser extends Model
     protected $guarded    = ['id'];
 
     public function scopeUser($query) {
-        $id = \Auth::user()->id;
+        if (\Auth::Check())
+        {
+            $id = \Auth::user()->id;
+        }
         return $query->where('user_id', '=', $id);
     }
 
@@ -38,7 +41,6 @@ class SinrenUser extends Model
 //    public function User() {
 //        return $this->hasOne('\App\User', 'id', 'user_id');
 //    }
-
 //    public function SinrenDivision() {
 //        return $this->hasOne('\App\SinrenDivision', 'division_id', 'division_id');
 //    }
