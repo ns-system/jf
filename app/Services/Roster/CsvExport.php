@@ -26,6 +26,7 @@ class CsvExport
                 ->join('sinren_data_db.sinren_users', 'rosters.user_id', '=', 'sinren_users.user_id')
                 ->join('sinren_data_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
+                ->join('roster_data_db.roster_users', 'rosters.user_id', '=', 'roster_users.user_id')
                 ->select(\DB::raw('*, rosters.id AS key_id'))
                 ->orderBy('sinren_users.division_id', 'asc')
                 ->orderBy('sinren_users.user_id', 'asc')

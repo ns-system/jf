@@ -192,10 +192,10 @@ class Calendar
 //            \Session::flash('warn_message', '予定データが見つかりませんでした。');
 //            return back();
         }
-
-        if ($roster->is_plan_accept || $roster->is_actual_accept)
-        {
+        
+        if($roster->is_plan_accept || $roster->is_actual_accept){
             throw new \Exception('データはすでに承認されているため、削除できません。');
+            
         }
         $ym   = $roster->month_id;
         $date = date('n月j日', strtotime($roster->entered_on));
