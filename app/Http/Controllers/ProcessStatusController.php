@@ -18,17 +18,48 @@ class ProcessStatusController extends Controller
 
     public function index() {
         $rows = \App\Month::orderBy('monthly_id', 'desc')->paginate(25);
+
+        $max    = \App\Month::max('monthly_id');
+        $months = [];
+        for ($i = -3; $i < 3; $i++) {
+            $tmp    = date('Y-m-d', strtotime($max . '01'));
+            $serial = strtotime("{$tmp} -{$i} month");
+            if (!\App\Month::where('monthly_id', '=', date('Ym', $serial))->exists())
+            {
+                $months[] = [
+                    'ym'      => date('Ym', $serial),
+                    'display' => date('Y年n月', $serial),
+                ];
+            }
+        }
         $cnts = [];
         foreach ($rows as $row) {
-            $cnt            = \App\ZenonStatus::where('monthly_id', '=', $row->monthly_id)->count();
-            $cnts[$row->id] = $cnt;
+            $all_cnt        = \App\ZenonStatus::where('monthly_id', '=', $row->monthly_id)->count();
+            $exist_cnt      = \App\ZenonStatus::where('monthly_id', '=', $row->monthly_id)->where('is_exist', '=', true)->count();
+            $import_cnt     = \App\ZenonStatus::where('monthly_id', '=', $row->monthly_id)->where('is_import', '=', true)->count();
+            $cnts[$row->id] = [
+                'all'    => $all_cnt,
+                'exist'  => $exist_cnt,
+                'import' => $import_cnt,
+            ];
         }
 //        var_dump($cnts);
 //        exit();
 //        foreach ($rows as $row) {
 //            var_dump($row);
 //        }
-        return view('admin.month.index', ['rows' => $rows, 'counts' => $cnts]);
+        return view('admin.month.index', ['rows' => $rows, 'counts' => $cnts, 'months' => $months]);
+    }
+
+    public function create() {
+        $in = \Input::get();
+        if (\App\Month::where('monthly_id', '=', $in['monthly_id'])->exists())
+        {
+            return false;
+        }
+        \App\Month::firstOrCreate(['monthly_id' => $in['monthly_id']]);
+        \Session::flash('flash_message', "月別ID［{$in['monthly_id']}］を生成しました。");
+        return redirect(route('admin::super::month::show'));
     }
 
     public function publish($id) {
@@ -74,6 +105,58 @@ class ProcessStatusController extends Controller
         }
 
         return view('admin.month.status', ['rows' => $rows, 'id' => $id, 'parameters' => $params, 'count' => $count])->with($params);
+    }
+
+    public function copy($id) {
+//        var_dump($id);
+        // TODO: queue
+        return view('admin.month.copy_processing', ['id' => $id]);
+//        $job = (new \App\Jobs\CallJava())->delay(1);
+//        $this->dispatch($job);
+//        $e = shell_exec('java -jar ~/cvs/app/Console/Commands/connect/phpConnectTest.jar ~/cvs/app/Console/Commands/connect/yuusisien_config.properties test');
+//        var_dump($e);
+//
+//        var_dump('At ' . date('Y-m-d H:i:s') . ', queue pushed.');
+    }
+
+    public function copyAjax($id) {
+//        $processes = \App\ZenonStatus::where('monthly_id', '=', $id);
+
+        $obj = new \App\Services\ImportZenonDataService();
+
+        try {
+            $json = $obj->getJsonFile(storage_path('javalogs/201709_status.json'));
+        } catch (\Exception $e) {
+            $json = [
+                'month'  => null,
+                'status' => null
+            ];
+        }
+
+        $status = false;
+        if ($json['month'] == $id && $json['status'] == true)
+        {
+            $status = true;
+        }
+        return response()->json(
+                        [
+                    'status' => $status,
+                    'id'     => $id
+                        ], 200, [], JSON_UNESCAPED_UNICODE
+        );
+    }
+
+    public function confirm($id) {
+        $files = \App\ZenonStatus::join('suisin_db.zenon_data_csv_files', 'zenon_data_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                ->where('monthly_id', '=', 201705)
+                ->orderBy('zenon_format_id')
+                ->paginate(50)
+        ;
+        return view('admin.month.import_confirm', ['files' => $files]);
+    }
+    
+    public function import($id){
+        
     }
 
 }

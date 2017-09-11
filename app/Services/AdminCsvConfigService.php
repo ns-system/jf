@@ -31,7 +31,7 @@ class AdminCsvConfigService
                 [
                     'row' => [
                         ['zenon_data_name', '全オンデータ名', 'class' => 'small text-left'],
-                        ['csv_file_name', 'CSVファイル名', 'class' => 'small text-left'],
+                        ['identifier', '識別子', 'class' => 'small text-left'],
                     ]
                 ],
                 [
@@ -47,8 +47,8 @@ class AdminCsvConfigService
                 ],
                 [
                     'row' => [
-                        ['first_column_position', '開始位置'],
-                        ['last_column_position', '終了位置'],
+                        ['first_column_position', '開始'],
+                        ['last_column_position', '終了'],
                         ['column_length', 'カラム長']
                     ]
                 ],

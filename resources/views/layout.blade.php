@@ -2,6 +2,7 @@
     <head>
         <meta http-equiv="content-language" content="ja">
         <meta charset="UTF-8">
+        @yield('meta')
 
         <title>@yield('title'){{$configs['title'] or ''}}</title>
 

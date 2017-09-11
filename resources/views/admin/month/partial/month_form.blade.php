@@ -6,7 +6,7 @@
 		<tr>
 			<th class="bg-primary">状態</th>
 			<th class="bg-primary">月別ID</th>
-			<th class="bg-primary">データ件数</th>
+			<th class="bg-primary"><p>処理数／存在数</p><p>データ件数</p></th>
 			<th class="bg-primary">データ範囲</th>
 			<th class="bg-primary"></th>
 		</tr>
@@ -22,20 +22,28 @@
 				@endif
 			</td>
 
-			<td>
-				<p>{{number_format($counts[$row->id])}}件</p>
+			<td class="text-right">
+				<p>
+                    {{number_format($counts[$row->id]['import'])}}件／
+                    {{number_format($counts[$row->id]['exist'])}}件
+                </p>
+                <p><small>／{{number_format($counts[$row->id]['all'])}}件</small>
+                </p>
 			</td>
 
-			<td><small>{{date('Y年n月', strtotime($row->displayed_on))}}1日 ～ {{date('Y年n月j日', strtotime($row->displayed_on))}}</small></td>
+			<td><small>{{date('Y年n月', strtotime($row->monthly_id.'01'))}}1日 ～ {{date('Y年n月t日', strtotime($row->monthly_id.'01'))}}</small></td>
 			<td>
 				<form class="form-horizontal" role="form" method="POST" action="{{route('admin::super::month::publish',['id'=>$row->id])}}">
 				    {{-- CSRF対策--}}
 				    <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 				    @if($row->is_current == true)
-				    <button type="submit" class="btn btn-block btn-warning" disabled="">公開中</button>
+				    <button type="submit" class="btn btn-warning" disabled="" style="min-width: 200px;">公開中</button>
 				    @else
-				    <button type="submit" class="btn btn-block btn-success">公開する</button>
+                    <div class="btn-group">
+                        <a href="{{route('admin::super::month::copy', ['id'=>$row->monthly_id])}}" class="btn btn-success" onclick="return confirm('処理を開始してもよろしいですか？');" style="min-width: 100px;">処理する</a>
+    				    <button type="submit" class="btn btn-primary" style="min-width: 100px;">公開する</button>
+                    </div>
 				    @endif
 
 				</form>

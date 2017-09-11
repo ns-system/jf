@@ -51,8 +51,16 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
         Route::group(['prefix' => '/month', 'as' => 'month::'], function() {
             Route::get('/', ['as' => 'show', 'uses' => 'ProcessStatusController@index']);
             Route::post('/publish/{id}', ['as' => 'publish', 'uses' => 'ProcessStatusController@publish']);
-            Route::get('/status/{id}', ['as' => 'status', 'uses' => 'ProcessStatusController@show']);
-            Route::get('/search/{id}', ['as' => 'search', 'uses' => 'ProcessStatusController@search']);
+            Route::post('/create',       ['as' => 'create',  'uses' => 'ProcessStatusController@create']);
+            Route::get('/status/{id}',   ['as' => 'status',  'uses' => 'ProcessStatusController@show']);
+            Route::get('/search/{id}',   ['as' => 'search',  'uses' => 'ProcessStatusController@search']);
+            Route::get('/copy/{id}',     ['as' => 'copy',    'uses' => 'ProcessStatusController@copy']);
+            Route::any('/copy_processing/{id}',     ['as' => 'copying',    'uses' => 'ProcessStatusController@copyAjax']);
+
+            Route::get('/import_confirm/{id}',      ['as' => 'confirm',    'uses' => 'ProcessStatusController@confirm']);
+
+            
+            
         });
         /**
          * Prefix     : /config
@@ -211,24 +219,26 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
 });
 // ===========================================================================================================================
 
+//
+//Route::get('/roster/add/user', 'SinrenUserController@showRosterRegisterUser');
+//Route::post('/roster/add/user/add', 'SinrenUserController@createRosterRegisterUser');
+//Route::get('/roster/app/home', 'RosterController@showIndex');
+//Route::get('/roster/app/calendar/{id?}', 'RosterController@showCalendar');
+//
+//Route::post('/roster/app/calendar/form', 'RosterController@showForm');
+//Route::post('/roster/app/calendar/form/plan/edit', 'RosterController@editPlan');
+//Route::post('/roster/app/calendar/form/actual/edit', 'RosterController@editActual');
+//
+//Route::get('/roster/app/list/{id?}', 'RosterController@showList');
+//
+//Route::get('/roster/chief/accept/{id?}', 'AcceptController@show');
+//Route::post('/roster/chief/accept/edit/all', 'AcceptController@editAll');
+//Route::post('/roster/chief/accept/edit/unit/{id?}', 'AcceptController@editUnit');
+//
+//Route::get('/roster/chief/proxy', 'ChiefController@show');
+//Route::post('/roster/chief/proxy/edit{id?}', 'ChiefController@edit');
 
-Route::get('/roster/add/user', 'SinrenUserController@showRosterRegisterUser');
-Route::post('/roster/add/user/add', 'SinrenUserController@createRosterRegisterUser');
-Route::get('/roster/app/home', 'RosterController@showIndex');
-Route::get('/roster/app/calendar/{id?}', 'RosterController@showCalendar');
-
-Route::post('/roster/app/calendar/form', 'RosterController@showForm');
-Route::post('/roster/app/calendar/form/plan/edit', 'RosterController@editPlan');
-Route::post('/roster/app/calendar/form/actual/edit', 'RosterController@editActual');
-
-Route::get('/roster/app/list/{id?}', 'RosterController@showList');
-
-Route::get('/roster/chief/accept/{id?}', 'AcceptController@show');
-Route::post('/roster/chief/accept/edit/all', 'AcceptController@editAll');
-Route::post('/roster/chief/accept/edit/unit/{id?}', 'AcceptController@editUnit');
-
-Route::get('/roster/chief/proxy', 'ChiefController@show');
-Route::post('/roster/chief/proxy/edit{id?}', 'ChiefController@edit');
+Route::get('/queue','SampleQueueController@index');
 
 Route::get('/strlen/{str?}', function() {
     var_dump(\Input::all());
@@ -262,9 +272,9 @@ Route::get('/phpmyadmin', function() {
 
 //Route::get('/admin/suisin/home', 'SuisinAdminController@index');
 
-Route::get('/admin/roster/home', function() {
-    return view('roster.admin.home');
-});
+//Route::get('/admin/roster/home', function() {
+//    return view('roster.admin.home');
+//});
 
 Route::get('/isok', ['middleware' => 'auth', function() {
         echo "ok";
