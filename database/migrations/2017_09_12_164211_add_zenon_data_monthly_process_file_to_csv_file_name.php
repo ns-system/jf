@@ -17,14 +17,20 @@ class AddZenonDataMonthlyProcessFileToCsvFileName extends Migration
                         ->after('id')
                 ;
             }
+            if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'is_processing'))
+            {
+                $table->boolean('is_process')
+                        ->after('zenon_data_csv_file_id')
+                ;
+            }
         });
     }
 
     public function down() {
-        if (Schema::connection($this->connect)->hasColumn($this->tableName, 'csv_file_name'))
+        if (Schema::connection($this->connect)->hasColumn($this->tableName, 'is_process'))
         {
             Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
-                $table->dropColumn('csv_file_name');
+                $table->dropColumn('is_process');
             });
         }
     }
