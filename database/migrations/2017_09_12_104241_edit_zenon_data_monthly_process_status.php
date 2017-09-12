@@ -3,10 +3,10 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class EditZenonDataProcessStatus extends Migration
+class EditZenonDataMonthlyProcessStatus extends Migration
 {
 
-    public $tableName = 'zenon_data_process_status';
+    public $tableName = 'zenon_data_monthly_process_status';
     public $connect   = 'mysql_suisin';
 
     public function up() {
