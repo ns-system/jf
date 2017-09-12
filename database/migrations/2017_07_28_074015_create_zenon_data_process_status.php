@@ -10,7 +10,7 @@ class CreateZenonDataProcessStatus extends Migration
      *
      * @return void
      */
-    public $tableName = 'zenon_data_process_status';
+    public $tableName = 'zenon_data_monthly_process_status';
     public $connect   = 'mysql_suisin';
     //本番ではconnect変更する
     public function up()
