@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests;
+use App\Http\Requests\Suisin\MonthlyImportForm;
+use App\Http\Requests\Suisin\UsbStorage;
 use App\Http\Controllers\Controller;
 use App\Services\ProcessStatusService;
 
@@ -34,9 +35,9 @@ class ProcessStatusController extends Controller
         }
         $cnts = [];
         foreach ($rows as $row) {
-            $all_cnt        = \App\ZenonStatus::where('monthly_id', '=', $row->monthly_id)->count();
-            $exist_cnt      = \App\ZenonStatus::where('monthly_id', '=', $row->monthly_id)->where('is_exist', '=', true)->count();
-            $import_cnt     = \App\ZenonStatus::where('monthly_id', '=', $row->monthly_id)->where('is_import', '=', true)->count();
+            $all_cnt        = \App\ZenonMonthlyStatus::where('monthly_id', '=', $row->monthly_id)->count();
+            $exist_cnt      = \App\ZenonMonthlyStatus::where('monthly_id', '=', $row->monthly_id)->where('is_exist', '=', true)->count();
+            $import_cnt     = \App\ZenonMonthlyStatus::where('monthly_id', '=', $row->monthly_id)->where('is_import', '=', true)->count();
             $cnts[$row->id] = [
                 'all'    => $all_cnt,
                 'exist'  => $exist_cnt,
@@ -107,16 +108,20 @@ class ProcessStatusController extends Controller
         return view('admin.month.status', ['rows' => $rows, 'id' => $id, 'parameters' => $params, 'count' => $count])->with($params);
     }
 
-    public function copy($id) {
+    public function copyConfirm($id) {
 //        var_dump($id);
-        // TODO: queue
+//        $in = \Input::get();
+//        var_dump($in);
+
+        return view('admin.month.copy_confirm', ['id' => $id]);
+    }
+
+    public function copy($id, UsbStorage $request) {
+        var_dump($request->csv_files);
+        exit();
+//        var_dump($request->input());
+        // TODO: copy queue
         return view('admin.month.copy_processing', ['id' => $id]);
-//        $job = (new \App\Jobs\CallJava())->delay(1);
-//        $this->dispatch($job);
-//        $e = shell_exec('java -jar ~/cvs/app/Console/Commands/connect/phpConnectTest.jar ~/cvs/app/Console/Commands/connect/yuusisien_config.properties test');
-//        var_dump($e);
-//
-//        var_dump('At ' . date('Y-m-d H:i:s') . ', queue pushed.');
     }
 
     public function copyAjax($id) {
@@ -124,6 +129,9 @@ class ProcessStatusController extends Controller
 
         $obj = new \App\Services\ImportZenonDataService();
 
+//        echo $cycle;
+//        echo $id;
+//        exit();
         try {
             $json = $obj->getJsonFile(storage_path('javalogs/201709_status.json'));
         } catch (\Exception $e) {
@@ -138,25 +146,121 @@ class ProcessStatusController extends Controller
         {
             $status = true;
         }
-        return response()->json(
-                        [
-                    'status' => $status,
-                    'id'     => $id
-                        ], 200, [], JSON_UNESCAPED_UNICODE
-        );
+        return response()->json(['status' => $status, 'id' => $id], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
-    public function confirm($id) {
-        $files = \App\ZenonStatus::join('suisin_db.zenon_data_csv_files', 'zenon_data_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
-                ->where('monthly_id', '=', 201705)
-                ->orderBy('zenon_format_id')
-                ->paginate(50)
+    public function importConfirm($id) {
+        $files = \App\ZenonMonthlyStatus::join('suisin_db.zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                ->select(\DB::raw('*, zenon_data_monthly_process_status.id as key_id'))
+                ->month($id)
+                ->where('is_monthly', '=', true)
+                ->orderBy('is_process', 'desc')
+                ->orderBy('is_exist', 'desc')
+                ->orderBy('zenon_format_id', 'asc')
+                ->get()
         ;
-        return view('admin.month.import_confirm', ['files' => $files]);
+        return view('admin.month.import_confirm', ['files' => $files, 'id' => $id]);
     }
-    
-    public function import($id){
-        
+
+    public function import($id) {
+
+        $rows = \App\ZenonMonthlyStatus::join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                ->select(\DB::raw('*, zenon_data_monthly_process_status.id as key_id'))
+                ->month($id)
+                ->where('is_execute', '=', true)
+                ->orderBy('zenon_format_id', 'asc')
+        ;
+
+        //debug
+//        foreach ($rows->get() as $r) {
+//            $r->process_started_at = null;
+//            $r->process_ended_at   = null;
+//            $r->row_count          = 0;
+//            $r->executed_row_count = 0;
+////            $r->is_pre_process     = (int) false;
+//            $r->is_post_process    = (int) false;
+//            $r->is_process_end     = (int) false;
+//            $r->is_import          = (int) false;
+//            $r->save();
+//        }
+        return view('admin.month.import', ['id' => $id, 'rows' => $rows]);
+    }
+
+    public function dispatchJob($id, MonthlyImportForm $request) {
+        $in        = $request->input();
+        $processes = array_keys($in['process']);
+
+        if (!isset($in['process']) && count($in['process']) <= 0)
+        {
+            throw new \Exception('処理対象が選択されていません。');
+        }
+
+        $rows = \App\ZenonMonthlyStatus::month($id)
+                ->where(function($query) use ($in) {
+                    foreach ($in['process'] as $key => $val) {
+                        $query->orWhere('zenon_data_monthly_process_status.id', '=', $key);
+                    }
+                })
+                ->get()
+        ;
+        foreach ($rows as $r) {
+            $r->is_execute = (int) true;
+            $r->save();
+        }
+
+        $this->dispatch(new \App\Jobs\Suisin\CsvUpload($id, $processes));
+        return redirect(route('admin::super::month::import', ['id' => $id]));
+    }
+
+    public function importAjax($id) {
+
+        $in   = \Input::only('input');
+        $rows = \App\ZenonMonthlyStatus::join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                ->select(\DB::raw('*, zenon_data_monthly_process_status.id as key_id'))
+                ->month($id)
+                ->where(function($query) use ($in) {
+                    foreach ($in['input'] as $val) {
+                        $query->orWhere('zenon_data_monthly_process_status.id', '=', $val);
+                    }
+                })
+                ->orderBy('zenon_format_id', 'asc')
+                ->get()
+        ;
+
+        $max_cnt = $rows->count();
+
+        $now_cnt = \App\ZenonMonthlyStatus::month($id)
+                ->where(function($query) use ($in) {
+                    foreach ($in['input'] as $val) {
+                        $query->orWhere('zenon_data_monthly_process_status.id', '=', $val);
+                    }
+                })
+                ->where('is_process_end', '=', true)
+                ->count()
+        ;
+
+        $arr = [];
+        foreach ($rows as $r) {
+            $s               = (($r->process_started_at == '0000-00-00 00:00:00') ? '-' : date('G:i:s', strtotime($r->process_started_at)));
+            $e               = (($r->process_ended_at == '0000-00-00 00:00:00') ? '-' : date('G:i:s', strtotime($r->process_ended_at)));
+            $arr[$r->key_id] = [
+                'key_id'             => $r->key_id,
+                'is_pre_process'     => $r->is_pre_process,
+                'is_post_process'    => $r->is_post_process,
+                'is_execute'         => $r->is_execute,
+                'is_process_end'     => $r->is_process_end,
+                'is_import'          => $r->is_import,
+                'process_started_at' => $s,
+                'process_ended_at'   => $e,
+                'row_count'          => $r->row_count,
+                'executed_row_count' => $r->executed_row_count,
+            ];
+        }
+
+//        $arr[62]['is_execute'] = 1;
+
+
+        return response()->json(['rows' => $arr, 'max_cnt' => $max_cnt, 'now_cnt' => $now_cnt], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
 }

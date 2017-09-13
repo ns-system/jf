@@ -22,6 +22,8 @@ class ImportZenonDataService
     }
 
     public function setCsvFile($file_path) {
+//        var_dump($file_path);
+//        \Log::info('IS_ERROR?:'.$file_path);
         if (!file_exists($file_path))
         {
             throw new \Exception("ファイルが存在しないようです（{$file_path}）");
@@ -40,37 +42,13 @@ class ImportZenonDataService
     public function getMaxRow() {
         $i = 0;
         foreach ($this->csv_file as $row) {
-            $i++;
+            if ($row !== [null])
+            {
+                $i++;
+            }
         }
         return $i;
     }
-
-//    public function setCsvAllRow($row, $table_column, $table_config, $month_id) {
-//        $param = [];
-//        foreach ($row as $i => $buf) {
-//            $attr             = $table_column[$i]['column_type'];
-//            $buf              = mb_convert_encoding($buf, 'UTF-8', 'sjis-win, sjis, JIS, EUC-JP');
-//            $value            = $this->convertValue($buf, $attr);
-//            $col_name         = $table_column[$i]['column_name'];
-//            $param[$col_name] = $value;
-//        }
-//        if ($table_config->is_cumulative == true)
-//        {
-//            $param['monthly_id'] = $month_id;
-//        }
-//        if ($table_config->is_account_convert == true)
-//        {
-//            $p                           = [
-//                'account' => $table_config->account_column_name,
-//                'subject' => $table_config->subject_column_name,
-//            ];
-//            $param['key_account_number'] = $this->convertAccount($p, $param);
-//        }
-//        $param['created_at'] = date("Y-m-d H:i:s");
-//        $param['updated_at'] = date("Y-m-d H:i:s");
-//
-//        return $param;
-//    }
 
     public function setCsvSplitRow($row, $table_columns, $table_types, $table_config, $month_id) {
 //        try {
@@ -113,12 +91,6 @@ class ImportZenonDataService
         $first     = $table_config->first_column_position;
         $last      = $table_config->last_column_position;
         $slice_row = array_slice($convert_row, $first, $last, true);
-//        var_dump($ret);
-//        for ($i = $first; $i <= $last; $i++) {
-//            $slice     = array_slice($convert_row, $i, 1, true);
-//            $key       = key($slice);
-//            $ret[$key] = $slice[$key];
-//        }
         for ($i = 1; $i <= 4; $i++) {
             $k  = 'split_foreign_key_' . $i;
             $fk = $table_config->$k;
@@ -138,75 +110,6 @@ class ImportZenonDataService
         $slice_row['created_at'] = $convert_row['created_at'];
         $slice_row['updated_at'] = date("Y-m-d H:i:s");
         return $slice_row;
-
-//        var_dump($convert_row);
-//            var_dump($test);
-//            exit();
-//            foreach ($row as $i => $buf) {
-////                $attr     = $table_column[$i]['column_type'];
-////                $col_name = $table_column[$i]['column_name'];
-//                $buf = mb_convert_encoding($buf, 'UTF-8', 'sjis-win, sjis, JIS, EUC-JP');
-////                $value = $buf;
-//////                $value    = $this->convertValue($buf, $attr);
-////
-////                $param[$col_name] = $value;
-//            }
-//            if ($table_config->is_cumulative == true)
-//            {
-//                $param['monthly_id'] = $month_id;
-//            }
-//            if ($table_config->is_account_convert == true)
-//            {
-//                $p = [
-//                    'account' => $table_config->account_column_name,
-//                    'subject' => $table_config->subject_column_name,
-//                ];
-//                if ($p['account'] == '' || $p['account'] == '')
-//                {
-//                    throw new \Exception("subject_column_nameもしくはaccount_column_nameの値が不正です。");
-//                }
-//                $param['key_account_number'] = $this->convertAccount($p, $param);
-//            }
-//            $param['created_at'] = date("Y-m-d H:i:s");
-//            $param['updated_at'] = date("Y-m-d H:i:s");
-//
-//
-//            if (!$table_config->is_split)
-//            {
-//                return $param;
-//            }
-//        $ret = [];
-//            $first = $table_config->first_column_position;
-//            $last  = $table_config->last_column_position;
-//            for ($i = $first; $i <= $last; $i++) {
-//                $slice     = array_slice($param, $i, 1, true);
-//                $key       = key($slice);
-//                $ret[$key] = $slice[$key];
-//            }
-//            for ($i = 1; $i <= 4; $i++) {
-//                $k  = 'split_foreign_key_' . $i;
-//                $fk = $table_config->$k;
-//                if ($fk != null)
-//                {
-//                    $ret[$fk] = $param[$fk];
-//                }
-//            }
-//            if ($table_config->is_cumulative == true)
-//            {
-//                $ret['monthly_id'] = $param['monthly_id'];
-//            }
-//            if ($table_config->is_account_convert == true)
-//            {
-//                $ret['key_account_number'] = $param['key_account_number'];
-//            }
-//            $ret['created_at'] = $param['created_at'];
-//            $ret['updated_at'] = $param['updated_at'];
-//        } catch (\Exception $ex) {
-//            $msg = "{$table_config->table_name} - hoge\n" . $ex->getMessage();
-//
-////            $msg = "{$table_config->table_name} - [{$col_name}({$i}カラム目)]\n" . $ex->getMessage();
-//            throw new \Exception($msg);
-//        }
     }
 
     private function convertAccount($param, $row) {
@@ -269,6 +172,70 @@ class ImportZenonDataService
             return null;
         }
         return $buf;
+    }
+
+    public function monthlyStatus($ym, $processes) {
+        $rows = \App\ZenonMonthlyStatus::month($ym)
+                ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                ->where(function($query) use($processes) {
+                    foreach ($processes as $id) {
+                        $query->orWhere('zenon_data_monthly_process_status.id', '=', $id);
+                    }
+                })
+                ->orderBy('zenon_format_id', 'asc')
+        ;
+
+        return $rows;
+    }
+
+    public function uploadToDatabase($r, $csv, $ym) {
+        $table            = \DB::connection('mysql_zenon')->table($r->table_name);
+        $table_column_obj = \App\ZenonTable::where(['zenon_format_id' => $r->zenon_format_id])->get(['column_name', 'column_type']);
+        $table_columns    = [];
+        $table_types      = [];
+
+        foreach ($table_column_obj as $t) {
+            $table_columns[] = $t->column_name;
+            $table_types[]   = $t->column_type;
+        }
+        $bulk_rows    = [];
+        $bulk_counter = 0;
+
+        $executed_rows = 0;
+        foreach ($csv as $i => $row) {
+            if ($row === [null])
+            {
+                continue;
+            }
+            else
+            {
+                $executed_rows++;
+            }
+
+            $tmp_bulk    = $this->setCsvSplitRow($row, $table_columns, $table_types, $r, $ym);
+            $cnt         = count($tmp_bulk);
+            $bulk_rows[] = $tmp_bulk;
+            // MySQLのバージョンによってはプリペアドステートメントが65536までに制限されているため、動的にしきい値を設ける
+            if ($i !== 0 && ($cnt + $bulk_counter) > 65000)
+            {
+                $r->executed_row_count = $executed_rows;
+                $r->save();
+
+                $table->insert($bulk_rows);
+                $bulk_counter = 0;
+                $bulk_rows    = [];
+            }
+            else
+            {
+                $bulk_counter += $cnt;
+            }
+        }
+        if ($bulk_rows !== [null])
+        {
+            $r->executed_row_count = $executed_rows;
+            $r->save();
+            $table->insert($bulk_rows);
+        }
     }
 
 }

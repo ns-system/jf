@@ -54,10 +54,19 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
             Route::post('/create',       ['as' => 'create',  'uses' => 'ProcessStatusController@create']);
             Route::get('/status/{id}',   ['as' => 'status',  'uses' => 'ProcessStatusController@show']);
             Route::get('/search/{id}',   ['as' => 'search',  'uses' => 'ProcessStatusController@search']);
-            Route::get('/copy/{id}',     ['as' => 'copy',    'uses' => 'ProcessStatusController@copy']);
-            Route::any('/copy_processing/{id}',     ['as' => 'copying',    'uses' => 'ProcessStatusController@copyAjax']);
+            
 
-            Route::get('/import_confirm/{id}',      ['as' => 'confirm',    'uses' => 'ProcessStatusController@confirm']);
+//            Route::post('/sample',        ['as' => 'copy_comfirm',   'uses' => 'ProcessStatusController@sample']);
+
+            
+            Route::get('/failed/{id}',              ['as' => 'failed',         'uses' => 'ProcessStatusController@processFailed']);
+            Route::get('/copy_confirm/{id}',        ['as' => 'copy_comfirm',   'uses' => 'ProcessStatusController@copyConfirm']);
+            Route::post('/copy/{id}',                ['as' => 'copy',           'uses' => 'ProcessStatusController@copy']);
+            Route::any('/copy_processing/{id}',     ['as' => 'copying',        'uses' => 'ProcessStatusController@copyAjax']);
+            Route::get('/import_confirm/{id}',      ['as' => 'import_confirm', 'uses' => 'ProcessStatusController@importConfirm']);
+            Route::post('/dispatch/{id}',           ['as' => 'dispatch',       'uses' => 'ProcessStatusController@dispatchJob']);
+            Route::get('/import/{id}',              ['as' => 'import',         'uses' => 'ProcessStatusController@import']);
+            Route::any('/importing/{id}',           ['as' => 'importing',      'uses' => 'ProcessStatusController@importAjax']);
 
             
             
@@ -279,7 +288,7 @@ Route::get('/phpmyadmin', function() {
 Route::get('/isok', ['middleware' => 'auth', function() {
         echo "ok";
     }]);
-
+    
 //Route::get('/my_error', function() {
 //    echo "err";
 //    Log::info('実はエラー', ['id' => 1]);

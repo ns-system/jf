@@ -79,6 +79,8 @@
             .modal-dialog{ width: 650px; }
 
             .pagination{ margin: 0; }
+
+            .progress{ background: #ddd; margin-bottom: 0;}
         </style>
     </head>
     <body class="no-thank-yu">

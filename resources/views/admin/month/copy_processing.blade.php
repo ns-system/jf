@@ -52,13 +52,13 @@ $(function(){
 
     var cnt = 0;
     setInterval(function(){
-        var per = $('#progress').css('width');
         redirectTo();
         cnt++;
-        if(cnt == 4){
+        if(cnt == 10){
+            location.href = "{{route('admin::super::month::failed')}}";
 //            alert();
         }
-    }, 4000);
+    }, 2000);
 });
 
 
@@ -75,17 +75,21 @@ function redirectTo(){
         dataType : 'json',
     }).then(
         (data) => {
+                console.log(data);
             if(data['status'] != true){
 //                console.log('still runnning...');
             }else{
+                console.log('Error');
 //                alert('complete!');
-                location.href = "{{route('admin::super::month::confirm', ['id'=>$id])}}";
+                location.href = "{{route('admin::super::month::import_confirm', ['id'=>$id])}}";
             }
         },
-        () => {
+        (error) => {
+            console.log(error);
             alert('エラーが発生しました。処理を最初から行ってください。');
         }
     );
+    console.log('hi');
 }
 </script>
 @endsection

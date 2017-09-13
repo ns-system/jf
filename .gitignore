@@ -5,3 +5,4 @@ nbproject
 .vagrant/
 Homestead.yaml
 Vagrantfile
+*.box

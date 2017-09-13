@@ -14,6 +14,9 @@ class ZenonMonthlyStatus extends Model
     public function ZenonCsv() {
         return $this->hasOne('\App\ZenonCsv', 'zenon_data_csv_file_id', 'id');
     }
+    public function scopeMonth($query, $monthly_id){
+        return $query->where('zenon_data_monthly_process_status.monthly_id','=',$monthly_id);
+    }
 
 //    public function joinZenonCsv($monthly) {
 //        $table = \DB::connection('mysql_suisin')
