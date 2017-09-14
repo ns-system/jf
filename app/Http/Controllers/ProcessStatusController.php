@@ -109,16 +109,27 @@ class ProcessStatusController extends Controller
     }
 
     public function copyConfirm($id) {
-//        var_dump($id);
-//        $in = \Input::get();
-//        var_dump($in);
+        $dir       = '/mnt/server/csv_files/temp';
+        $tmp_lists = scandir($dir);
+        $lists     = [];
+        foreach ($tmp_lists as $t) {
+            $f = pathinfo($t);
+            if (!empty($f['extension']) && $f['extension'] == 'csv')
+            {
+                $file_path = $dir.'/'.$t;
+                $lists[] = [
+                    'name' => $t,
+                    'size' =>filesize($file_path),
+                    'time'=>date('', filemtime($file_path)),
+                ];
+            }
+        }
+        var_dump($lists);
 
-        return view('admin.month.copy_confirm', ['id' => $id]);
+        return view('admin.month.copy_confirm', ['id' => $id, 'lists' => $lists]);
     }
 
-    public function copy($id, UsbStorage $request) {
-        var_dump($request->csv_files);
-        exit();
+    public function copy($id) {
 //        var_dump($request->input());
         // TODO: copy queue
         return view('admin.month.copy_processing', ['id' => $id]);
@@ -153,7 +164,7 @@ class ProcessStatusController extends Controller
         $files = \App\ZenonMonthlyStatus::join('suisin_db.zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
                 ->select(\DB::raw('*, zenon_data_monthly_process_status.id as key_id'))
                 ->month($id)
-                ->where('is_monthly', '=', true)
+                ->where('cycle', '=', 'M')
                 ->orderBy('is_process', 'desc')
                 ->orderBy('is_exist', 'desc')
                 ->orderBy('zenon_format_id', 'asc')

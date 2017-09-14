@@ -41,8 +41,9 @@ class AdminCsvConfigService
                 ],
                 [
                     'row' => [
-                        ['is_monthly', '月次'],
-                        ['is_daily', '日次']
+                        ['cycle', 'サイクル'],
+//                        ['is_monthly', '月次'],
+//                        ['is_daily', '日次']
                     ]
                 ],
                 [
@@ -87,15 +88,14 @@ class AdminCsvConfigService
             'csv'           => [
                 'columns'       => [
                     'id',
-                    'csv_file_name',
+                    'identifier',
                     'zenon_data_type_id',
                     'zenon_data_name',
                     'first_column_position',
                     'last_column_position',
                     'column_length',
                     'reference_return_date',
-                    'is_daily',
-                    'is_monthly',
+                    'cycle',
                     'database_name',
                     'table_name',
                     'is_cumulative',
@@ -140,15 +140,14 @@ class AdminCsvConfigService
                 'table_columns' => [
                     /* display_flag, kanji_name, [format], [class] */
                     [1, 'id', 'No',],
-                    [1, 'csv_file_name', 'CSVファイル名',],
+                    [1, 'identifier', '識別子',],
                     [1, 'zenon_data_type_id', '全オンデータ種類',],
                     [1, 'zenon_data_name', '全オンデータ名',],
                     [1, 'first_column_position', '開始カラム位置',],
                     [1, 'last_column_position', '終了カラム位置',],
                     [1, 'column_length', 'カラム長',],
                     [1, 'reference_return_date', '目安還元日',],
-                    [1, 'is_daily', '日次フラグ',],
-                    [1, 'is_monthly', '月次フラグ',],
+                    [1, 'cycle', 'サイクル',],
                     [1, 'database_name', 'データベース名',],
                     [1, 'table_name', 'テーブル名',],
                     [1, 'is_cumulative', '累積フラグ',],
@@ -165,13 +164,12 @@ class AdminCsvConfigService
                 ],
                 'rules'         => [
                     'id'                    => 'required|integer',
-                    'csv_file_name'         => 'required|min:4',
+                    'identifier'            => 'required|min:4',
                     'zenon_data_type_id'    => 'required|integer',
                     'first_column_position' => 'required|integer',
                     'last_column_position'  => 'required|integer|min:1',
                     'column_length'         => 'required|integer|min:1',
-                    'is_daily'              => 'required|boolean',
-                    'is_monthly'            => 'required|boolean',
+                    'cycle'                 => 'required|min:1|max:1',
                     'database_name'         => 'required|min:1',
 //                    'table_name'            => 'required|min:1',
                     'is_cumulative'         => 'required|boolean',
@@ -186,8 +184,6 @@ class AdminCsvConfigService
                     'first_column_position' => 'integer',
                     'last_column_position'  => 'integer',
                     'column_length'         => 'integer',
-                    'is_daily'              => 'integer',
-                    'is_monthly'            => 'integer',
                     'is_cumulative'         => 'integer',
                     'is_account_convert'    => 'integer',
                     'is_process'            => 'integer',
@@ -196,15 +192,14 @@ class AdminCsvConfigService
                 ],
                 'flags'         => [
                     'id'                    => 1,
-                    'csv_file_name'         => 1,
+                    'identifier'            => 1,
                     'zenon_data_type_id'    => 1,
                     'zenon_data_name'       => 1,
                     'first_column_position' => 1,
                     'last_column_position'  => 1,
                     'column_length'         => 1,
                     'reference_return_date' => 1,
-                    'is_daily'              => 1,
-                    'is_monthly'            => 1,
+                    'cycle'                 => 1,
                     'database_name'         => 1,
                     'table_name'            => 1,
                     'is_cumulative'         => 1,
@@ -244,7 +239,7 @@ class AdminCsvConfigService
                         ],
                         'row'   => [
                             ['zenon_data_name', 'データ名', 'class' => 'text-left'],
-                            ['csv_file_name', 'CSVファイル名', 'class' => 'text-left'],
+                            ['identifier', '識別子', 'class' => 'text-left'],
                         ]
                     ]
                 ],

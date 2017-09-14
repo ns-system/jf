@@ -21,8 +21,8 @@ class ProcessStatusService
         $this->rows = $rows;
         return $this;
     }
-    
-    public function getCount(){
+
+    public function getCount() {
         return $this->rows->count();
     }
 
@@ -43,11 +43,11 @@ class ProcessStatusService
             $params[$key] = $input[$key];
             if ($input[$key] === 'daily')
             {
-                $rows = $rows->where('is_daily', '=', (int) true);
+                $rows = $rows->where('cycle', '=', 'D');
             }
             elseif ($input[$key] === 'monthly')
             {
-                $rows = $rows->where('is_monthly', '=', (int) true);
+                $rows = $rows->where('cycle', '=', 'M');
             }
         }
 
