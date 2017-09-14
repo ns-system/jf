@@ -29,41 +29,88 @@ class CopyCsvFileService
         return $this;
     }
 
+    private function createDirectory($path) {
+        if (!file_exists($path))
+        {
+            mkdir($path, 0777, FALSE);
+            return true;
+        }
+        return false;
+    }
+
     public function accumulationFileCreation(/* $monthly_id, $accumulation_dir_path */) {
         $monthly_id            = $this->monthly_id;
         $accumulation_dir_path = $this->directory_path;
         $serial                = strtotime($monthly_id . '01');
         $last_day              = date('t', $serial);
+        $before_last_day       = date("t", strtotime($monthly_id . '01 -1 month'));
         $before_monthly_id     = date("Ym", strtotime($monthly_id . '01 -1 month')); // Spell miss
 
         $monthly_data_accumulation_dir_path        = $accumulation_dir_path . "/monthly/" . $monthly_id;
-        $dayly_data_accumulation_dir_path          = $accumulation_dir_path . "/daily/" . $monthly_id;
+        $daily_data_accumulation_dir_path          = $accumulation_dir_path . "/daily/" . $monthly_id;
+        $before_daily_data_accumulation_dir_path   = $accumulation_dir_path . "/daily/" . $before_monthly_id;
         $etcetera_data_accumulation_dir_path       = $accumulation_dir_path . "/exclude_files/" . $monthly_id; // TODO: toste->kawanishi 実サーバーに合わせてね
         $before_monthly_data_accumulation_dir_path = $accumulation_dir_path . "/monthly/" . $before_monthly_id;
-        if (!(file_exists($accumulation_dir_path)))
-        {
-            mkdir($accumulation_dir_path, 0777, FALSE);
+
+
+        $this->createDirectory($accumulation_dir_path);
+
+        $this->createDirectory($monthly_data_accumulation_dir_path);
+        $this->createDirectory($before_monthly_data_accumulation_dir_path);
+
+        $this->createDirectory($daily_data_accumulation_dir_path);
+        for ($i = 1; $i <= $last_day; $i++) {
+            $this->createDirectory($daily_data_accumulation_dir_path . "/" . sprintf('%02d', $i));
         }
-        if (!(file_exists($monthly_data_accumulation_dir_path)))
-        {
-            mkdir($monthly_data_accumulation_dir_path, 0777, FALSE);
+
+        $this->createDirectory($before_daily_data_accumulation_dir_path);
+        for ($i = 1; $i <= $before_last_day; $i++) {
+            $this->createDirectory($before_daily_data_accumulation_dir_path . "/" . sprintf('%02d', $i));
         }
-        if (!(file_exists($before_monthly_data_accumulation_dir_path)))
-        {
-            mkdir($before_monthly_data_accumulation_dir_path, 0777, FALSE);
-        }
-        if (!(file_exists($dayly_data_accumulation_dir_path)))
-        {
-            mkdir($dayly_data_accumulation_dir_path, 0777, FALSE);
-        }
-        if (!(file_exists($etcetera_data_accumulation_dir_path)))
-        {
-            mkdir($etcetera_data_accumulation_dir_path, 0777, FALSE);
-            for ($i = 1; $i <= $last_day; $i++) {
-                $day = sprintf('%02d', (int) $i);
-                mkdir($dayly_data_accumulation_dir_path . "/" . $day, 0777, FALSE);
-            }
-        }
+
+        $this->createDirectory($etcetera_data_accumulation_dir_path);
+
+
+//        if (!(file_exists($accumulation_dir_path)))
+//        {
+//            mkdir($accumulation_dir_path, 0777, FALSE);
+//        }
+//        if (!(file_exists($monthly_data_accumulation_dir_path)))
+//        {
+//            mkdir($monthly_data_accumulation_dir_path, 0777, FALSE);
+//        }
+//        if (!(file_exists($before_monthly_data_accumulation_dir_path)))
+//        {
+//            mkdir($before_monthly_data_accumulation_dir_path, 0777, FALSE);
+//        }
+
+//        if (!(file_exists($daily_data_accumulation_dir_path)))
+//        {
+//            mkdir($daily_data_accumulation_dir_path, 0777, FALSE);
+//            for ($i = 1; $i <= $last_day; $i++) {
+//                $day = sprintf('%02d', (int) $i);
+//                if (!file_exists($daily_data_accumulation_dir_path . "/" . $day))
+//                {
+//                    mkdir($daily_data_accumulation_dir_path . "/" . $day, 0777, FALSE);
+//                }
+//            }
+//        }
+//        if (!(file_exists($before_daily_data_accumulation_dir_path)))
+//        {
+//            mkdir($before_daily_data_accumulation_dir_path, 0777, FALSE);
+//            for ($i = 1; $i <= $last_day; $i++) {
+//                $day = sprintf('%02d', (int) $i);
+//                if (!file_exists($daily_data_accumulation_dir_path . "/" . $day))
+//                {
+//                    mkdir($daily_data_accumulation_dir_path . "/" . $day, 0777, FALSE);
+//                }
+//            }
+//        }
+
+//        if (!(file_exists($etcetera_data_accumulation_dir_path)))
+//        {
+//            mkdir($etcetera_data_accumulation_dir_path, 0777, FALSE);
+//        }
         // last_day使わないならチェーンメソッドにしようぜ。
         return $this;
 //        return $last_day;
@@ -210,7 +257,7 @@ class CopyCsvFileService
                     $r->csv_file_name   = $f['csv_file_name'];
                     $r->csv_file_set_on = $f['csv_file_set_on'];
                     $r->is_exist        = (int) true;
-                    $r->file_kb_size = $f['kb_size'];
+                    $r->file_kb_size    = $f['kb_size'];
                     $r->save();
                 }
             }
