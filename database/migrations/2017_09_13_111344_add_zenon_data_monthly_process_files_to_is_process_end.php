@@ -35,6 +35,14 @@ class AddZenonDataMonthlyProcessFilesToIsProcessEnd extends Migration
                         ->after('is_post_process')
                 ;
             }
+
+            if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'is_execute'))
+            {
+                $table->boolean('is_execute')
+                        ->after('zenon_data_csv_file_id')
+                ;
+            }
+
             if (Schema::connection($this->connect)->hasColumn($this->tableName, 'is_import_process'))
             {
                 $table->dropColumn('is_import_process');
@@ -42,9 +50,6 @@ class AddZenonDataMonthlyProcessFilesToIsProcessEnd extends Migration
             if (Schema::connection($this->connect)->hasColumn($this->tableName, 'is_pre_check'))
             {
                 $table->dropColumn('is_pre_check');
-                $table->boolean('is_execute')
-                        ->after('zenon_data_csv_file_id')
-                ;
             }
         });
     }
@@ -74,6 +79,22 @@ class AddZenonDataMonthlyProcessFilesToIsProcessEnd extends Migration
                 $table->dropColumn('is_execute');
             });
         }
+
+        Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
+            if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'is_import_process'))
+            {
+                $table->boolean('is_import_process')
+                        ->after('zenon_data_csv_file_id')
+                ;
+            }
+
+            if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'is_pre_check'))
+            {
+                $table->boolean('is_pre_check')
+                        ->after('is_import_process')
+                ;
+            }
+        });
     }
 
 }
