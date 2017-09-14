@@ -35,7 +35,7 @@
                 <div class="progress-bar progress-bar-info progress-bar-striped active" id="progress" role="progressbar" style="width: 100%;">処理中です...しばらくお待ちください</div>
 
             </div>
-            <p>ファイルをUSBからコピーしています。</p>
+            <p>ファイルをコピーしています。</p>
             <p>しばらくそのままでお待ち下さい。</p>
 {{--             <button class="btn btn-primary" id="ajax">ajax</button> --}}
         </div>

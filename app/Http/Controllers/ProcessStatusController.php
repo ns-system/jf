@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\Suisin\MonthlyImportForm;
-use App\Http\Requests\Suisin\UsbStorage;
 use App\Http\Controllers\Controller;
 use App\Services\ProcessStatusService;
+use App\Services\CopyCsvFileService;
 
 class ProcessStatusController extends Controller
 {
@@ -44,11 +44,6 @@ class ProcessStatusController extends Controller
                 'import' => $import_cnt,
             ];
         }
-//        var_dump($cnts);
-//        exit();
-//        foreach ($rows as $row) {
-//            var_dump($row);
-//        }
         return view('admin.month.index', ['rows' => $rows, 'counts' => $cnts, 'months' => $months]);
     }
 
@@ -64,7 +59,6 @@ class ProcessStatusController extends Controller
     }
 
     public function publish($id) {
-//        echo $id;
         $month = \App\Month::find($id);
         if ($month == null)
         {
@@ -95,8 +89,6 @@ class ProcessStatusController extends Controller
 
     public function search($id) {
         $input  = \Input::all();
-//        var_dump($input);
-//        exit();
         $params = $this->service->setRows($id)->where($input)->getParameters();
         $count  = $this->service->getCount();
         $rows   = $this->service->getRows(25);
@@ -109,28 +101,22 @@ class ProcessStatusController extends Controller
     }
 
     public function copyConfirm($id) {
-        $dir       = '/mnt/server/csv_files/temp';
-        $tmp_lists = scandir($dir);
-        $lists     = [];
-        foreach ($tmp_lists as $t) {
-            $f = pathinfo($t);
-            if (!empty($f['extension']) && $f['extension'] == 'csv')
-            {
-                $file_path = $dir.'/'.$t;
-                $lists[] = [
-                    'name' => $t,
-                    'size' =>filesize($file_path),
-                    'time'=>date('', filemtime($file_path)),
-                ];
-            }
-        }
-        var_dump($lists);
-
+        $json_path   = config_path() . '/import_config.json';
+        $o           = new \App\Services\ImportZenonDataService();
+        $dir         = $o->getJsonFile($json_path)['csv_folder_path'] . '/temp';
+        $csv_service = new CopyCsvFileService();
+        $lists       = $csv_service->getCsvFileList($dir);
         return view('admin.month.copy_confirm', ['id' => $id, 'lists' => $lists]);
     }
 
+//    public function exportPreviousProcessCsvList() {
+//        $json_path = config_path() . '/import_config.json';
+//        $o         = new \App\Services\ImportZenonDataService();
+//        $dir       = $o->getJsonFile($json_path);
+//        var_dump($dir);
+//    }
+
     public function copy($id) {
-//        var_dump($request->input());
         // TODO: copy queue
         return view('admin.month.copy_processing', ['id' => $id]);
     }
@@ -181,19 +167,6 @@ class ProcessStatusController extends Controller
                 ->where('is_execute', '=', true)
                 ->orderBy('zenon_format_id', 'asc')
         ;
-
-        //debug
-//        foreach ($rows->get() as $r) {
-//            $r->process_started_at = null;
-//            $r->process_ended_at   = null;
-//            $r->row_count          = 0;
-//            $r->executed_row_count = 0;
-////            $r->is_pre_process     = (int) false;
-//            $r->is_post_process    = (int) false;
-//            $r->is_process_end     = (int) false;
-//            $r->is_import          = (int) false;
-//            $r->save();
-//        }
         return view('admin.month.import', ['id' => $id, 'rows' => $rows]);
     }
 

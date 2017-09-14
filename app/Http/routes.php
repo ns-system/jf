@@ -51,25 +51,25 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
         Route::group(['prefix' => '/month', 'as' => 'month::'], function() {
             Route::get('/', ['as' => 'show', 'uses' => 'ProcessStatusController@index']);
             Route::post('/publish/{id}', ['as' => 'publish', 'uses' => 'ProcessStatusController@publish']);
-            Route::post('/create',       ['as' => 'create',  'uses' => 'ProcessStatusController@create']);
-            Route::get('/status/{id}',   ['as' => 'status',  'uses' => 'ProcessStatusController@show']);
-            Route::get('/search/{id}',   ['as' => 'search',  'uses' => 'ProcessStatusController@search']);
-            
+            Route::post('/create', ['as' => 'create', 'uses' => 'ProcessStatusController@create']);
+            Route::get('/status/{id}', ['as' => 'status', 'uses' => 'ProcessStatusController@show']);
+            Route::get('/search/{id}', ['as' => 'search', 'uses' => 'ProcessStatusController@search']);
+
 
 //            Route::post('/sample',        ['as' => 'copy_comfirm',   'uses' => 'ProcessStatusController@sample']);
 
-            
-            Route::get('/failed/{id}',              ['as' => 'failed',         'uses' => 'ProcessStatusController@processFailed']);
-            Route::get('/copy_confirm/{id}',        ['as' => 'copy_comfirm',   'uses' => 'ProcessStatusController@copyConfirm']);
-            Route::post('/copy/{id}',                ['as' => 'copy',           'uses' => 'ProcessStatusController@copy']);
-            Route::any('/copy_processing/{id}',     ['as' => 'copying',        'uses' => 'ProcessStatusController@copyAjax']);
-            Route::get('/import_confirm/{id}',      ['as' => 'import_confirm', 'uses' => 'ProcessStatusController@importConfirm']);
-            Route::post('/dispatch/{id}',           ['as' => 'dispatch',       'uses' => 'ProcessStatusController@dispatchJob']);
-            Route::get('/import/{id}',              ['as' => 'import',         'uses' => 'ProcessStatusController@import']);
-            Route::any('/importing/{id}',           ['as' => 'importing',      'uses' => 'ProcessStatusController@importAjax']);
 
-            
-            
+            Route::get('/failed/{id}', ['as' => 'failed', 'uses' => 'ProcessStatusController@processFailed']);
+            Route::get('/copy_confirm/{id}', ['as' => 'copy_comfirm', 'uses' => 'ProcessStatusController@copyConfirm']);
+//            Route::get('/copy_confirm/export/{id}', ['as' => 'copy_export',   'uses' => 'ProcessStatusController@exportPreviousProcessCsvList']);
+
+
+            Route::get('/copy/{id}', ['as' => 'copy', 'uses' => 'ProcessStatusController@copy']);
+            Route::any('/copy_processing/{id}', ['as' => 'copying', 'uses' => 'ProcessStatusController@copyAjax']);
+            Route::get('/import_confirm/{id}', ['as' => 'import_confirm', 'uses' => 'ProcessStatusController@importConfirm']);
+            Route::post('/dispatch/{id}', ['as' => 'dispatch', 'uses' => 'ProcessStatusController@dispatchJob']);
+            Route::get('/import/{id}', ['as' => 'import', 'uses' => 'ProcessStatusController@import']);
+            Route::any('/importing/{id}', ['as' => 'importing', 'uses' => 'ProcessStatusController@importAjax']);
         });
         /**
          * Prefix     : /config
@@ -108,23 +108,22 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
         Route::post('/config/{system}/{category}/import', ['as' => 'import', 'uses' => 'SuisinAdminController@import']);
         Route::post('/config/{system}/{category}/upload', ['as' => 'upload', 'uses' => 'SuisinAdminController@upload']);
         Route::group(['as' => 'user::', 'prefix' => '/user'], function() {
-            Route::get('/',              ['as'=>'index',  'uses'=>'RosterUserController@indexAdmin']);
-            Route::get('/{id}',          ['as'=>'show',   'uses'=>'RosterUserController@showAdmin']);
-            Route::post('/edit',         ['as'=>'edit',   'uses'=>'RosterUserController@editAdmin']);
-            Route::get('/delete/{id}', ['as'=>'delete', 'uses'=>'RosterUserController@deleteAdmin']);
+            Route::get('/', ['as' => 'index', 'uses' => 'RosterUserController@indexAdmin']);
+            Route::get('/{id}', ['as' => 'show', 'uses' => 'RosterUserController@showAdmin']);
+            Route::post('/edit', ['as' => 'edit', 'uses' => 'RosterUserController@editAdmin']);
+            Route::get('/delete/{id}', ['as' => 'delete', 'uses' => 'RosterUserController@deleteAdmin']);
         });
         Route::group(['as' => 'csv::', 'prefix' => '/csv'], function() {
-            Route::get('/',                   ['as'=>'index',  'uses'=>'RosterCsvExportController@index']);
-            Route::get('/list/{ym}',          ['as'=>'show',   'uses'=>'RosterCsvExportController@show']);
-            Route::get('/edit/{ym}/{id}',     ['as'=>'edit',   'uses'=>'RosterCsvExportController@edit']);
-            Route::post('/update/{ym}',       ['as'=>'update', 'uses'=>'RosterCsvExportController@update']);
-            Route::get('/search/{ym}',        ['as'=>'search', 'uses'=>'RosterCsvExportController@search']);
-            Route::get('/export/{ym}/{type}', ['as'=>'export', 'uses'=>'RosterCsvExportController@export']);
+            Route::get('/', ['as' => 'index', 'uses' => 'RosterCsvExportController@index']);
+            Route::get('/list/{ym}', ['as' => 'show', 'uses' => 'RosterCsvExportController@show']);
+            Route::get('/edit/{ym}/{id}', ['as' => 'edit', 'uses' => 'RosterCsvExportController@edit']);
+            Route::post('/update/{ym}', ['as' => 'update', 'uses' => 'RosterCsvExportController@update']);
+            Route::get('/search/{ym}', ['as' => 'search', 'uses' => 'RosterCsvExportController@search']);
+            Route::get('/export/{ym}/{type}', ['as' => 'export', 'uses' => 'RosterCsvExportController@export']);
         });
     });
 });
 // ===========================================================================================================================
-
 // ===========================================================================================================================
 /**
  * Role       : auth
@@ -176,9 +175,9 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
                  * As         : form::
                  */
                 Route::group(['as' => 'form::'], function() {
-                    Route::get('/form/{ym}/{d}',          ['as' => 'index', 'uses' => 'RosterController@form']);
-                    Route::get('/delete/{id}',            ['as' => 'delete', 'uses' => 'RosterController@delete']);
-                    Route::post('/plan/edit/{ym}/{id}',   ['as' => 'plan_edit', 'uses' => 'RosterController@editPlan']);
+                    Route::get('/form/{ym}/{d}', ['as' => 'index', 'uses' => 'RosterController@form']);
+                    Route::get('/delete/{id}', ['as' => 'delete', 'uses' => 'RosterController@delete']);
+                    Route::post('/plan/edit/{ym}/{id}', ['as' => 'plan_edit', 'uses' => 'RosterController@editPlan']);
                     Route::post('/actual/edit/{ym}/{id}', ['as' => 'actual_edit', 'uses' => 'RosterController@editActual']);
                 });
             });
@@ -187,31 +186,31 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
              * Prefix     : /divisions
              */
             Route::group(['as' => 'division::', 'prefix' => '/division'], function() {
-                Route::get('/check',           ['as' => 'check', 'uses' => 'RosterListController@check']);
-                Route::get('/home/{div}',      ['as' => 'index', 'uses' => 'RosterListController@index']);
-                Route::get('/list/{div}/{ym}', ['as' => 'show',  'uses' => 'RosterListController@show']);
+                Route::get('/check', ['as' => 'check', 'uses' => 'RosterListController@check']);
+                Route::get('/home/{div}', ['as' => 'index', 'uses' => 'RosterListController@index']);
+                Route::get('/list/{div}/{ym}', ['as' => 'show', 'uses' => 'RosterListController@show']);
             });
             /**
              * Middleware : roster_proxy
              * As         : accept::
              * Prefix     : /accept
              */
-            Route::group(['middleware'=>'roster_proxy'], function() {
+            Route::group(['middleware' => 'roster_proxy'], function() {
                 Route::group(['as' => 'accept::', 'prefix' => '/accept'], function() {
-                    Route::get('/home',                     ['as' => 'index',           'uses' => 'RosterAcceptController@index']);
-                    Route::get('/list/{ym}/{div}',          ['as' => 'list',            'uses' => 'RosterAcceptController@show']);
-                    Route::get('/calendar/{ym}/{div}',      ['as' => 'calendar',        'uses' => 'RosterAcceptController@calendar']);
-                    Route::post('/calendar/edit',      ['as' => 'calendar_accept', 'uses' => 'RosterAcceptController@calendarAccept']);
-                    
+                    Route::get('/home', ['as' => 'index', 'uses' => 'RosterAcceptController@index']);
+                    Route::get('/list/{ym}/{div}', ['as' => 'list', 'uses' => 'RosterAcceptController@show']);
+                    Route::get('/calendar/{ym}/{div}', ['as' => 'calendar', 'uses' => 'RosterAcceptController@calendar']);
+                    Route::post('/calendar/edit', ['as' => 'calendar_accept', 'uses' => 'RosterAcceptController@calendarAccept']);
 
-                    Route::post('/edit/{type}/part/{id}', ['as' => 'part',     'uses' => 'RosterAcceptController@part']);
-                    Route::post('/edit/{type}/all',       ['as' => 'all',      'uses' => 'RosterAcceptController@all']);
+
+                    Route::post('/edit/{type}/part/{id}', ['as' => 'part', 'uses' => 'RosterAcceptController@part']);
+                    Route::post('/edit/{type}/all', ['as' => 'all', 'uses' => 'RosterAcceptController@all']);
                 });
                 Route::group(['as' => 'work_plan::', 'prefix' => '/work_plan'], function() {
-                    Route::get('',                         ['as' => 'index',    'uses' => 'RosterWorkPlanController@index']);
-                    Route::get('/{month}',                 ['as' => 'division', 'uses' => 'RosterWorkPlanController@division']);
-                    Route::get('/list/{month}/{id}',       ['as' => 'list',     'uses' => 'RosterWorkPlanController@userList']);
-                    Route::post('/list/edit/{month}/{id}', ['as' => 'edit',     'uses' => 'RosterWorkPlanController@edit']);
+                    Route::get('', ['as' => 'index', 'uses' => 'RosterWorkPlanController@index']);
+                    Route::get('/{month}', ['as' => 'division', 'uses' => 'RosterWorkPlanController@division']);
+                    Route::get('/list/{month}/{id}', ['as' => 'list', 'uses' => 'RosterWorkPlanController@userList']);
+                    Route::post('/list/edit/{month}/{id}', ['as' => 'edit', 'uses' => 'RosterWorkPlanController@edit']);
                 });
             });
             /**
@@ -219,15 +218,14 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
              * As         : accept::
              * Prefix     : /accept
              */
-            Route::group(['middleware'=>'roster_chief','as' => 'chief::', 'prefix' => '/chief'], function() {
-                Route::get('/home',    ['as' => 'index',    'uses' => 'RosterChiefController@index']);
-                Route::post('/update', ['as' => 'update',   'uses' => 'RosterChiefController@update']);
+            Route::group(['middleware' => 'roster_chief', 'as' => 'chief::', 'prefix' => '/chief'], function() {
+                Route::get('/home', ['as' => 'index', 'uses' => 'RosterChiefController@index']);
+                Route::post('/update', ['as' => 'update', 'uses' => 'RosterChiefController@update']);
             });
         });
     });
 });
 // ===========================================================================================================================
-
 //
 //Route::get('/roster/add/user', 'SinrenUserController@showRosterRegisterUser');
 //Route::post('/roster/add/user/add', 'SinrenUserController@createRosterRegisterUser');
@@ -247,7 +245,14 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
 //Route::get('/roster/chief/proxy', 'ChiefController@show');
 //Route::post('/roster/chief/proxy/edit{id?}', 'ChiefController@edit');
 
-Route::get('/queue','SampleQueueController@index');
+Route::get('/queue', 'SampleQueueController@index');
+
+Route::get('/model', function(){
+    $t = '\App\Masters\Common\Prefecture';
+    $m = \App\Masters\Common\Prefecture::find(1);
+    $m = new \App\Masters\Common\Prefecture();
+    $m = new $t;
+});
 
 Route::get('/strlen/{str?}', function() {
     var_dump(\Input::all());
@@ -280,7 +285,6 @@ Route::get('/phpmyadmin', function() {
 });
 
 //Route::get('/admin/suisin/home', 'SuisinAdminController@index');
-
 //Route::get('/admin/roster/home', function() {
 //    return view('roster.admin.home');
 //});
@@ -288,7 +292,7 @@ Route::get('/phpmyadmin', function() {
 Route::get('/isok', ['middleware' => 'auth', function() {
         echo "ok";
     }]);
-    
+
 //Route::get('/my_error', function() {
 //    echo "err";
 //    Log::info('実はエラー', ['id' => 1]);
