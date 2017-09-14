@@ -1,13 +1,14 @@
 <?php
 
-namespace App;
+namespace App\Models\Loan;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DepositBankbookCode extends Model
+class SecurityInstitution extends Model
 {
+
     protected $connection = 'mysql_master';
-    protected $table = 'deposit_bankbook_deed_codes';
+    protected $table      = 'loan_security_institution_codes';
     protected $guarded    = ['id'];
 
 }

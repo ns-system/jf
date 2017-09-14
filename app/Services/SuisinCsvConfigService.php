@@ -20,7 +20,7 @@ class SuisinCsvConfigService
 
     public function getDepositGist() {
         $params      = [
-            'object'        => '\App\DepositGist',
+            'object'        => '\App\Models\Deposit\Gist',
             'display'       => [
                 'title' => '摘要コード',
                 'route' => $this->route . '/DepositGist',
@@ -94,7 +94,7 @@ class SuisinCsvConfigService
 
     public function getDepositCategory() {
         $params      = [
-            'object'        => '\App\DepositCategory',
+            'object'        => '\App\Models\Deposit\Category',
             'join'          => [
                 ['db' => 'master_data_db.subject_codes', 'left' => 'deposit_category_codes.subject_code', 'right' => 'subject_codes.subject_code',],
             ],
@@ -163,7 +163,7 @@ class SuisinCsvConfigService
 
     public function getDepositBankbookType() {
         $params      = [
-            'object'        => '\App\DepositBankbookType',
+            'object'        => '\App\Models\Deposit\BankbookType',
             'join'          => [],
             'display'       => [
                 'title' => '通証タイプ',
@@ -218,7 +218,7 @@ class SuisinCsvConfigService
 
 //    public function getDepositBankbookCode() {
 //        $params      = [
-//            'object'        => '\App\DepositBankbookCode',
+//            'object'        => '\App\Models\DepositBankbookCode',
 //            'display'       => [
 //                'title' => '通証区分',
 //                'route' => $this->route.'/DepositBankbookCode',
@@ -271,7 +271,7 @@ class SuisinCsvConfigService
 
     public function getSubject() {
         $params      = [
-            'object'        => '\App\Subject',
+            'object'        => '\App\Models\Common\Subject',
             'join'          => [],
             'display'       => [
                 'title' => '科目コード',
@@ -326,7 +326,7 @@ class SuisinCsvConfigService
 
     public function getIndustry() {
         $params      = [
-            'object'        => '\App\Industry',
+            'object'        => '\App\Models\Common\Industry',
             'join'          => [],
             'display'       => [
                 'title' => '業種コード',
@@ -386,7 +386,7 @@ class SuisinCsvConfigService
 
     public function getQualification() {
         $params      = [
-            'object'        => '\App\Qualification',
+            'object'        => '\App\Models\Common\Qualification',
             'join'          => [],
             'display'       => [
                 'title' => '資格区分',
@@ -447,7 +447,7 @@ class SuisinCsvConfigService
 
     public function getPersonality() {
         $params      = [
-            'object'        => '\App\Personality',
+            'object'        => '\App\Models\Common\Personality',
             'join'          => [],
             'display'       => [
                 'title' => '人格コード',
@@ -502,7 +502,7 @@ class SuisinCsvConfigService
 
     public function getPrefecture() {
         $params      = [
-            'object'        => '\App\Prefecture',
+            'object'        => '\App\Models\Common\Prefecture',
             'join'          => [],
             'display'       => [
                 'title' => '県コード',
@@ -557,7 +557,7 @@ class SuisinCsvConfigService
 
     public function getStore() {
         $params      = [
-            'object'        => '\App\Store',
+            'object'        => '\App\Models\Common\Store',
             'join'          => [
                 ['db' => 'master_data_db.prefecture_codes', 'left' => 'stores.prefecture_code', 'right' => 'prefecture_codes.prefecture_code',],
             ],
@@ -626,7 +626,7 @@ class SuisinCsvConfigService
 
     public function getSmallStore() {
         $params      = [
-            'object'        => '\App\SmallStore',
+            'object'        => '\App\Models\Common\SmallStore',
             'join'          => [
                 ['db' => 'master_data_db.prefecture_codes', 'left' => 'small_stores.prefecture_code', 'right' => 'prefecture_codes.prefecture_code',],
                 ['db' => 'master_data_db.stores', 'left' => 'small_stores.store_number', 'right' => 'stores.store_number',],
@@ -737,7 +737,7 @@ class SuisinCsvConfigService
 
     public function getArea() {
         $params      = [
-            'object'        => '\App\Area',
+            'object'        => '\App\Models\Common\Area',
             'join'          => [
                 ['db' => 'master_data_db.prefecture_codes', 'left' => 'area_codes.prefecture_code', 'right' => 'prefecture_codes.prefecture_code',],
                 ['db' => 'master_data_db.stores', 'left' => 'area_codes.store_number', 'right' => 'stores.store_number',],
@@ -946,7 +946,7 @@ class SuisinCsvConfigService
                 ],
 //                ['eloquent' =>
 //                    [
-//                        'model' => '\App\ConsignorGroup',
+//                        'model' => '\App\Models\ConsignorGroup',
 //                        'key'   => [
 //                            'local_key'   => 'id',
 //                            'foreign_key' => 'consignor_group_id',
@@ -1023,7 +1023,7 @@ class SuisinCsvConfigService
                 ['row' => [['group_name', 'グループ名', 'class' => 'text-left']]],
 //                ['eloquent' =>
 //                    [
-//                        'model' => '\App\User',
+//                        'model' => '\App\Models\User',
 //                        'key'   => [
 //                            'local_key'   => 'id',
 //                            'foreign_key' => 'create_user_id',
@@ -1033,7 +1033,7 @@ class SuisinCsvConfigService
 //                ],
 //                ['eloquent' =>
 //                    [
-//                        'model' => '\App\User',
+//                        'model' => '\App\Models\User',
 //                        'key'   => [
 //                            'local_key'   => 'id',
 //                            'foreign_key' => 'modify_user_id',
@@ -1079,6 +1079,892 @@ class SuisinCsvConfigService
 //                    'modify_user_id' => 1,
                 ],
                 'keys'          => ['id'],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getDepositTaxation() {
+        $params      = [
+            'object'        => '\App\Models\Deposit\Taxation',
+            'join'          => [],
+            'display'       => [
+                'title' => '課税区分',
+                'route' => $this->route . '/DepositTaxation',
+                'h2'    => '課税区分',
+            ],
+            'table_columns' => [
+                ['row' => [['taxation_code', '課税コード',],]],
+                ['row' => [['taxation_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'deposit_taxation_codes.taxation_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'deposit_taxation_codes.taxation_code',
+                    'deposit_taxation_codes.taxation_name',
+                ],
+                'kanji_columns' => [
+                    '課税コード',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'taxation_code', '課税コード',],
+                    [1, 'taxation_name', '表示名',],
+                ],
+                'rules'         => [
+                    'taxation_code' => 'required|integer',
+                    'taxation_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'taxation_code' => 'integer',
+                ],
+                'flags'         => [
+                    'taxation_code' => 1,
+                    'taxation_name' => 1,
+                ],
+                'keys'          => ['taxation_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getDepositTerm() {
+        $params      = [
+            'object'        => '\App\Models\Deposit\Term',
+            'join'          => [],
+            'display'       => [
+                'title' => '期間コード',
+                'route' => $this->route . '/DepositTerm',
+                'h2'    => '期間コード',
+            ],
+            'table_columns' => [
+                ['row' => [['term_code', '期間コード',],]],
+                ['row' => [['term_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'deposit_term_codes.term_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'deposit_term_codes.term_code',
+                    'deposit_term_codes.term_name',
+                ],
+                'kanji_columns' => [
+                    '期間コード',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'term_code', '期間コード',],
+                    [1, 'term_name', '表示名',],
+                ],
+                'rules'         => [
+                    'term_code' => 'required|integer',
+                    'term_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'term_code' => 'integer',
+                ],
+                'flags'         => [
+                    'term_code' => 1,
+                    'term_name' => 1,
+                ],
+                'keys'          => ['term_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getDepositContinuation() {
+        $params      = [
+            'object'        => '\App\Models\Deposit\Continuation',
+            'join'          => [],
+            'display'       => [
+                'title' => '継続区分',
+                'route' => $this->route . '/DepositContinuation',
+                'h2'    => '継続区分',
+            ],
+            'table_columns' => [
+                ['row' => [['continuation_code', '継続区分',],]],
+                ['row' => [['continuation_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'deposit_continuation_codes.continuation_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'deposit_continuation_codes.continuation_code',
+                    'deposit_continuation_codes.continuation_name',
+                ],
+                'kanji_columns' => [
+                    '継続区分',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'continuation_code', '継続区分',],
+                    [1, 'continuation_name', '表示名',],
+                ],
+                'rules'         => [
+                    'continuation_code' => 'required|integer',
+                    'continuation_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'continuation_code' => 'integer',
+                ],
+                'flags'         => [
+                    'continuation_code' => 1,
+                    'continuation_name' => 1,
+                ],
+                'keys'          => ['continuation_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getLoanCategory() {
+        $params      = [
+            'object'        => '\App\Models\Loan\Category',
+            'join'          => [],
+            'display'       => [
+                'title' => '貸付種類',
+                'route' => $this->route . '/LoanCategory',
+                'h2'    => '貸付種類',
+            ],
+            'table_columns' => [
+                ['row' => [['loan_category_code', '貸付種類',],]],
+                ['row' => [['loan_category_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'loan_category_codes.loan_category_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'loan_category_codes.loan_category_code',
+                    'loan_category_codes.loan_category_name',
+                ],
+                'kanji_columns' => [
+                    '貸付種類',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'loan_category_code', '貸付種類',],
+                    [1, 'loan_category_name', '表示名',],
+                ],
+                'rules'         => [
+                    'loan_category_code' => 'required|integer',
+                    'loan_category_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'loan_category_code' => 'integer',
+                ],
+                'flags'         => [
+                    'loan_category_code' => 1,
+                    'loan_category_name' => 1,
+                ],
+                'keys'          => ['loan_category_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getLoanCollateral() {
+        $params      = [
+            'object'        => '\App\Models\Loan\Collateral',
+            'join'          => [],
+            'display'       => [
+                'title' => '担保コード',
+                'route' => $this->route . '/LoanCollateral',
+                'h2'    => '担保コード',
+            ],
+            'table_columns' => [
+                ['row' => [['collateral_code', '担保コード',],]],
+                ['row' => [['collateral_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'loan_collateral_codes.collateral_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'loan_collateral_codes.collateral_code',
+                    'loan_collateral_codes.collateral_name',
+                ],
+                'kanji_columns' => [
+                    '担保コード',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'collateral_code', '担保コード',],
+                    [1, 'collateral_name', '表示名',],
+                ],
+                'rules'         => [
+                    'collateral_code' => 'required|integer',
+                    'collateral_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'collateral_code' => 'integer',
+                ],
+                'flags'         => [
+                    'collateral_code' => 1,
+                    'collateral_name' => 1,
+                ],
+                'keys'          => ['collateral_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getLoanFishery() {
+        $params      = [
+            'object'        => '\App\Models\Loan\Fishery',
+            'join'          => [],
+            'display'       => [
+                'title' => '漁業形態',
+                'route' => $this->route . '/LoanFishery',
+                'h2'    => '漁業形態',
+            ],
+            'table_columns' => [
+                ['row' => [['fishery_form_code', '漁業形態',],]],
+                ['row' => [['fishery_form_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'loan_fishery_form_codes.fishery_form_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'loan_fishery_form_codes.fishery_form_code',
+                    'loan_fishery_form_codes.fishery_form_name',
+                ],
+                'kanji_columns' => [
+                    '漁業形態',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'fishery_form_code', '漁業形態',],
+                    [1, 'fishery_form_name', '表示名',],
+                ],
+                'rules'         => [
+                    'fishery_form_code' => 'required|integer',
+                    'fishery_form_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'fishery_form_code' => 'integer',
+                ],
+                'flags'         => [
+                    'fishery_form_code' => 1,
+                    'fishery_form_name' => 1,
+                ],
+                'keys'          => ['fishery_form_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getLoanFund() {
+        $params      = [
+            'object'        => '\App\Models\Loan\Fund',
+            'join'          => [],
+            'display'       => [
+                'title' => '資金区分',
+                'route' => $this->route . '/LoanFund',
+                'h2'    => '資金区分',
+            ],
+            'table_columns' => [
+                ['row' => [['fund_code', '資金区分',],]],
+                ['row' => [['fund_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'loan_fund_codes.fund_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'loan_fund_codes.fund_code',
+                    'loan_fund_codes.fund_name',
+                ],
+                'kanji_columns' => [
+                    '資金区分',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'fund_code', '資金区分',],
+                    [1, 'fund_name', '表示名',],
+                ],
+                'rules'         => [
+                    'fund_code' => 'required|integer',
+                    'fund_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'fund_code' => 'integer',
+                ],
+                'flags'         => [
+                    'fund_code' => 1,
+                    'fund_name' => 1,
+                ],
+                'keys'          => ['fund_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getLoanFundAuxiliary() {
+        $params      = [
+            'object'        => '\App\Models\Loan\FundAuxiliary',
+            'join'          => [],
+            'display'       => [
+                'title' => '資金補助区分',
+                'route' => $this->route . '/LoanFundAuxiliary',
+                'h2'    => '資金補助区分',
+            ],
+            'table_columns' => [
+                ['row' => [['fund_auxiliary_code', '資金補助区分',],]],
+                ['row' => [['fund_auxiliary_category', '資金補助分類',],]],
+                ['row' => [['fund_auxiliary_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'loan_fund_auxiliary_codes.fund_auxiliary_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'loan_fund_auxiliary_codes.fund_auxiliary_code',
+                    'loan_fund_auxiliary_codes.fund_auxiliary_category',
+                    'loan_fund_auxiliary_codes.fund_auxiliary_name',
+                ],
+                'kanji_columns' => [
+                    '資金補助区分',
+                    '資金補助分類',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'fund_auxiliary_code', '資金補助区分',],
+                    [1, 'fund_auxiliary_category', '資金補助分類',],
+                    [1, 'fund_auxiliary_name', '表示名',],
+                ],
+                'rules'         => [
+                    'fund_auxiliary_code'     => 'required|integer',
+                    'fund_auxiliary_category' => 'required|min:1',
+                    'fund_auxiliary_name'     => 'required|min:1',
+                ],
+                'types'         => [
+                    'fund_auxiliary_code' => 'integer',
+                ],
+                'flags'         => [
+                    'fund_auxiliary_code'     => 1,
+                    'fund_auxiliary_category' => 1,
+                    'fund_auxiliary_name'     => 1,
+                ],
+                'keys'          => ['fund_auxiliary_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getLoanFundUsageCode() {
+        $params      = [
+            'object'        => '\App\Models\Loan\FundUsageCode',
+            'join'          => [],
+            'display'       => [
+                'title' => '資金使途区分',
+                'route' => $this->route . '/LoanFundUsageCode',
+                'h2'    => '資金使途区分',
+            ],
+            'table_columns' => [
+                ['row' => [['fund_usage_code', '資金使途区分',],]],
+                ['row' => [['fund_usage_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'loan_fund_usage_codes.fund_usage_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'loan_fund_usage_codes.fund_usage_code',
+                    'loan_fund_usage_codes.fund_usage_name',
+                ],
+                'kanji_columns' => [
+                    '資金使途区分',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'fund_usage_code', '資金使途区分',],
+                    [1, 'fund_usage_name', '表示名',],
+                ],
+                'rules'         => [
+                    'fund_usage_code' => 'required|integer',
+                    'fund_usage_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'fund_usage_code' => 'integer',
+                ],
+                'flags'         => [
+                    'fund_usage_code' => 1,
+                    'fund_usage_name' => 1,
+                ],
+                'keys'          => ['fund_usage_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getLoanJifuriCode() {
+        $params      = [
+            'object'        => '\App\Models\Loan\JifuriCode',
+            'join'          => [],
+            'display'       => [
+                'title' => '自振区分',
+                'route' => $this->route . '/LoanJifuriCode',
+                'h2'    => '自振区分',
+            ],
+            'table_columns' => [
+                ['row' => [['jifuri_code', '自振区分',],]],
+                ['row' => [['jifuri_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'loan_jifuri_codes.jifuri_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'loan_jifuri_codes.jifuri_code',
+                    'loan_jifuri_codes.jifuri_name',
+                ],
+                'kanji_columns' => [
+                    '自振区分',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'jifuri_code', '自振区分',],
+                    [1, 'jifuri_name', '表示名',],
+                ],
+                'rules'         => [
+                    'jifuri_code' => 'required|integer',
+                    'jifuri_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'jifuri_code' => 'integer',
+                ],
+                'flags'         => [
+                    'jifuri_code' => 1,
+                    'jifuri_name' => 1,
+                ],
+                'keys'          => ['jifuri_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getLoanPhasedMoneyRate() {
+        $params      = [
+            'object'        => '\App\Models\Loan\PhasedMoneyRate',
+            'join'          => [],
+            'display'       => [
+                'title' => '段階金利制区分',
+                'route' => $this->route . '/LoanPhasedMoneyRate',
+                'h2'    => '段階金利制区分',
+            ],
+            'table_columns' => [
+                ['row' => [['phased_money_rate_code', '段階金利制区分',],]],
+                ['row' => [['phased_money_rate_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'loan_phased_money_rate_codes.phased_money_rate_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'loan_phased_money_rate_codes.phased_money_rate_code',
+                    'loan_phased_money_rate_codes.phased_money_rate_name',
+                ],
+                'kanji_columns' => [
+                    '段階金利制区分',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'phased_money_rate_code', '段階金利制区分',],
+                    [1, 'phased_money_rate_name', '表示名',],
+                ],
+                'rules'         => [
+                    'phased_money_rate_code' => 'required|integer',
+                    'phased_money_rate_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'phased_money_rate_code' => 'integer',
+                ],
+                'flags'         => [
+                    'phased_money_rate_code' => 1,
+                    'phased_money_rate_name' => 1,
+                ],
+                'keys'          => ['phased_money_rate_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getLoanSecurityInstitution() {
+        $params      = [
+            'object'        => '\App\Models\Loan\SecurityInstitution',
+            'join'          => [],
+            'display'       => [
+                'title' => '保証機関コード',
+                'route' => $this->route . '/LoanSecurityInstitution',
+                'h2'    => '保証機関コード',
+            ],
+            'table_columns' => [
+                ['row' => [['security_institution_code', '保証機関コード',],]],
+                ['row' => [['security_institution_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'loan_security_institution_codes.security_institution_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'loan_security_institution_codes.security_institution_code',
+                    'loan_security_institution_codes.security_institution_name',
+                ],
+                'kanji_columns' => [
+                    '保証機関コード',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'security_institution_code', '保証機関コード',],
+                    [1, 'security_institution_name', '表示名',],
+                ],
+                'rules'         => [
+                    'security_institution_code' => 'required|integer',
+                    'security_institution_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'security_institution_code' => 'integer',
+                ],
+                'flags'         => [
+                    'security_institution_code' => 1,
+                    'security_institution_name' => 1,
+                ],
+                'keys'          => ['security_institution_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getLoanSubsidy() {
+        $params      = [
+            'object'        => '\App\Models\Loan\Subsidy',
+            'join'          => [],
+            'display'       => [
+                'title' => '利子補給・助成区分',
+                'route' => $this->route . '/LoanSubsidy',
+                'h2'    => '利子補給・助成区分',
+            ],
+            'table_columns' => [
+                ['row' => [['subsidy_code', '利子補給・助成区分',],]],
+                ['row' => [['subsidy_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'loan_subsidy_codes.subsidy_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'loan_subsidy_codes.subsidy_code',
+                    'loan_subsidy_codes.subsidy_name',
+                ],
+                'kanji_columns' => [
+                    '利子補給・助成区分',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'subsidy_code', '利子補給・助成区分',],
+                    [1, 'subsidy_name', '表示名',],
+                ],
+                'rules'         => [
+                    'subsidy_code' => 'required|integer',
+                    'subsidy_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'subsidy_code' => 'integer',
+                ],
+                'flags'         => [
+                    'subsidy_code' => 1,
+                    'subsidy_name' => 1,
+                ],
+                'keys'          => ['subsidy_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getLoanSubsidyCalculation() {
+        $params      = [
+            'object'        => '\App\Models\Loan\SubsidyCalculation',
+            'join'          => [],
+            'display'       => [
+                'title' => '利子補給・助成計算区分',
+                'route' => $this->route . '/LoanSubsidyCalculation',
+                'h2'    => '利子補給・助成計算区分',
+            ],
+            'table_columns' => [
+                ['row' => [['subsidy_calculation_code', '利子補給・助成計算区分',],]],
+                ['row' => [['subsidy_calculation_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'loan_subsidy_calculation_codes.subsidy_calculation_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'loan_subsidy_calculation_codes.subsidy_calculation_code',
+                    'loan_subsidy_calculation_codes.subsidy_calculation_name',
+                ],
+                'kanji_columns' => [
+                    '利子補給・助成計算区分',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'subsidy_calculation_code', '利子補給・助成計算区分',],
+                    [1, 'subsidy_calculation_name', '表示名',],
+                ],
+                'rules'         => [
+                    'subsidy_calculation_code' => 'required|integer',
+                    'subsidy_calculation_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'subsidy_calculation_code' => 'integer',
+                ],
+                'flags'         => [
+                    'subsidy_calculation_code' => 1,
+                    'subsidy_calculation_name' => 1,
+                ],
+                'keys'          => ['subsidy_calculation_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getLoanSubsidyInstitution() {
+        $params      = [
+            'object'        => '\App\Models\Loan\SubsidyInstitution',
+            'join'          => [],
+            'display'       => [
+                'title' => '利子補給・助成機関区分',
+                'route' => $this->route . '/LoanSubsidyInstitution',
+                'h2'    => '利子補給・助成機関区分',
+            ],
+            'table_columns' => [
+                ['row' => [['subsidy_institution_code', '利子補給・助成機関区分',],]],
+                ['row' => [['subsidy_institution_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'loan_subsidy_institution_codes.subsidy_institution_code' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'loan_subsidy_institution_codes.subsidy_institution_code',
+                    'loan_subsidy_institution_codes.subsidy_institution_name',
+                ],
+                'kanji_columns' => [
+                    '利子補給・助成機関区分',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'subsidy_institution_code', '利子補給・助成機関区分',],
+                    [1, 'subsidy_institution_name', '表示名',],
+                ],
+                'rules'         => [
+                    'subsidy_institution_code' => 'required|integer',
+                    'subsidy_institution_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'subsidy_institution_code' => 'integer',
+                ],
+                'flags'         => [
+                    'subsidy_institution_code' => 1,
+                    'subsidy_institution_name' => 1,
+                ],
+                'keys'          => ['subsidy_institution_code',],
+            ],
+        ];
+        $this->param = $params;
+    }
+
+    public function getLoanFundUsage() {
+        $params      = [
+            'object'        => '\App\Models\Loan\FundUsage',
+            'join'          => [],
+            'display'       => [
+                'title' => '資金用途',
+                'route' => $this->route . '/LoanFundUsage',
+                'h2'    => '資金用途',
+            ],
+            'table_columns' => [
+                ['row' => [['fund_usage', '資金用途',],]],
+                ['row' => [['fund_usage_name', '表示名',],]],
+                ['row' =>
+                    [
+                        ['created_at', '登録日', 'class' => 'small'],
+                        ['updated_at', '更新日', 'class' => 'small'],
+                    ]
+                ],
+            ],
+            'table_orders'  => [
+                'loan_fund_usages.fund_usage' => 'asc',
+            ],
+            'csv'           => [
+                'columns'       => [
+                    'loan_fund_usages.fund_usage',
+                    'loan_fund_usages.fund_usage_name',
+                ],
+                'kanji_columns' => [
+                    '資金用途',
+                    '表示名',
+                ],
+            ],
+            'import'        => [
+                'table_columns' => [
+                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
+                    [1, 'fund_usage', '資金用途',],
+                    [1, 'fund_usage_name', '表示名',],
+                ],
+                'rules'         => [
+                    'fund_usage'      => 'required|integer',
+                    'fund_usage_name' => 'required|min:1',
+                ],
+                'types'         => [
+                    'fund_usage' => 'integer',
+                ],
+                'flags'         => [
+                    'fund_usage'      => 1,
+                    'fund_usage_name' => 1,
+                ],
+                'keys'          => ['fund_usage',],
             ],
         ];
         $this->param = $params;

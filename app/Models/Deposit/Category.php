@@ -1,13 +1,13 @@
 <?php
 
-namespace App;
+namespace App\Models\Deposit;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Subject extends Model
+class Category extends Model
 {
     protected $connection = 'mysql_master';
-    protected $table = 'subject_codes';
+    protected $table = 'deposit_category_codes';
     protected $guarded    = ['id'];
     
 }

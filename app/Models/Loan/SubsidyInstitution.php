@@ -1,13 +1,14 @@
 <?php
 
-namespace App;
+namespace App\Models\Loan;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DepositBankbookType extends Model
+class SubsidyInstitution extends Model
 {
+
     protected $connection = 'mysql_master';
-    protected $table = 'deposit_bankbook_deed_types';
+    protected $table      = 'loan_subsidy_institution_codes';
     protected $guarded    = ['id'];
 
 }

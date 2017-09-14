@@ -1,13 +1,14 @@
 <?php
 
-namespace App;
+namespace App\Models\Loan;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Qualification extends Model
+class Category extends Model
 {
+
     protected $connection = 'mysql_master';
-    protected $table = 'qualification_codes';
+    protected $table      = 'loan_category_codes';
     protected $guarded    = ['id'];
-    
+
 }

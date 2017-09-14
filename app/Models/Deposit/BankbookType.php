@@ -1,13 +1,13 @@
 <?php
 
-namespace App;
+namespace App\Models\Deposit;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Personality extends Model
+class BankbookType extends Model
 {
     protected $connection = 'mysql_master';
-    protected $table = 'personality_codes';
+    protected $table = 'deposit_bankbook_deed_types';
     protected $guarded    = ['id'];
-    
+
 }
