@@ -19,8 +19,8 @@ class CreateZenonDataProcessStatus extends Migration
             $table->increments("id");
             $table->integer("monthly_id")->index();
             $table->integer("zenon_data_csv_file_id")->index();
-            $table->integer("is_exist");
-            $table->integer("is_import");
+            $table->boolean("is_exist");
+            $table->boolean("is_import");
             $table->timestamps("");
         });
     }
