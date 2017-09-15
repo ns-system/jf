@@ -228,8 +228,7 @@ class CopyCsvFileService
     }
 
     public function tempFileErase() {
-        $tmp_file_lists = $this->getCsvFileList($this->directory_path . '/temp');
-
+       
         $tmp_file_lists = glob($this->directory_path . '/temp/*');
         foreach ($tmp_file_lists as $l) {
             unlink($l);
