@@ -42,8 +42,8 @@ class CopyCsvFile extends Command
         $copy_csv_file_service     = new \App\Services\CopyCsvFileService();
         $import_zenon_data_service = new \App\Services\ImportZenonDataService();
         $json_file                 = $import_zenon_data_service->getJsonFile($json_file_path . "/import_config.json");
-        //$accumulation_dir_path     = $json_file["csv_folder_path"];
-        $accumulation_dir_path     = $json_file["accumulation_dir_path"]; //ファイルパスが微妙に異なるので川西のローカル用本番では上のpathを使用
+        $accumulation_dir_path     = $json_file["csv_folder_path"];
+       
         if (!file_exists($accumulation_dir_path))
         {
             //おかしかったらエラー処理
