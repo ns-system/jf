@@ -18,7 +18,7 @@ class CopyCsvFileService
 
     protected $monthly_id;
     protected $directory_path;
-
+    protected $not_exist_json_output_path;
     public function setMonthlyId($monthly_id) {
         $this->monthly_id = $monthly_id;
         return $this;
@@ -26,6 +26,11 @@ class CopyCsvFileService
 
     public function setDirectoryPath($directory_path) {
         $this->directory_path = $directory_path;
+        $this->not_exist_json_output_path = $this->directory_path . "/log/notexist.json";
+           if (!file_exists($this->not_exist_json_output_path))
+        {
+            throw new \Exception("LogFile出力時に存在しないファイルパスが指定されました。（ログファイル出力先：{$this->not_exist_json_output_path}）");
+        }
         return $this;
     }
 
@@ -226,8 +231,8 @@ class CopyCsvFileService
                     $not_exist_file_list[] = $file;
                 }
             }
-            $not_exist_json_output_path = $this->directory_path . "/log/notexist.json"; //本番の時にlog吐く場所に変更
-            $this->outputForJsonFile($not_exist_file_list, $not_exist_json_output_path);
+            
+            $this->outputForJsonFile($not_exist_file_list);
         });
 
         return $this;
@@ -241,15 +246,23 @@ class CopyCsvFileService
         }
     }
 
-    public function outputForJsonFile($array, $json_output_path) {
+    public function outputForJsonFile($array) {
         $data = json_encode($array);
-        if (!file_exists($json_output_path))
-        {
-            throw new \Exception("LogFile出力時に存在しないファイルパスが指定されました。（ログファイル出力先：{$json_output_path}）");
-        }
-        $json_file = fopen($json_output_path, "w+b");
+        $json_file = fopen($this->not_exist_json_output_path, "w+b");
         fwrite($json_file, $data);
         fclose($json_file);
     }
-
+ public function inputCheck($monthly_id,$accumulation_dir_path)
+    {
+         if (!file_exists($accumulation_dir_path))
+        {
+            //おかしかったらエラー処理
+            throw new \Exception("累積先ディレクトリが存在しないようです。（想定：{$accumulation_dir_path}）");
+        }
+        if (!strptime($monthly_id, '%Y%m'))
+        {
+            //おかしかったらエラー処理
+            throw new \Exception("月別IDに誤りがあるようです。（投入された値：{$monthly_id}）");
+        }
+    }
 }
