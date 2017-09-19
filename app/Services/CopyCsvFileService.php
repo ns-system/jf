@@ -18,7 +18,6 @@ class CopyCsvFileService
 
     protected $monthly_id;
     protected $directory_path;
-//    protected $not_exist_json_output_path;
     protected $directorys = [
         'temp'    => 'temp',
         'log'     => 'log',
@@ -36,14 +35,14 @@ class CopyCsvFileService
         $this->directory_path = $directory_path;
         if (!file_exists($this->directory_path))
         {
-            throw new \Exception("存在しないファイルパスが指定されました。（指定：{$this->directory_path}）");
+            throw new \Exception("存在しないファイルパスが指定されました。（マウント先：{$this->directory_path}）");
         }
 //        $this->not_exist_json_output_path = $this->directory_path . "/log/notexist.json";
         foreach ($this->directorys as $d) {
             $tmp_dir = $this->directory_path . '/' . $d;
             if (!file_exists($tmp_dir))
             {
-                throw new \Exception("格納先ファイルパスが存在しません。（ログファイル出力先：{$tmp_dir}）");
+                throw new \Exception("格納先ファイルパスが存在しません。（格納先ファイル：{$tmp_dir}）");
             }
         }
 //        if (!file_exists($this->not_exist_json_output_path))
@@ -69,15 +68,15 @@ class CopyCsvFileService
         $serial                                    = strtotime($monthly_id . '01');
         $last_day                                  = date('t', $serial);
         $before_last_day                           = date("t", strtotime($monthly_id . '01 -1 month'));
-        $before_monthly_id                         = date("Ym", strtotime($monthly_id . '01 -1 month')); // Spell miss
+        $before_monthly_id                         = date("Ym", strtotime($monthly_id . '01 -1 month'));
         $after_monthly_id                          = date("Ym", strtotime($monthly_id . '01 +1 month'));
         $after_last_day                            = date("t", strtotime($monthly_id . '01 +1 month'));
-        $monthly_data_accumulation_dir_path        = $accumulation_dir_path . "/monthly/" . $monthly_id;
-        $daily_data_accumulation_dir_path          = $accumulation_dir_path . "/daily/" . $monthly_id;
-        $after_daily_data_accumulation_dir_path    = $accumulation_dir_path . "/daily/" . $after_monthly_id;
-        $before_daily_data_accumulation_dir_path   = $accumulation_dir_path . "/daily/" . $before_monthly_id;
-        $etcetera_data_accumulation_dir_path       = $accumulation_dir_path . "/exclude_files/" . $monthly_id; // TODO: toste->kawanishi 実サーバーに合わせてね
-        $before_monthly_data_accumulation_dir_path = $accumulation_dir_path . "/monthly/" . $before_monthly_id;
+        $monthly_data_accumulation_dir_path        = $accumulation_dir_path . "/" . $this->directorys['monthly'] . "/" . $monthly_id;
+        $daily_data_accumulation_dir_path          = $accumulation_dir_path . "/" . $this->directorys['daily'] . "/" . $monthly_id;
+        $after_daily_data_accumulation_dir_path    = $accumulation_dir_path . "/" . $this->directorys['daily'] . "/" . $after_monthly_id;
+        $before_daily_data_accumulation_dir_path   = $accumulation_dir_path . "/" . $this->directorys['daily'] . "/" . $before_monthly_id;
+        $etcetera_data_accumulation_dir_path       = $accumulation_dir_path . "/" . $this->directorys['ignore'] . "/" . $monthly_id; // TODO: toste->kawanishi 実サーバーに合わせてね
+        $before_monthly_data_accumulation_dir_path = $accumulation_dir_path . "/" . $this->directorys['monthly'] . "/" . $before_monthly_id;
 
 
 
@@ -106,12 +105,11 @@ class CopyCsvFileService
 
         // last_day使わないならチェーンメソッドにしようぜ。
         return $this;
-//        return $last_day;
     }
 
     public function copyCsvFile() {
         $monthly_id            = $this->monthly_id;
-        $temp_file_path        = $this->directory_path . '/temp'; // TODO: tosite->kawanishi USBじゃないよね．．．kawanishi->toite temp_fileに変えました
+        $temp_file_path        = $this->directory_path . "/" . $this->directorys['temp']; // TODO: tosite->kawanishi USBじゃないよね．．．kawanishi->tosite temp_fileに変えました
         $accumulation_dir_path = $this->directory_path;
         $file_lists            = $this->getCsvFileList($temp_file_path);
 
@@ -124,21 +122,25 @@ class CopyCsvFileService
             {
                 $day          = date('d', strtotime($f['csv_file_set_on']));
                 $monthly_path = date('Ym', strtotime($f['csv_file_set_on']));
-                $dest         = $accumulation_dir_path . "/daily/" . $monthly_path . "/" . $day . "/" . $f['csv_file_name'];
-//                copy($src, $dist);
-            }
-            elseif ($f['cycle'] == 'M')
+                $month_dir    = $accumulation_dir_path . "/" . $this->directorys['daily'] . "/" . $monthly_path;
+                $day_dir      = $month_dir . "/" . $day;
+                $dest         = $day_dir . "/" . $f['csv_file_name'];
+                $this->createDirectory($month_dir);
+                $this->createDirectory($day_dir);
+            } elseif ($f['cycle'] == 'M')
             {
                 $monthly_path = date('Ym', strtotime($f['csv_file_set_on'] . ' -1 month'));
-                $dest         = $accumulation_dir_path . "/monthly/" . $monthly_path . "/" . $f['csv_file_name'];
-//                copy($src, $dist);
-            }
-            else
+                $month_dir    = $accumulation_dir_path . "/" . $this->directorys['monthly'] . "/" . $monthly_path;
+                $dest         = $month_dir . "/" . $f['csv_file_name'];
+                $this->createDirectory($month_dir);
+            } else
             {
-                $dest = $accumulation_dir_path . "/exclude_files/" . $monthly_id . "/" . $f['csv_file_name'];
+                $monthly_path = date('Ym', strtotime($f['csv_file_set_on']));
+                $month_dir    = $accumulation_dir_path . "/" . $this->directorys['ignore'] . "/" . $monthly_path;
+                $dest         = $month_dir . "/" . $f['csv_file_name'];
+                $this->createDirectory($month_dir);
             }
             exec("sudo cp -f -p {$src} {$dest}");
-//            copy($src, $dist);
         }
         return $this;
     }
@@ -157,11 +159,10 @@ class CopyCsvFileService
                 $date      = null;
                 $file_path = $directory_path . '/' . $t;
                 $date_text = mb_substr($t, 14, 8);
-                if (!strptime($date_text, '%Y%m%d'))
+                if (!strptime($date_text, '%Y%m%d')&& mb_strlen($date_text)!==6)
                 {
                     continue;
-                }
-                else
+                } else
                 {
                     $date = date('Y-m-d', strtotime($date_text));
                 }
@@ -199,20 +200,19 @@ class CopyCsvFileService
         $file_lists        = [];
         $ignore_file_lists = [];
         $monthly_id        = $this->monthly_id;
-        $tmp_file_lists    = $this->getCsvFileList($this->directory_path . '/temp');
-//        var_dump($tmp_file_lists);
+        $tmp_file_lists    = $this->getCsvFileList($this->directory_path . "/" . $this->directorys['temp']);
+
         foreach ($tmp_file_lists as $l) {
 
             if ($l['cycle'] == 'M' && date('Ym', strtotime($l['csv_file_set_on'] . ' -1 month')) == $monthly_id)
             {
                 $file_lists[$l['identifier']] = $l;
-            }
-            else
+            } else
             {
                 $ignore_file_lists[] = $l;
             }
         }
-
+        $this->outputForJsonFile($ignore_file_lists, "IgnoreFileList");
 
         \DB::connection('mysql_suisin')->transaction(function() use($file_lists, $monthly_id) {
             $not_exist_file_list = [];
@@ -250,8 +250,7 @@ class CopyCsvFileService
                     $not_exist_file_list[] = $file;
                 }
             }
-
-            $this->outputForJsonFile($not_exist_file_list);
+            $this->outputForJsonFile($not_exist_file_list, "NotExistFileList");
         });
 
         return $this;
@@ -259,15 +258,20 @@ class CopyCsvFileService
 
     public function tempFileErase() {
 
-        $tmp_file_lists = glob($this->directory_path . '/temp/*');
+        $tmp_file_lists = glob($this->directory_path . $this->directorys['temp'] > "/*");
         foreach ($tmp_file_lists as $l) {
             unlink($l);
         }
     }
 
-    public function outputForJsonFile($array) {
-        $data      = json_encode($array);
-        $json_file = fopen($this->not_exist_json_output_path, "w+b");
+    public function outputForJsonFile($array, $file_name) {
+
+        $data             = json_encode($array);
+        $today_time_stamp = date('Ymd_His');
+        $json_output_path = $this->directory_path . "/" . $this->directorys['log'] . "/" . $file_name . $today_time_stamp . ".json";
+        exec("sudo touch {$json_output_path}");
+        exec("sudo chmod 777 {$json_output_path}");
+        $json_file        = fopen($json_output_path, "w+b");
         fwrite($json_file, $data);
         fclose($json_file);
     }
@@ -278,11 +282,13 @@ class CopyCsvFileService
             //おかしかったらエラー処理
             throw new \Exception("累積先ディレクトリが存在しないようです。（想定：{$accumulation_dir_path}）");
         }
-        if (!strptime($monthly_id, '%Y%m'))
+        if (!strptime($monthly_id, '%Y%m')|| mb_strlen($monthly_id)!==6||mb_strlen($monthly_id)!==0)
         {
             //おかしかったらエラー処理
             throw new \Exception("月別IDに誤りがあるようです。（投入された値：{$monthly_id}）");
         }
+  
+        
     }
 
 }
