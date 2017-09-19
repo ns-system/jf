@@ -18,7 +18,15 @@ class CopyCsvFileService
 
     protected $monthly_id;
     protected $directory_path;
-    protected $not_exist_json_output_path;
+//    protected $not_exist_json_output_path;
+    protected $directorys = [
+        'temp'    => 'temp',
+        'log'     => 'log',
+        'monthly' => 'monthly',
+        'daily'   => 'daily',
+        'ignore'  => 'ignore',
+    ];
+
     public function setMonthlyId($monthly_id) {
         $this->monthly_id = $monthly_id;
         return $this;
@@ -26,11 +34,22 @@ class CopyCsvFileService
 
     public function setDirectoryPath($directory_path) {
         $this->directory_path = $directory_path;
-        $this->not_exist_json_output_path = $this->directory_path . "/log/notexist.json";
-           if (!file_exists($this->not_exist_json_output_path))
+        if (!file_exists($this->directory_path))
         {
-            throw new \Exception("LogFile出力時に存在しないファイルパスが指定されました。（ログファイル出力先：{$this->not_exist_json_output_path}）");
+            throw new \Exception("存在しないファイルパスが指定されました。（指定：{$this->directory_path}）");
         }
+//        $this->not_exist_json_output_path = $this->directory_path . "/log/notexist.json";
+        foreach ($this->directorys as $d) {
+            $tmp_dir = $this->directory_path . '/' . $d;
+            if (!file_exists($tmp_dir))
+            {
+                throw new \Exception("格納先ファイルパスが存在しません。（ログファイル出力先：{$tmp_dir}）");
+            }
+        }
+//        if (!file_exists($this->not_exist_json_output_path))
+//        {
+//            throw new \Exception("LogFile出力時に存在しないファイルパスが指定されました。（ログファイル出力先：{$this->not_exist_json_output_path}）");
+//        }
         return $this;
     }
 
@@ -231,7 +250,7 @@ class CopyCsvFileService
                     $not_exist_file_list[] = $file;
                 }
             }
-            
+
             $this->outputForJsonFile($not_exist_file_list);
         });
 
@@ -247,14 +266,14 @@ class CopyCsvFileService
     }
 
     public function outputForJsonFile($array) {
-        $data = json_encode($array);
+        $data      = json_encode($array);
         $json_file = fopen($this->not_exist_json_output_path, "w+b");
         fwrite($json_file, $data);
         fclose($json_file);
     }
- public function inputCheck($monthly_id,$accumulation_dir_path)
-    {
-         if (!file_exists($accumulation_dir_path))
+
+    public function inputCheck($monthly_id, $accumulation_dir_path) {
+        if (!file_exists($accumulation_dir_path))
         {
             //おかしかったらエラー処理
             throw new \Exception("累積先ディレクトリが存在しないようです。（想定：{$accumulation_dir_path}）");
@@ -265,4 +284,5 @@ class CopyCsvFileService
             throw new \Exception("月別IDに誤りがあるようです。（投入された値：{$monthly_id}）");
         }
     }
+
 }
