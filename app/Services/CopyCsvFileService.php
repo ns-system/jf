@@ -32,7 +32,8 @@ class CopyCsvFileService
     private function createDirectory($path) {
         if (!file_exists($path))
         {
-            mkdir($path, 0777, FALSE);
+//            mkdir($path, 0777, FALSE);
+            exec("sudo mkdir -m=777 {$path}");
             return true;
         }
         return false;
@@ -99,18 +100,21 @@ class CopyCsvFileService
             {
                 $day          = date('d', strtotime($f['csv_file_set_on']));
                 $monthly_path = date('Ym', strtotime($f['csv_file_set_on']));
-                $dist         = $accumulation_dir_path . "/daily/" . $monthly_path . "/" . $day . "/" . $f['csv_file_name'];
-                copy($src, $dist);
-            } elseif ($f['cycle'] == 'M')
+                $dest         = $accumulation_dir_path . "/daily/" . $monthly_path . "/" . $day . "/" . $f['csv_file_name'];
+//                copy($src, $dist);
+            }
+            elseif ($f['cycle'] == 'M')
             {
                 $monthly_path = date('Ym', strtotime($f['csv_file_set_on'] . ' -1 month'));
-                $dist         = $accumulation_dir_path . "/monthly/" . $monthly_path . "/" . $f['csv_file_name'];
-                copy($src, $dist);
-            } else
-            {
-                $dist = $accumulation_dir_path . "/exclude_files/" . $monthly_id . "/" . $f['csv_file_name'];
-                copy($src, $dist);
+                $dest         = $accumulation_dir_path . "/monthly/" . $monthly_path . "/" . $f['csv_file_name'];
+//                copy($src, $dist);
             }
+            else
+            {
+                $dest = $accumulation_dir_path . "/exclude_files/" . $monthly_id . "/" . $f['csv_file_name'];
+            }
+            exec("sudo cp -f -p {$src} {$dest}");
+//            copy($src, $dist);
         }
         return $this;
     }
@@ -118,7 +122,7 @@ class CopyCsvFileService
     public function getCsvFileList($directory_path) {
         if (!file_exists($directory_path))
         {
-            throw new \Exception('存在しないファイルパスが指定されました。');
+            throw new \Exception("存在しないファイルパスが指定されました。（指定先：{$directory_path}）");
         }
         $tmp_lists = scandir($directory_path);
         $lists     = [];
@@ -132,7 +136,8 @@ class CopyCsvFileService
                 if (!strptime($date_text, '%Y%m%d'))
                 {
                     continue;
-                } else
+                }
+                else
                 {
                     $date = date('Y-m-d', strtotime($date_text));
                 }
@@ -177,12 +182,13 @@ class CopyCsvFileService
             if ($l['cycle'] == 'M' && date('Ym', strtotime($l['csv_file_set_on'] . ' -1 month')) == $monthly_id)
             {
                 $file_lists[$l['identifier']] = $l;
-            } else
+            }
+            else
             {
                 $ignore_file_lists[] = $l;
             }
         }
-      
+
 
         \DB::connection('mysql_suisin')->transaction(function() use($file_lists, $monthly_id) {
             $not_exist_file_list = [];
@@ -228,7 +234,7 @@ class CopyCsvFileService
     }
 
     public function tempFileErase() {
-       
+
         $tmp_file_lists = glob($this->directory_path . '/temp/*');
         foreach ($tmp_file_lists as $l) {
             unlink($l);
@@ -236,10 +242,10 @@ class CopyCsvFileService
     }
 
     public function outputForJsonFile($array, $json_output_path) {
-        $data      = json_encode($array);
-         if (!file_exists($json_output_path))
+        $data = json_encode($array);
+        if (!file_exists($json_output_path))
         {
-            throw new \Exception('logfile出力時に存在しないファイルパスが指定されました。');
+            throw new \Exception("LogFile出力時に存在しないファイルパスが指定されました。（ログファイル出力先：{$json_output_path}）");
         }
         $json_file = fopen($json_output_path, "w+b");
         fwrite($json_file, $data);
