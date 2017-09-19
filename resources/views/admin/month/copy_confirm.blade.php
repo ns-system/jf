@@ -23,7 +23,7 @@
 
 <div class="text-right" data-spy="affix" style="top: 110px; right: 30px; margin-bottom: 10px;" data-offset-top="120">
     <div class="btn-group">
-        <a href="{{route('admin::super::month::copy', ['id'=>$id])}}" class="btn btn-warning btn-sm">処理開始</a>
+        <a href="{{route('admin::super::month::copy_dispatch', ['id'=>$id])}}" class="btn btn-warning btn-sm" onclick="return confirm('処理を開始してもよろしいですか？');">処理開始</a>
     </div>
 </div>
 

@@ -238,4 +238,13 @@ class ImportZenonDataService
         }
     }
 
+    public function getLastTraded($row) {
+        $date = $row->reference_last_traded_on;
+        if (empty($date) || $date == '0000-00-00')
+        {
+            return $row->last_traded_on;
+        }
+        return $date;
+    }
+
 }

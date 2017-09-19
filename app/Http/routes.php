@@ -60,16 +60,19 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
 
 
             Route::get('/failed/{id}', ['as' => 'failed', 'uses' => 'ProcessStatusController@processFailed']);
-            Route::get('/copy_confirm/{id}', ['as' => 'copy_comfirm', 'uses' => 'ProcessStatusController@copyConfirm']);
 //            Route::get('/copy_confirm/export/{id}', ['as' => 'copy_export',   'uses' => 'ProcessStatusController@exportPreviousProcessCsvList']);
 
 
-            Route::get('/copy/{id}', ['as' => 'copy', 'uses' => 'ProcessStatusController@copy']);
-            Route::any('/copy_processing/{id}', ['as' => 'copying', 'uses' => 'ProcessStatusController@copyAjax']);
-            Route::get('/import_confirm/{id}', ['as' => 'import_confirm', 'uses' => 'ProcessStatusController@importConfirm']);
-            Route::post('/dispatch/{id}', ['as' => 'dispatch', 'uses' => 'ProcessStatusController@dispatchJob']);
-            Route::get('/import/{id}', ['as' => 'import', 'uses' => 'ProcessStatusController@import']);
-            Route::any('/importing/{id}', ['as' => 'importing', 'uses' => 'ProcessStatusController@importAjax']);
+            Route::get('/copy_confirm/{id}',              ['as' => 'copy_confirm',    'uses' => 'ProcessStatusController@copyConfirm']);
+            Route::any('/copy_dispatch/{id}',             ['as' => 'copy_dispatch',   'uses' => 'ProcessStatusController@dispatchCopyJob']);
+            Route::get('/copy/{id}/{job_id}',             ['as' => 'copy',            'uses' => 'ProcessStatusController@copy']);
+
+            Route::get('/import_confirm/{id}/{job_id}',   ['as' => 'import_confirm',  'uses' => 'ProcessStatusController@importConfirm']);
+            Route::post('/import_dispatch/{id}/{job_id}', ['as' => 'import_dispatch', 'uses' => 'ProcessStatusController@dispatchImportJob']);
+            Route::get('/import/{id}/{job_id}',           ['as' => 'import',          'uses' => 'ProcessStatusController@import']);
+
+            Route::any('/importing/{id}/{job_id}',        ['as' => 'importing',      'uses' => 'ProcessStatusController@importAjax']);
+            Route::any('/copying/{id}/{job_id}',          ['as' => 'copying',        'uses' => 'ProcessStatusController@copyAjax']);
         });
         /**
          * Prefix     : /config
@@ -245,7 +248,6 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
 //Route::get('/roster/chief/proxy', 'ChiefController@show');
 //Route::post('/roster/chief/proxy/edit{id?}', 'ChiefController@edit');
 
-Route::get('/queue', 'SampleQueueController@index');
 
 Route::get('/model', function(){
     $t = '\App\Masters\Common\Prefecture';

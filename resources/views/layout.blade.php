@@ -158,34 +158,40 @@
                     var width = $(this).attr('data-size');
                     $(this).css('min-width', width + 'px');
                 });
-            });
 
-            /**
-             * class='btn-group' && data-toggle='buttons'に対して
-             * チェックされたボタンをハイライト表示する関数
-             * class='btn'内のdata-color属性に変えたい色のボタンクラスを与えることで
-             * 好きな色に変更できる(デフォルト値はbtn-primary)
-             */
-            $('.btn-group[data-toggle="buttons"] .btn input:checked').each(function(){
-                var btn = $(this).parent('.btn');
-                var color = $(this).parent('.btn').attr('data-color');
-                console.log(color);
-                if(color == null) color = 'btn-primary';
-                btn.removeClass('btn-default').addClass(color);
-            });
-
-            $('.btn-group[data-toggle="buttons"] .btn').click(function(){
-                var obj = $(this).siblings();
-                obj.each(function(){
-                    var color = $(this).attr('data-color');
+$(document).bind("ajaxSend", function(c, xhr) {
+    $(window).bind( 'beforeunload', function() {
+        alert('abort');
+        xhr.abort();
+    })
+});
+                /**
+                 * class='btn-group' && data-toggle='buttons'に対して
+                 * チェックされたボタンをハイライト表示する関数
+                 * class='btn'内のdata-color属性に変えたい色のボタンクラスを与えることで
+                 * 好きな色に変更できる(デフォルト値はbtn-primary)
+                 */
+                $('.btn-group[data-toggle="buttons"] .btn input:checked').each(function(){
+                    var btn = $(this).parent('.btn');
+                    var color = $(this).parent('.btn').attr('data-color');
+                    console.log(color);
                     if(color == null) color = 'btn-primary';
-                    $(this).removeClass(color).addClass('btn-default');
+                    btn.removeClass('btn-default').addClass(color);
                 });
-                var color = $(this).attr('data-color');
-//                console.log(color);
-                if(color == null) color = 'btn-primary';
 
-                $(this).removeClass('btn-default').addClass(color);
+                $('.btn-group[data-toggle="buttons"] .btn').click(function(){
+                    var obj = $(this).siblings();
+                    obj.each(function(){
+                        var color = $(this).attr('data-color');
+                        if(color == null) color = 'btn-primary';
+                        $(this).removeClass(color).addClass('btn-default');
+                    });
+                    var color = $(this).attr('data-color');
+    //                console.log(color);
+                    if(color == null) color = 'btn-primary';
+
+                    $(this).removeClass('btn-default').addClass(color);
+                });
             });
 
         </script>

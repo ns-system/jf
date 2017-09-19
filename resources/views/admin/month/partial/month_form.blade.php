@@ -41,7 +41,7 @@
 				    <button type="submit" class="btn btn-warning" disabled="" style="min-width: 200px;">公開中</button>
 				    @else
                     <div class="btn-group">
-                        <a href="{{route('admin::super::month::copy', ['id'=>$row->monthly_id])}}" class="btn btn-success" onclick="return confirm('処理を開始してもよろしいですか？');" style="min-width: 100px;">処理する</a>
+                        <a href="{{route('admin::super::month::copy_confirm', ['id'=>$row->monthly_id])}}" class="btn btn-success" {{-- onclick="return confirm('処理を開始してもよろしいですか？');" --}} style="min-width: 100px;">処理する</a>
     				    <button type="submit" class="btn btn-primary" style="min-width: 100px;">公開する</button>
                     </div>
 				    @endif

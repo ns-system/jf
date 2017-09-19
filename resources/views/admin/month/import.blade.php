@@ -108,33 +108,36 @@
 @parent
 <script type="text/javascript">
 var array = JSON.parse('<?php echo json_encode($array); ?>');
-var process_continue = 9999;
+//var process_continue = 9999;
 var timer;
+var tmp_timer;
+var is_continue = true;
 
 $(function(){
     // ajax 通信制御
-    $("body").bind("ajaxSend", function(c, xhr) {
-        $( window ).bind( 'beforeunload', function() {
-            xhr.abort();
-        })
-    });
+    // $("body").bind("ajaxSend", function(c, xhr) {
+    //     $( window ).bind( 'beforeunload', function() {
+    //         xhr.abort();
+    //     })
+    // });
 
     timer = setInterval(function(){
         connectAjax(array);
-        console.log(process_continue);
+//        console.log(process_continue);
     }, 5000);
 
-    setInterval(function(){
-        if(process_continue <= 0){
+    tmp_timer = setInterval(function(){
+        if(is_continue == false){
             clearInterval(timer);
+            console.log('timer');
             // redirect
         }
     }, 5000);
 
-    if(process_continue <= 0){
-        console.log('clear');
-        clearInterval(timer);
-    }
+    // if(process_continue <= 0){
+    //     console.log('clear');
+    //     clearInterval(timer);
+    // }
 });
 
 
@@ -148,13 +151,21 @@ function connectAjax(array){
     $.ajax({
         type     : 'POST',
         data     : {'input' : array},
-        url      : "{{route('admin::super::month::importing', ['id'=>$id])}}",
+        url      : "{{route('admin::super::month::importing', ['id'=>$id, 'job_id'=>$job_id])}}",
         dataType : 'json',
     }).then(
         (rows) => {
-                console.log(rows);
-                editHtml(rows['rows']);
-                process_continue = rows['max_cnt'] - rows['now_cnt'];
+            console.log(rows);
+            var s = rows['status'];
+            console.log(s);
+    //                process_continue = rows['max_cnt'] - rows['now_cnt'];
+            if(s['is_import_end'] == true){
+                clearInterval(timer);
+                clearInterval(tmp_timer);
+                is_continue = false;
+//                console.log('fin');
+            }
+            editHtml(rows['rows']);
         },
         (error) => {
 //            console.log(error);

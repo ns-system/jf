@@ -55,10 +55,10 @@ $(function(){
         redirectTo();
         cnt++;
         if(cnt == 10){
-            location.href = "{{route('admin::super::month::failed')}}";
+//            location.href = "{{route('admin::super::month::failed')}}";
 //            alert();
         }
-    }, 2000);
+    }, 5000);
 });
 
 
@@ -70,18 +70,19 @@ function redirectTo(){
     });
     $.ajax({
         type     : 'POST',
-//        url      : '/admin/super_user/month/copy_processing/201709',
-        url      : "{{route('admin::super::month::copying', ['id'=>$id])}}",
+        url      : "{{route('admin::super::month::copying', ['id'=>$id, 'job_id'=>$job_id])}}",
         dataType : 'json',
     }).then(
         (data) => {
                 console.log(data);
-            if(data['status'] != true){
-//                console.log('still runnning...');
-            }else{
-                console.log('Error');
-//                alert('complete!');
-                location.href = "{{route('admin::super::month::import_confirm', ['id'=>$id])}}";
+            var s = data['status'];
+            if(s['is_copy_end'] == true){
+                // redirect
+                location.href = "{{route('admin::super::month::import_confirm', ['id'=>$id, 'job_id'=>$job_id])}}";
+            }else if(s['is_copy_error'] == true){
+                // Error
+                alert('処理に失敗しました。最初から処理を行ってください。');
+                location.href = "{{route('admin::super::month::failed')}}";
             }
         },
         (error) => {

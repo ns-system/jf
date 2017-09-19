@@ -30,7 +30,7 @@
             <h2>CSVファイルコピー処理<small> - 月次処理</small></h2>
         </div>
 
-<form method="POST" action="{{route('admin::super::month::dispatch', ['id'=>$id])}}">
+<form method="POST" action="{{route('admin::super::month::import_dispatch', ['id'=>$id, 'job_id'=>$job_id])}}">
 <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <div class="text-right" data-spy="affix" data-offset-top="130" style="margin-bottom: 10px; top: 110px; right: 135px;">
             <div style="margin-bottom: 10px;">
