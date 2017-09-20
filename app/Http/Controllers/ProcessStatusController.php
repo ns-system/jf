@@ -292,9 +292,29 @@ class ProcessStatusController extends Controller
     }
 
     public function exportNothingList($id) {
-        $ignore    = $this->json_service->getJsonFile($this->path . "/log/{$id}_ignore_file_list.json");
-        $not_exist = $this->json_service->getJsonFile($this->path . "/log/{$id}_not_exist_file_list.json");
-        $lists     = [];
+        try {
+            $ignore = $this->json_service->getJsonFile($this->path . "/log/{$id}_ignore_file_list.json");
+        } catch (\Exception $exc) {
+            $ignore = [];
+        }
+        try {
+            $not_exist = $this->json_service->getJsonFile($this->path . "/log/{$id}_not_exist_file_list.json");
+        } catch (\Exception $exc) {
+            $not_exist = [];
+        }
+
+        $lists = [
+            [
+                'CSVファイルパス'   => '',
+                'CSVファイル名'    => '',
+                'CSVファイル基準日'  => '',
+                '識別子'         => '',
+                'ファイルサイズ(kB)' => '',
+                'ダウンロード日時'    => '',
+                '区分'          => '',
+                '除外された理由'     => '',
+            ]
+        ];
 
         foreach ($ignore as $l) {
             $lists[] = [
