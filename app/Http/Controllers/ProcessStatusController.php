@@ -2,24 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\Suisin\MonthlyImportForm;
 use App\Http\Controllers\Controller;
 use App\Services\ProcessStatusService;
+use App\Services\ImportZenonDataService;
 use App\Services\CopyCsvFileService;
 
 class ProcessStatusController extends Controller
 {
 
     protected $service;
+    protected $json_service;
+    protected $path;
 
     public function __construct() {
-        $this->service = new ProcessStatusService();
+        $this->service      = new ProcessStatusService();
+        $obj                = new ImportZenonDataService();
+        $this->json_service = $obj;
+        $json               = $obj->getJsonFile(config_path() . '/import_config.json');
+        $this->path         = $json['csv_folder_path'];
     }
 
     public function index() {
-        $rows = \App\Month::orderBy('monthly_id', 'desc')->paginate(25);
-
+        $rows   = \App\Month::orderBy('monthly_id', 'desc')->paginate(25);
         $max    = \App\Month::max('monthly_id');
         $months = [];
         for ($i = -3; $i < 3; $i++) {
@@ -96,7 +101,6 @@ class ProcessStatusController extends Controller
         {
             $params['warn_message'] = "指定した条件ではデータが見つかりませんでした。";
         }
-
         return view('admin.month.status', ['rows' => $rows, 'id' => $id, 'parameters' => $params, 'count' => $count])->with($params);
     }
 
@@ -119,7 +123,6 @@ class ProcessStatusController extends Controller
     }
 
     public function copy($id, $job_id) {
-        // TODO: copy queue
         return view('admin.month.copy', ['id' => $id, 'job_id' => $job_id]);
     }
 
@@ -144,7 +147,6 @@ class ProcessStatusController extends Controller
                         ->count()
                 ;
             }
-
             $counts[$f->id] = $cnt;
         }
         return view('admin.month.import_confirm', ['files' => $files, 'id' => $id, 'job_id' => $job_id, 'counts' => $counts]);
@@ -213,24 +215,13 @@ class ProcessStatusController extends Controller
     }
 
     public function importAjax($id, $job_id) {
-
-        $in   = \Input::only('input')['input'];
-        $rows = $this->service->getProcessRows($id, $in)
-                ->select(\DB::raw('*, zenon_data_monthly_process_status.id as key_id'))
-                ->get()
-                ;
-//        var_dump($rows);
-//        foreach ($rows as $r) {
-//            var_dump($r);
-//        }
-//        exit();
-
+        $in      = \Input::only('input')['input'];
+        $rows    = $this->service->getProcessRows($id, $in)->select(\DB::raw('*, zenon_data_monthly_process_status.id as key_id'))->get();
         $max_cnt = $rows->count();
         $now_cnt = $this->service->getProcessRows($id, $in)->where('is_post_process_end', '=', true)->count();
 
         $status = $this->editJob($job_id);
-
-        $arr = [];
+        $arr    = [];
         foreach ($rows as $r) {
             $s               = (($r->process_started_at == '0000-00-00 00:00:00') ? '-' : date('G:i:s', strtotime($r->process_started_at)));
             $e               = (($r->process_ended_at == '0000-00-00 00:00:00') ? '-' : date('G:i:s', strtotime($r->process_ended_at)));
@@ -248,15 +239,92 @@ class ProcessStatusController extends Controller
                 'executed_row_count'    => $r->executed_row_count,
             ];
         }
-
         $param = [
             'rows'    => $arr,
             'max_cnt' => $max_cnt,
             'now_cnt' => $now_cnt,
             'status'  => $status,
         ];
-
         return response()->json($param, 200, [], JSON_UNESCAPED_UNICODE);
+    }
+
+    public function exportProcessList($id) {
+        $rows  = $this->service->setRows($id)
+                ->getRows()
+//                ->where('is_import', '=', true)
+                ->get()
+//                ->toArray()
+        ;
+        $lists = [];
+        foreach ($rows as $r) {
+            $l       = [
+                '月別ID'        => $r->monthly_id,
+                '全オンフォーマットNo' => $r->zenon_format_id,
+                '全オンデータ区分'    => $r->data_type_name,
+                '全オンデータ名'     => $r->zenon_data_name,
+                '識別子'         => $r->identifier,
+                'CSVファイル状態'   => ($r->is_exist) ? 'あり' : 'なし',
+                '処理状態'        => ($r->is_import) ? '処理済み' : '未処理',
+                '処理対象'        => ($r->is_process) ? '対象' : '対象外',
+                '累積'          => ($r->is_cumulative) ? 'する' : 'しない',
+                '口座変換'        => ($r->is_account_convert) ? 'する' : 'しない',
+                '分割'          => ($r->is_split) ? 'する' : 'しない',
+                'CSVファイル名'    => $r->csv_file_name,
+                'ファイルサイズ(kB)' => number_format($r->file_kb_size),
+                'CSVファイル基準日'  => (empty($r->csv_file_set_on) || $r->csv_file_set_on == '0000-00-00') ? '' : $r->csv_file_set_on,
+                'データ件数'       => number_format($r->row_count),
+                '処理開始時間'      => (empty($r->process_started_at) || $r->process_started_at == '0000-00-00 00:00:00') ? '' : $r->process_started_at,
+                '処理終了時間'      => (empty($r->process_ended_at) || $r->process_ended_at == '0000-00-00 00:00:00') ? '' : $r->process_ended_at,
+                'テーブル名'       => $r->table_name,
+                'データ開始位置'     => $r->first_column_position,
+                'データ終了位置'     => $r->last_column_position,
+                'データ長'        => $r->column_length,
+                '目安還元日'       => $r->reference_return_date,
+            ];
+            $lists[] = $l;
+        }
+        $headers   = array_keys($l);
+//        var_dump($headers);
+//        var_dump($lists);
+        $obj       = new \App\Services\CsvService();
+        $file_name = "{$id}_月次データ処理リスト_" . date('Ymd_His') . '.csv';
+        return $obj->exportCsv($lists, $file_name, $headers);
+    }
+
+    public function exportNothingList($id) {
+        $ignore    = $this->json_service->getJsonFile($this->path . "/log/{$id}_ignore_file_list.json");
+        $not_exist = $this->json_service->getJsonFile($this->path . "/log/{$id}_not_exist_file_list.json");
+        $lists     = [];
+
+        foreach ($ignore as $l) {
+            $lists[] = [
+                'CSVファイルパス'   => $l['destination'],
+                'CSVファイル名'    => $l['csv_file_name'],
+                'CSVファイル基準日'  => $l['csv_file_set_on'],
+                '識別子'         => $l['identifier'],
+                'ファイルサイズ(kB)' => number_format($l['kb_size']),
+                'ダウンロード日時'    => date('Y-m-d H:i:s', (int) $l['file_create_time']),
+                '区分'          => '処理対象外',
+                '除外された理由'     => "処理サイクルが月次以外であるか、指定した月のデータではないようです。（指定月：{$id}）",
+            ];
+        }
+
+        foreach ($not_exist as $l) {
+            $lists[] = [
+                'CSVファイルパス'   => $l['destination'],
+                'CSVファイル名'    => $l['csv_file_name'],
+                'CSVファイル基準日'  => $l['csv_file_set_on'],
+                '識別子'         => $l['identifier'],
+                'ファイルサイズ(kB)' => number_format($l['kb_size']),
+                'ダウンロード日時'    => date('Y-m-d H:i:s', (int) $l['file_create_time']),
+                '区分'          => '設定ファイルなし',
+                '除外された理由'     => "データベースに登録されていない種類の還元データです。",
+            ];
+        }
+        $headers   = array_keys($lists[0]);
+        $obj       = new \App\Services\CsvService();
+        $file_name = "{$id}_月次データ処理対象外リスト_" . date('Ymd_His') . '.csv';
+        return $obj->exportCsv($lists, $file_name, $headers);
     }
 
 }

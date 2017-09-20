@@ -81,6 +81,12 @@
             .pagination{ margin: 0; }
 
             .progress{ background: #ddd; margin-bottom: 0;}
+
+            .btn-success{ border-color: #00a383; }
+            .btn-primary{ border-color: #132537; }
+            .btn-danger{ border-color: #ce3323; }
+            .btn-warning{ border-color: #da8300; }
+            .btn-info{ border-color: #1b7fc2; }
         </style>
     </head>
     <body class="no-thank-yu">

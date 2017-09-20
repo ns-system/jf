@@ -70,15 +70,15 @@
 			</td>
 
 			<td>
-				<p data-toggle="tooltip" title="CSVファイルが存在する場合、緑色で表示されます。">
+				<p>
 					@if($row->is_exist) <span class="label label-success" style="min-width: 100px;">ファイル</span>
 					@else               <span class="label label-default" style="min-width: 100px;">ファイル</span> @endif
 				</p>
-                <p data-toggle="tooltip" title="CSVファイルが処理される場合、緑色で表示されます。">
+                <p>
                     @if($row->is_process) <span class="label label-success" style="min-width: 100px;">処理対象</span>
                     @else                 <span class="label label-default" style="min-width: 100px;">処理対象</span> @endif
                 </p>
-				<p data-toggle="tooltip" title="CSVファイルが処理された場合、緑色で表示されます。">
+				<p>
 					@if($row->is_import) <span class="label label-success" style="min-width: 100px;">処理</span>
 					@else                <span class="label label-default" style="min-width: 100px;">処理</span> @endif
 				</p>

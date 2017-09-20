@@ -39,6 +39,10 @@
         </div>
     </div>
 
+    <div class="text-right" style="margin-bottom: 10px; display: none;">
+        <a href="{{route('admin::super::month::status', ['id'=>$id])}}" class="btn btn-success btn-sm">処理結果を確認する</a>
+    </div>
+
 <table class="table table-hover table-striped table-small va-middle">
     <thead>
         <tr class="bg-primary">
