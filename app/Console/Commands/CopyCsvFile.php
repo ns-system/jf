@@ -19,7 +19,7 @@ class CopyCsvFile extends Command
      *
      * @var string
      */
-    protected $description = 'Copy CSV file from USB';
+    protected $description = 'Copy CSV file from temporary save file';
 
     /**
      * Create a new command instance.
@@ -49,8 +49,8 @@ class CopyCsvFile extends Command
             //おかしかったらエラー処理
             throw new \Exception("累積先ディレクトリが存在しないようです。（想定：{$accumulation_dir_path}）");
         }
-        if (!strptime($monthly_id, '%Y%m'))
-        {
+        if (!strptime($monthly_id, '%Y%m')|| mb_strlen($monthly_id)!==6||!empty(strptime($monthly_id, '%Y%m')["unparsed"]))
+        {            var_dump(strptime($monthly_id, '%Y%m'));
             //おかしかったらエラー処理
             throw new \Exception("月別IDに誤りがあるようです。（投入された値：{$monthly_id}）");
         }
