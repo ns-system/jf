@@ -33,16 +33,16 @@
 
 			<td><small>{{date('Y年n月', strtotime($row->monthly_id.'01'))}}1日 ～ {{date('Y年n月t日', strtotime($row->monthly_id.'01'))}}</small></td>
 			<td>
-				<form class="form-horizontal" role="form" method="POST" action="{{route('admin::super::month::publish',['id'=>$row->id])}}">
+				<form class="form-horizontal" role="form" method="POST" action="{{route('admin::super::month::publish',['id'=>$row->id])}}" style="margin-bottom: 0;">
 				    {{-- CSRF対策--}}
 				    <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 				    @if($row->is_current == true)
-				    <button type="submit" class="btn btn-warning" disabled="" style="min-width: 200px;">公開中</button>
+				    <button type="submit" class="btn btn-warning btn-sm" disabled="" style="min-width: 200px;">公開中</button>
 				    @else
                     <div class="btn-group">
-                        <a href="{{route('admin::super::month::copy_confirm', ['id'=>$row->monthly_id])}}" class="btn btn-success" {{-- onclick="return confirm('処理を開始してもよろしいですか？');" --}} style="min-width: 100px;">処理する</a>
-    				    <button type="submit" class="btn btn-primary" style="min-width: 100px;">公開する</button>
+                        <a href="{{route('admin::super::month::copy_confirm', ['id'=>$row->monthly_id])}}" class="btn btn-success btn-sm" style="min-width: 100px;">処理する</a>
+    				    <button type="submit" class="btn btn-primary btn-sm" style="min-width: 100px;">公開する</button>
                     </div>
 				    @endif
 

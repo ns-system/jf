@@ -33,6 +33,7 @@
 <div class="col-md-10 col-md-offset-1">
     <div class="container-fluid">
         @include('partial.alert')
+        @include('admin.month.partial.breadcrumbs')
         <div class="border-bottom">
             <h2>データベース セットアップ処理<small> - {{$rows->count()}}件</small></h2>
         </div>
@@ -41,40 +42,49 @@
 <table class="table table-hover table-striped table-small va-middle">
     <thead>
         <tr class="bg-primary">
-            <th width="5%">No</th>
-            <th width="5%"></th>
+            <th width="4%">No</th>
+            <th width="5%">事前</th>
+            <th width="5%">DB</th>
             <th width="30%">データ名</th>
-            <th width="5%">処理区分</th>
-            <th width="35%"><p>事前チェック</p><p>DBセット処理</p></th>
+            <th width="6%">処理区分</th>
+            <th width="30%"><p>事前チェック</p><p>DBセット処理</p></th>
             <th width="10%">データ件数</th>
             <th width="10%">処理時刻</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($rows->get() as $i => $r)
+        <?php $array = []; ?>
+        @foreach($rows as $i => $r)
         <tr>
+
             <th class="bg-primary">{{$i + 1}}</th>
             <td>
                 <span class="text-success">
-                    <span class="glyphicon" aria-hidden="true" id="process_{{$r->key_id}}" style="font-size: 24px;"></span>
+                    <span class="glyphicon" aria-hidden="true" id="pre_process_{{$r->key_id}}" style="font-size: 24px;"></span>
+                </span>
+            </td>
+            <td>
+                <span class="text-success">
+                    <span class="glyphicon" aria-hidden="true" id="post_process_{{$r->key_id}}" style="font-size: 24px;"></span>
                 </span>
             </td>
             <td class="text-left">
                 <p>{{$r->zenon_format_id}}：{{$r->zenon_data_name}}</p>
-                <p>{{$r->database_name}}.{{$r->table_name}}</p>
+                <p>{{$r->csv_file_name}}</p>
+                <p>@if(!empty($r->table_name)) {{$r->database_name}}.{{$r->table_name}} @endif</p>
             </td>
             <td>
                 <p>
-                    @if($r->is_cumulative)      <label class="label label-info" style="min-width: 100px;">累積する</label>{{-- 
-                    @else                       <label class="label label-default" style="min-width: 100px;">累積しない</label> --}} @endif
+                    @if($r->is_cumulative)      <label class="label label-info"   >累積</label>
+                    @else                       <label class="label label-default">累積</label> @endif
                 </p>
                 <p>
-                    @if($r->is_split)           <label class="label label-info" style="min-width: 100px;">分割する</label>{{-- 
-                    @else                       <label class="label label-default" style="min-width: 100px;">分割しない</label>  --}} @endif
+                    @if($r->is_split)           <label class="label label-info"   >分割</label>
+                    @else                       <label class="label label-default">分割</label>  @endif
                 </p>
                 <p>
-                    @if($r->is_account_convert) <label class="label label-info" style="min-width: 100px;">変換する</label>{{-- 
-                    @else                       <label class="label label-default" style="min-width: 100px;">変換しない</label> --}} @endif
+                    @if($r->is_account_convert) <label class="label label-info"   >変換</label>
+                    @else                       <label class="label label-default">変換</label> @endif
                 </p>
             </td>
             <td>
@@ -86,7 +96,7 @@
 
             </td>
 
-            <td>
+            <td class="text-right">
                 <p><span id="executed_row_count_{{$r->key_id}}">0</span>件</p>
                 <p><span id="row_count_{{$r->key_id}}">0</span>件</p>
             </td>
@@ -114,13 +124,6 @@ var tmp_timer;
 var is_continue = true;
 
 $(function(){
-    // ajax 通信制御
-    // $("body").bind("ajaxSend", function(c, xhr) {
-    //     $( window ).bind( 'beforeunload', function() {
-    //         xhr.abort();
-    //     })
-    // });
-
     timer = setInterval(function(){
         connectAjax(array);
 //        console.log(process_continue);
@@ -181,11 +184,20 @@ function editHtml(rows){
 
         var r = rows[id];
         // Progress bar
-        if(r['is_pre_process'] == true){
-            $('#process_'+id).addClass('glyphicon-repeat rotate');
+        if(r['is_pre_process_end'] == true){
+            $('#pre_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-ok');
+        }else if(r['is_pre_process_start'] == true){
+            $('#pre_process_'+id).addClass('glyphicon-repeat rotate');
         }
 
-        if(r['is_post_process'] == true){
+        if(r['is_post_process_end'] == true){
+            $('#post_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-ok');
+        }else if(r['is_post_process_start'] == true){
+            $('#post_process_'+id).addClass('glyphicon-repeat rotate');
+        }
+
+
+        if(r['is_post_process_start'] == true){
             var now = r['executed_row_count'];
             var max = r['row_count'];
             var p = Math.round((now / (max+1)) * 100);
@@ -201,13 +213,9 @@ function editHtml(rows){
             }
         }
 
-        if(r['is_process_end'] == true){
-            $('#process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-ok');
-        }
-
         // Rowカウンタ
-        $('#row_count_'+id).html(r['row_count']);
-        $('#executed_row_count_'+id).html(r['executed_row_count']);
+        $('#row_count_'+id).html(r['row_count'].toLocaleString());
+        $('#executed_row_count_'+id).html(r['executed_row_count'].toLocaleString());
         $('#start_time_'+id).html(r['process_started_at']);
         $('#end_time_'+id).html(r['process_ended_at']);
 

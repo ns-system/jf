@@ -3,50 +3,45 @@
 @else
 <table class="table va-middle table-small">
 	<thead>
-		<tr>
-			<th class="bg-primary">
+		<tr class="bg-primary">
+            <th>No</th>
+			<th>
 				<p>区分</p>
 				<p>データ名</p>
 			</th>
-			<th class="bg-primary">
+			<th>
 				<p>CSVファイル名</p>
-				<p>MySQL内レコード件数</p>
-{{-- 				<p>データ名</p> --}}
+				<p>DB内レコード件数</p>
+				<p>件数</p>
 			</th>
-			<th class="bg-primary">
-				<p>DB名</p>
-				<p>テーブル名</p>
-			</th>
-
-			<th class="bg-primary">
+			<th>
 				<p>サイクル</p>
 				<p>目安還元日</p>
 			</th>
 
-			<th class="bg-primary">
-				<p>処理状態</p>
-				<p>処理結果</p>
+			<th>
+				<p>状態</p>
 			</th>
-			<th class="bg-primary">
-				<p>累積</p>
-				<p>分割</p>
+			<th>
+				<p>設定情報</p>
 			</th>
-			<th class="bg-primary">処理時刻</th>
+			<th>処理時刻</th>
 
 		</tr>
 	</thead>
 	<tbody>
-	@foreach($rows as $row)
+	@foreach($rows as $i => $row)
 		<tr>
+            <th class="bg-primary">{{$i + 1}}</th>
 			<td class="text-left">
 				<p>{{$row->data_type_name or '登録されていません'}}</p>
-				<p>{{$row->zenon_data_name}}</p>
+				<p>{{$row-> zenon_data_csv_file_id}} ： {{$row->zenon_data_name}}</p>
 			</td>
 			<td class="text-left">
-				<p>{{$row->csv_file_name}}</p>
+				<p>@if(!empty($row->csv_file_name)) {{$row->csv_file_name}} @else <small>CSVファイルが存在しません</small> @endif</p>
+                <p>@if($row->table_name) {{$row->table_name}} @else <small>テーブルが登録されていません</small> @endif</p>
+
 				<p>
-					@if($row->is_exist) <span class="label label-primary">あり</span>
-					@else <span class="label label-danger">なし</span> @endif
 				@if(isset($row->database_name) && isset($row->table_name))
 					<?php
 					try {
@@ -71,38 +66,38 @@
 				@endif</p>
 			</td>
 			<td class="text-left">
-				<p>{{$row->database_name or 'DBが登録されていません'}}</p>
-				<p>{{$row->table_name or 'テーブルが登録されていません'}}</p>
-			</td>
-			<td class="text-left">
-				<p>
-					@if($row->is_monthly) <span class="label label-info">月次</span>
-					@else <span class="label label-success">日次</span> @endif
-				</p>
-				<p>{{$row->reference_return_date or '登録されていません'}}</p>
+				<p><span class="label label-info">{{$row->cycle}}</span> {{$row->reference_return_date or '登録されていません'}}</p>
 			</td>
 
-			<td class="text-left">
-				<p>
-					@if($row->is_process) <strong class="text-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 処理対象</strong>
-					@else                 <strong class="text-danger" ><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> 処理対象外</strong> @endif
+			<td>
+				<p data-toggle="tooltip" title="CSVファイルが存在する場合、緑色で表示されます。">
+					@if($row->is_exist) <span class="label label-success" style="min-width: 100px;">ファイル</span>
+					@else               <span class="label label-default" style="min-width: 100px;">ファイル</span> @endif
 				</p>
-				<p>
-					@if($row->is_import) <strong class="text-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 完了</strong>
-					@else                <strong class="text-danger" ><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> 未処理</strong> @endif
-				</p>
-			</td>
-			<td class="text-left">
-				<p>
-					@if($row->is_cumulative) <strong class="text-success"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 累積する</strong>
-					@else                    <strong class="text-warning"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> 累積しない</strong> @endif
-				</p>
-				<p>
-					@if($row->is_split) <strong class="text-success"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 分割する</strong>
-					@else               <strong class="text-warning"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span> 分割しない</strong> @endif
+                <p data-toggle="tooltip" title="CSVファイルが処理される場合、緑色で表示されます。">
+                    @if($row->is_process) <span class="label label-success" style="min-width: 100px;">処理対象</span>
+                    @else                 <span class="label label-default" style="min-width: 100px;">処理対象</span> @endif
+                </p>
+				<p data-toggle="tooltip" title="CSVファイルが処理された場合、緑色で表示されます。">
+					@if($row->is_import) <span class="label label-success" style="min-width: 100px;">処理</span>
+					@else                <span class="label label-default" style="min-width: 100px;">処理</span> @endif
 				</p>
 			</td>
-			<td>{{date('n月j日 H:i:s', strtotime($row->updated_at))}}</td>
+			<td>
+				<p>
+					@if($row->is_cumulative) <span class="label label-info">累積</span>
+					@else                    <span class="label label-default">累積</span> @endif
+				</p>
+				<p>
+					@if($row->is_split) <span class="label label-info">分割</span>
+					@else               <span class="label label-default">分割</span> @endif
+				</p>
+                <p>
+                    @if($row->is_account_convert) <span class="label label-info">変換</span>
+                    @else                         <span class="label label-default">変換</span> @endif
+                </p>
+			</td>
+			<td>@if($row->is_import) {{date('n月j日 H:i:s', strtotime($row->process_updated_at))}} @else - @endif</td>
 		</tr>
 	@endforeach
 	</tbody>
