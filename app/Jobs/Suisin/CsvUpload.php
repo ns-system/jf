@@ -60,12 +60,14 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             $rows = $obj->monthlyStatus($ym, $processes)->get();
             foreach ($rows as $r) {
                 echo "  -----> {$r->csv_file_name}" . PHP_EOL;
-
-                $csv_file          = $obj->setCsvFile($file_path . '/' . $r->csv_file_name)->getCsvFile();
-                $r->is_pre_process = (int) true;
+                $r->is_pre_process_start = true;
                 $r->save();
+
+                $csv_file = $obj->setCsvFile($file_path . '/' . $r->csv_file_name)->getCsvFile();
                 $this->csvCheck($csv_file, $r);
-                $r->row_count      = $obj->getMaxRow();
+
+                $r->row_count          = $obj->getMaxRow();
+                $r->is_pre_process_end = true;
                 $r->save();
             }
 
@@ -74,17 +76,18 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             // upload-to-db
             \DB::connection('mysql_zenon')->transaction(function() use($rows, $ym, $file_path, $obj) {
                 foreach ($rows as $r) {
-                    $r->is_post_process    = (int) true;
-                    $r->process_started_at = date('Y-m-d H:i:s');
+                    $r->is_post_process_start = true;
+                    $r->process_started_at    = date('Y-m-d H:i:s');
                     $r->save();
                     echo "  -----> {$r->csv_file_name}" . PHP_EOL;
 
                     $csv = $obj->setCsvFile($file_path . '/' . $r->csv_file_name)->getCsvFile();
                     $obj->uploadToDatabase($r, $csv, $ym);
 
-                    $r->is_import        = true;
-                    $r->is_process_end   = true;
-                    $r->process_ended_at = date('Y-m-d H:i:s');
+                    $r->is_import           = true;
+                    $r->is_post_process_end = true;
+//                    $r->is_process_end      = true;
+                    $r->process_ended_at    = date('Y-m-d H:i:s');
                     $r->save();
                 }
             });

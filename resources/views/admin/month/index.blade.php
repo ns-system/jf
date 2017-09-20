@@ -56,7 +56,7 @@
             </div>
             <div class="modal-footer">
                 <div class="col-md-10 col-md-offset-1">
-                <button type="submit" class="btn btn-warning">新規IDを生成する</button>
+                <button type="submit" class="btn btn-warning btn-sm">新規IDを生成する</button>
                 </div>
             </div>
         </div>

@@ -23,9 +23,11 @@
 
 
 @section('content')
-<div class="col-md-8 col-md-offset-2">
+<div class="col-md-10 col-md-offset-1">
     <div class="container-fluid">
         @include('partial.alert')
+        @include('admin.month.partial.breadcrumbs')
+
         <div class="border-bottom">
             <h2>CSVファイルコピー処理</h2>
         </div>

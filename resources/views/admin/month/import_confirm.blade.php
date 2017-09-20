@@ -13,40 +13,96 @@
 @section('brand')
 @endsection
 
-{{-- @section('sidebar')
+@section('sidebar')
 <div class="col-md-2">
-    @include('admin.sidebar.sidebar')
+<div data-spy="affix" data-offset-top="10" style="margin-bottom: 10px; top: 110px; left: 15px; min-width: 200px;">
+    <div class="nav nav-pills nav-stacked list-group">
+        <p role="presentation" class="list-group-item collapse bg-primary-important" style="color: #fff;">メニュー</p>
+
+            <a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#filter"><span class="caret"></span> 絞<small>り込み</small></a>
+            <span></span>
+            <div class="collapse" id="filter">
+                <a role="presentation"
+                    class="list-group-item collapse list-second"
+                    href="#"
+                    onclick="return false;"
+                    id="process"
+                >処理対象のみ</a>
+
+                <a role="presentation"
+                    class="list-group-item collapse list-second"
+                    href="#"
+                    onclick="return false;"
+                    id="reset"
+                >絞り込み解除</a>
+
+                <a role="presentation"
+                    class="list-group-item collapse list-second"
+                    href="#"
+                    id="more"
+                    onclick="return false;"
+                >もっと見る</a>
+            <span></span>
+        </div><span class="list-group-item collapse list-divider"></span>
+
+        <a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#change"><span class="caret"></span> チ<small>ェック状態</small></a>
+        <span></span>
+        <div class="collapse" id="change">
+            <a role="presentation"
+                class="list-group-item collapse list-second"
+                href="#"
+                onclick="return false;"
+                id="check"
+            >全てにチェック</a>
+
+            <a role="presentation"
+                class="list-group-item collapse list-second"
+                href="#"
+                onclick="return false;"
+                id="uncheck"
+            >チェックを外す</a>
+        <span></span>
+        </div><span class="list-group-item collapse list-divider"></span>
+        
+        <a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#list"><span class="caret"></span> リ<small>スト出力</small></a>
+        <span></span>
+        <div class="collapse" id="list">
+            <a role="presentation"
+                class="list-group-item collapse list-second"
+                href="#"
+                onclick="return false;"
+                id="check"
+            >全てにチェック</a>
+
+            <a role="presentation"
+                class="list-group-item collapse list-second"
+                href="#"
+                onclick="return false;"
+                id="uncheck"
+            >チェックを外す</a>
+        <span></span>
+        </div>
+    </div>
 </div>
-@endsection --}}
+</div>
+@endsection
 
 <div style="margin-top: 100px;"></div>
 
 
 @section('content')
-<div class="col-md-10 col-md-offset-1">
+<div class="col-md-10">
     <div class="container-fluid">
         @include('partial.alert')
+        @include('admin.month.partial.breadcrumbs')
         <div class="border-bottom">
             <h2>CSVファイルコピー処理<small> - 月次処理</small></h2>
         </div>
 
 <form method="POST" action="{{route('admin::super::month::import_dispatch', ['id'=>$id, 'job_id'=>$job_id])}}">
 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-        <div class="text-right" data-spy="affix" data-offset-top="130" style="margin-bottom: 10px; top: 110px; right: 135px;">
-            <div style="margin-bottom: 10px;">
-                <div class="btn-group">
-                    <button type="button" id="process" class="btn btn-sm btn-primary" style="min-width: 115px;">処理対象のみ</button>
-                    <button type="button" id="reset"   class="btn btn-sm btn-warning" style="min-width: 115px;">条件リセット</button>
-                    <button type="button" id="more"    class="btn btn-sm btn-success" style="min-width: 115px;">もっと見る</button>
-                </div>
-            </div>
-            <div>
-                <div class="btn-group">
-                    <button type="button" id="check"   class="btn btn-sm btn-primary" style="min-width: 115px;">全てにチェック</button>
-                    <button type="button" id="uncheck" class="btn btn-sm btn-warning" style="min-width: 115px;">チェックを外す</button>
-                    <button type="submit"              class="btn btn-sm btn-success" style="min-width: 115px;" onclick="return validateCheck();">処理を開始する</button>
-            </div>
-            </div>
+        <div class="text-right" data-spy="affix" data-offset-top="130" style="margin-bottom: 10px; top: 110px; right: 25px;">
+            <button type="submit"              class="btn btn-sm btn-success" style="min-width: 115px;" onclick="return validateCheck();">処理を開始する</button>
         </div>
 
 
@@ -55,12 +111,12 @@
         <tr class="bg-primary">
             <th>No</th>
             <th>処理</th>
-            <th>処理対象</th>
-            <th>還元データ名　CSVファイル名</th>
+            <th>還元データ名／CSVファイル名</th>
             <th>還元日</th>
-            <th>CSVファイル　処理状態</th>
+            <th>状態</th>
+            <th>データ件数</th>
             <th>目安還元日</th>
-            <th>累積　分割　口座変換</th>
+            <th>設定情報</th>
         </tr>
     </thead>
 
@@ -68,8 +124,8 @@
     @foreach($files as $i => $f)
         <tr
             class="display"
-            @if($i < 25) data-display="1"
-            @else        data-display="0" @endif
+            @if($i < 25) data-display="true"
+            @else        data-display="false" @endif
 
             data-process="{{$f->is_process}}"
         >
@@ -80,52 +136,51 @@
                     style="width: 18px;height: 18px;vertical-align: middle; margin:0; margin-bottom: 5px;"
                     name="process[{{$f->key_id}}]"
                     @if($f->is_process)
+                        data-toggle="tooltip"
+                        data-placement="right"
+                        title="すでに当月データが累積されていた場合、データが二重で累積される恐れがあります。"
                         @if(!$f->is_import) checked @endif
                     @else disabled @endif
                 >
                 <input type="hidden" name="id[{{$f->key_id}}]" value="{{$f->key_id}}">
             </td>
-            <td class="va-middle">
-                
-                <p>
-                    @if($f->is_process) <label class="label label-success" style="min-width: 100px;">処理対象</label>
-                    @else               <label class="label label-default" style="min-width: 100px;">処理対象外</label> @endif</p>
-                </td>
-            </td>
-            <td>
-                <p>{{$f->zenon_format_id}}</p>
-                <p>{{$f->zenon_data_name}}</p>
+            <td class="text-left">
+                <p>{{$f->zenon_format_id}}：{{$f->zenon_data_name}}</p>
                 <P>{{$f->csv_file_name}}</P>
             </td>
             <td class="va-middle">
-                <p>{{$f->csv_file_set_on}}</p>
+                <p>@if(!empty($f->csv_file_set_on) && $f->csv_file_set_on != '0000-00-00'){{$f->csv_file_set_on}} @endif</p>
             </td>
             <td class="va-middle">
                 <p>
-                    @if($f->is_exist) <label class="label label-success" style="min-width: 100px;">ファイルあり</label>
-                    @else             <label class="label label-warning" style="min-width: 100px;">ファイルなし</label> @endif
+                    @if($f->is_process) <label class="label label-success" style="min-width: 75px;">対象</label>
+                    @else               <label class="label label-default" style="min-width: 75px;">対象</label> @endif
                 </p>
                 <p>
-                    @if($f->is_import)       <label class="label label-warning" style="min-width: 100px;">処理済み</label>
-                    @elseif(!$f->is_process) <label class="label label-default" style="min-width: 100px;">処理対象外</label>
-                    @else                    <label class="label label-danger" style="min-width: 100px;">未処理</label> @endif
+                    @if($f->is_exist) <label class="label label-success" style="min-width: 75px;">ファイル</label>
+                    @else             <label class="label label-default" style="min-width: 75px;">ファイル</label> @endif
+                </p>
+                <p>
+                    @if($f->is_import)       <label class="label label-warning" style="min-width: 75px;">処理済</label>
+                    @else                    <label class="label label-default" style="min-width: 75px;">未処理</label> @endif
                 </p>
             </td>
 
+            <td class="va-middle text-right">{{number_format((int) $counts[$f->id])}}件</td>
             <td class="va-middle">{{$f->reference_return_date}}</td>
 
             <td>
                 <p>
-                    @if($f->is_cumulative)      <label class="label label-info"    style="min-width: 100px;">累積する</label>
-                    @else                       <label class="label label-default" style="min-width: 100px;">累積しない</label> @endif
+                    @if($f->is_cumulative)      <label class="label label-info"   >累積</label>
+                    @else                       <label class="label label-default">累積</label> @endif
                 </p>
                 <p>
-                    @if($f->is_split)           <label class="label label-info"    style="min-width: 100px;">分割する</label>
-                    @else                       <label class="label label-default" style="min-width: 100px;">分割しない</label> @endif
+                    @if($f->is_split)           <label class="label label-info"   >分割</label>
+                    @else                       <label class="label label-default">分割</label> @endif
                 </p>
                 <p>
-                    @if($f->is_account_convert) <label class="label label-info"    style="min-width: 100px;">変換する</label>
-                    @else                       <label class="label label-default" style="min-width: 100px;">変換しない</label> @endif
+                    @if($f->is_account_convert) <label class="label label-info"   >変換</label>
+                    @else                       <label class="label label-default">変換</label> @endif
                 </p>
             </td>
         </tr>
@@ -152,7 +207,7 @@ $(function(){
     });
     $('#more').click(function(){
         var i = 0;
-        $('.display[data-display="0"]').each(function(){
+        $('.display[data-display="false"]').each(function(){
             $(this).show();
             $(this).attr('data-display', true);
             i++;
@@ -160,7 +215,7 @@ $(function(){
                 return false;
             }
         });
-        if($('.display[data-display="0"]').length == 0){
+        if($('.display[data-display="false"]').length == 0){
             $('#more').attr('disabled', true);
         }
     });
