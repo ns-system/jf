@@ -109,39 +109,23 @@ class CopyCsvFileService
 
     public function copyCsvFile() {
         $monthly_id            = $this->monthly_id;
-        $temp_file_path        = $this->directory_path . "/" . $this->directorys['temp']; // TODO: tosite->kawanishi USBじゃないよね．．．kawanishi->tosite temp_fileに変えました
+        $temp_file_path        = $this->directory_path . "/" . $this->directorys['temp'];
         $accumulation_dir_path = $this->directory_path;
         $file_lists            = $this->getCsvFileList($temp_file_path);
 
-        foreach ($file_lists as $f) {
-            $src = $temp_file_path . '/' . $f['csv_file_name'];
+        foreach ($file_lists as $i => $f) {
+            $src       = $temp_file_path . '/' . $f['csv_file_name'];
 //            $src = $temp_file_path . '/temp/' . $f['csv_file_name']; // こっちでも可
+//            $monthly_path = date('Ym', strtotime($f['csv_file_set_on']));
+            $daily_dir = $accumulation_dir_path . "/" . $this->directorys['daily'] . "/" . $f['monthly_id'];
 
-
-            if ($f['cycle'] == 'D')
-            {
-                $day          = date('d', strtotime($f['csv_file_set_on']));
-                $monthly_path = date('Ym', strtotime($f['csv_file_set_on']));
-                $month_dir    = $accumulation_dir_path . "/" . $this->directorys['daily'] . "/" . $monthly_path;
-                $day_dir      = $month_dir . "/" . $day;
-                $dest         = $day_dir . "/" . $f['csv_file_name'];
-                $this->createDirectory($month_dir);
-                $this->createDirectory($day_dir);
-            } elseif ($f['cycle'] == 'M')
-            {
-                $monthly_path = date('Ym', strtotime($f['csv_file_set_on'] . ' -1 month'));
-                $month_dir    = $accumulation_dir_path . "/" . $this->directorys['monthly'] . "/" . $monthly_path;
-                $dest         = $month_dir . "/" . $f['csv_file_name'];
-                $this->createDirectory($month_dir);
-            } else
-            {
-                $monthly_path = date('Ym', strtotime($f['csv_file_set_on']));
-                $month_dir    = $accumulation_dir_path . "/" . $this->directorys['ignore'] . "/" . $monthly_path;
-                $dest         = $month_dir . "/" . $f['csv_file_name'];
-                $this->createDirectory($month_dir);
-            }
+            $this->createDirectory($daily_dir);
+            $this->createDirectory($daily_dir);
+//            $file_lists[$i]['file_path'] = $dest;
+            $dest = $f["destination"] . "/" . $f["csv_file_name"];
             exec("sudo cp -f -p {$src} {$dest}");
         }
+
         return $this;
     }
 
@@ -159,17 +143,36 @@ class CopyCsvFileService
                 $date      = null;
                 $file_path = $directory_path . '/' . $t;
                 $date_text = mb_substr($t, 14, 8);
-                if (!strptime($date_text, '%Y%m%d')&& mb_strlen($date_text)!==6)
+                $monthly   = null;
+                $daily     = null;
+                $path      = $this->directory_path;
+//                echo $date_text;
+                if (!strptime($date_text, '%Y%m%d') && mb_strlen($date_text) !== 8 || !empty(strptime($date_text, '%Y%m%d')["unparsed"]))
                 {
                     continue;
                 } else
                 {
-                    $date = date('Y-m-d', strtotime($date_text));
+                    $date    = date('Y-m-d', strtotime($date_text));
+                    $monthly = date('Ym', strtotime($date_text));
+
+                    $daily = date('d', strtotime($date_text));
                 }
 
 
+                if (mb_substr($t, 8, 1) == 'D')
+                {
+                    $path .= "/{$this->directorys['daily']}/{$monthly}/{$daily}";
+                } elseif (mb_substr($t, 8, 1) == 'M')
+                {
+                    $path .= "/{$this->directorys['monthly']}/{$monthly}";
+                } else
+                {
+                    $path .= "/{$this->directorys['ignore']}/{$monthly}";
+                }
                 $lists[] = [
+                    'destination'      => $path,
                     'csv_file_name'    => $t,
+                    'monthly_id'       => $monthly,
                     'cycle'            => mb_substr($t, 8, 1),
                     'csv_file_set_on'  => $date,
                     'identifier'       => mb_substr($t, 8, 5),
@@ -179,6 +182,7 @@ class CopyCsvFileService
             }
         }
         array_multisort(array_column($lists, 'identifier'), $lists);
+
         return $lists;
     }
 
@@ -212,7 +216,7 @@ class CopyCsvFileService
                 $ignore_file_lists[] = $l;
             }
         }
-        $this->outputForJsonFile($ignore_file_lists, "IgnoreFileList");
+        $this->outputForJsonFile($ignore_file_lists, "ignore_file_list", $monthly_id);
 
         \DB::connection('mysql_suisin')->transaction(function() use($file_lists, $monthly_id) {
             $not_exist_file_list = [];
@@ -250,7 +254,7 @@ class CopyCsvFileService
                     $not_exist_file_list[] = $file;
                 }
             }
-            $this->outputForJsonFile($not_exist_file_list, "NotExistFileList");
+            $this->outputForJsonFile($not_exist_file_list, "not_exist_file_list", $monthly_id);
         });
 
         return $this;
@@ -264,16 +268,26 @@ class CopyCsvFileService
         }
     }
 
-    public function outputForJsonFile($array, $file_name) {
+    public function outputForJsonFile($array, $file_name, $monthly_id) {
 
-        $data             = json_encode($array);
-        $today_time_stamp = date('Ymd_His');
-        $json_output_path = $this->directory_path . "/" . $this->directorys['log'] . "/" . $file_name . $today_time_stamp . ".json";
+
+        //$today_time_stamp = date('Ymd_His');
+        $json_output_path          = $this->directory_path . "/" . $this->directorys['log'] . "/" . $monthly_id ."_". $file_name . ".json";
         exec("sudo touch {$json_output_path}");
         exec("sudo chmod 777 {$json_output_path}");
-        $json_file        = fopen($json_output_path, "w+b");
-        fwrite($json_file, $data);
-        fclose($json_file);
+         $tmp   = file_get_contents($json_output_path);
+        $json  = mb_convert_encoding($tmp, 'UTF8', 'ASCII,JIS,UTF-8,EUC-JP,SJIS-WIN');
+        $existing_data = json_decode($json, true);
+        foreach ($array as $data) {
+            $existing_data[] = $data;
+        }
+        if (!(file_get_contents($json_output_path) == NULL && round(filesize($json_output_path) / 1024) > 1))
+        {
+             
+            $json_file = fopen($json_output_path, "w+b");
+            fwrite($json_file, json_encode($existing_data));
+            fclose($json_file);
+        }
     }
 
     public function inputCheck($monthly_id, $accumulation_dir_path) {
@@ -282,13 +296,11 @@ class CopyCsvFileService
             //おかしかったらエラー処理
             throw new \Exception("累積先ディレクトリが存在しないようです。（想定：{$accumulation_dir_path}）");
         }
-        if (!strptime($monthly_id, '%Y%m')|| mb_strlen($monthly_id)!==6||mb_strlen($monthly_id)!==0)
+        if (!strptime($monthly_id, '%Y%m') || mb_strlen($monthly_id) !== 6 || nonEmptyArray(strptime($monthly_id, '%Y%m')["unparsed"]))
         {
             //おかしかったらエラー処理
             throw new \Exception("月別IDに誤りがあるようです。（投入された値：{$monthly_id}）");
         }
-  
-        
     }
 
 }
