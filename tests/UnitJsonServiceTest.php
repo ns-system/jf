@@ -10,7 +10,8 @@ class UnitJsonServiceTest extends TestCase
     protected $s;
 
     public function __construct() {
-        $this->s = new \App\Services\JsonService();
+        $this->s = $this->getMockForTrait(\App\Services\JsonUsable::class);
+//        $this->s = new \App\Services\JsonService();
 //        $path = storage_path() . '/tests/';
     }
 

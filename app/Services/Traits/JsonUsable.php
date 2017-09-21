@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-class JsonService
+trait JsonUsable
 {
 
     protected $file_path;
