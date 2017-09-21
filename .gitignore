@@ -6,3 +6,4 @@ nbproject
 Homestead.yaml
 Vagrantfile
 *.box
+report/
