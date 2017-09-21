@@ -42,11 +42,6 @@ trait JsonUsable
         $tmp   = file_get_contents($json_path);
         $json  = mb_convert_encoding($tmp, 'UTF8', 'ASCII,JIS,UTF-8,EUC-JP,SJIS-WIN');
         $array = json_decode($json, true);
-
-//        if ($array === null)
-//        {
-//            throw new \Exception("ファイル内に設定ファイルが記述されていないようです。（ファイルパス：{$json_path}）");
-//        }
         return $array;
     }
 
@@ -65,11 +60,10 @@ trait JsonUsable
             $plane_text    = file_get_contents($json_output_path);
             $existing_data = $this->getJsonFile();
         }
-        else
-        {
-            exec(escapeshellcmd("sudo touch {$json_output_path}"));
-            exec(escapeshellcmd("sudo chmod 777 {$json_output_path}"));
-        }
+//        else
+//        {
+//            exec(escapeshellcmd("sudo touch {$json_output_path}"));
+//        }
         if ((!empty($plane_text)) && empty($existing_data))
         {
             throw new \Exception("Jsonファイル読み込み時にエラーが発生しました。（ファイルパス：{$json_output_path}）");
@@ -86,7 +80,9 @@ trait JsonUsable
             }
         }
 
-        $json_file = fopen($json_output_path, "w+b");
+        exec(escapeshellcmd("sudo touch {$json_output_path}"));
+        exec(escapeshellcmd("sudo chmod 777 {$json_output_path}"));
+        $json_file = fopen($json_output_path, "wb");
         fwrite($json_file, json_encode($existing_data));
         fclose($json_file);
     }
