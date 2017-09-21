@@ -7,28 +7,35 @@ class JsonService
 
     protected $file_path;
 
-    public function setFilePath($path) {
+    public function setFilePath($path, $name) {
         if (!file_exists($path))
         {
             throw new \Exception("ファイルパスが存在しません。（ファイルパス：{$path}）");
         }
-        $ext = pathinfo($path, PATHINFO_EXTENSION);
+
+        if (mb_substr($path, -1) != '/')
+        {
+            $path .= '/';
+        }
+        $full_path = $path . $name;
+
+        $ext = pathinfo($full_path, PATHINFO_EXTENSION);
         if (empty($ext))
         {
-            throw new \Exception("指定されたパスはファイル形式ではありません。（ファイルパス：{$path}）");
+            throw new \Exception("指定されたパスはファイル形式ではありません。（ファイルパス：{$full_path}）");
         }
         if ($ext != 'json')
         {
-            throw new \Exception("拡張子が.json以外です。（ファイルパス：{$path}）");
+            throw new \Exception("拡張子が.json以外です。（ファイルパス：{$full_path}）");
         }
-        $this->file_path = $path;
+        $this->file_path = $full_path;
         return $this;
     }
 
-    public function getJsonFile($path = '') {
-        if (!empty($path))
+    public function getJsonFile($path = '', $name = '') {
+        if (!empty($path) && !empty($name))
         {
-            $this->setFilePath($path);
+            $this->setFilePath($path, $name);
         }
         $json_path = $this->file_path;
 
@@ -43,24 +50,40 @@ class JsonService
         return $array;
     }
 
-    public function outputForJsonFile($export_array, $path = '') {
-        if (!empty($path))
+    public function outputForJsonFile($export_array, $path = '', $name = '') {
+        if (!empty($path) && !empty($name))
         {
-            $this->setFilePath($path);
+            $this->setFilePath($path, $name);
         }
-        $json_output_path = $this->file_path;
-        exec(escapeshellcmd("sudo touch {$json_output_path}"));
-        exec(escapeshellcmd("sudo chmod 777 {$json_output_path}"));
+//        $json_path = $this->file_path;
 
-        $existing_data = $this->getJsonFile($path);
-        $plane_text    = file_get_contents($json_output_path);
-        if (($plane_text !== false || !empty($plane_text)) && empty($existing_data))
+        $json_output_path = $this->file_path;
+        $plane_text       = null;
+        $existing_data    = [];
+        if (file_exists($json_output_path))
+        {
+            $plane_text    = file_get_contents($json_output_path);
+            $existing_data = $this->getJsonFile();
+        }
+        else
+        {
+            exec(escapeshellcmd("sudo touch {$json_output_path}"));
+            exec(escapeshellcmd("sudo chmod 777 {$json_output_path}"));
+        }
+        if ((!empty($plane_text)) && empty($existing_data))
         {
             throw new \Exception("Jsonファイル読み込み時にエラーが発生しました。（ファイルパス：{$json_output_path}）");
         }
 
-        foreach ($export_array as $data) {
-            $existing_data[] = $data;
+        foreach ($export_array as $key => $data) {
+            if (is_array($data))
+            {
+                $existing_data[] = $data;
+            }
+            else
+            {
+                $existing_data[$key] = $data;
+            }
         }
 
         $json_file = fopen($json_output_path, "w+b");
