@@ -1,0 +1,15 @@
+{
+    "description": "phpmyadmin sample",
+    "short_description": "phpmyadmin_1",
+    "name": "homestead1.0",
+    "versions": [{
+        "version": "3.0.1",
+        "status": "active",
+        "description_html": "<p>CentOS6.5 x86_64</p>",
+        "description_markdown": "CentOS6.5 x86_64",
+        "providers": [{
+            "name": "virtualbox",
+            "url": "D:/products/boxfiles/package.box"
+        }]
+    }]
+}
