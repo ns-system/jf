@@ -64,6 +64,7 @@ trait JsonUsable
 //        {
 //            exec(escapeshellcmd("sudo touch {$json_output_path}"));
 //        }
+        $plane_text = str_replace(']', '', str_replace('[', '', $plane_text));
         if ((!empty($plane_text)) && empty($existing_data))
         {
             throw new \Exception("Jsonファイル読み込み時にエラーが発生しました。（ファイルパス：{$json_output_path}）");
