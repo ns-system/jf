@@ -32,6 +32,20 @@ class UnitJsonUsableTest extends TestCase
     /**
      * @test
      */
+    public function 異常系_パスが存在しない() {
+        $path       = storage_path() . '/tests/notexist/';
+        $wrong_name = 'testfile.txt';
+        try {
+            $this->s->setFilePath($path, $wrong_name);
+            $this->fail('例外発生なし');
+        } catch (\Exception $e) {
+            $this->assertEquals("ファイルパスが存在しません。（ファイルパス：{$path}）", $e->getMessage());
+        }
+    }
+
+    /**
+     * @test
+     */
     public function 異常系_ファイルパスがディレクトリ() {
         $path       = storage_path() . '/tests/';
         $wrong_name = 'directory';
@@ -47,10 +61,12 @@ class UnitJsonUsableTest extends TestCase
      * @test
      */
     public function 正常系_Jsonファイルの読み込み() {
-        $path  = storage_path() . '/tests/';
-        $name  = 'testfile.json';
-        $array = $this->s->setFilePath($path, $name)->getJsonFile();
-        $this->assertEquals($array['test'], 'pass!');
+        $path    = storage_path() . '/tests';
+        $name    = 'testfile.json';
+        $array_1 = $this->s->setFilePath($path, $name)->getJsonFile();
+        $array_2 = $this->s->setFilePath($path . '/', $name)->getJsonFile();
+        $this->assertEquals($array_1['test'], 'pass!');
+        $this->assertEquals($array_2['test'], 'pass!');
     }
 
     /**
@@ -81,7 +97,7 @@ class UnitJsonUsableTest extends TestCase
         ];
 
         $this->s->setFilePath($path, $name)->outputForJsonFile($array);
-        $result = $this->s->getJsonFile($path);
+        $result = $this->s->getJsonFile($path, $name);
         $this->assertEquals($result, $array);
         unlink($path . $name);
     }
@@ -131,7 +147,7 @@ class UnitJsonUsableTest extends TestCase
         ];
 
         $this->s->setFilePath($path, $name)->outputForJsonFile($array_1);
-        $this->s->setFilePath($path, $name)->outputForJsonFile($array_2);
+        $this->s->setFilePath($path, $name)->outputForJsonFile($array_2, $path, $name);
         $result = $this->s->getJsonFile($path);
         $this->assertEquals($result, $expected);
         unlink($path . $name);
