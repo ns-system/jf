@@ -48,6 +48,7 @@ class CopyCsvFileService
 //        $this->not_exist_json_output_path = $this->directory_path . "/log/notexist.json";
         foreach ($this->directorys as $d) {
             $tmp_dir = $this->directory_path . '/' . $d;
+           
             if (!file_exists($tmp_dir))
             {
                 throw new \Exception("格納先ファイルパスが存在しません。（格納先ファイル：{$tmp_dir}）");
@@ -63,7 +64,6 @@ class CopyCsvFileService
     private function createDirectory($path) {
         if (!file_exists($path))
         {
-//            mkdir($path, 0777, FALSE);
             exec("sudo mkdir -m=777 {$path}");
             return true;
         }
@@ -105,7 +105,7 @@ class CopyCsvFileService
                 $monthly   = null;
                 $daily     = null;
                 $path      = $this->directory_path;
-//                echo $date_text;
+
                 if (!strptime($date_text, '%Y%m%d') && mb_strlen($date_text) !== 8 || !empty(strptime($date_text, '%Y%m%d')["unparsed"]))
                 {
                     continue;
@@ -124,6 +124,7 @@ class CopyCsvFileService
                 }
                 elseif (mb_substr($t, 8, 1) == 'M')
                 {
+                    $monthly = date('Ym', strtotime($date_text."-1 month"));
                     $path .= "/{$this->directorys['monthly']}/{$monthly}";
                 }
                 else
@@ -159,13 +160,13 @@ class CopyCsvFileService
         });
         return $this;
     }
-
+  
     public function registrationCsvFileToDatabase() {
 
         $file_lists        = [];
         $ignore_file_lists = [];
         $monthly_id        = $this->monthly_id;
-        $tmp_file_lists    = $this->getCsvFileList($this->directory_path . "/" . $this->directorys['temp']);
+        $tmp_file_lists    = $this->getCsvFileList($this->directory_path . "/" . $this->directorys['temp']. "/");
         $json_output_path  = storage_path() . "/jsonlogs";
         foreach ($tmp_file_lists as $l) {
 
