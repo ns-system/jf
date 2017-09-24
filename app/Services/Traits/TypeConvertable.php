@@ -7,7 +7,7 @@ trait TypeConvertable
 
     use DateUsable;
 
-    public function convertType($type, $column) {
+    public function convertType($type, $column, $is_ceil = false) {
 
         switch ($type) {
             case 'integer':
@@ -24,7 +24,11 @@ trait TypeConvertable
                 {
                     throw new \Exception("値が数字型ではありません。（引数：{$column}）");
                 }
-                return (double) $column;
+                if (!$is_ceil)
+                {
+                    return (double) $column;
+                }
+                return round((double) $column, 0);
 
             case 'date':
                 if (!$this->isDate($column))
@@ -51,16 +55,19 @@ trait TypeConvertable
         }
     }
 
-    public function convertTypes($types, $row) {
+    public function convertTypes($types, $rows, $is_ceil = false) {
         $tmp_rows = [];
+//        var_dump($types);
+//        var_dump($rows);
 
-        foreach ($row as $key => $column) {
+        foreach ($rows as $key => $column) {
 //            if (!array_key_exists($key, $types))
 //            {
 //                $tmp_rows[$key] = $column;
 //                continue;
 //            }
-            $tmp_rows[$key] = $this->convertType($types[$key], $column);
+//            var_dump($key);
+            $tmp_rows[$key] = $this->convertType($types[$key], $column, $is_ceil);
         }
         return $tmp_rows;
     }

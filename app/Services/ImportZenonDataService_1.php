@@ -5,7 +5,7 @@ namespace App\Services;
 use \App\Services\Traits\JsonUsable;
 use \App\Services\Traits\CsvUsable;
 
-class ImportZenonDataService
+class ImportZenonDataService_1
 {
 
     use JsonUsable,
