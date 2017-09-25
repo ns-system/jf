@@ -52,6 +52,16 @@ trait CsvUsable
         {
             $this->setCsvFileObject($path);
         }
+//        $param = $this->csv_file;
+//        $e     = mb_convert_variables('utf8', 'SJIS-win', $param);
+//        var_dump($e);
+//        
+//        foreach($param as $p){
+//            var_dump($p);
+//        }
+//        
+//        exit();
+//        return $param;
         return $this->csv_file;
     }
 
@@ -80,7 +90,21 @@ trait CsvUsable
     }
 
     public function lineEncode($line) {
-        return mb_convert_encoding($line, 'UTF-8', 'sjis-win,sjis,JIS,EUC-JP');
+//        return mb_convert_encoding($line, 'UTF-8', 'sjis-win,sjis,JIS,EUC-JP');
+//        $encode = mb_detect_encoding($str);
+//        if (is_array($line))
+//        {
+//            mb_convert_variables('UTF-8', 'SJIS-WIN', $line);
+//            var_dump($line);
+//            return $line;
+//        }
+        mb_convert_variables('UTF-8', 'SJIS-win', $line);
+        return $line;
+//        return $param;
+//
+//        
+//        
+//        return mb_convert_encoding($line, 'UTF-8', 'SJIS-WIN,SJIS,JIS,EUC-JP');
     }
 
     /**

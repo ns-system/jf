@@ -51,7 +51,7 @@ trait TypeConvertable
             case 'boolean':
                 return ($column === 'false') ? false : (bool) $column;
             default:
-                return $column;
+                return $this->splitSpace($column);
         }
     }
 
@@ -61,14 +61,15 @@ trait TypeConvertable
 //        var_dump($rows);
 
         foreach ($rows as $key => $column) {
-//            if (!array_key_exists($key, $types))
-//            {
-//                $tmp_rows[$key] = $column;
-//                continue;
-//            }
+            if (!array_key_exists($key, $types))
+            {
+                $tmp_rows[$key] = $column;
+                continue;
+            }
 //            var_dump($key);
             $tmp_rows[$key] = $this->convertType($types[$key], $column, $is_ceil);
         }
+//        var_dump($tmp_rows);
         return $tmp_rows;
     }
 
