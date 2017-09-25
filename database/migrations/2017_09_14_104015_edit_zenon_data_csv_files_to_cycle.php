@@ -5,6 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class EditZenonDataCsvFilesToCycle extends Migration
 {
+
     public $tableName = 'zenon_data_csv_files';
     public $connect   = 'mysql_suisin';
 
@@ -36,24 +37,25 @@ class EditZenonDataCsvFilesToCycle extends Migration
     }
 
     public function down() {
-        if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'is_daily'))
-        {
-            $table->boolean('is_daily')
-                    ->after('reference_return_date')
-            ;
-        }
-        if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'is_monthly'))
-        {
-            $table->boolean('is_monthly')
-                    ->after('is_daily')
-            ;
-        }
-        if (Schema::connection($this->connect)->hasColumn($this->tableName, 'cycle'))
-        {
-            Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
+        Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
+
+            if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'is_daily'))
+            {
+                $table->boolean('is_daily')
+                        ->after('reference_return_date')
+                ;
+            }
+            if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'is_monthly'))
+            {
+                $table->boolean('is_monthly')
+                        ->after('is_daily')
+                ;
+            }
+            if (Schema::connection($this->connect)->hasColumn($this->tableName, 'cycle'))
+            {
                 $table->dropColumn('cycle');
-            });
-        }
+            }
+        });
     }
 
 }

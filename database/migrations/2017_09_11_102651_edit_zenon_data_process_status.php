@@ -27,18 +27,16 @@ class EditZenonDataProcessStatus extends Migration
     }
 
     public function down() {
-        if (Schema::connection($this->connect)->hasColumn($this->tableName, 'csv_file_name'))
-        {
-            Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
+        Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
+            if (Schema::connection($this->connect)->hasColumn($this->tableName, 'csv_file_name'))
+            {
                 $table->dropColumn('csv_file_name');
-            });
-        }
-        if (Schema::connection($this->connect)->hasColumn($this->tableName, 'csv_file_set_on'))
-        {
-            Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
+            }
+            if (Schema::connection($this->connect)->hasColumn($this->tableName, 'csv_file_set_on'))
+            {
                 $table->dropColumn('csv_file_set_on');
-            });
-        }
+            }
+        });
     }
 
 }

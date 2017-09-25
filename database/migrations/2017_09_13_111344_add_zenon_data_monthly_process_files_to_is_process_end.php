@@ -55,32 +55,24 @@ class AddZenonDataMonthlyProcessFilesToIsProcessEnd extends Migration
     }
 
     public function down() {
-        if (Schema::connection($this->connect)->hasColumn($this->tableName, 'is_pre_process'))
-        {
-            Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
-                $table->dropColumn('is_pre_process');
-            });
-        }
-        if (Schema::connection($this->connect)->hasColumn($this->tableName, 'is_post_process'))
-        {
-            Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
-                $table->dropColumn('is_post_process');
-            });
-        }
-        if (Schema::connection($this->connect)->hasColumn($this->tableName, 'is_process_end'))
-        {
-            Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
-                $table->dropColumn('is_process_end');
-            });
-        }
-        if (Schema::connection($this->connect)->hasColumn($this->tableName, 'is_execute'))
-        {
-            Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
-                $table->dropColumn('is_execute');
-            });
-        }
-
         Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
+            if (Schema::connection($this->connect)->hasColumn($this->tableName, 'is_pre_process'))
+            {
+                $table->dropColumn('is_pre_process');
+            }
+            if (Schema::connection($this->connect)->hasColumn($this->tableName, 'is_post_process'))
+            {
+                $table->dropColumn('is_post_process');
+            }
+            if (Schema::connection($this->connect)->hasColumn($this->tableName, 'is_process_end'))
+            {
+                $table->dropColumn('is_process_end');
+            }
+            if (Schema::connection($this->connect)->hasColumn($this->tableName, 'is_execute'))
+            {
+                $table->dropColumn('is_execute');
+            }
+
             if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'is_import_process'))
             {
                 $table->boolean('is_import_process')
