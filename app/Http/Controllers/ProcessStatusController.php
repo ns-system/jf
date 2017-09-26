@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Suisin\MonthlyImportForm;
 use App\Http\Controllers\Controller;
 use App\Services\ProcessStatusService;
-//use App\Services\ImportZenonDataService;
 use App\Services\CopyCsvFileService;
 
 class ProcessStatusController extends Controller
@@ -19,8 +18,6 @@ class ProcessStatusController extends Controller
 
     public function __construct() {
         $this->service = new ProcessStatusService();
-//        $obj                = new ImportZenonDataService();
-//        $this->json_service = $obj;
         $json          = $this->getJsonFile(config_path(), 'import_config.json');
         $this->path    = $json['csv_folder_path'];
     }
@@ -135,7 +132,6 @@ class ProcessStatusController extends Controller
         ;
         $counts = [];
         foreach ($files as $f) {
-//            var_dump($f);
             $cnt = 0;
             if (!empty($f->table_name))
             {
@@ -285,9 +281,6 @@ class ProcessStatusController extends Controller
             $lists[] = $l;
         }
         $headers   = array_keys($l);
-//        var_dump($headers);
-//        var_dump($lists);
-//        $obj       = new \App\Services\CsvService();
         $file_name = "{$id}_月次データ処理リスト_" . date('Ymd_His') . '.csv';
         return $this->exportCsv($lists, $file_name, $headers);
     }
@@ -295,13 +288,11 @@ class ProcessStatusController extends Controller
     public function exportNothingList($id) {
         try {
             $ignore = $this->getJsonFile($this->path . '/log/', "{$id}_ignore_file_list.json");
-//            $ignore = $this->json_service->getJsonFile($this->path . "/log/{$id}_ignore_file_list.json");
         } catch (\Exception $exc) {
             $ignore = [];
         }
         try {
             $not_exist = $this->getJsonFile($this->path . '/log/', "{$id}_not_exist_file_list.json");
-//            $not_exist = $this->json_service->getJsonFile($this->path . "/log/{$id}_not_exist_file_list.json");
         } catch (\Exception $exc) {
             $not_exist = [];
         }
@@ -345,7 +336,6 @@ class ProcessStatusController extends Controller
             ];
         }
         $headers   = array_keys($lists[0]);
-//        $obj       = new \App\Services\CsvService();
         $file_name = "{$id}_月次データ処理対象外リスト_" . date('Ymd_His') . '.csv';
         return $this->exportCsv($lists, $file_name, $headers);
     }

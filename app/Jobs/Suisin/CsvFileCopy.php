@@ -34,13 +34,11 @@ class CsvFileCopy extends Job implements SelfHandling, ShouldQueue
      * @return void
      */
     public function handle() {
-//        $id = $this->ym;
         echo '==== CsvFileCopy ====' . PHP_EOL;
         echo '[start : ' . date('Y-m-d H:i:s') . ']' . PHP_EOL;
         $monthly_id            = $this->ym;
         $json_file_path        = config_path();
         $copy_csv_file_service = new \App\Services\CopyCsvFileService();
-//        $import_zenon_data_service = new \App\Services\ImportZenonDataService();
         $json_file             = $copy_csv_file_service->getJsonFile($json_file_path, "/import_config.json");
         $accumulation_dir_path = $json_file["csv_folder_path"];
         $job                   = \App\JobStatus::find($this->job_id);
@@ -59,7 +57,6 @@ class CsvFileCopy extends Job implements SelfHandling, ShouldQueue
 
             $copy_csv_file_service->setMonthlyId($monthly_id)
                     ->setDirectoryPath($accumulation_dir_path)
-//                    ->accumulationFileCreation()
                     ->copyCsvFile()
                     ->tableTemplateCreation()
                     ->registrationCsvFileToDatabase()

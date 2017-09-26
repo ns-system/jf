@@ -50,10 +50,7 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             $import_zenon_data_service = new ImportZenonDataService();
             $json                      = $import_zenon_data_service->setFilePath(config_path(), 'import_config.json')->getJsonFile();
             $file_path                 = $json['csv_folder_path'] . "/monthly/{$ym}";
-//            if (!file_exists($file_path))
-//            {
-//                throw new \Exception("CSVファイル累積先が存在しないようです。（ファイルパス：{$file_path}）");
-//            }
+
             echo "  -- check : " . date('Y-m-d H:i:s') . PHP_EOL;
 
             // pre-check
@@ -74,21 +71,12 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
                 foreach ($rows as $r) {
 
                     $import_zenon_data_service->setPostProcessStartToMonthlyStatus($r);
-//                    $r->is_post_process_start = true;
-//                    $r->process_started_at    = date('Y-m-d H:i:s');
-//                    $r->save();
                     echo "  -----> {$r->csv_file_name}" . PHP_EOL;
 
                     $csv_file_object = $import_zenon_data_service->setCsvFileObject($file_path . '/' . $r->csv_file_name)->getCsvFileObject();
                     $import_zenon_data_service->uploadToDatabase($r, $csv_file_object, $ym);
 
                     $import_zenon_data_service->setPostProcessEndToMonthlyStatus($r);
-
-//                    $r->is_import           = true;
-//                    $r->is_post_process_end = true;
-////                    $r->is_process_end      = true;
-//                    $r->process_ended_at    = date('Y-m-d H:i:s');
-//                    $r->save();
                 }
             });
 
