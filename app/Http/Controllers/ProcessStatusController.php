@@ -26,11 +26,15 @@ class ProcessStatusController extends Controller
     }
 
     public function index() {
-        $rows   = \App\Month::orderBy('monthly_id', 'desc')->paginate(25);
-        $max    = \App\Month::max('monthly_id');
+        $rows     = \App\Month::orderBy('monthly_id', 'desc')->paginate(25);
+        $max_date = \App\Month::max('monthly_id');
+        if (empty($max_date))
+        {
+            $max_date = date('Ym');
+        }
         $months = [];
         for ($i = -3; $i < 3; $i++) {
-            $tmp    = date('Y-m-d', strtotime($max . '01'));
+            $tmp    = date('Y-m-d', strtotime($max_date . '01'));
             $serial = strtotime("{$tmp} -{$i} month");
             if (!\App\Month::where('monthly_id', '=', date('Ym', $serial))->exists())
             {
@@ -101,10 +105,6 @@ class ProcessStatusController extends Controller
 
     public function copyConfirm($id) {
         $dir         = $this->path . '/temp';
-//        $json_path   = config_path() . '/import_config.json';
-//        $o           = new \App\Services\ImportZenonDataService();
-//        $dir         = $o->getJsonFile($json_path)['csv_folder_path'] . '/temp';
-//        $json_path                   = $this->
         $csv_service = new CopyCsvFileService();
         $lists       = $csv_service->getCsvFileList($dir);
         // 月次サイクルを先頭に持ってくるよう配列ソート
@@ -135,6 +135,7 @@ class ProcessStatusController extends Controller
         ;
         $counts = [];
         foreach ($files as $f) {
+//            var_dump($f);
             $cnt = 0;
             if (!empty($f->table_name))
             {
@@ -144,7 +145,7 @@ class ProcessStatusController extends Controller
                         ->count()
                 ;
             }
-            $counts[$f->id] = $cnt;
+            $counts[$f->key_id] = $cnt;
         }
         return view('admin.month.import_confirm', ['files' => $files, 'id' => $id, 'job_id' => $job_id, 'counts' => $counts]);
     }

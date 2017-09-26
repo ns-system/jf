@@ -59,20 +59,6 @@ class UnitCsvUsableTest extends TestCase
         $this->assertInstanceOf('SplFileObject', $obj_3);
     }
 
-//    /**
-//     * @test
-//     */
-//    public function 正常系_CSVファイル配列取得() {
-//        $path = storage_path() . '/tests/testfile.csv';
-////        $excpection = ['data1', 1000, '山田'];
-//        $this->s
-//                ->setCsvFilePath($path)
-//                ->setCsvFileObject()
-//                ->checkCsvFileLength(3)
-//        ;
-////        $this->assertEquals($array, $excpection);
-//    }
-
     /**
      * @test
      */
@@ -98,7 +84,7 @@ class UnitCsvUsableTest extends TestCase
             $this->s->checkCsvFileLength(20);
             $this->fail('例外発生なし');
         } catch (\Exception $e) {
-            $this->assertEquals("CSVファイルが指定されていません。", $e->getMessage());
+            $this->assertEquals("CSVファイルが指定されていないようです。", $e->getMessage());
         }
     }
 
@@ -146,6 +132,23 @@ class UnitCsvUsableTest extends TestCase
         $array     = [['data1', 1000, '山田']];
         $result    = $this->s->exportCsv($array, $file_name);
         $this->assertEquals(200, $result->status());
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_配列判定() {
+        $array = null;
+        $res_1 = $this->s->isArrayEmpty($array);
+        $this->assertTrue($res_1);
+        $res_2 = $this->s->isArrayEmpty([null]);
+        $this->assertTrue($res_2);
+        $res_3 = $this->s->isArrayEmpty([[[null]]]);
+        $this->assertTrue($res_3);
+        $res_4 = $this->s->isArrayEmpty([null, 1, 2, 3]);
+        $this->assertFalse($res_4);
+        $res_5 = $this->s->isArrayEmpty([null, [null, null, [null]]]);
+        $this->assertTrue($res_5);
     }
 
 }

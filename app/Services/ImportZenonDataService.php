@@ -14,6 +14,7 @@ class ImportZenonDataService
         TypeConvertable;
 
     protected $row;
+    protected $status;
 
     public function getRow() {
         return $this->row;
@@ -177,10 +178,20 @@ class ImportZenonDataService
         ];
 
         $table = $this->getTableObject('mysql_zenon', $table_config->table_name);
+        $this->setPreProcessStartToMonthlyStatus($table_config);
 //        var_dump($table_config->table_name);
 
-        foreach ($csv_file_object as $line_number => $line) {
-            $tmp_bulk = $this->setRow($this->lineEncode($line))
+        $line_number = 0;
+        foreach ($csv_file_object as /* $line_number => */ $raw_line) {
+            $line = $this->lineEncode($raw_line);
+            if ($this->isArrayEmpty($line))
+            {
+                var_dump($raw_line);
+//                $line_number--;
+                continue;
+            }
+            $line_number++;
+            $tmp_bulk = $this->setRow($line)
                     ->setKeyToRow($keys)
                     ->convertRow($types, true)
                     ->splitRow($table_config->is_split, $table_config->first_column_position, $table_config->last_column_position, $split_key_configs)
@@ -190,12 +201,10 @@ class ImportZenonDataService
                     ->getRow()
             ;
             // MySQLのバージョンによってはプリペアドステートメントが65536までに制限されているため、動的にしきい値を設ける
-//            echo '[' . count($tmp_bulk) . ' - ' . count($bulk) * count($tmp_bulk). ']';
-            if ($line_number > 0 && count($bulk) * count($tmp_bulk) + count($tmp_bulk) > 65000)
+            if ($line_number > 0 && (count($bulk) * count($tmp_bulk) + count($tmp_bulk)) > 65000)
             {
-//                var_dump('=======================');
-//                var_dump($bulk);
                 $table->insert($bulk);
+                $this->setExecutedRowCountToMonthlyStatus($table_config, $line_number);
                 $bulk = null;
             }
             $bulk[] = $tmp_bulk;
@@ -204,7 +213,9 @@ class ImportZenonDataService
         if (count($bulk) !== 0)
         {
             $table->insert($bulk);
+            $this->setExecutedRowCountToMonthlyStatus($table_config, $line_number);
         }
+        $this->setPostProcessEndToMonthlyStatus($table_config);
     }
 
     private function getTableObject($connection, $table_name) {
@@ -213,6 +224,44 @@ class ImportZenonDataService
             throw new \Exception("コネクションもしくはテーブル名が指定されていないようです。");
         }
         return \DB::connection($connection)->table($table_name);
+    }
+
+    public function getLastTraded($reference_last_traded_on, $last_traded_on) {
+//        $date = $row->reference_last_traded_on;
+        if (empty($reference_last_traded_on) || $reference_last_traded_on === '0000-00-00' || $reference_last_traded_on === '00000000')
+        {
+            return $last_traded_on;
+        }
+        return $reference_last_traded_on;
+    }
+
+    public function setPreProcessStartToMonthlyStatus($monthly_status_object) {
+        $monthly_status_object->is_pre_process_start = true;
+        $monthly_status_object->save();
+    }
+
+    public function setPreProcessEndToMonthlyStatus($monthly_status_object, $row_count) {
+        $monthly_status_object->is_pre_process_end = true;
+        $monthly_status_object->row_count          = $row_count;
+        $monthly_status_object->save();
+    }
+
+    public function setPostProcessStartToMonthlyStatus($monthly_status_object) {
+        $monthly_status_object->is_post_process_start = true;
+        $monthly_status_object->process_started_at    = date('Y-m-d H:i:s');
+        $monthly_status_object->save();
+    }
+
+    public function setPostProcessEndToMonthlyStatus($monthly_status_object) {
+        $monthly_status_object->is_import           = true;
+        $monthly_status_object->is_post_process_end = true;
+        $monthly_status_object->process_ended_at    = date('Y-m-d H:i:s');
+        $monthly_status_object->save();
+    }
+
+    public function setExecutedRowCountToMonthlyStatus($monthly_status_object, $executed_row_count) {
+        $monthly_status_object->executed_row_count = $executed_row_count;
+        $monthly_status_object->save();
     }
 
 }

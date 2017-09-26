@@ -13,14 +13,6 @@ class UnitImportZenonDataServiceTest extends TestCase
 
     public function __construct() {
         $this->s = new \App\Services\ImportZenonDataService();
-//        $this->param = [
-//            'account' => 'account_number',
-//            'subject' => 'subject_code',
-//        ];
-//        $this->rows  = [
-//            'account_number' => '1',
-//            'subject_code'   => '1',
-//        ];
     }
 
     private function setReflection($function_name) {
@@ -28,41 +20,6 @@ class UnitImportZenonDataServiceTest extends TestCase
         $s->setAccessible(true);
         return $s;
     }
-
-//    /**
-//     * @test
-//     */
-//    public function 異常系_口座番号変換時エラー() {
-//        $param = [
-//            'account_column_name' => 'account_number',
-//            'subject_column_name' => 'subject_code',
-//        ];
-//        $rows  = [
-//            'account_number' => '1',
-//            'subject_code'   => '1',
-//        ];
-//        $s     = $this->setReflection('convertAccount');
-//        try {
-//            $s->invoke($this->s, $param, $rows);
-//            $this->fail('例外発生なし');
-//        } catch (\Exception $e) {
-//            $this->assertEquals("口座番号が短すぎるようです（科目：1， 口座番号：1）", $e->getMessage());
-//        }
-//
-//        try {
-//            $this->s->setConvertedAccountToRow(true);
-//            $this->fail('例外発生なし');
-//        } catch (\Exception $e) {
-//            $this->assertEquals("口座分割設定値が指定されていません。", $e->getMessage());
-//        }
-//
-//        try {
-//            $this->s->setConvertedAccountToRow(true, ['account_column_name' => '', 'subject_column_name' => '',]);
-//            $this->fail('例外発生なし');
-//        } catch (\Exception $e) {
-//            $this->assertEquals("指定された口座番号変換キーが不正です。", $e->getMessage());
-//        }
-//    }
 
     /**
      * @test
@@ -76,29 +33,6 @@ class UnitImportZenonDataServiceTest extends TestCase
             $this->assertEquals("月別IDが指定されていません。", $e->getMessage());
         }
     }
-
-//    /**
-//     * @test
-//     */
-//    public function 正常系_口座番号変換成功() {
-//        $param = [
-//            'account_column_name' => 'account_number',
-//            'subject_column_name' => 'subject_code',
-//        ];
-//        $s     = $this->setReflection('convertAccount');
-//        $res_1 = $s->invoke($this->s, $param, ['account_number' => '1234567890', 'subject_code' => '1',]);
-//        $res_2 = $s->invoke($this->s, $param, ['account_number' => '1234567890', 'subject_code' => '2',]);
-//        $res_3 = $s->invoke($this->s, $param, ['account_number' => '1234567890', 'subject_code' => '8',]);
-//        $res_4 = $s->invoke($this->s, $param, ['account_number' => '1234567890', 'subject_code' => '9',]);
-//        $res_5 = $s->invoke($this->s, $param, ['account_number' => '1234567890', 'subject_code' => '11',]);
-//        $res_6 = $s->invoke($this->s, $param, ['account_number' => '1234567890', 'subject_code' => '3',]);
-//        $this->assertEquals(1234567, $res_1);
-//        $this->assertEquals(1234567, $res_2);
-//        $this->assertEquals(1234567, $res_3);
-//        $this->assertEquals(1234567, $res_4);
-//        $this->assertEquals(1234567, $res_5);
-//        $this->assertEquals(1234567890, $res_6);
-//    }
 
     /**
      * @test
@@ -144,8 +78,6 @@ class UnitImportZenonDataServiceTest extends TestCase
                     ->getRow()
             ;
         }
-//        var_dump('============================');
-//        var_dump($res_1);
         $this->assertEquals($res_1, $expection_1);
     }
 
@@ -159,8 +91,6 @@ class UnitImportZenonDataServiceTest extends TestCase
         ];
         $timestamp         = date('Y-m-d H:i:s');
         $expection_1       = [
-//            ['subject_code' => 1, 'account_number' => 1234567890.0, 'split_key' => 'key_1', 'user_name' => 'test user_1', 'created_on' => '2017-07-01', 'is_administrator' => true, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 1234567, 'created_at' => $timestamp, 'updated_at' => $timestamp,],
-//            ['subject_code' => 4, 'account_number' => 2345678901.0, 'split_key' => 'key_2', 'user_name' => 'test user_2', 'created_on' => '2017-08-21', 'is_administrator' => false, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 2345678901, 'created_at' => $timestamp, 'updated_at' => $timestamp,],
             ['split_key' => 'key_1', 'user_name' => 'test user_1', 'created_on' => '2017-07-01', 'is_administrator' => true, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 1234567, 'created_at' => $timestamp, 'updated_at' => $timestamp,],
             ['split_key' => 'key_2', 'user_name' => 'test user_2', 'created_on' => '2017-08-21', 'is_administrator' => false, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 2345678901, 'created_at' => $timestamp, 'updated_at' => $timestamp,],
         ];
@@ -182,7 +112,6 @@ class UnitImportZenonDataServiceTest extends TestCase
                     ->getRow()
             ;
         }
-//        var_dump($res_1);
         $this->assertEquals($res_1, $expection_1);
     }
 
@@ -194,7 +123,6 @@ class UnitImportZenonDataServiceTest extends TestCase
             ['1', '1234567890', 'key_1', 'test user_1', '20170701', 'true'],
             ['4', '2345678901', 'key_2', 'test user_2', '2017/08/21', 'false'],
         ];
-//        $timestamp   = date('Y-m-d H:i:s');
         $expection_1 = [
             ['subject_code' => 1, 'account_number' => 1234567890.0, 'split_key' => 'key_1', 'user_name' => 'test user_1', 'created_on' => '2017-07-01', 'is_administrator' => true, 'id' => null,],
             ['subject_code' => 4, 'account_number' => 2345678901.0, 'split_key' => 'key_2', 'user_name' => 'test user_2', 'created_on' => '2017-08-21', 'is_administrator' => false, 'id' => null,],
@@ -212,7 +140,6 @@ class UnitImportZenonDataServiceTest extends TestCase
                     ->getRow()
             ;
         }
-//        var_dump($res_1);
         $this->assertEquals($res_1, $expection_1);
     }
 
@@ -312,12 +239,37 @@ class UnitImportZenonDataServiceTest extends TestCase
      * @test
      */
     public function 正常系_INSERT成功() {
-        $table_configs   = \App\ZenonCsv::where('zenon_data_csv_files.id', '=', 25)->get()
+        $monthly_status = [
+            'csv_file_name'          => 'K_D_902_M0332_20170801.csv',
+            'file_kb_size'           => 8645,
+            'monthly_id'             => 201707,
+            'csv_file_set_on'        => '2017-08-01',
+            'zenon_data_csv_file_id' => 25,
+            'is_execute'             => 1,
+            'is_pre_process_start'   => 0,
+            'is_pre_process_end'     => 0,
+            'is_pre_process_error'   => 0,
+            'is_post_process_start'  => 0,
+            'is_post_process_end'    => 0,
+            'is_post_process_error'  => 0,
+            'is_exist'               => 1,
+            'is_import'              => 0,
+            'row_count'              => 0,
+            'executed_row_count'     => 0,
+        ];
+
+        \DB::connection('mysql_zenon')->beginTransaction();
+        \DB::connection('mysql_suisin')->beginTransaction();
+        \App\ZenonMonthlyStatus::insert($monthly_status);
+        $table_configs = \App\ZenonMonthlyStatus::month(201707)
+                ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                ->where('zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 25)
+                ->get()
         ;
+
         $csv_file_object = $this->s->setCsvFileObject(storage_path() . '/tests/K_D_902_M0332_20170801.csv')->getCsvFileObject();
 
         $start_time = date('Y-m-d H:i:s');
-        \DB::connection('mysql_zenon')->beginTransaction();
         foreach ($table_configs as $t) {
             $this->s->uploadToDatabase($t, $csv_file_object, 201707);
         }
@@ -330,6 +282,116 @@ class UnitImportZenonDataServiceTest extends TestCase
         ;
         $this->assertEquals($count, 1500);
         \DB::connection('mysql_zenon')->rollback();
+        \DB::connection('mysql_suisin')->rollback();
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_事前ステータス変更() {
+        $monthly_status = [
+            'csv_file_name'          => 'K_D_902_M0332_20170801.csv',
+            'file_kb_size'           => 8645,
+            'monthly_id'             => 201707,
+            'csv_file_set_on'        => '2017-08-01',
+            'zenon_data_csv_file_id' => 25,
+            'is_execute'             => 1,
+            'is_pre_process_start'   => 0,
+            'is_pre_process_end'     => 0,
+            'is_pre_process_error'   => 0,
+            'is_post_process_start'  => 0,
+            'is_post_process_end'    => 0,
+            'is_post_process_error'  => 0,
+            'is_exist'               => 1,
+            'is_import'              => 0,
+            'row_count'              => 0,
+            'executed_row_count'     => 0,
+        ];
+
+        \DB::connection('mysql_suisin')->beginTransaction();
+        \App\ZenonMonthlyStatus::insert($monthly_status);
+        $table_configs = \App\ZenonMonthlyStatus::month(201707)
+                ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                ->where('zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 25)
+                ->first()
+        ;
+        $before        = [
+            'start' => $table_configs->is_pre_process_start,
+            'end'   => $table_configs->is_pre_process_end,
+            'count' => $table_configs->row_count,
+        ];
+
+        $this->s->setPreProcessStartToMonthlyStatus($table_configs);
+        $after['start'] = $table_configs->is_pre_process_start;
+        $this->s->setPreProcessEndToMonthlyStatus($table_configs, 200);
+        $after['end']   = $table_configs->is_pre_process_end;
+        $after['count'] = $table_configs->row_count;
+
+        $this->assertEquals($before, ['start' => false, 'end' => false, 'count' => 0]);
+        $this->assertEquals($after, ['start' => true, 'end' => true, 'count' => 200]);
+        \DB::connection('mysql_suisin')->rollback();
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_本ステータス変更() {
+        $monthly_status = [
+            'csv_file_name'          => 'K_D_902_M0332_20170801.csv',
+            'file_kb_size'           => 8645,
+            'monthly_id'             => 201707,
+            'csv_file_set_on'        => '2017-08-01',
+            'zenon_data_csv_file_id' => 25,
+            'is_execute'             => 1,
+            'is_pre_process_start'   => 0,
+            'is_pre_process_end'     => 0,
+            'is_pre_process_error'   => 0,
+            'is_post_process_start'  => 0,
+            'is_post_process_end'    => 0,
+            'is_post_process_error'  => 0,
+            'is_exist'               => 1,
+            'is_import'              => 0,
+            'row_count'              => 0,
+            'executed_row_count'     => 0,
+        ];
+
+        \DB::connection('mysql_suisin')->beginTransaction();
+        \App\ZenonMonthlyStatus::insert($monthly_status);
+        $table_configs = \App\ZenonMonthlyStatus::month(201707)
+                ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                ->where('zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 25)
+                ->first()
+        ;
+//        var_dump($table_configs);
+        $before        = [
+            'import' => $table_configs->is_import,
+            'start'  => $table_configs->is_post_process_start,
+            'end'    => $table_configs->is_post_process_end,
+            'count'  => $table_configs->executed_row_count,
+        ];
+
+        $this->s->setPostProcessStartToMonthlyStatus($table_configs);
+        $after['start']  = $table_configs->is_post_process_start;
+        $this->s->setPostProcessEndToMonthlyStatus($table_configs);
+        $after['end']    = $table_configs->is_post_process_end;
+        $after['import'] = $table_configs->is_import;
+        $this->s->setExecutedRowCountToMonthlyStatus($table_configs, 200);
+        $after['count']  = $table_configs->executed_row_count;
+
+        $this->assertEquals($before, ['import' => false, 'start' => false, 'end' => false, 'count' => 0]);
+        $this->assertEquals($after, ['import' => true, 'start' => true, 'end' => true, 'count' => 200]);
+        \DB::connection('mysql_suisin')->rollback();
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_更新日時取得() {
+        $res_1 = $this->s->getLastTraded(null, '2017-07-21');
+        $res_2 = $this->s->getLastTraded('2017-12-09', '2017-07-21');
+
+        $this->assertEquals($res_1, '2017-07-21');
+        $this->assertEquals($res_2, '2017-12-09');
     }
 
 }

@@ -12,17 +12,23 @@ trait TypeConvertable
         switch ($type) {
             case 'integer':
             case 'bigInteger':
-                if (!is_numeric($column))
+                if ((!empty($column) && $column !== ' '))
                 {
-                    throw new \Exception("値が数字型ではありません。（引数：{$column}）");
+                    if (!is_numeric($column))
+                    {
+                        throw new \Exception("値が数字型ではありません。（引数：'{$column}）'");
+                    }
                 }
                 return (int) $column;
 
             case 'float':
             case 'double':
-                if (!is_numeric($column))
+                if ((!empty($column) && $column !== ' '))
                 {
-                    throw new \Exception("値が数字型ではありません。（引数：{$column}）");
+                    if (!is_numeric($column))
+                    {
+                        throw new \Exception("値が数字型ではありません。（引数：'{$column}）'");
+                    }
                 }
                 if (!$is_ceil)
                 {
