@@ -127,25 +127,25 @@ class UnitTypeConvertableTest extends TestCase
             $this->s->convertType('integer', $buf_1);
             $this->fail('例外発生なし');
         } catch (\Exception $e) {
-            $this->assertEquals("値が数字型ではありません。（引数：{$buf_1}）", $e->getMessage());
+            $this->assertEquals("値が数字型ではありません。（引数：'{$buf_1}'）", $e->getMessage());
         }
         try {
             $this->s->convertType('float', $buf_1);
             $this->fail('例外発生なし');
         } catch (\Exception $e) {
-            $this->assertEquals("値が数字型ではありません。（引数：{$buf_1}）", $e->getMessage());
+            $this->assertEquals("値が数字型ではありません。（引数：'{$buf_1}'）", $e->getMessage());
         }
         try {
             $this->s->convertType('date', $buf_1);
             $this->fail('例外発生なし');
         } catch (\Exception $e) {
-            $this->assertEquals("値が日付型ではありません。（引数：{$buf_1}）", $e->getMessage());
+            $this->assertEquals("値が日付型ではありません。（引数：'{$buf_1}'）", $e->getMessage());
         }
         try {
             $this->s->convertType('dateTime', $buf_1);
             $this->fail('例外発生なし');
         } catch (\Exception $e) {
-            $this->assertEquals("値が日付時刻型ではありません。（引数：{$buf_1}）", $e->getMessage());
+            $this->assertEquals("値が日付時刻型ではありません。（引数：'{$buf_1}'）", $e->getMessage());
         }
     }
 

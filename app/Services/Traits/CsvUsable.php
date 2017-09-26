@@ -40,17 +40,31 @@ trait CsvUsable
         {
             $this->setCsvFilePath($path);
         }
-        $csv_path = $this->file_path;
-        $file     = new \SplFileObject($csv_path, 'r');
+        $csv_path       = $this->file_path;
+        $file           = new \SplFileObject($csv_path, 'r');
 //        $file->setFlags(\SplFileObject::READ_CSV + \SplFileObject::DROP_NEW_LINE + \SplFileObject::READ_AHEAD + \SplFileObject::SKIP_EMPTY);
         // SplFileObject::SKIP_EMPTY フラグをセットすると行中にNULLが入っていた場合、そこで止まってしまうため除外
         // 実例：[1, 2, 3, null, 5, 6] => [1, 2, 3]
-        $file->setFlags(\SplFileObject::READ_CSV /*| \SplFileObject::DROP_NEW_LINE | \SplFileObject::READ_AHEAD  | \SplFileObject::SKIP_EMPTY */);
+        $file->setFlags(\SplFileObject::READ_CSV /* | \SplFileObject::DROP_NEW_LINE | \SplFileObject::READ_AHEAD  | \SplFileObject::SKIP_EMPTY */);
 //        if (empty($file))
 //        {
 //            throw new \Exception("CSVファイルが指定されていないようです。");
 //        }
         $this->csv_file = $file;
+        return $this;
+    }
+
+    public function setCsvFileObjectFromRequest($request_csv_file, $is_header_exist = true, $column_length = null) {
+        $file_name = $request_csv_file->getClientOriginalName();
+        if ($request_csv_file->getClientOriginalExtension() != 'csv')
+        {
+            throw new \Exception("拡張子が違うようです。（ファイルパス：{$file_name}）");
+        }
+        $this->setCsvFileObject($request_csv_file);
+        if (!empty($column_length))
+        {
+            $this->checkCsvFileLength($column_length, $is_header_exist);
+        }
         return $this;
     }
 

@@ -16,7 +16,7 @@ trait TypeConvertable
                 {
                     if (!is_numeric($column))
                     {
-                        throw new \Exception("値が数字型ではありません。（引数：'{$column}）'");
+                        throw new \Exception("値が数字型ではありません。（引数：'{$column}'）");
                     }
                 }
                 return (int) $column;
@@ -27,7 +27,7 @@ trait TypeConvertable
                 {
                     if (!is_numeric($column))
                     {
-                        throw new \Exception("値が数字型ではありません。（引数：'{$column}）'");
+                        throw new \Exception("値が数字型ではありません。（引数：'{$column}'）");
                     }
                 }
                 if (!$is_ceil)
@@ -39,7 +39,7 @@ trait TypeConvertable
             case 'date':
                 if (!$this->isDate($column))
                 {
-                    throw new \Exception("値が日付型ではありません。（引数：{$column}）");
+                    throw new \Exception("値が日付型ではありません。（引数：'{$column}'）");
                 }
                 $obj   = $this->setDate($column);
                 return (empty($obj)) ? null : $obj->format('Y-m-d');
@@ -50,7 +50,7 @@ trait TypeConvertable
             case 'dateTime':
                 if (!$this->isDate($column))
                 {
-                    throw new \Exception("値が日付時刻型ではありません。（引数：{$column}）");
+                    throw new \Exception("値が日付時刻型ではありません。（引数：'{$column}'）");
                 }
                 $obj = $this->setDate($column);
                 return (empty($obj)) ? null : $obj->format('Y-m-d H:i:s');

@@ -3,9 +3,13 @@
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Services\Traits\FileUploadTestable;
 
 class UnitCsvUsableTest extends TestCase
 {
+
+    use FileUploadTestable;
 
     protected $s;
 
@@ -149,6 +153,68 @@ class UnitCsvUsableTest extends TestCase
         $this->assertFalse($res_4);
         $res_5 = $this->s->isArrayEmpty([null, [null, null, [null]]]);
         $this->assertTrue($res_5);
+    }
+
+    /**
+     * @test
+     */
+    public function 異常系_Webから指定したCSVの形式が誤っている() {
+        try {
+            $file_object = $this->createUploadFile(storage_path() . '/tests', 'testfile.txt', 'text/csv');
+            $this->s->setCsvFileObjectFromRequest($file_object, false, 3);
+            $this->fail('例外発生なし');
+        } catch (\Exception $exc) {
+            $this->assertEquals("拡張子が違うようです。（ファイルパス：testfile.txt）", $exc->getMessage());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_Web画面からCSVカラム名をファイルを取り込む() {
+//        \Session::start();
+////        var_dump(csrf_token());
+//
+////        var_dump($para);
+//        $path     = storage_path() . '/tests/';
+//        $name     = 'testfile.csv';
+//        $full_path = $path.$name;
+//        var_dump($full_path);
+//
+//        $tmp_file = new UploadedFile(
+//                $full_path,
+//                $name,
+//                'text/csv',
+//                filesize($full_path),
+//                null,
+//                true
+//        );
+//        var_dump($tmp_file);
+////        $file     = ['test' => $tmp_file];
+////        var_dump($file);
+//        $para     = [
+//            '_token' => csrf_token(),
+//            'test'=>'test_user 1234567890',
+////            'file'=>$tmp_file,
+////            'file_name' => storage_path() . '/tests/testfile.csv',
+//        ];
+//        $response = $this->call(
+//                'POST',
+//                '/test/upload_csv',
+//                $para,
+//                [],
+//                ['file'=>$tmp_file]
+//        );
+//        $response = $this->getResponse(storage_path() . '/tests', 'testfile.csv', 'text/csv');
+//        \Session::start();
+
+        $file_object = $this->createUploadFile(storage_path() . '/tests', 'testfile.csv', 'text/csv');
+        $this->s->setCsvFileObjectFromRequest($file_object, false, 3);
+//        var_dump($file_object);
+//        $response    = $this->call('POST', 'test/file_upload', $this->getInputs(), [], ['file' => $file_object]);
+//        var_dump($file_object->getClientOriginalExtension());
+//        var_dump($response);
+//        $this->s->setCsvFileObjectFromRequest();
     }
 
 }

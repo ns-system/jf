@@ -335,3 +335,11 @@ Route::get('/walk', function() {
     $obj = new \App\Services\Swim();
     $obj->swim(3000);
 });
+
+Route::any('/test/file_upload', function() {
+    $file = \Request::file('file');
+    var_dump($file->getClientOriginalExtension());
+    return $file;
+//    return \Requrest::input();
+//    return Response::make();
+});
