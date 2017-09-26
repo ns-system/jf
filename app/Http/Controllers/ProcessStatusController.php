@@ -157,6 +157,15 @@ class ProcessStatusController extends Controller
                 ->orderBy('zenon_data_csv_file_id', 'asc')
                 ->get()
         ;
+        $job  = \App\JobStatus::find($job_id);
+        if ($job->is_import_start)
+        {
+            \Session::flash('flash_message', '処理は終了しています。');
+        }
+        else if ($job->is_import_start)
+        {
+            \Session::flash('warn_message', 'すでに処理は開始されています。');
+        }
         return view('admin.month.import', ['id' => $id, 'rows' => $rows, 'job_id' => $job_id]);
     }
 
@@ -172,10 +181,11 @@ class ProcessStatusController extends Controller
         $job = \App\JobStatus::find($job_id);
         if ($job->is_import_start)
         {
+            \Session::flash('warn_message', 'すでに処理は開始されています。');
             return redirect(route('admin::super::month::import', ['id' => $id, 'job_id' => $job_id]));
         }
 
-        $this->service->resetProcessStatus($rows);
+        $this->service->resetProcessStatus($rows, $id);
         try {
             $this->dispatch(new \App\Jobs\Suisin\CsvUpload($id, $processes, $job_id));
         } catch (\Exception $exc) {

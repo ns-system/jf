@@ -15,7 +15,7 @@
 
 @section('sidebar')
 <div class="col-md-2">
-<div data-spy="affix" data-offset-top="10" style="margin-bottom: 10px; top: 110px; left: 15px; min-width: 200px;">
+<div data-spy="affix" style="min-width: 200px;">
     <div class="nav nav-pills nav-stacked list-group">
         <p role="presentation" class="list-group-item collapse bg-primary-important" style="color: #fff;">メニュー</p>
 
@@ -62,7 +62,7 @@
                 id="uncheck"
             >チェックを外す</a>
         <span></span>
-        </div><span class="list-group-item collapse list-divider"></span>
+        </div>{{-- <span class="list-group-item collapse list-divider"></span>
         
         <a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#list"><span class="caret"></span> リ<small>スト出力</small></a>
         <span></span>
@@ -81,7 +81,7 @@
                 id="uncheck"
             >チェックを外す</a>
         <span></span>
-        </div>
+        </div> --}}
     </div>
 </div>
 </div>
@@ -161,12 +161,12 @@
                     @else             <label class="label label-default" style="min-width: 75px;">ファイル</label> @endif
                 </p>
                 <p>
-                    @if($f->is_import)       <label class="label label-warning" style="min-width: 75px;">処理済</label>
+                    @if($f->is_import)       <label class="label label-success" style="min-width: 75px;">処理済</label>
                     @else                    <label class="label label-default" style="min-width: 75px;">未処理</label> @endif
                 </p>
             </td>
 
-            <td class="va-middle text-right">{{number_format((int) $counts[$f->id])}}件</td>
+            <td class="va-middle text-right">{{number_format((int) $counts[$f->key_id])}}件</td>
             <td class="va-middle">{{$f->reference_return_date}}</td>
 
             <td>

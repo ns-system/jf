@@ -32,13 +32,14 @@
             <h2>CSVファイルコピー処理</h2>
         </div>
 
-        <div class="well">
-            <div class="progress">
-                <div class="progress-bar progress-bar-info progress-bar-striped active" id="progress" role="progressbar" style="width: 100%;">処理中です...しばらくお待ちください</div>
-
+        <div class="col-md-10 col-md-offset-1">
+            <div class="well" style="padding: 30px 60px;">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" id="progress" role="progressbar" style="width: 100%;">処理中です...しばらくお待ちください</div>
+                </div>
+                <p>ファイルをコピーしています。</p>
+                <p>しばらくそのままでお待ち下さい。</p>
             </div>
-            <p>ファイルをコピーしています。</p>
-            <p>しばらくそのままでお待ち下さい。</p>
 {{--             <button class="btn btn-primary" id="ajax">ajax</button> --}}
         </div>
 

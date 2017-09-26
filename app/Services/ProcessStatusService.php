@@ -24,7 +24,12 @@ class ProcessStatusService
         return $this;
     }
 
-    public function resetProcessStatus($rows) {
+    public function resetProcessStatus($rows, $monthly_id) {
+        \App\ZenonMonthlyStatus::month($monthly_id)
+//                ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                ->update(['is_execute' => (int) false])
+        ;
+
         foreach ($rows as $r) {
             $r->is_execute            = true;
             $r->is_import             = false;
@@ -46,10 +51,10 @@ class ProcessStatusService
             $rows = \App\ZenonMonthlyStatus::month($id)
                     ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
                     ->where(function($query) use ($processes) {
-                        foreach ($processes as $val) {
-                            $query->orWhere('zenon_data_monthly_process_status.id', '=', $val);
-                        }
-                    })
+                foreach ($processes as $val) {
+                    $query->orWhere('zenon_data_monthly_process_status.id', '=', $val);
+                }
+            })
             ;
         }
         else

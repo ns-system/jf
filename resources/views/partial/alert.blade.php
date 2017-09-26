@@ -27,8 +27,11 @@
 @if(!empty($warn_message) || Session::has('warn_message') > 0)
 <div class="alert alert-warning alert-dismissible fade in" rore="alert">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-        <p><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> @if(!empty($warn_message)) {{$warn_message}} @endif</p>
-        <p><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> @if(Session::has('warn_message') > 0) {{Session::get('warn_message')}} @endif</p>
+        <p>
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            @if(!empty($warn_message)) {{$warn_message}} @endif
+            @if(Session::has('warn_message') > 0) {{Session::get('warn_message')}} @endif
+        </p>
 </div>
 @endif
 

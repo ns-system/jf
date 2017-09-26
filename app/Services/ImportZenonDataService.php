@@ -186,7 +186,7 @@ class ImportZenonDataService
             $line = $this->lineEncode($raw_line);
             if ($this->isArrayEmpty($line))
             {
-                var_dump($raw_line);
+//                var_dump($raw_line);
 //                $line_number--;
                 continue;
             }
