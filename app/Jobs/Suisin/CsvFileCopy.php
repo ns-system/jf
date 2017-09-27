@@ -44,27 +44,18 @@ class CsvFileCopy extends Job implements SelfHandling, ShouldQueue
         $job                   = \App\JobStatus::find($this->job_id);
 
         try {
-            if (!file_exists($accumulation_dir_path))
-            {
-                //おかしかったらエラー処理
-                throw new \Exception("累積先ディレクトリが存在しないようです。（想定：{$accumulation_dir_path}）");
-            }
-            if (!strptime($monthly_id, '%Y%m'))
-            {
-                //おかしかったらエラー処理
-                throw new \Exception("月別IDに誤りがあるようです。（投入された値：{$monthly_id}）");
-            }
-
-            $copy_csv_file_service->setMonthlyId($monthly_id)
+            $ignore_and_not_exist_file_lists = $copy_csv_file_service
+                    ->setMonthlyId($monthly_id)
                     ->setDirectoryPath($accumulation_dir_path)
                     ->copyCsvFile()
                     ->tableTemplateCreation()
                     ->registrationCsvFileToDatabase()
 //                ->tempFileErase()
             ;
+            $copy_csv_file_service->outputForJsonFile($ignore_and_not_exist_file_lists['ignore'], storage_path() . '/jsonlogs', $this->ym . '_ignore_file_list.json');
+            $copy_csv_file_service->outputForJsonFile($ignore_and_not_exist_file_lists['not_exist'], storage_path() . '/jsonlogs', $this->ym . '_not_exist_file_list.json');
         } catch (\Exception $exc) {
             echo $exc->getTraceAsString();
-
             $job->is_copy_error = true;
             $job->save();
         } finally {

@@ -144,13 +144,13 @@ class CopyCsvFileService
 //            $base_path = $this->directory_path;
             if (empty($file_info['extension']) || $file_info['extension'] !== 'csv')
             {
-                $not_execution_file_list[] = $file_path;
+                $not_execution_file_list[] = [$file_path, 'The extension is not csv.'];
                 continue;
             }
             $date_text = mb_substr($t, 14, 8);
-            if (!$this->isDate($date_text))
+            if (!$date_text || !$this->isDate($date_text))
             {
-                $not_execution_file_list[] = $file_path;
+                $not_execution_file_list[] = [$file_path, 'File name does not contain date type.'];
                 continue;
             }
             $date    = date('Y-m-d', strtotime($date_text));
@@ -233,7 +233,7 @@ class CopyCsvFileService
         array_multisort(array_column($lists, 'identifier'), $lists);
         if ($is_log_export)
         {
-            $this->outputForJsonFile($not_execution_file_list, storage_path() . '/jsonlogs', 'not_execution_file_list.json');
+            $this->outputForJsonFile($not_execution_file_list, storage_path() . '/jsonlogs', date('Ym') . '_not_execution_file_list.json');
         }
         return $lists;
     }
