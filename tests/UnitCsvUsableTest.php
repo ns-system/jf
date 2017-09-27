@@ -76,7 +76,7 @@ class UnitCsvUsableTest extends TestCase
             ;
             $this->fail('例外発生なし');
         } catch (\Exception $e) {
-            $this->assertEquals("行数：1行目のCSVのカラム数が一致しませんでした。（想定：20，実際：3）", $e->getMessage());
+            $this->assertEquals("行数：2行目のCSVのカラム数が一致しませんでした。（想定：20，実際：3）", $e->getMessage());
         }
     }
 
@@ -105,14 +105,22 @@ class UnitCsvUsableTest extends TestCase
      * @test
      */
     public function 正常系_ファイル列数カウント() {
-        $path = storage_path() . '/tests/testfile.csv';
-        $len  = $this->s
-                ->setCsvFilePath($path)
+        $path_1 = storage_path() . '/tests/testfile.csv';
+        $path_2 = storage_path() . '/tests/K_D_902_M0332_20170801.csv';
+        $len_1  = $this->s
+                ->setCsvFilePath($path_1)
                 ->setCsvFileObject()
                 ->checkCsvFileLength(3)
                 ->getCsvLines()
         ;
-        $this->assertEquals($len, 1);
+        $len_2  = $this->s
+                ->setCsvFilePath($path_2)
+                ->setCsvFileObject()
+                ->checkCsvFileLength(46)
+                ->getCsvLines()
+        ;
+        $this->assertEquals($len_1, 1);
+        $this->assertEquals($len_2, 1500);
     }
 
     /**

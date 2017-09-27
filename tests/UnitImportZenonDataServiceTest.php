@@ -258,31 +258,37 @@ class UnitImportZenonDataServiceTest extends TestCase
             'executed_row_count'     => 0,
         ];
 
-        \DB::connection('mysql_zenon')->beginTransaction();
-        \DB::connection('mysql_suisin')->beginTransaction();
-        \App\ZenonMonthlyStatus::insert($monthly_status);
-        $table_configs = \App\ZenonMonthlyStatus::month(201707)
-                ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
-                ->where('zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 25)
-                ->get()
-        ;
+        try {
+            \DB::connection('mysql_zenon')->beginTransaction();
+            \DB::connection('mysql_suisin')->beginTransaction();
+            \App\ZenonMonthlyStatus::insert($monthly_status);
+            $table_configs = \App\ZenonMonthlyStatus::month(201707)
+                    ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                    ->where('zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 25)
+                    ->get()
+            ;
 
-        $csv_file_object = $this->s->setCsvFileObject(storage_path() . '/tests/K_D_902_M0332_20170801.csv')->getCsvFileObject();
+            $csv_file_object = $this->s->setCsvFileObject(storage_path() . '/tests/K_D_902_M0332_20170801.csv')->getCsvFileObject();
 
-        $start_time = date('Y-m-d H:i:s');
-        foreach ($table_configs as $t) {
-            $this->s->uploadToDatabase($t, $csv_file_object, 201707);
+            $start_time = date('Y-m-d H:i:s');
+            foreach ($table_configs as $t) {
+                $this->s->uploadToDatabase($t, $csv_file_object, 201707);
+            }
+            $end_time = date('Y-m-d H:i:s');
+            $count    = \DB::connection('mysql_zenon')
+                    ->table('deposit_term_ledgers')
+                    ->where('created_at', '>=', $start_time)
+                    ->where('created_at', '<=', $end_time)
+                    ->count()
+            ;
+            $this->assertEquals($count, 1500);
+        } catch (\Exception $exc) {
+            $this->fail('予期しないエラー');
+            //          echo $exc->getTraceAsString();
+        } finally {
+            \DB::connection('mysql_zenon')->rollback();
+            \DB::connection('mysql_suisin')->rollback();
         }
-        $end_time = date('Y-m-d H:i:s');
-        $count    = \DB::connection('mysql_zenon')
-                ->table('deposit_term_ledgers')
-                ->where('created_at', '>=', $start_time)
-                ->where('created_at', '<=', $end_time)
-                ->count()
-        ;
-        $this->assertEquals($count, 1500);
-        \DB::connection('mysql_zenon')->rollback();
-        \DB::connection('mysql_suisin')->rollback();
     }
 
     /**
@@ -308,28 +314,34 @@ class UnitImportZenonDataServiceTest extends TestCase
             'executed_row_count'     => 0,
         ];
 
-        \DB::connection('mysql_suisin')->beginTransaction();
-        \App\ZenonMonthlyStatus::insert($monthly_status);
-        $table_configs = \App\ZenonMonthlyStatus::month(201707)
-                ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
-                ->where('zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 25)
-                ->first()
-        ;
-        $before        = [
-            'start' => $table_configs->is_pre_process_start,
-            'end'   => $table_configs->is_pre_process_end,
-            'count' => $table_configs->row_count,
-        ];
+        try {
+            \DB::connection('mysql_suisin')->beginTransaction();
+            \App\ZenonMonthlyStatus::insert($monthly_status);
+            $table_configs = \App\ZenonMonthlyStatus::month(201707)
+                    ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                    ->where('zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 25)
+                    ->first()
+            ;
+            $before        = [
+                'start' => $table_configs->is_pre_process_start,
+                'end'   => $table_configs->is_pre_process_end,
+                'count' => $table_configs->row_count,
+            ];
 
-        $this->s->setPreProcessStartToMonthlyStatus($table_configs);
-        $after['start'] = $table_configs->is_pre_process_start;
-        $this->s->setPreProcessEndToMonthlyStatus($table_configs, 200);
-        $after['end']   = $table_configs->is_pre_process_end;
-        $after['count'] = $table_configs->row_count;
+            $this->s->setPreProcessStartToMonthlyStatus($table_configs);
+            $after['start'] = $table_configs->is_pre_process_start;
+            $this->s->setPreProcessEndToMonthlyStatus($table_configs, 200);
+            $after['end']   = $table_configs->is_pre_process_end;
+            $after['count'] = $table_configs->row_count;
 
-        $this->assertEquals($before, ['start' => false, 'end' => false, 'count' => 0]);
-        $this->assertEquals($after, ['start' => true, 'end' => true, 'count' => 200]);
-        \DB::connection('mysql_suisin')->rollback();
+            $this->assertEquals($before, ['start' => false, 'end' => false, 'count' => 0]);
+            $this->assertEquals($after, ['start' => true, 'end' => true, 'count' => 200]);
+            \DB::connection('mysql_suisin')->rollback();
+        } catch (\Exception $exc) {
+            $this->fail('予期しないエラー');
+
+            \DB::connection('mysql_suisin')->rollback();
+        }
     }
 
     /**
@@ -355,32 +367,38 @@ class UnitImportZenonDataServiceTest extends TestCase
             'executed_row_count'     => 0,
         ];
 
-        \DB::connection('mysql_suisin')->beginTransaction();
-        \App\ZenonMonthlyStatus::insert($monthly_status);
-        $table_configs = \App\ZenonMonthlyStatus::month(201707)
-                ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
-                ->where('zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 25)
-                ->first()
-        ;
+
+        try {
+            \DB::connection('mysql_suisin')->beginTransaction();
+            \App\ZenonMonthlyStatus::insert($monthly_status);
+            $table_configs = \App\ZenonMonthlyStatus::month(201707)
+                    ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                    ->where('zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 25)
+                    ->first()
+            ;
 //        var_dump($table_configs);
-        $before        = [
-            'import' => $table_configs->is_import,
-            'start'  => $table_configs->is_post_process_start,
-            'end'    => $table_configs->is_post_process_end,
-            'count'  => $table_configs->executed_row_count,
-        ];
+            $before        = [
+                'import' => $table_configs->is_import,
+                'start'  => $table_configs->is_post_process_start,
+                'end'    => $table_configs->is_post_process_end,
+                'count'  => $table_configs->executed_row_count,
+            ];
 
-        $this->s->setPostProcessStartToMonthlyStatus($table_configs);
-        $after['start']  = $table_configs->is_post_process_start;
-        $this->s->setPostProcessEndToMonthlyStatus($table_configs);
-        $after['end']    = $table_configs->is_post_process_end;
-        $after['import'] = $table_configs->is_import;
-        $this->s->setExecutedRowCountToMonthlyStatus($table_configs, 200);
-        $after['count']  = $table_configs->executed_row_count;
+            $this->s->setPostProcessStartToMonthlyStatus($table_configs);
+            $after['start']  = $table_configs->is_post_process_start;
+            $this->s->setPostProcessEndToMonthlyStatus($table_configs);
+            $after['end']    = $table_configs->is_post_process_end;
+            $after['import'] = $table_configs->is_import;
+            $this->s->setExecutedRowCountToMonthlyStatus($table_configs, 200);
+            $after['count']  = $table_configs->executed_row_count;
 
-        $this->assertEquals($before, ['import' => false, 'start' => false, 'end' => false, 'count' => 0]);
-        $this->assertEquals($after, ['import' => true, 'start' => true, 'end' => true, 'count' => 200]);
-        \DB::connection('mysql_suisin')->rollback();
+            $this->assertEquals($before, ['import' => false, 'start' => false, 'end' => false, 'count' => 0]);
+            $this->assertEquals($after, ['import' => true, 'start' => true, 'end' => true, 'count' => 200]);
+            \DB::connection('mysql_suisin')->rollback();
+        } catch (\Exception $exc) {
+            $this->fail('予期しないエラー');
+            \DB::connection('mysql_suisin')->rollback();
+        }
     }
 
     /**

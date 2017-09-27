@@ -35,21 +35,29 @@ trait CsvUsable
         return $this;
     }
 
-    public function setCsvFileObject($path = '') {
-        if (!empty($path))
+    /**
+     * CSVファイルオブジェクトを生成するメソッド
+     * @param mixed $file_path_or_file_object
+     *                    : ファイルパスをフルパスで指定するかもしくはリクエストからアップロードしたオブジェクトを引き渡す。
+     * @return      $this : チェーンメソッド。getCsvFileObjectとかにつなげる。
+     * @history           :
+     *                      2017-09-27 string型以外で入ってきた場合の分岐処理を追記。
+     */
+    public function setCsvFileObject($file_path_or_file_object = '') {
+        if (gettype($file_path_or_file_object) === 'string')
         {
-            $this->setCsvFilePath($path);
+            $file_path = (empty($file_path_or_file_object)) ? $this->file_path : $this->setCsvFilePath($file_path_or_file_object)->file_path;
+            $file      = new \SplFileObject($file_path, 'r');
         }
-        $csv_path       = $this->file_path;
-        $file           = new \SplFileObject($csv_path, 'r');
+        else
+        {
+            $file_object = $file_path_or_file_object;
+            $file        = new \SplFileObject($file_object, 'r');
+        }
 //        $file->setFlags(\SplFileObject::READ_CSV + \SplFileObject::DROP_NEW_LINE + \SplFileObject::READ_AHEAD + \SplFileObject::SKIP_EMPTY);
         // SplFileObject::SKIP_EMPTY フラグをセットすると行中にNULLが入っていた場合、そこで止まってしまうため除外
         // 実例：[1, 2, 3, null, 5, 6] => [1, 2, 3]
         $file->setFlags(\SplFileObject::READ_CSV /* | \SplFileObject::DROP_NEW_LINE | \SplFileObject::READ_AHEAD  | \SplFileObject::SKIP_EMPTY */);
-//        if (empty($file))
-//        {
-//            throw new \Exception("CSVファイルが指定されていないようです。");
-//        }
         $this->csv_file = $file;
         return $this;
     }
@@ -60,6 +68,9 @@ trait CsvUsable
         {
             throw new \Exception("拡張子が違うようです。（ファイルパス：{$file_name}）");
         }
+
+//        dd($file_name);
+//        $this->setCsvFileObject($file_name);
         $this->setCsvFileObject($request_csv_file);
         if (!empty($column_length))
         {
@@ -111,24 +122,24 @@ trait CsvUsable
         {
             throw new \Exception("CSVファイルが指定されていないようです。");
         }
-        foreach ($this->csv_file as $line_cnt => $raw_line) {
+        $line_number = 0;
+        foreach ($this->csv_file as $i => $raw_line) {
             $line = $this->lineEncode($raw_line);
 
             // ヘッダー行の指定があった場合、もしくは行が空の場合スキップ
-            // この場合ラインカウンタを1行減らす
-            if (($is_header_exist && $line_cnt === 0) || $this->isArrayEmpty($line))
+            if (($is_header_exist && $i === 0) || $this->isArrayEmpty($line))
             {
-                $line_cnt--;
                 continue;
             }
+            $line_number++;
             $cnt = count($line);
             if ($line_length !== $cnt)
             {
 //                var_dump($line);
-                throw new \Exception("行数：" . ($line_cnt + 1) . "行目のCSVのカラム数が一致しませんでした。（想定：{$line_length}，実際：" . ($cnt) . "）");
+                throw new \Exception("行数：" . ($line_number + 1) . "行目のCSVのカラム数が一致しませんでした。（想定：{$line_length}，実際：" . ($cnt) . "）");
             }
         }
-        $this->csv_lines = $line_cnt + 1;
+        $this->csv_lines = $line_number;
         return $this;
     }
 
