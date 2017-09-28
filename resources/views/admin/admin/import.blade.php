@@ -1,7 +1,7 @@
 @extends('layout')
 
-@section('title', 'CSV確認')
-
+{{-- @section('title', 'CSV確認')
+ --}}
 @section('header')
 @parent
 @endsection
@@ -24,7 +24,7 @@
 <div class="text-right" data-spy="affix" style="right: 30px; top: 100px;" data-offset-top="150">
     <div class="btn-group">
         <button type="button" class="btn btn-primary btn-sm margin-bottom" id="more">もっと見る</button>
-        <button type="sumbit" class="btn btn-success btn-sm margin-bottom">更新する</button>
+        <button type="sumbit" class="btn btn-success btn-sm margin-bottom" onclick="return confirm('取り込んだデータをデータベースに反映させてよろしいですか？');">更新する</button>
     </div>
 </div>
             <table class="table table-hover va-middle table-small">

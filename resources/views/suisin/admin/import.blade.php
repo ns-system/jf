@@ -1,7 +1,5 @@
 @extends('layout')
 
-@section('title', 'CSV確認')
-
 @section('header')
 @parent
 @endsection
@@ -24,7 +22,7 @@
 <div class="text-right" data-spy="affix" style="right: 30px; top: 100px;" data-offset-top="150">
     <div class="btn-group">
         <button type="button" class="btn btn-primary btn-sm margin-bottom" id="more">もっと見る</button>
-        <button type="sumbit" class="btn btn-success btn-sm margin-bottom">更新する</button>
+        <button type="sumbit" class="btn btn-success btn-sm margin-bottom" onclick="return confirm('取り込んだデータをデータベースに反映させてよろしいですか？');">更新する</button>
     </div>
 </div>
             <table class="table table-hover va-middle table-small">
@@ -56,20 +54,7 @@
 
                             @if($column_config[0] === 1)
                                 <span>{{$display}}</span>
-                                <?php
-                                    $key = '';
-                                    if(is_array($configs['key'])){
-                                        // Multi key
-                                        foreach ($configs['key'] as $pk) {
-                                            $key .= $row[$pk].'-';
-                                        }
-                                        $key = mb_substr($key, 0, mb_strlen($key) - 1);
-                                    }else{
-                                        // Single key
-                                        $key = $row[$configs['key']];
-                                    }
-                                ?>
-                                <input type="hidden" name="<?php echo $column_config[1].'['.$key.']'; ?>" value="{{$row[$column_config[1]]}}">
+                                <input type="hidden" name="{{$column_config[1]}}[]" value="{{$row[$column_config[1]]}}">
                             @else
                                 {{$display}}
                             @endif

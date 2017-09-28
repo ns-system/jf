@@ -98,6 +98,12 @@ class SuisinCsvConfigService
             'join'          => [
                 ['db' => 'master_data_db.subject_codes', 'left' => 'deposit_category_codes.subject_code', 'right' => 'subject_codes.subject_code',],
             ],
+            'as'            => [
+                'table'   => 'deposit_category_codes',
+                'columns' => [
+                    'subject_code',
+                ],
+            ],
             'display'       => [
                 'title' => '貯金種類コード',
                 'route' => $this->route . '/DepositCategory',
@@ -561,6 +567,12 @@ class SuisinCsvConfigService
             'join'          => [
                 ['db' => 'master_data_db.prefecture_codes', 'left' => 'stores.prefecture_code', 'right' => 'prefecture_codes.prefecture_code',],
             ],
+            'as'            => [
+                'table'   => 'stores',
+                'columns' => [
+                    'prefecture_code',
+                ],
+            ],
             'display'       => [
                 'title' => '店番',
                 'route' => $this->route . '/Store',
@@ -631,6 +643,14 @@ class SuisinCsvConfigService
                 ['db' => 'master_data_db.prefecture_codes', 'left' => 'small_stores.prefecture_code', 'right' => 'prefecture_codes.prefecture_code',],
                 ['db' => 'master_data_db.stores', 'left' => 'small_stores.store_number', 'right' => 'stores.store_number',],
                 ['db' => 'master_data_db.control_stores', 'left' => 'small_stores.control_store_code', 'right' => 'control_stores.control_store_code',],
+            ],
+            'as'            => [
+                'table'   => 'small_stores',
+                'columns' => [
+                    'prefecture_code',
+                    'store_number',
+                    'control_store_code',
+                ],
             ],
             'display'       => [
                 'title' => '小規模店番',
@@ -739,9 +759,17 @@ class SuisinCsvConfigService
         $params      = [
             'object'        => '\App\Models\Common\Area',
             'join'          => [
-                ['db' => 'master_data_db.prefecture_codes', 'left' => 'area_codes.prefecture_code', 'right' => 'prefecture_codes.prefecture_code',],
-                ['db' => 'master_data_db.stores', 'left' => 'area_codes.store_number', 'right' => 'stores.store_number',],
-                ['db' => 'master_data_db.small_stores', 'left' => 'area_codes.small_store_number', 'right' => 'small_stores.small_store_number',],
+                ['db' => 'master_data_db.prefecture_codes', 'left' => 'area_codes.prefecture_code',    'right' => 'prefecture_codes.prefecture_code',],
+                ['db' => 'master_data_db.stores',           'left' => 'area_codes.store_number',       'right' => 'stores.store_number',],
+                ['db' => 'master_data_db.small_stores',     'left' => 'area_codes.small_store_number', 'right' => 'small_stores.small_store_number',],
+            ],
+            'as'            => [
+                'table'   => 'area_codes',
+                'columns' => [
+                    'prefecture_code',
+                    'store_number',
+                    'small_store_number',
+                ],
             ],
             'display'       => [
                 'title' => '地区コード',
@@ -852,6 +880,12 @@ class SuisinCsvConfigService
             'join'          => [
                 ['db' => 'master_data_db.prefecture_codes', 'left' => 'control_stores.prefecture_code', 'right' => 'prefecture_codes.prefecture_code',],
             ],
+            'as'            => [
+                'table'   => 'control_stores',
+                'columns' => [
+                    'prefecture_code',
+                ],
+            ],
             'display'       => [
                 'title' => '管轄店舗',
                 'route' => $this->route . '/ControlStore',
@@ -928,6 +962,12 @@ class SuisinCsvConfigService
             'object'        => '\App\Consignor',
             'join'          => [
                 ['db' => 'suisin_db.consignor_groups', 'left' => 'consignors.consignor_group_id', 'right' => 'consignor_groups.id',],
+            ],
+            'as'            => [
+                'table'   => 'consignors',
+                'columns' => [
+                    'consignor_group_id',
+                ],
             ],
             'display'       => [
                 'title' => '委託者リスト',

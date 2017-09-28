@@ -38,6 +38,7 @@ class UnitImportZenonDataServiceTest extends TestCase
      * @test
      */
     public function 正常系_月別ID指定() {
+        // FIX:テストになってない
         $obj = $this->s->monthlyStatus(201707, [1, 2, 3]);
     }
 
