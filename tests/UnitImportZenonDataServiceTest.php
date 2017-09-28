@@ -54,14 +54,7 @@ class UnitImportZenonDataServiceTest extends TestCase
             ['subject_code' => 1, 'account_number' => 1234567890.0, 'split_key' => 'key_1', 'user_name' => 'テストユーザー1', 'created_on' => '2017-07-01', 'is_administrator' => true, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 1234567, 'created_at' => $timestamp, 'updated_at' => $timestamp,],
             ['subject_code' => 4, 'account_number' => 2345678901.0, 'split_key' => 'key_2', 'user_name' => 'test user_2', 'created_on' => '2017-08-21', 'is_administrator' => false, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 2345678901, 'created_at' => $timestamp, 'updated_at' => $timestamp,],
         ];
-        $types       = [
-            'subject_code'     => 'integer',
-            'account_number'   => 'double',
-            'split_key'        => 'string',
-            'user_name'        => 'string',
-            'created_on'       => 'date',
-            'is_administrator' => 'boolean',
-        ];
+        $types       = ['subject_code' => 'integer', 'account_number' => 'double', 'split_key' => 'string', 'user_name' => 'string', 'created_on' => 'date', 'is_administrator' => 'boolean',];
         $keys        = ['subject_code', 'account_number', 'split_key', 'user_name', 'created_on', 'is_administrator'];
 
         $res_1 = [];
@@ -239,24 +232,7 @@ class UnitImportZenonDataServiceTest extends TestCase
      * @test
      */
     public function 正常系_INSERT成功() {
-        $monthly_status = [
-            'csv_file_name'          => 'K_D_902_M0332_20170801.csv',
-            'file_kb_size'           => 8645,
-            'monthly_id'             => 201707,
-            'csv_file_set_on'        => '2017-08-01',
-            'zenon_data_csv_file_id' => 25,
-            'is_execute'             => 1,
-            'is_pre_process_start'   => 0,
-            'is_pre_process_end'     => 0,
-            'is_pre_process_error'   => 0,
-            'is_post_process_start'  => 0,
-            'is_post_process_end'    => 0,
-            'is_post_process_error'  => 0,
-            'is_exist'               => 1,
-            'is_import'              => 0,
-            'row_count'              => 0,
-            'executed_row_count'     => 0,
-        ];
+        $monthly_status = ['csv_file_name' => 'K_D_902_M0332_20170801.csv', 'file_kb_size' => 8645, 'monthly_id' => 201707, 'csv_file_set_on' => '2017-08-01', 'zenon_data_csv_file_id' => 25, 'is_execute' => 1, 'is_pre_process_start' => 0, 'is_pre_process_end' => 0, 'is_pre_process_error' => 0, 'is_post_process_start' => 0, 'is_post_process_end' => 0, 'is_post_process_error' => 0, 'is_exist' => 1, 'is_import' => 0, 'row_count' => 0, 'executed_row_count' => 0,];
 
         try {
             \DB::connection('mysql_zenon')->beginTransaction();
@@ -281,38 +257,22 @@ class UnitImportZenonDataServiceTest extends TestCase
                     ->where('created_at', '<=', $end_time)
                     ->count()
             ;
-            $this->assertEquals($count, 1500);
         } catch (\Exception $exc) {
+            echo $exc->getMessage();
             $this->fail('予期しないエラー');
             //          echo $exc->getTraceAsString();
         } finally {
             \DB::connection('mysql_zenon')->rollback();
             \DB::connection('mysql_suisin')->rollback();
         }
+        $this->assertEquals($count, 3000);
     }
 
     /**
      * @test
      */
     public function 正常系_事前ステータス変更() {
-        $monthly_status = [
-            'csv_file_name'          => 'K_D_902_M0332_20170801.csv',
-            'file_kb_size'           => 8645,
-            'monthly_id'             => 201707,
-            'csv_file_set_on'        => '2017-08-01',
-            'zenon_data_csv_file_id' => 25,
-            'is_execute'             => 1,
-            'is_pre_process_start'   => 0,
-            'is_pre_process_end'     => 0,
-            'is_pre_process_error'   => 0,
-            'is_post_process_start'  => 0,
-            'is_post_process_end'    => 0,
-            'is_post_process_error'  => 0,
-            'is_exist'               => 1,
-            'is_import'              => 0,
-            'row_count'              => 0,
-            'executed_row_count'     => 0,
-        ];
+        $monthly_status = ['csv_file_name' => 'K_D_902_M0332_20170801.csv', 'file_kb_size' => 8645, 'monthly_id' => 201707, 'csv_file_set_on' => '2017-08-01', 'zenon_data_csv_file_id' => 25, 'is_execute' => 1, 'is_pre_process_start' => 0, 'is_pre_process_end' => 0, 'is_pre_process_error' => 0, 'is_post_process_start' => 0, 'is_post_process_end' => 0, 'is_post_process_error' => 0, 'is_exist' => 1, 'is_import' => 0, 'row_count' => 0, 'executed_row_count' => 0,];
 
         try {
             \DB::connection('mysql_suisin')->beginTransaction();
@@ -334,38 +294,21 @@ class UnitImportZenonDataServiceTest extends TestCase
             $after['end']   = $table_configs->is_pre_process_end;
             $after['count'] = $table_configs->row_count;
 
-            $this->assertEquals($before, ['start' => false, 'end' => false, 'count' => 0]);
-            $this->assertEquals($after, ['start' => true, 'end' => true, 'count' => 200]);
             \DB::connection('mysql_suisin')->rollback();
         } catch (\Exception $exc) {
             $this->fail('予期しないエラー');
 
             \DB::connection('mysql_suisin')->rollback();
         }
+        $this->assertEquals($before, ['start' => false, 'end' => false, 'count' => 0]);
+        $this->assertEquals($after, ['start' => true, 'end' => true, 'count' => 200]);
     }
 
     /**
      * @test
      */
     public function 正常系_本ステータス変更() {
-        $monthly_status = [
-            'csv_file_name'          => 'K_D_902_M0332_20170801.csv',
-            'file_kb_size'           => 8645,
-            'monthly_id'             => 201707,
-            'csv_file_set_on'        => '2017-08-01',
-            'zenon_data_csv_file_id' => 25,
-            'is_execute'             => 1,
-            'is_pre_process_start'   => 0,
-            'is_pre_process_end'     => 0,
-            'is_pre_process_error'   => 0,
-            'is_post_process_start'  => 0,
-            'is_post_process_end'    => 0,
-            'is_post_process_error'  => 0,
-            'is_exist'               => 1,
-            'is_import'              => 0,
-            'row_count'              => 0,
-            'executed_row_count'     => 0,
-        ];
+        $monthly_status = ['csv_file_name' => 'K_D_902_M0332_20170801.csv', 'file_kb_size' => 8645, 'monthly_id' => 201707, 'csv_file_set_on' => '2017-08-01', 'zenon_data_csv_file_id' => 25, 'is_execute' => 1, 'is_pre_process_start' => 0, 'is_pre_process_end' => 0, 'is_pre_process_error' => 0, 'is_post_process_start' => 0, 'is_post_process_end' => 0, 'is_post_process_error' => 0, 'is_exist' => 1, 'is_import' => 0, 'row_count' => 0, 'executed_row_count' => 0,];
 
 
         try {
@@ -392,13 +335,14 @@ class UnitImportZenonDataServiceTest extends TestCase
             $this->s->setExecutedRowCountToMonthlyStatus($table_configs, 200);
             $after['count']  = $table_configs->executed_row_count;
 
-            $this->assertEquals($before, ['import' => false, 'start' => false, 'end' => false, 'count' => 0]);
-            $this->assertEquals($after, ['import' => true, 'start' => true, 'end' => true, 'count' => 200]);
             \DB::connection('mysql_suisin')->rollback();
         } catch (\Exception $exc) {
+            $exc->getMessage();
             $this->fail('予期しないエラー');
             \DB::connection('mysql_suisin')->rollback();
         }
+        $this->assertEquals($before, ['import' => false, 'start' => false, 'end' => false, 'count' => 0]);
+        $this->assertEquals($after, ['import' => true, 'start' => true, 'end' => true, 'count' => 200]);
     }
 
     /**

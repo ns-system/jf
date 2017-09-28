@@ -285,17 +285,21 @@ class CopyCsvFileService
 //        $not_exist_file_list_json_name = $monthly_id . "_not_exist_file_list" . ".json";
 
         $not_exist_file_list = \DB::connection('mysql_suisin')->transaction(function() use($file_lists, $monthly_id, $csv_file_masters) {
-            $not_exist_file_list = [];
+            $not_exist_file_list = $file_lists;
             foreach ($csv_file_masters as $mst) {
                 $monthly_status = \App\ZenonMonthlyStatus::month($monthly_id)->where('zenon_data_csv_file_id', '=', $mst->id)->first();
                 $file           = $file_lists[$mst->identifier];
-                // identifier・monthly_idを指定してオブジェクトが生成できなかった場合
-                // -> DBに存在しないがファイルは存在しているため、not_exist扱い
-                if (empty($monthly_status))
-                {
-                    $not_exist_file_list[] = $file;
-                    continue;
-                }
+
+                // そもそも日付型がおかしいファイルはファイルリスト生成時に弾かれるのでこの処理自体が不要
+//                if (empty($monthly_status))
+//                {
+//                    $not_exist_file_list[] = $file;
+//                    continue;
+//                }
+                // identifier+monthly_idを指定してオブジェクトが生成できた場合
+                //     -> DBに存在しているため、全てのファイルリストから生成できたCSVファイルデータを取り除く
+                //        残ったものがnot_exist_file_listとなる
+                unset($not_exist_file_list[$mst->identifier]);
                 $monthly_status->is_exist        = true;
                 $monthly_status->csv_file_name   = $file['csv_file_name'];
                 $monthly_status->csv_file_set_on = $file['csv_file_set_on'];

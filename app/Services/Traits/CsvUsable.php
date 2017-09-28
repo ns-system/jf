@@ -46,13 +46,15 @@ trait CsvUsable
     public function setCsvFileObject($file_path_or_file_object = '') {
         if (gettype($file_path_or_file_object) === 'string')
         {
-            $file_path = (empty($file_path_or_file_object)) ? $this->file_path : $this->setCsvFilePath($file_path_or_file_object)->file_path;
-            $file      = new \SplFileObject($file_path, 'r');
+            $file_path       = (empty($file_path_or_file_object)) ? $this->file_path : $this->setCsvFilePath($file_path_or_file_object)->file_path;
+            $file            = new \SplFileObject($file_path, 'r');
+            $this->file_name = pathinfo($file_path, PATHINFO_BASENAME);
         }
         else
         {
-            $file_object = $file_path_or_file_object;
-            $file        = new \SplFileObject($file_object, 'r');
+            $file_object     = $file_path_or_file_object;
+            $this->file_name = $file_object->getClientOriginalName();
+            $file            = new \SplFileObject($file_object, 'r');
         }
 //        $file->setFlags(\SplFileObject::READ_CSV + \SplFileObject::DROP_NEW_LINE + \SplFileObject::READ_AHEAD + \SplFileObject::SKIP_EMPTY);
         // SplFileObject::SKIP_EMPTY フラグをセットすると行中にNULLが入っていた場合、そこで止まってしまうため除外

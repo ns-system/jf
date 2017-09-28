@@ -56,6 +56,11 @@ class UnitCopyCsvFileServiceTest extends TestCase
     public function setUp() {
         parent::setUp();
         $base_path = storage_path() . '/tests/csv_files';
+        if (file_exists($base_path))
+        {
+            system("rm -rf {$base_path}");
+        }
+
         if (!file_exists($base_path))
         {
             mkdir($base_path, 0777);
@@ -336,10 +341,16 @@ class UnitCopyCsvFileServiceTest extends TestCase
 
             // preparation
             \App\ZenonCsv::insert($this->dummy_csv_template);
-            $id        = \App\ZenonCsv::where('zenon_data_type_id', '=', 9999)->first()->id;
-            $templates = \App\ZenonCsv::where('zenon_data_type_id', '=', 9999)->get();
-            $service   = new \App\Services\CopyCsvFileService();
-            $base_path = storage_path() . '/tests/csv_files';
+            $id          = \App\ZenonCsv::where('zenon_data_type_id', '=', 9999)->first()->id;
+            $templates   = \App\ZenonCsv::where('zenon_data_type_id', '=', 9999)->get();
+            $service     = new \App\Services\CopyCsvFileService();
+            $base_path   = storage_path() . '/tests/csv_files';
+            $file_path_1 = $base_path . '/' . $this->directorys['temp'] . '/K_D_902_M8888_20170801.csv';
+            $file_path_2 = $base_path . '/' . $this->directorys['temp'] . '/K_D_902_M7777_20170801.csv';
+            $file_path_3 = $base_path . '/' . $this->directorys['temp'] . '/K_D_902_M7777_20179999.csv';
+            touch($file_path_1);
+            touch($file_path_2);
+            touch($file_path_3);
 
             // test
             $service->setMonthlyId(201707)
@@ -347,11 +358,10 @@ class UnitCopyCsvFileServiceTest extends TestCase
                     ->tableTemplateCreation($templates)
             ;
 
-            $lists          = $service->copyCsvFile()->registrationCsvFileToDatabase();
-            $ignore_list    = $this->removeFileCreateTimeFromList($lists['ignore']);
-            $nox_exist_list = $this->removeFileCreateTimeFromList($lists['not_exist']);
-            $result_1       = \App\ZenonMonthlyStatus::where('zenon_data_csv_file_id', '=', $id)->first()->toArray();
-
+            $lists              = $service->copyCsvFile()->registrationCsvFileToDatabase();
+            $ignore_list        = $this->removeFileCreateTimeFromList($lists['ignore']);
+            $not_exist_list     = $this->removeFileCreateTimeFromList($lists['not_exist']);
+            $result_1           = \App\ZenonMonthlyStatus::where('zenon_data_csv_file_id', '=', $id)->first()->toArray();
             $expect_1           = ["id" => $result_1['id'], "csv_file_name" => "K_D_902_M9999_20170801.csv", "file_kb_size" => 0.0, "monthly_id" => 201707, "csv_file_set_on" => "2017-08-01", "zenon_data_csv_file_id" => $result_1['zenon_data_csv_file_id'], "is_execute" => 0, "is_pre_process_start" => 0, "is_pre_process_end" => 0, "is_pre_process_error" => 0, "is_post_process_start" => 0, "is_post_process_end" => 0, "is_post_process_error" => 0, "is_process_end" => 0, "is_exist" => 1, "is_import" => 0, "row_count" => 0, "executed_row_count" => 0, "process_started_at" => "0000-00-00 00:00:00", "process_ended_at" => "0000-00-00 00:00:00", "created_at" => $result_1['created_at'], "updated_at" => $result_1['updated_at'],];
             $expect_ignore_1    = [
                 ["destination" => "/home/vagrant/cvs/storage/tests/csv_files/daily/201708/01", "csv_file_name" => "S_D_302_D0255_20170801.csv", "monthly_id" => "201708", "cycle" => "D", "csv_file_set_on" => "2017-08-01", "identifier" => "D0255", "kb_size" => 0.0,],
@@ -361,18 +371,21 @@ class UnitCopyCsvFileServiceTest extends TestCase
                 ["destination" => "/home/vagrant/cvs/storage/tests/csv_files/daily/201708/01", "csv_file_name" => "S_D_302_D0259_20170801.csv", "monthly_id" => "201708", "cycle" => "D", "csv_file_set_on" => "2017-08-01", "identifier" => "D0259", "kb_size" => 0.0,],
             ];
             $expect_not_exist_1 = [
-                ["destination" => "/home/vagrant/cvs/storage/tests/csv_files/monthly/201707", "csv_file_name" => "K_D_902_M0332_20170801.csv", "monthly_id" => "201708", "cycle" => "M", "csv_file_set_on" => "2017-08-01", "identifier" => "M0332", "kb_size" => 0.0,],
-                ["destination" => "/home/vagrant/cvs/storage/tests/csv_files/monthly/201707", "csv_file_name" => "K_D_902_M0333_20170801.csv", "monthly_id" => "201708", "cycle" => "M", "csv_file_set_on" => "2017-08-01", "identifier" => "M0333", "kb_size" => 0.0,],
+                ["destination" => "/home/vagrant/cvs/storage/tests/csv_files/monthly/201707", "csv_file_name" => "K_D_902_M7777_20170801.csv", "monthly_id" => "201708", "cycle" => "M", "csv_file_set_on" => "2017-08-01", "identifier" => "M7777", "kb_size" => 0.0,],
+                ["destination" => "/home/vagrant/cvs/storage/tests/csv_files/monthly/201707", "csv_file_name" => "K_D_902_M8888_20170801.csv", "monthly_id" => "201708", "cycle" => "M", "csv_file_set_on" => "2017-08-01", "identifier" => "M8888", "kb_size" => 0.0,],
             ];
-            $this->assertEquals($expect_ignore_1, $ignore_list);
-            $this->assertEquals($expect_not_exist_1, $nox_exist_list);
-            $this->assertEquals($expect_1, $result_1);
         } catch (\Exception $exc) {
+            echo $exc->getMessage();
             echo $exc->getTraceAsString();
             $this->fail('予期しないエラーです。');
         } finally {
             \DB::connection('mysql_suisin')->rollback();
         }
+//        var_dump($expect_not_exist_1);
+//        dd($not_exist_list);
+        $this->assertEquals($expect_1, $result_1);
+        $this->assertEquals($expect_ignore_1, $ignore_list);
+        $this->assertEquals($expect_not_exist_1, $not_exist_list);
 //        $monthly_id                 = "201707";
 //        $test_accumulation_dir_path = "/home/vagrant/cvs/storage/test";
 //        $csv_file_record_to_db      = \App\ZenonCsv::get();
