@@ -154,9 +154,9 @@ class ProcessStatusController extends Controller
                 ->get()
         ;
         $job  = \App\JobStatus::find($job_id);
-        if ($job->is_import_start)
+        if ($job->is_import_end)
         {
-            \Session::flash('flash_message', '処理は終了しています。');
+            \Session::flash('success_message', '処理は終了しています。');
         }
         else if ($job->is_import_start)
         {

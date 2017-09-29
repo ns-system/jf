@@ -96,7 +96,8 @@ class SuisinAdminController extends Controller
             \Session::flash('danger_message', "CSVファイルの内容に不備がありました。");
             return back()->withErrors($validator);
         }
-        \Session::flash('warn_message', 'CSVデータの取り込みが完了しました。引き続き更新処理を行ってください。');
+        \Session::flash('success_message', 'CSVデータの取り込みが完了しました。');
+        \Session::flash('warn_message', '現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。');
         return view($view, ['configs' => $page_settings, 'rows' => $rows]);
     }
 

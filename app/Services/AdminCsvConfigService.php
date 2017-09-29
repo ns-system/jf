@@ -237,11 +237,11 @@ class AdminCsvConfigService
                 ],
             ],
             'table_columns' => [
-                ['row' => [['zenon_format_id', 'ID',],]],
+//                ['row' => [['zenon_format_id', 'ID',],]],
                 [
                     'row' => [
-                        ['zenon_data_name', 'データ名', 'class' => 'text-left'],
-                        ['identifier', '識別子', 'class' => 'text-left'],
+                        ['zenon_data_name', 'データ名',],
+                        ['identifier', '識別子',],
                     ]
                 ],
                 ['row' =>
@@ -264,14 +264,14 @@ class AdminCsvConfigService
             ],
             'csv'           => [
                 'columns'       => [
-                    'id',
+//                    'id',
                     'zenon_format_id',
                     'column_name',
                     'japanese_column_name',
                     'column_type',
                 ],
                 'kanji_columns' => [
-                    'No',
+//                    'No',
                     'フォーマットID',
                     'カラム名',
                     '日本語カラム名',
@@ -281,20 +281,20 @@ class AdminCsvConfigService
             'import'        => [
                 'table_columns' => [
                     /* display_flag, kanji_name, [format], [class] */
-                    [1, 'id', 'No',],
+//                    [1, 'id', 'No',],
                     [1, 'zenon_format_id', 'フォーマットID',],
                     [1, 'column_name', 'カラム名', 'class' => 'text-left',],
                     [1, 'japanese_column_name', '日本語カラム名', 'class' => 'text-left',],
                     [1, 'column_type', 'データ型', 'class' => 'text-left',],
                 ],
                 'rules'         => [
-                    'id'              => 'required|integer',
+//                    'id'              => 'required|integer',
                     'zenon_format_id' => 'required|exists:mysql_suisin.zenon_data_csv_files,zenon_format_id',
                     'column_name'     => 'required|min:1',
                     'column_type'     => 'required|min:1',
                 ],
                 'types'         => [
-                    'id'              => 'integer',
+//                    'id'              => 'integer',
                     'zenon_format_id' => 'integer',
                 ],
                 'flags'         => [
@@ -304,7 +304,7 @@ class AdminCsvConfigService
                     'japanese_column_name' => 1,
                     'column_type'          => 1,
                 ],
-                'keys'          => ['id'],
+                'keys'          => ['zenon_format_id', 'column_name'],
             ],
         ];
         $this->param = $params;

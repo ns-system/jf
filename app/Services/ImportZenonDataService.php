@@ -42,6 +42,10 @@ class ImportZenonDataService
     }
 
     public function setKeyToRow($keys) {
+        if (count($keys) !== count($this->row))
+        {
+            throw new \Exception("配列長が一致しませんでした。（想定：" . count($keys) . " 実際：" . count($this->row) . "）");
+        }
         $row       = array_combine($keys, $this->row);
         $row['id'] = null;
         $this->row = $row;
@@ -153,7 +157,18 @@ class ImportZenonDataService
         return $rows;
     }
 
-    public function uploadToDatabase($table_config, $csv_file_object, $monthly_id) {
+    private function makeErrorLog($table_config, $error_message) {
+        return
+                [
+                    'timestamp'       => date('Y-m-d H:i:s'),
+                    'csv_file_name'   => $table_config->csv_file_name,
+                    'zenon_data_name' => $table_config->zenon_data_name,
+                    'zenon_format_id' => $table_config->zenon_format_id,
+                    'reason'          => $error_message,
+        ];
+    }
+
+    public function uploadToDatabase($table_config, $csv_file_object, $monthly_id): array {
         $bulk    = [];
         $types   = [];
         $keys    = [];
@@ -162,8 +177,11 @@ class ImportZenonDataService
             $types[$c->column_name] = $c->column_type;
             $keys[]                 = $c->column_name;
         }
-//        var_dump($types);
-//        var_dump($keys);
+        if ($this->isArrayEmpty($keys))
+        {
+            $this->setErrorFlagToMonthlyStatus($table_config);
+            return $this->makeErrorLog($table_config, 'The table configuration file did not exist in the database. Please import the configuration file and try again.');
+        }
 
         $split_key_configs = [
             'split_foreign_key_1' => $table_config->split_foreign_key_1,
@@ -177,7 +195,13 @@ class ImportZenonDataService
             'subject_column_name' => $table_config->subject_column_name,
         ];
 
-        $table = $this->getTableObject('mysql_zenon', $table_config->table_name);
+        try {
+            $table = $this->getTableObject('mysql_zenon', $table_config->table_name);
+        } catch (\Exception $e) {
+            $this->setErrorFlagToMonthlyStatus($table_config);
+            return $this->makeErrorLog($table_config, $e->getMessage());
+        }
+
         $this->setPreProcessStartToMonthlyStatus($table_config);
 //        var_dump($table_config->table_name);
 
@@ -216,6 +240,7 @@ class ImportZenonDataService
             $this->setExecutedRowCountToMonthlyStatus($table_config, $line_number);
         }
         $this->setPostProcessEndToMonthlyStatus($table_config);
+        return [];
     }
 
     private function getTableObject($connection, $table_name) {
@@ -261,6 +286,11 @@ class ImportZenonDataService
 
     public function setExecutedRowCountToMonthlyStatus($monthly_status_object, $executed_row_count) {
         $monthly_status_object->executed_row_count = $executed_row_count;
+        $monthly_status_object->save();
+    }
+
+    public function setErrorFlagToMonthlyStatus($monthly_status_object) {
+        $monthly_status_object->is_post_process_error = true;
         $monthly_status_object->save();
     }
 

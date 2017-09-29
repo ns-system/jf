@@ -13,7 +13,7 @@ class ProcessStatusService
 //                \DB::connection('mysql_suisin')
 //                ->table('zenon_data_monthly_process_status')
                 ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
-                ->join('zenon_data_types', 'zenon_data_csv_files.zenon_data_type_id', '=', 'zenon_data_types.id')
+                ->leftJoin('zenon_data_types', 'zenon_data_csv_files.zenon_data_type_id', '=', 'zenon_data_types.id')
                 ->select(\DB::raw('*, zenon_data_monthly_process_status.updated_at AS process_updated_at'))
 //                ->where('zenon_data_monthly_process_status.monthly_id', '=', $id)
 //                ->orderBy('is_exist', 'desc')

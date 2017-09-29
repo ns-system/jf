@@ -67,18 +67,28 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             echo "  -- upload : " . date('Y-m-d H:i:s') . PHP_EOL;
 
             // upload-to-db
-            \DB::connection('mysql_zenon')->transaction(function() use($rows, $ym, $file_path, $import_zenon_data_service) {
+            $database_setting_not_exist_list = \DB::connection('mysql_zenon')->transaction(function() use($rows, $ym, $file_path, $import_zenon_data_service) {
+                $database_setting_not_exist_list = [];
                 foreach ($rows as $r) {
 
                     $import_zenon_data_service->setPostProcessStartToMonthlyStatus($r);
                     echo "  -----> {$r->csv_file_name}" . PHP_EOL;
 
                     $csv_file_object = $import_zenon_data_service->setCsvFileObject($file_path . '/' . $r->csv_file_name)->getCsvFileObject();
-                    $import_zenon_data_service->uploadToDatabase($r, $csv_file_object, $ym);
-
+                    $array           = $import_zenon_data_service->uploadToDatabase($r, $csv_file_object, $ym);
+                    if (!empty($array))
+                    {
+                        $database_setting_not_exist_list[] = $array;
+                    }
                     $import_zenon_data_service->setPostProcessEndToMonthlyStatus($r);
                 }
+                return $database_setting_not_exist_list;
             });
+
+            if (!empty($database_setting_not_exist_list))
+            {
+                $import_zenon_data_service->outputForJsonFile($database_setting_not_exist_list, storage_path() . '/jsonlogs', date('Ymd_His') . '_database_setting_not_exist_files.json');
+            }
 
             echo "  -- consignors : " . date('Y-m-d H:i:s') . PHP_EOL;
 
