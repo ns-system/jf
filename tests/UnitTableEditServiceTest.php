@@ -65,6 +65,23 @@ class UnitTableEditServiceTest extends TestCase
     /**
      * @tests
      */
+    public function 異常系_CSVの配列とキー値の個数が違った場合_エラーを吐く() {
+        $request_csv_file = $this->createUploadFile(storage_path() . '/tests', 'test_gist_code.csv', 'text/csv');
+        $csv_object       = $this->s->setHtmlPageGenerateConfigs('App\Services\SuisinCsvConfigService', 'Area')
+                ->setCsvFileObject($request_csv_file)
+                ->getCsvFileObject()
+        ;
+        try {
+            $this->s->convertCsvFileToArray('en', true, $csv_object);
+            $this->fail('例外発生なし');
+        } catch (\Exception $ex) {
+            $this->assertEquals('CSVファイル列数が一致しませんでした。（想定：8列 実際：6列）', $ex->getMessage());
+        }
+    }
+
+    /**
+     * @tests
+     */
     public function 正常系_ページ生成用の設定情報を取得する() {
         $res_1       = $this->s->setHtmlPageGenerateConfigs('App\Services\SuisinCsvConfigService', 'DepositGist')
                 ->getHtmlPageGenerateParameter()

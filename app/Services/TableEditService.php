@@ -255,7 +255,6 @@ class TableEditService
      * @param bool   $is_header_exist      : ヘッダー行として1行目を読み飛ばす場合、true。
      * @param type $option_csv_file_object : CSVファイルオブジェクトを外で指定する場合にセット。
      * @return array                       : 変換後の配列を返す。
-     * @return array
      */
     public function convertCsvFileToArray(string $select_language = 'en', bool $is_header_exist = true, $option_csv_file_object = null): array {
         $keys            = ($select_language === 'jp') ? $this->csv_jp_columns : $this->csv_en_columns;
@@ -274,6 +273,11 @@ class TableEditService
             {
                 continue;
             }
+            if(count($keys) !== count($line)){
+                throw new \Exception("CSVファイル列数が一致しませんでした。（想定：".count($keys)."列 実際：".count($line)."列）");
+            }
+//            var_dump(count($keys), count($line));
+//            dd($line);
             $tmp_row    = array_combine($keys, $line);
             $csv_rows[] = $this->convertTypes($convert_rules, $tmp_row);
         }
