@@ -45,7 +45,7 @@ class CreateTozaAccountLedgers extends Migration
             $table->double("expected_interest");
             $table->float("special_interest_rate");
             $table->float("specified_interest_rate");
-            $table->integer("taxation_code");
+            $table->integer("toza_taxation_code");
             $table->integer("overdraft_product_code")->index();
             $table->double("uncollected_delayed_damage");
             $table->date("new_current_first_issued_on")->nullable();

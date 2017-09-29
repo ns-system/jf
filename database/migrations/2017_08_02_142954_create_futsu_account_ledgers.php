@@ -68,7 +68,7 @@ class CreateFutsuAccountLedgers extends Migration
             $table->date("overdraft_preferential_interest_rate_3_applied_on")->nullable();
             $table->integer("personal_card_security_state");
             $table->integer("agent_card_security_state");
-            $table->char("futsu_spare_1", 90);
+            $table->char("spare_1", 90);
             $table->integer("monthly_id")->index();
             $table->timestamps("");
         });

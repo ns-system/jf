@@ -44,7 +44,7 @@ class CreateOldBetsudanAccountLedgers extends Migration
             $table->integer("tr_state_023");
             $table->integer("tr_state_024");
             $table->double("principal");
-            $table->date("last_traded_on")->nullable();
+            $table->date("old_betsudan_last_traded_on")->nullable();
             $table->date("contracted_on")->nullable();
             $table->date("deposited_on")->nullable();
             $table->char("gist", 20);
