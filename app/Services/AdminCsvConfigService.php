@@ -242,7 +242,12 @@ class AdminCsvConfigService
                         ]
                     ]
                 ],
-                ['row' => [['column_name', 'カラム名',],]],
+                ['row' =>
+                    [
+                        ['column_name', 'カラム名', 'class' => 'text-left',],
+                        ['japanese_column_name', '日本語カラム名', 'class' => 'text-left',],
+                    ]
+                ],
                 ['row' => [['column_type', 'カラム型',],]],
                 [
                     'row' =>
@@ -260,12 +265,14 @@ class AdminCsvConfigService
                     'id',
                     'zenon_format_id',
                     'column_name',
+                    'japanese_column_name',
                     'column_type',
                 ],
                 'kanji_columns' => [
                     'No',
                     'フォーマットID',
                     'カラム名',
+                    '日本語カラム名',
                     'データ型',
                 ],
             ],
@@ -275,6 +282,7 @@ class AdminCsvConfigService
                     [1, 'id', 'No',],
                     [1, 'zenon_format_id', 'フォーマットID',],
                     [1, 'column_name', 'カラム名', 'class' => 'text-left',],
+                    [1, 'japanese_column_name', '日本語カラム名', 'class' => 'text-left',],
                     [1, 'column_type', 'データ型', 'class' => 'text-left',],
                 ],
                 'rules'         => [
@@ -288,10 +296,11 @@ class AdminCsvConfigService
                     'zenon_format_id' => 'integer',
                 ],
                 'flags'         => [
-                    'id'              => 1,
-                    'zenon_format_id' => 1,
-                    'column_name'     => 1,
-                    'column_type'     => 1,
+                    'id'                   => 1,
+                    'zenon_format_id'      => 1,
+                    'column_name'          => 1,
+                    'japanese_column_name' => 1,
+                    'column_type'          => 1,
                 ],
                 'keys'          => ['id'],
             ],
