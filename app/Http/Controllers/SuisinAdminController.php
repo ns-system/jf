@@ -32,10 +32,6 @@ class SuisinAdminController extends Controller
         $conf                  = $service->getHtmlPageGenerateParameter();
         $conf['table_columns'] = $service->getTopPageTableSettings();
         $rows                  = $model->paginate(25);
-//        $rows                  = $model->toSql();
-//        dd($rows);
-//        $conf['import_route']  = $service->getImportRoute();
-//        $conf['export_route']  = $service->getExportRoute();
         $view                  = strtolower($system) . '.admin.list';
         return view($view, ['rows' => $rows, 'configs' => $conf]);
     }
@@ -53,14 +49,14 @@ class SuisinAdminController extends Controller
         $service    = $this->service;
         $jp_columns = $service->setHtmlPageGenerateConfigs("App\Services\\{$system}CsvConfigService", $category)->getJpColumns();
         $conf       = $service->getHtmlPageGenerateParameter();
-
-        $file_name   = $conf['title'] . date('_Ymd_His') . '.csv';
-        $export_rows = $service->getExportRows();
-        return $service->exportCsv($export_rows, $file_name, $jp_columns);
-//        return $service->setConfigs("App\Services\\{$system}CsvConfigService", $category)->exportRow();
-//        } catch (\Exception $e) {
-//            echo $e->getTraceAsString();
-//        }
+        $file_name  = $conf['title'] . date('_Ymd_His') . '.csv';
+        try {
+            $export_rows = $service->getExportRows();
+            return $service->exportCsv($export_rows, $file_name, $jp_columns);
+        } catch (\Exception $e) {
+            \Session::flash('danger_message', $e->getMessage());
+            return back();
+        }
     }
 
     /**
@@ -72,29 +68,32 @@ class SuisinAdminController extends Controller
      *   備考       ： checkCsvFile関数で簡単なバリデーションを行っている
      */
     public function import($system, $category/* , CsvFile $request */) {
-        $service          = $this->service;
-//        $rows             = $service->setHtmlPageGenerateConfigs("App\Services\\{$system}CsvConfigService", $category)->setCsvFile(\Request::file('csv_file'))->convertCsvFileToArray();
-        $csv_file_object  = $service->setHtmlPageGenerateConfigs("App\Services\\{$system}CsvConfigService", $category)
-                ->setCsvFileObjectFromRequest(\Request::file('csv_file'))
-                ->getCsvFileObject()
-        ;
-        $rows             = $service->convertCsvFileToArray(/* language = */'en', /* is_header_exist = */ true, /* csv_file_object = */ $csv_file_object);
-        $page_settings    = $service->getHtmlPageGenerateParameter();
-        $import_setttings = $service->getImportSettings();
-        $rules            = $service->makeValidationRules($rows);
-        $validator        = \Validator::make($rows, $rules);
+        $service = $this->service;
+        try {
+            $csv_file_object  = $service->setHtmlPageGenerateConfigs("App\Services\\{$system}CsvConfigService", $category)
+                    ->setCsvFileObjectFromRequest(\Request::file('csv_file'))
+                    ->getCsvFileObject()
+            ;
+            $page_settings    = $service->getHtmlPageGenerateParameter();
+            $rows             = $service->convertCsvFileToArray(/* language = */'en', /* is_header_exist = */ true, /* csv_file_object = */ $csv_file_object);
+            $import_setttings = $service->getImportSettings();
+            $rules            = $service->makeValidationRules($rows);
+            $validator        = \Validator::make($rows, $rules);
+        } catch (\Exception $e) {
+            \Session::flash('danger_message', $e->getMessage());
+            return back();
+        }
+
 
 //        dd($rows);
         $page_settings['title']         = '確認 - ' . $page_settings['title'];
         $page_settings['h2']            = "CSVファイル確認 <small> - {$service->getFileName()}</small>";
         $page_settings['key']           = $import_setttings['keys'];
         $page_settings['table_columns'] = $import_setttings['table_columns'];
-        $view = strtolower($system) . '.admin.import';
+        $view                           = strtolower($system) . '.admin.import';
         if ($validator->fails())
         {
-//            dd($validator);
             \Session::flash('danger_message', "CSVファイルの内容に不備がありました。");
-//            return view($view, ['configs' => $page_settings, 'rows' => $rows]);
             return back()->withErrors($validator);
         }
         \Session::flash('warn_message', 'CSVデータの取り込みが完了しました。引き続き更新処理を行ってください。');
@@ -119,25 +118,17 @@ class SuisinAdminController extends Controller
         try {
             \DB::connection('mysql_master')->beginTransaction();
             \DB::connection('mysql_suisin')->beginTransaction();
-//            dd($input);
             $cnt = $service->uploadToDatabase($input, 'mysql_zenon');
             \DB::connection('mysql_master')->commit();
             \DB::connection('mysql_suisin')->commit();
-        } catch (\Exception $exc) {
+        } catch (\Exception $e) {
             \DB::connection('mysql_master')->rollback();
             \DB::connection('mysql_suisin')->rollback();
-            \Session::flash('danger_message', $exc->getMessage());
+            \Session::flash('danger_message', $e->getMessage());
             return back();
         }
-        \Session::flash('flash_message', ($cnt['insert_count'] + $cnt['update_count']) . "件の処理が終了しました。（新規：{$cnt['insert_count']}件，更新：{$cnt['update_count']}件）");
+        \Session::flash('success_message', ($cnt['insert_count'] + $cnt['update_count']) . "件の処理が終了しました。（新規：{$cnt['insert_count']}件，更新：{$cnt['update_count']}件）");
         return redirect($page_settings['index_route']);
-
-//        $after_rows = $service->swapPostColumnAndRow($input);
-//        dd($after_rows);
-//        dd($input);
-//        $cnt     = $param   = $service->setConfigs("App\Services\\{$system}CsvConfigService", $category)->updatePost($input);
-//        \Session::flash('flash_message', ($cnt['insert_count'] + $cnt['update_count']) . "件の処理が終了しました。（新規：{$cnt['insert_count']}件，更新：{$cnt['update_count']}件）");
-//        return redirect($service->getIndexRoute());
     }
 
 }

@@ -227,19 +227,21 @@ class AdminCsvConfigService
                 'route' => '/admin/super_user/config/Admin/ZenonTable',
                 'h2'    => 'MySQL側 全オンテーブル設定',
             ],
+            'join'          => [
+                ['db' => 'suisin_db.zenon_data_csv_files', 'left' => 'zenon_table_column_configs.zenon_format_id', 'right' => 'zenon_data_csv_files.zenon_format_id',],
+            ],
+            'as'            => [
+                'table'   => 'zenon_table_column_configs',
+                'columns' => [
+                    'zenon_format_id',
+                ],
+            ],
             'table_columns' => [
                 ['row' => [['zenon_format_id', 'ID',],]],
                 [
-                    'eloquent' => [
-                        'model' => '\App\ZenonCsv',
-                        'key'   => [
-                            'local_key'   => 'zenon_format_id',
-                            'foreign_key' => 'zenon_format_id',
-                        ],
-                        'row'   => [
-                            ['zenon_data_name', 'データ名', 'class' => 'text-left'],
-                            ['identifier', '識別子', 'class' => 'text-left'],
-                        ]
+                    'row' => [
+                        ['zenon_data_name', 'データ名', 'class' => 'text-left'],
+                        ['identifier', '識別子', 'class' => 'text-left'],
                     ]
                 ],
                 ['row' =>
@@ -258,7 +260,7 @@ class AdminCsvConfigService
                 ],
             ],
             'table_orders'  => [
-                'zenon_format_id' => 'asc',
+                'zenon_table_column_configs.zenon_format_id' => 'asc',
             ],
             'csv'           => [
                 'columns'       => [
