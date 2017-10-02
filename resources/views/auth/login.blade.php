@@ -40,12 +40,12 @@
             <!-- タブ内容 -->
             <div class="tab-content" style="margin-top: 20px;">
                 <div class="tab-pane active" id="login-form">
-                    <div class="col-md-10 col-md-offset-1" style="background: rgba(255,255,255,0.1); padding: 30px 0px; border-radius: 2px; border: 1px solid #999;">
+                    <div style="background: rgba(255,255,255,0.1); padding: 30px 0px; border-radius: 2px; border: 1px solid #999;">
                         @include('auth.partial.login_form')
                     </div>
                 </div>
                 <div class="tab-pane" id="register-form">
-                    <div class="col-md-10 col-md-offset-1" style="background: rgba(255,255,255,0.1); padding: 30px 0px; border-radius: 2px; border: 1px solid #999;">
+                    <div style="background: rgba(255,255,255,0.1); padding: 30px 0px; border-radius: 2px; border: 1px solid #999;">
                         @include('auth.partial.register_form')
                     </div>
                 </div>
