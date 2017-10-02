@@ -7,7 +7,7 @@
                 <label class="input-group-addon control-label bg-primary-important" style="min-width: 150px;">
                     <small>メールアドレス</small>
                 </label>
-                <input type="email" class="form-control" name="email" value="{{ old('email') }} @jf-nssinren.or.jp" placeholder="メールアドレスを入力してください（@jf-nssinren.or.jp）">
+                <input type="email" class="form-control" name="email" @if(empty(old('email'))) value="@jf-nssinren.or.jp" @else value="{{old('email')}}" @endif placeholder="メールアドレスを入力してください（@jf-nssinren.or.jp）">
             </div>
 {{--             <span class="help-block"><small class="text-warning">メールアドレスを入力してください。すでに登録されているメールアドレスは利用できません。</small></span> --}}
             <span class="help-block" style="margin-bottom: 20px;"><small class="text-warning">すでに登録されているメールアドレスはご利用できません。</small></span>
@@ -18,7 +18,7 @@
                 <label class="input-group-addon control-label bg-primary-important" style="min-width: 50px;">
                     <small>姓</small>
                 </label>
-                <input type="text" class="form-control" name="last_name" value="{{ old('name') }}" placeholder="山田">
+                <input type="text" class="form-control" name="last_name" value="{{ old('last_name') }}" placeholder="山田">
             </div>
 {{--             <span class="help-block"><small class="text-warning">漢字で入力してください。</small></span> --}}
             </div>
@@ -28,7 +28,7 @@
                 <label class="input-group-addon control-label bg-primary-important" style="min-width: 50px;">
                     <small>名</small>
                 </label>
-                <input type="text" class="form-control" name="first_name" value="{{ old('name') }}" placeholder="太郎">
+                <input type="text" class="form-control" name="first_name" value="{{ old('first_name') }}" placeholder="太郎">
             </div>
 {{--             <span class="help-block"><small class="text-warning">漢字で入力してください。</small></span> --}}
             </div>
@@ -39,7 +39,7 @@
                 <label class="input-group-addon control-label bg-primary-important" style="min-width: 50px;">
                     <small>せい</small>
                 </label>
-                <input type="text" class="form-control" name="last_name_kana" value="{{ old('name') }}" placeholder="やまだ">
+                <input type="text" class="form-control" name="last_name_kana" value="{{ old('last_name_kana') }}" placeholder="やまだ">
             </div>
 {{--             <span class="help-block"><small class="text-warning">ひらがなで入力してください。</small></span> --}}
             </div>
@@ -49,7 +49,7 @@
                 <label class="input-group-addon control-label bg-primary-important" style="min-width: 50px;">
                     <small>めい</small>
                 </label>
-                <input type="text" class="form-control" name="first_name_kana" value="{{ old('name') }}" placeholder="たろう">
+                <input type="text" class="form-control" name="first_name_kana" value="{{ old('first_name_kana') }}" placeholder="たろう">
             </div>
 {{--             <span class="help-block"><small class="text-warning">ひらがなで入力してください。</small></span> --}}
             </div>

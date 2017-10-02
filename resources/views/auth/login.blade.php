@@ -28,7 +28,12 @@
 
 @section('content')
 <div class="container-fluid">
-
+    <div clas="row">
+        <div class="col-md-8 col-md-offset-2" style="margin-top: 20px;">
+            @include('partial.alert')
+        </div>
+    </div>
+    
     <div clas="row">
         <div class="col-md-8 col-md-offset-2">
             <!-- タブ・メニュー -->
@@ -54,11 +59,7 @@
     </div>
 
 
-    <div clas="row">
-        <div class="col-md-8 col-md-offset-2" style="margin-top: 20px;">
-            @include('partial.alert')
-        </div>
-    </div>
+
 </div><!-- .container-fluid -->
 @endsection
 
