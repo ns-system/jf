@@ -14,14 +14,13 @@ class ProcessStatusController extends Controller
     use JsonUsable;
 
     protected $service;
-
 //    protected $json_service;
-//    protected $path;
+    protected $path;
 
     public function __construct() {
         $this->service = new ProcessStatusService();
-//        $json          = $this->getJsonFile(config_path(), 'import_config.json');
-//        $this->path    = $json['csv_folder_path'];
+        $json          = $this->getJsonFile(config_path(), 'import_config.json');
+        $this->path    = $json['csv_folder_path'];
     }
 
     public function index() {
@@ -124,7 +123,7 @@ class ProcessStatusController extends Controller
     }
 
     public function importConfirm($monthly_id, $job_id) {
-        $files  = $this->service->setRows($monthly_id)
+        $files = $this->service->setRows($monthly_id)
                 ->getRows()
                 ->select(\DB::raw('*, zenon_data_monthly_process_status.id as key_id'))
                 ->where('cycle', '=', 'M')
@@ -133,7 +132,9 @@ class ProcessStatusController extends Controller
                 ->orderBy('zenon_format_id', 'asc')
                 ->get()
         ;
-        $counts = [];
+
+        $record_counts = [];
+        $column_counts = [];
         foreach ($files as $f) {
             $cnt = 0;
             if (!empty($f->table_name))
@@ -144,9 +145,12 @@ class ProcessStatusController extends Controller
                         ->count()
                 ;
             }
-            $counts[$f->key_id] = $cnt;
+
+            $column_counts[$f->key_id] = \App\ZenonTable::where('zenon_format_id', '=', $f->zenon_format_id)->count();
+            $record_counts[$f->key_id] = $cnt;
         }
-        return view('admin.month.import_confirm', ['files' => $files, 'id' => $monthly_id, 'job_id' => $job_id, 'counts' => $counts]);
+//        dd($column_counts);
+        return view('admin.month.import_confirm', ['files' => $files, 'id' => $monthly_id, 'job_id' => $job_id, 'record_counts' => $record_counts,'column_counts'=>$column_counts]);
     }
 
     public function import($id, $job_id) {

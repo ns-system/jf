@@ -31,7 +31,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @var array
      */
-    protected $fillable = ['name', 'email', 'password', 'unencrypt_password'];
+    protected $fillable = ['name', 'first_name', 'first_name_kana', 'last_name', 'last_name_kana', 'email', 'password', 'unencrypt_password'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -70,5 +70,4 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 //    public function ControlDivisions() {
 //        return $this->hasMany('\App\ControlDivision', 'user_id', 'user_id');
 //    }
-
 }
