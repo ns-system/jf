@@ -33,11 +33,11 @@
                         @foreach($config as $columns)
                         @if(array_key_exists('model', $columns))
                         @foreach($columns['row'] as $column)
-                        <p class="@if(array_key_exists('class', $column)) {{$column['class']}} @endif">{{$column[1]}}</p>
+                        <p @if(array_key_exists('class', $column)) class="{{$column['class']}}" @endif>{{$column[1]}}</p>
                         @endforeach
                         @else
                         @foreach($columns as $column)
-                        <p class="@if(array_key_exists('class', $column)) {{$column['class']}} @endif">{{$column[1]}}</p>
+                        <p @if(array_key_exists('class', $column)) class="{{$column['class']}}" @endif>{{$column[1]}}</p>
                         @endforeach
                         @endif
                         @endforeach

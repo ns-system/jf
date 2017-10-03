@@ -6,20 +6,22 @@ use App\Http\Requests\Suisin\MonthlyImportForm;
 use App\Http\Controllers\Controller;
 use App\Services\ProcessStatusService;
 use App\Services\CopyCsvFileService;
+use \App\Services\Traits\JsonUsable;
 
 class ProcessStatusController extends Controller
 {
 
-    use \App\Services\Traits\JsonUsable;
+    use JsonUsable;
 
     protected $service;
-    protected $json_service;
-    protected $path;
+
+//    protected $json_service;
+//    protected $path;
 
     public function __construct() {
         $this->service = new ProcessStatusService();
-        $json          = $this->getJsonFile(config_path(), 'import_config.json');
-        $this->path    = $json['csv_folder_path'];
+//        $json          = $this->getJsonFile(config_path(), 'import_config.json');
+//        $this->path    = $json['csv_folder_path'];
     }
 
     public function index() {
@@ -45,7 +47,8 @@ class ProcessStatusController extends Controller
             $import_cnt     = \App\ZenonMonthlyStatus::where('monthly_id', '=', $row->monthly_id)->where('is_import', '=', true)->count();
             $cnts[$row->id] = ['all' => $all_cnt, 'exist' => $exist_cnt, 'import' => $import_cnt,];
         }
-        return view('admin.month.index', ['rows' => $rows, 'counts' => $cnts, 'months' => $months]);
+        $job_status = \App\JobStatus::orderBy('id', 'desc')->take(5)->get();
+        return view('admin.month.index', ['rows' => $rows, 'counts' => $cnts, 'months' => $months, 'job_status' => $job_status]);
     }
 
     public function create() {
@@ -228,10 +231,7 @@ class ProcessStatusController extends Controller
     }
 
     public function exportProcessList($id) {
-        $rows  = $this->service->setRows($id)
-                ->getRows()
-                ->get()
-        ;
+        $rows  = $this->service->setRows($id)->getRows()->get();
         $lists = [];
         foreach ($rows as $r) {
             $l       = [
@@ -262,19 +262,25 @@ class ProcessStatusController extends Controller
         }
         $headers   = array_keys($l);
         $file_name = "{$id}_月次データ処理リスト_" . date('Ymd_His') . '.csv';
-        return $this->exportCsv($lists, $file_name, $headers);
+        return $this->service->exportCsv($lists, $file_name, $headers);
     }
 
     public function exportNothingList($id) {
         try {
-            $ignore = $this->getJsonFile($this->path . '/log/', "{$id}_ignore_file_list.json");
+            $ignore = $this->getJsonFile(storage_path() . '/jsonlogs/', "{$id}_ignore_file_list.json");
         } catch (\Exception $exc) {
-            $ignore = [];
+            \Session::flash('danger_message', $exc->getMessage());
+            return back();
+//            dd($exc->getMessage());
+//            $ignore = [];
         }
         try {
-            $not_exist = $this->getJsonFile($this->path . '/log/', "{$id}_not_exist_file_list.json");
+//            $not_exist = $this->getJsonFile($this->path . '/log/', "{$id}_not_exist_file_list.json");
+            $not_exist = $this->getJsonFile(storage_path() . '/jsonlogs/', "{$id}_not_exist_file_list.json");
         } catch (\Exception $exc) {
-            $not_exist = [];
+            \Session::flash('danger_message', $exc->getMessage());
+            return back();
+//            $not_exist = [];
         }
 
         $lists = [
@@ -317,7 +323,7 @@ class ProcessStatusController extends Controller
         }
         $headers   = array_keys($lists[0]);
         $file_name = "{$id}_月次データ処理対象外リスト_" . date('Ymd_His') . '.csv';
-        return $this->exportCsv($lists, $file_name, $headers);
+        return $this->service->exportCsv($lists, $file_name, $headers);
     }
 
 }

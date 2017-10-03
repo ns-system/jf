@@ -30,7 +30,7 @@
                     <tr>
                         <th class="bg-primary">No</th>
                         @foreach($configs['table_columns'] as $column_config)
-                            <th class="bg-primary @if(array_key_exists('class', $column_config)) {{$column_config['class']}} @endif">{{$column_config['2']}}</th>
+                            <th @if(array_key_exists('class', $column_config)) class="bg-primary {{$column_config['class']}}" @else class="bg-primary" @endif>{{$column_config['2']}}</th>
                         @endforeach
                     </tr>
                 </thead>
@@ -43,7 +43,7 @@
                                 {{$cnt + 1}}
                             </th>
                             @foreach($configs['table_columns'] as $column_config)
-                            <td class="@if(array_key_exists('class', $column_config)) {{$column_config['class']}} @endif">
+                            <td @if(array_key_exists('class', $column_config)) class="{{$column_config['class']}}" @endif>
 
 
                             @if(array_key_exists('format', $column_config))

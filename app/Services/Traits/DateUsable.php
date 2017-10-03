@@ -16,7 +16,9 @@ trait DateUsable
         }
         return true;
     }
+    
 
+    // setterでGetさせるのまずい非常に。
     public function setDate($date_time_buf) {
         if (
                 empty($date_time_buf) ||

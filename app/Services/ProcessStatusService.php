@@ -6,6 +6,7 @@ class ProcessStatusService
 {
 
     use \App\Services\Traits\JobStatusUsable;
+    use \App\Services\Traits\CsvUsable;
 
     protected $rows;
     protected $parameters;
