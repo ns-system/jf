@@ -39,10 +39,6 @@
         </div>
     </div>
 
-    <div class="text-right" style="margin-bottom: 10px; display: none;">
-        <a href="{{route('admin::super::month::status', ['id'=>$id])}}" class="btn btn-success btn-sm">処理結果を確認する</a>
-    </div>
-
 <table class="table table-hover table-striped table-small va-middle">
     <thead>
         <tr class="bg-primary">
@@ -63,12 +59,12 @@
 
             <th class="bg-primary">{{$i + 1}}</th>
             <td>
-                <span class="text-success">
+                <span class="text-success animate">
                     <span class="glyphicon" aria-hidden="true" id="pre_process_{{$r->key_id}}" style="font-size: 24px;"></span>
                 </span>
             </td>
             <td>
-                <span class="text-success">
+                <span class="text-success animate">
                     <span class="glyphicon" aria-hidden="true" id="post_process_{{$r->key_id}}" style="font-size: 24px;"></span>
                 </span>
             </td>
@@ -93,9 +89,10 @@
             </td>
             <td>
                 <div>
-                    <div class="progress" >
+                    <div class="progress">
                         <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" id="progress_post_{{$r->key_id}}" style="width: 0%;"></div>
                     </div>
+                    <p class="error_message text-left text-warning"></p>
                 </div>
 
             </td>
@@ -114,6 +111,10 @@
     </tbody>
 </table>
 
+@include('admin.month.partial.error_box')
+<div style="display: none; position: fixed; right: 40px; bottom: 15px;" id="process-list" class="text-right">
+    <a href="{{route('admin::super::month::status', ['id'=>$id])}}">処理結果を確認する</a>
+</div>
 
 </div>
 @endsection
@@ -122,32 +123,14 @@
 @parent
 <script type="text/javascript">
 var array = JSON.parse('<?php echo json_encode($array); ?>');
-//var process_continue = 9999;
 var timer;
-var tmp_timer;
-var is_continue = true;
 
 $(function(){
     timer = setInterval(function(){
         connectAjax(array);
-//        console.log(process_continue);
     }, 5000);
 
-    tmp_timer = setInterval(function(){
-        if(is_continue == false){
-            clearInterval(timer);
-            console.log('timer');
-            // redirect
-        }
-    }, 5000);
-
-    // if(process_continue <= 0){
-    //     console.log('clear');
-    //     clearInterval(timer);
-    // }
 });
-
-
 
 function connectAjax(array){
     $.ajaxSetup({
@@ -163,20 +146,22 @@ function connectAjax(array){
     }).then(
         (rows) => {
             console.log(rows);
+            editHtml(rows['rows']);
             var s = rows['status'];
-            console.log(s);
-    //                process_continue = rows['max_cnt'] - rows['now_cnt'];
+            if(s['is_import_error']){
+                setErrorList(s);
+                clearInterval(timer);
+                stopAllAnimation();
+                changeProgressBarToError();
+            }
             if(s['is_import_end'] == true){
                 clearInterval(timer);
-                clearInterval(tmp_timer);
-                is_continue = false;
-//                console.log('fin');
+                $('#process-list').show();
             }
-            editHtml(rows['rows']);
         },
         (error) => {
-//            console.log(error);
             alert('エラーが発生しました。処理を最初から行ってください。');
+            clearInterval(timer);
         }
     );
 //    console.log('hi');
@@ -187,34 +172,31 @@ function editHtml(rows){
     Object.keys(rows).forEach(function(id, index, array){
 
         var r = rows[id];
-        // Progress bar
-        if(r['is_pre_process_end'] == true){
-            $('#pre_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-ok');
-        }else if(r['is_pre_process_start'] == true){
-            $('#pre_process_'+id).addClass('glyphicon-repeat rotate');
-        }
+        if(r['is_pre_process_start']){  $('#pre_process_'+id).addClass('glyphicon-repeat rotate'); }
+        if(r['is_pre_process_end']){    $('#pre_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-ok'); }
+        if(r['is_pre_process_error']){  $('#pre_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-remove').parent().removeClass('text-success').addClass('text-warning'); }
 
-        if(r['is_post_process_end'] == true){
-            $('#post_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-ok');
-        }else if(r['is_post_process_start'] == true){
-            $('#post_process_'+id).addClass('glyphicon-repeat rotate');
-        }
-
+        if(r['is_post_process_start']){ $('#post_process_'+id).addClass('glyphicon-repeat rotate'); }
+        if(r['is_post_process_end']){   $('#post_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-ok'); }
+        if(r['is_post_process_error']){ $('#post_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-remove').parent().removeClass('text-success').addClass('text-warning'); }
 
         if(r['is_post_process_start'] == true){
             var now = r['executed_row_count'];
             var max = r['row_count'];
             var p = Math.round((now / (max+1)) * 100);
-            console.log('% = '+p+' - '+now+' / '+max);
-            if(r['is_import'] == false){
-                if(p > 20){
-                    $('#progress_post_'+id).css('width', p+'%').html('処理中...');
-                }else{
-                    $('#progress_post_'+id).css('width', p+'%');
-                }
+//            console.log('% = '+p+' - '+now+' / '+max);
+            if(!r['is_import']){
+                if(p > 20){ $('#progress_post_'+id).css('width', p+'%').html('処理中...'); }
+                else{       $('#progress_post_'+id).css('width', p+'%'); }
             }else{
                 $('#progress_post_'+id).css('width', '100%').removeClass('active').html('処理終了');
             }
+        }
+        // エラーメッセージ
+        if(r['is_pre_process_error'] || r['is_post_process_error']){
+            $('#progress_post_'+id).css('width', '100%').removeClass('active progress-bar-success').addClass('progress-bar-warning').html('処理中断');
+            console.log(r['key_id'],r['is_pre_process_error'],r['is_post_process_error'],r['warning_message']);
+            $('#progress_post_'+id).parent().next('.error_message').html(r['warning_message']);
         }
 
         // Rowカウンタ
@@ -224,6 +206,23 @@ function editHtml(rows){
         $('#end_time_'+id).html(r['process_ended_at']);
 
         // progress
+    });
+    setErrorList(rows);
+}
+
+function stopAllAnimation(){
+    $('.animate').each(function(){
+        $(this).children().removeClass('rotate');
+    });
+}
+
+function changeProgressBarToError(){
+    $('.progress').each(function(){
+        $(this).children().removeClass('active').html('処理中断');
+        if($(this).children().hasClass('progress-bar-warning')){
+        }else{
+            $(this).children().removeClass('progress-bar-success').addClass('progress-bar-danger').css('width','100%');
+        }
     });
 }
 </script>

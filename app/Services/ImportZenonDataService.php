@@ -5,13 +5,15 @@ namespace App\Services;
 use \App\Services\Traits\JsonUsable;
 use \App\Services\Traits\CsvUsable;
 use \App\Services\Traits\TypeConvertable;
+use \App\Services\Traits\JobStatusUsable;
 
 class ImportZenonDataService
 {
 
     use JsonUsable,
         CsvUsable,
-        TypeConvertable;
+        TypeConvertable,
+        JobStatusUsable;
 
     protected $row;
     protected $status;
@@ -168,42 +170,41 @@ class ImportZenonDataService
         ];
     }
 
-    public function uploadToDatabase($table_config, $csv_file_object, $monthly_id): array {
+    public function uploadToDatabase($monthly_state, $csv_file_object, $monthly_id): array {
         $bulk    = [];
         $types   = [];
         $keys    = [];
-        $configs = \App\ZenonTable::format($table_config->zenon_format_id)->select(['column_name', 'column_type',])->get();
+        $configs = \App\ZenonTable::format($monthly_state->zenon_format_id)->select(['column_name', 'column_type',])->get();
         foreach ($configs as $c) {
             $types[$c->column_name] = $c->column_type;
             $keys[]                 = $c->column_name;
         }
         if ($this->isArrayEmpty($keys))
         {
-            $this->setErrorFlagToMonthlyStatus($table_config);
-            return $this->makeErrorLog($table_config, 'The table configuration file did not exist in the database. Please import the configuration file and try again.');
+            $this->setPreErrorToMonthlyStatus($monthly_state->id, 'テーブル設定が取り込まれていないようです。');
+            return $this->makeErrorLog($monthly_state, 'テーブル設定が取り込まれていないようです。MySQL側 全オンテーブル設定から取込処理を行ってください。');
         }
 
         $split_key_configs = [
-            'split_foreign_key_1' => $table_config->split_foreign_key_1,
-            'split_foreign_key_2' => $table_config->split_foreign_key_2,
-            'split_foreign_key_3' => $table_config->split_foreign_key_3,
-            'split_foreign_key_4' => $table_config->split_foreign_key_4,
+            'split_foreign_key_1' => $monthly_state->split_foreign_key_1,
+            'split_foreign_key_2' => $monthly_state->split_foreign_key_2,
+            'split_foreign_key_3' => $monthly_state->split_foreign_key_3,
+            'split_foreign_key_4' => $monthly_state->split_foreign_key_4,
         ];
 
         $account_convert_param = [
-            'account_column_name' => $table_config->account_column_name,
-            'subject_column_name' => $table_config->subject_column_name,
+            'account_column_name' => $monthly_state->account_column_name,
+            'subject_column_name' => $monthly_state->subject_column_name,
         ];
 
         try {
-            $table = $this->getTableObject('mysql_zenon', $table_config->table_name);
+            $table = $this->getTableObject('mysql_zenon', $monthly_state->table_name);
         } catch (\Exception $e) {
-            $this->setErrorFlagToMonthlyStatus($table_config);
-            return $this->makeErrorLog($table_config, $e->getMessage());
+            $this->setPreErrorToMonthlyStatus($monthly_state->id, $e->getMessage());
+            return $this->makeErrorLog($monthly_state, $e->getMessage());
         }
 
-        $this->setPreProcessStartToMonthlyStatus($table_config);
-//        var_dump($table_config->table_name);
+        $this->setPreStartToMonthlyStatus($monthly_state->id);
 
         $line_number = 0;
         foreach ($csv_file_object as /* $line_number => */ $raw_line) {
@@ -218,9 +219,9 @@ class ImportZenonDataService
             $tmp_bulk = $this->setRow($line)
                     ->setKeyToRow($keys)
                     ->convertRow($types, true)
-                    ->splitRow($table_config->is_split, $table_config->first_column_position, $table_config->last_column_position, $split_key_configs)
+                    ->splitRow($monthly_state->is_split, $monthly_state->first_column_position, $monthly_state->last_column_position, $split_key_configs)
                     ->setMonthlyIdToRow(true, $monthly_id)
-                    ->setConvertedAccountToRow($table_config->is_account_convert, $account_convert_param)
+                    ->setConvertedAccountToRow($monthly_state->is_account_convert, $account_convert_param)
                     ->setTimeStamp(date('Y-m-d H:i:s'))
                     ->getRow()
             ;
@@ -228,7 +229,7 @@ class ImportZenonDataService
             if ($line_number > 0 && (count($bulk) * count($tmp_bulk) + count($tmp_bulk)) > 65000)
             {
                 $table->insert($bulk);
-                $this->setExecutedRowCountToMonthlyStatus($table_config, $line_number);
+                $this->setExecutedRowCountToMonthlyStatus($monthly_state->id, $line_number);
                 $bulk = null;
             }
             $bulk[] = $tmp_bulk;
@@ -237,9 +238,9 @@ class ImportZenonDataService
         if (count($bulk) !== 0)
         {
             $table->insert($bulk);
-            $this->setExecutedRowCountToMonthlyStatus($table_config, $line_number);
+            $this->setExecutedRowCountToMonthlyStatus($monthly_state->id, $line_number);
         }
-        $this->setPostProcessEndToMonthlyStatus($table_config);
+        $this->setPostEndToMonthlyStatus($monthly_state->id);
         return [];
     }
 
@@ -248,50 +249,21 @@ class ImportZenonDataService
         {
             throw new \Exception("コネクションもしくはテーブル名が指定されていないようです。");
         }
+        try {
+            \DB::connection($connection)->table($table_name)->get();
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+
         return \DB::connection($connection)->table($table_name);
     }
 
-    public function getLastTraded($reference_last_traded_on, $last_traded_on) {
-//        $date = $row->reference_last_traded_on;
-        if (empty($reference_last_traded_on) || $reference_last_traded_on === '0000-00-00' || $reference_last_traded_on === '00000000')
-        {
-            return $last_traded_on;
-        }
-        return $reference_last_traded_on;
-    }
-
-    public function setPreProcessStartToMonthlyStatus($monthly_status_object) {
-        $monthly_status_object->is_pre_process_start = true;
-        $monthly_status_object->save();
-    }
-
-    public function setPreProcessEndToMonthlyStatus($monthly_status_object, $row_count) {
-        $monthly_status_object->is_pre_process_end = true;
-        $monthly_status_object->row_count          = $row_count;
-        $monthly_status_object->save();
-    }
-
-    public function setPostProcessStartToMonthlyStatus($monthly_status_object) {
-        $monthly_status_object->is_post_process_start = true;
-        $monthly_status_object->process_started_at    = date('Y-m-d H:i:s');
-        $monthly_status_object->save();
-    }
-
-    public function setPostProcessEndToMonthlyStatus($monthly_status_object) {
-        $monthly_status_object->is_import           = true;
-        $monthly_status_object->is_post_process_end = true;
-        $monthly_status_object->process_ended_at    = date('Y-m-d H:i:s');
-        $monthly_status_object->save();
-    }
-
-    public function setExecutedRowCountToMonthlyStatus($monthly_status_object, $executed_row_count) {
-        $monthly_status_object->executed_row_count = $executed_row_count;
-        $monthly_status_object->save();
-    }
-
-    public function setErrorFlagToMonthlyStatus($monthly_status_object) {
-        $monthly_status_object->is_post_process_error = true;
-        $monthly_status_object->save();
-    }
-
+//    public function getLastTraded($reference_last_traded_on, $last_traded_on) {
+////        $date = $row->reference_last_traded_on;
+//        if (empty($reference_last_traded_on) || $reference_last_traded_on === '0000-00-00' || $reference_last_traded_on === '00000000')
+//        {
+//            return $last_traded_on;
+//        }
+//        return $reference_last_traded_on;
+//    }
 }

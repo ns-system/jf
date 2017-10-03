@@ -89,7 +89,6 @@
 
 <div style="margin-top: 100px;"></div>
 
-
 @section('content')
 <div class="col-md-10">
     <div class="container-fluid">
@@ -139,10 +138,11 @@
                         data-toggle="tooltip"
                         data-placement="right"
                         title="すでに当月データが累積されていた場合、データが二重で累積される恐れがあります。"
-                        @if(!$f->is_import) checked @endif
+                        value="{{$f->key_id}}"
+                        @if(!$f->is_import || $counts[$f->key_id] <= 0) checked @endif
                     @else disabled @endif
                 >
-                <input type="hidden" name="id[{{$f->key_id}}]" value="{{$f->key_id}}">
+{{--                 <input type="hidden" name="id[{{$f->key_id}}]" value="{{$f->key_id}}"> --}}
             </td>
             <td class="text-left">
                 <p>{{$f->zenon_format_id}}：{{$f->zenon_data_name}}</p>
@@ -192,6 +192,7 @@
 
     </div>
 </div>
+@include('admin.month.partial.error_box')
 
 @endsection
 

@@ -21,6 +21,7 @@ class UnitImportZenonDataServiceTest extends TestCase
         return $s;
     }
 
+
     /**
      * @test
      */
@@ -40,6 +41,26 @@ class UnitImportZenonDataServiceTest extends TestCase
     public function 正常系_月別ID指定() {
         // FIX:テストになってない
         $obj = $this->s->monthlyStatus(201707, [1, 2, 3]);
+    }
+
+    /**
+     * @test
+     */
+    public function 異常系_列セット時に失敗() {
+        $rows = [
+            ['1', '1234567890', 'key_1', 'テストユーザー1', '20170701', 'true'],
+            ['4', '2345678901', 'key_2', 'test user_2', '2017-08-21', 'false'],
+        ];
+        $keys = ['subject_code', 'account_number', 'split_key', 'user_name',];
+
+        try {
+            foreach ($rows as $r) {
+                $this->s->setRow($r)->setKeyToRow($keys);
+            }
+            $this->fail("予期しないエラーです。");
+        } catch (\Exception $e) {
+            $this->assertEquals("配列長が一致しませんでした。（想定：4 実際：6）", $e->getMessage());
+        }
     }
 
     /**
@@ -233,23 +254,24 @@ class UnitImportZenonDataServiceTest extends TestCase
      * @test
      */
     public function 正常系_INSERT成功() {
-        $monthly_status = ['csv_file_name' => 'K_D_902_M0332_20170801.csv', 'file_kb_size' => 8645, 'monthly_id' => 201707, 'csv_file_set_on' => '2017-08-01', 'zenon_data_csv_file_id' => 25, 'is_execute' => 1, 'is_pre_process_start' => 0, 'is_pre_process_end' => 0, 'is_pre_process_error' => 0, 'is_post_process_start' => 0, 'is_post_process_end' => 0, 'is_post_process_error' => 0, 'is_exist' => 1, 'is_import' => 0, 'row_count' => 0, 'executed_row_count' => 0,];
+        // 環境依存してない？これ
+        $monthly_status = ['csv_file_name' => 'K_D_902_M0332_20101001.csv', 'file_kb_size' => 338, 'monthly_id' => 201009, 'csv_file_set_on' => '2010-10-01', 'zenon_data_csv_file_id' => 25, 'is_execute' => 1, 'is_pre_process_start' => 0, 'is_pre_process_end' => 0, 'is_pre_process_error' => 0, 'is_post_process_start' => 0, 'is_post_process_end' => 0, 'is_post_process_error' => 0, 'is_exist' => 1, 'is_import' => 0, 'row_count' => 0, 'executed_row_count' => 0,];
 
         try {
             \DB::connection('mysql_zenon')->beginTransaction();
             \DB::connection('mysql_suisin')->beginTransaction();
             \App\ZenonMonthlyStatus::insert($monthly_status);
-            $table_configs = \App\ZenonMonthlyStatus::month(201707)
+            $table_configs = \App\ZenonMonthlyStatus::month(201009)
                     ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
                     ->where('zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 25)
                     ->get()
             ;
 
-            $csv_file_object = $this->s->setCsvFileObject(storage_path() . '/tests/K_D_902_M0332_20170801.csv')->getCsvFileObject();
+            $csv_file_object = $this->s->setCsvFileObject(storage_path() . '/tests/K_D_902_M0332_20101001.csv')->getCsvFileObject();
 
             $start_time = date('Y-m-d H:i:s');
             foreach ($table_configs as $t) {
-                $this->s->uploadToDatabase($t, $csv_file_object, 201707);
+                $this->s->uploadToDatabase($t, $csv_file_object, 201009);
             }
             $end_time = date('Y-m-d H:i:s');
             $count    = \DB::connection('mysql_zenon')
@@ -266,95 +288,127 @@ class UnitImportZenonDataServiceTest extends TestCase
             \DB::connection('mysql_zenon')->rollback();
             \DB::connection('mysql_suisin')->rollback();
         }
-        $this->assertEquals($count, 3000);
+        $this->assertEquals($count, 1500);
+    }
+
+    /**
+     * @test
+     */ public function 正常系_エラーログ出力() {
+        try {
+            \DB::connection('mysql_suisin')->beginTransaction();
+            $monthly_status = ['csv_file_name' => 'K_D_902_M0332_20101001.csv', 'file_kb_size' => 338, 'monthly_id' => 201009, 'csv_file_set_on' => '2010-10-01', 'zenon_data_csv_file_id' => 25, 'is_execute' => 1, 'is_pre_process_start' => 0, 'is_pre_process_end' => 0, 'is_pre_process_error' => 0, 'is_post_process_start' => 0, 'is_post_process_end' => 0, 'is_post_process_error' => 0, 'is_exist' => 1, 'is_import' => 0, 'row_count' => 0, 'executed_row_count' => 0,];
+            \App\ZenonMonthlyStatus::insert($monthly_status);
+            $monthly_object = \App\ZenonMonthlyStatus::month(201009)->first();
+            $s              = $this->setReflection('makeErrorLog');
+            $result_1       = $s->invoke($this->s, $monthly_object, '無視できるエラー発生');
+        } catch (\Exception $exc) {
+            echo $exc->getMessage();
+        } finally {
+            \DB::connection('mysql_suisin')->rollback();
+        }
+        $this->assertEquals('無視できるエラー発生', $result_1['reason']);
     }
 
     /**
      * @test
      */
-    public function 正常系_事前ステータス変更() {
-        $monthly_status = ['csv_file_name' => 'K_D_902_M0332_20170801.csv', 'file_kb_size' => 8645, 'monthly_id' => 201707, 'csv_file_set_on' => '2017-08-01', 'zenon_data_csv_file_id' => 25, 'is_execute' => 1, 'is_pre_process_start' => 0, 'is_pre_process_end' => 0, 'is_pre_process_error' => 0, 'is_post_process_start' => 0, 'is_post_process_end' => 0, 'is_post_process_error' => 0, 'is_exist' => 1, 'is_import' => 0, 'row_count' => 0, 'executed_row_count' => 0,];
+    public function 正常系_Database反映時にテーブル設定がない() {
+        $monthly_status = [
+            'csv_file_name'   => 'K_D_902_M0332_20101001.csv',
+//            'file_kb_size'           => 338,
+            'monthly_id'      => 201009,
+            'csv_file_set_on' => '2010-10-01',
+//            'zenon_data_csv_file_id' => 25,
+//            'is_execute'             => 1,
+//            'is_pre_process_start'   => 0,
+//            'is_pre_process_end'     => 0,
+//            'is_pre_process_error'   => 0,
+//            'is_post_process_start'  => 0,
+//            'is_post_process_end'    => 0,
+//            'is_post_process_error'  => 0,
+//            'is_exist'               => 1,
+//            'is_import'              => 0,
+//            'row_count'              => 0,
+//            'executed_row_count'     => 0,
+        ];
+
+        $zenon_data_csv_files = [
+            'database_name' => 'zenon_data_db',
+            'table_name'    => 'not_exist_table_name',
+        ];
+
 
         try {
             \DB::connection('mysql_suisin')->beginTransaction();
+            \App\ZenonCsv::insert($zenon_data_csv_files);
+            $zenon_csv = \App\ZenonCsv::where('table_name', '=', 'not_exist_table_name')->first();
+
+            $monthly_status['zenon_data_csv_file_id'] = $zenon_csv->id;
             \App\ZenonMonthlyStatus::insert($monthly_status);
-            $table_configs = \App\ZenonMonthlyStatus::month(201707)
-                    ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
-                    ->where('zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 25)
-                    ->first()
-            ;
-            $before        = [
-                'start' => $table_configs->is_pre_process_start,
-                'end'   => $table_configs->is_pre_process_end,
-                'count' => $table_configs->row_count,
-            ];
 
-            $this->s->setPreProcessStartToMonthlyStatus($table_configs);
-            $after['start'] = $table_configs->is_pre_process_start;
-            $this->s->setPreProcessEndToMonthlyStatus($table_configs, 200);
-            $after['end']   = $table_configs->is_pre_process_end;
-            $after['count'] = $table_configs->row_count;
-
-            \DB::connection('mysql_suisin')->rollback();
+            $csv_file_object = $this->s->setCsvFileObject(storage_path() . '/tests/K_D_902_M0332_20101001.csv')->getCsvFileObject();
+            $zenon_monthly   = \App\ZenonMonthlyStatus::where('zenon_data_csv_file_id', '=', $zenon_csv->id)->first();
+//            dd($zenon_monthly);
+            $result_1        = $this->s->uploadToDatabase($zenon_monthly, $csv_file_object, 201009);
         } catch (\Exception $exc) {
-            $this->fail('予期しないエラー');
-
+            echo $exc->getMessage();
+        } finally {
             \DB::connection('mysql_suisin')->rollback();
         }
-        $this->assertEquals($before, ['start' => false, 'end' => false, 'count' => 0]);
-        $this->assertEquals($after, ['start' => true, 'end' => true, 'count' => 200]);
+//        dd($result_1);
+        $this->assertEquals('テーブル設定が取り込まれていないようです。MySQL側 全オンテーブル設定から取込処理を行ってください。', $result_1['reason']);
     }
 
     /**
      * @test
      */
-    public function 正常系_本ステータス変更() {
-        $monthly_status = ['csv_file_name' => 'K_D_902_M0332_20170801.csv', 'file_kb_size' => 8645, 'monthly_id' => 201707, 'csv_file_set_on' => '2017-08-01', 'zenon_data_csv_file_id' => 25, 'is_execute' => 1, 'is_pre_process_start' => 0, 'is_pre_process_end' => 0, 'is_pre_process_error' => 0, 'is_post_process_start' => 0, 'is_post_process_end' => 0, 'is_post_process_error' => 0, 'is_exist' => 1, 'is_import' => 0, 'row_count' => 0, 'executed_row_count' => 0,];
+    public function 正常系_Database反映時にテーブルオブジェクトが生成できない() {
+        $monthly_status = [
+            'csv_file_name'   => 'K_D_902_M0332_20101001.csv',
+            'monthly_id'      => 201009,
+            'csv_file_set_on' => '2010-10-01',
+        ];
+
+        $zenon_data_csv_files = [
+            'database_name'   => 'zenon_data_db',
+            'table_name'      => 'not_exist_table_name',
+            'zenon_format_id' => 99999,
+        ];
+
+        $zenon_table_configs = [
+            'zenon_format_id' => 99999,
+            'column_name'     => 'sample_column',
+        ];
+
 
 
         try {
             \DB::connection('mysql_suisin')->beginTransaction();
+            \App\ZenonCsv::insert($zenon_data_csv_files);
+            \App\ZenonTable::insert($zenon_table_configs);
+            $zenon_csv = \App\ZenonCsv::where('table_name', '=', 'not_exist_table_name')->first();
+//            $zenon_table = \App\ZenonTable::where('zenon_format_id', '=', 99999)->first();
+
+            $monthly_status['zenon_data_csv_file_id'] = $zenon_csv->id;
             \App\ZenonMonthlyStatus::insert($monthly_status);
-            $table_configs = \App\ZenonMonthlyStatus::month(201707)
+
+            $csv_file_object = $this->s->setCsvFileObject(storage_path() . '/tests/K_D_902_M0332_20101001.csv')->getCsvFileObject();
+            $zenon_monthly   = \App\ZenonMonthlyStatus::where('zenon_data_csv_file_id', '=', $zenon_csv->id)
                     ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
-                    ->where('zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 25)
+                    ->select(\DB::raw('*, zenon_data_monthly_process_status.id AS id'))
                     ->first()
             ;
-//        var_dump($table_configs);
-            $before        = [
-                'import' => $table_configs->is_import,
-                'start'  => $table_configs->is_post_process_start,
-                'end'    => $table_configs->is_post_process_end,
-                'count'  => $table_configs->executed_row_count,
-            ];
-
-            $this->s->setPostProcessStartToMonthlyStatus($table_configs);
-            $after['start']  = $table_configs->is_post_process_start;
-            $this->s->setPostProcessEndToMonthlyStatus($table_configs);
-            $after['end']    = $table_configs->is_post_process_end;
-            $after['import'] = $table_configs->is_import;
-            $this->s->setExecutedRowCountToMonthlyStatus($table_configs, 200);
-            $after['count']  = $table_configs->executed_row_count;
-
-            \DB::connection('mysql_suisin')->rollback();
+//            var_dump($zenon_monthly);
+            $result_1        = $this->s->uploadToDatabase($zenon_monthly, $csv_file_object, 201009);
         } catch (\Exception $exc) {
-            $exc->getMessage();
-            $this->fail('予期しないエラー');
+            $result_1 = ['reason' => ''];
+            echo $exc->getMessage();
+//            echo $exc->getTraceAsString();
+        } finally {
             \DB::connection('mysql_suisin')->rollback();
         }
-        $this->assertEquals($before, ['import' => false, 'start' => false, 'end' => false, 'count' => 0]);
-        $this->assertEquals($after, ['import' => true, 'start' => true, 'end' => true, 'count' => 200]);
-    }
-
-    /**
-     * @test
-     */
-    public function 正常系_更新日時取得() {
-        $res_1 = $this->s->getLastTraded(null, '2017-07-21');
-        $res_2 = $this->s->getLastTraded('2017-12-09', '2017-07-21');
-
-        $this->assertEquals($res_1, '2017-07-21');
-        $this->assertEquals($res_2, '2017-12-09');
+//        dd($result_1);
+        $this->assertEquals("SQLSTATE[42S02]: Base table or view not found: 1146 Table 'zenon_data_db.not_exist_table_name' doesn't exist (SQL: select * from `not_exist_table_name`)", $result_1['reason']);
     }
 
 }

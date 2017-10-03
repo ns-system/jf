@@ -26,8 +26,8 @@ class MonthlyImportForm extends Request
         $in = \Input::get();
         $rules = [];
         foreach($in['process'] as $key => $val){
-            $rules["process.{$key}"] = 'required|accepted';
-            $rules["id.{$key}"] = 'required|exists:mysql_suisin.zenon_data_monthly_process_status,id';
+            $rules["process.{$key}"] = 'required|exists:mysql_suisin.zenon_data_monthly_process_status,id';
+//            $rules["id.{$key}"] = 'required|exists:mysql_suisin.zenon_data_monthly_process_status,id';
         }
         return $rules;
     }

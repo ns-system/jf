@@ -40,26 +40,26 @@
                 <p>ファイルをコピーしています。</p>
                 <p>しばらくそのままでお待ち下さい。</p>
             </div>
-{{--             <button class="btn btn-primary" id="ajax">ajax</button> --}}
         </div>
 
     </div>
 </div>
+
+@include('admin.month.partial.error_box')
 
 @endsection
 
 @section('footer')
 @parent
 <script type="text/javascript">
-$(function(){
+var timer;
 
+$(function(){
     var cnt = 0;
-    setInterval(function(){
+    timer = setInterval(function(){
         redirectTo();
         cnt++;
         if(cnt == 10){
-//            location.href = "{{route('admin::super::month::failed')}}";
-//            alert();
         }
     }, 5000);
 });
@@ -84,8 +84,12 @@ function redirectTo(){
                 location.href = "{{route('admin::super::month::import_confirm', ['id'=>$id, 'job_id'=>$job_id])}}";
             }else if(s['is_copy_error'] == true){
                 // Error
-                alert('処理に失敗しました。最初から処理を行ってください。');
-                location.href = "{{route('admin::super::month::failed')}}";
+//                alert('処理に失敗しました。最初から処理を行ってください。');
+                setErrorList(data);
+//                setErrorList(data['status']);
+                $('#progress').removeClass('progress-bar-info active').addClass('progress-bar-danger').html("処理は中断されました");
+                clearInterval(timer);
+//                location.href = "{{route('admin::super::month::failed')}}";
             }
         },
         (error) => {
@@ -93,7 +97,7 @@ function redirectTo(){
             alert('エラーが発生しました。処理を最初から行ってください。');
         }
     );
-    console.log('hi');
 }
+
 </script>
 @endsection

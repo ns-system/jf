@@ -87,7 +87,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
             Route::get('/{system}/{category}', ['as' => 'index', 'uses' => 'SuisinAdminController@show']);
             Route::get('/{system}/{category}/export', ['as' => 'export', 'uses' => 'SuisinAdminController@export']);
             Route::post('/{system}/{category}/import', ['as' => 'import', 'uses' => 'SuisinAdminController@import']);
-            Route::post('/{system}/{category}/upload', ['as' => 'uppload', 'uses' => 'SuisinAdminController@upload']);
+            Route::post('/{system}/{category}/upload', ['as' => 'upload', 'uses' => 'SuisinAdminController@upload']);
         });
     });
     /**

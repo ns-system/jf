@@ -106,7 +106,7 @@ class UnitCsvUsableTest extends TestCase
      */
     public function 正常系_ファイル列数カウント() {
         $path_1 = storage_path() . '/tests/testfile.csv';
-        $path_2 = storage_path() . '/tests/K_D_902_M0332_20170801.csv';
+        $path_2 = storage_path() . '/tests/K_D_902_M0332_20101001.csv';
         $len_1  = $this->s
                 ->setCsvFilePath($path_1)
                 ->setCsvFileObject()

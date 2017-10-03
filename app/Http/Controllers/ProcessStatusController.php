@@ -120,8 +120,8 @@ class ProcessStatusController extends Controller
         return view('admin.month.copy', ['id' => $id, 'job_id' => $job_id]);
     }
 
-    public function importConfirm($id, $job_id) {
-        $files  = $this->service->setRows($id)
+    public function importConfirm($monthly_id, $job_id) {
+        $files  = $this->service->setRows($monthly_id)
                 ->getRows()
                 ->select(\DB::raw('*, zenon_data_monthly_process_status.id as key_id'))
                 ->where('cycle', '=', 'M')
@@ -143,47 +143,57 @@ class ProcessStatusController extends Controller
             }
             $counts[$f->key_id] = $cnt;
         }
-        return view('admin.month.import_confirm', ['files' => $files, 'id' => $id, 'job_id' => $job_id, 'counts' => $counts]);
+        return view('admin.month.import_confirm', ['files' => $files, 'id' => $monthly_id, 'job_id' => $job_id, 'counts' => $counts]);
     }
 
     public function import($id, $job_id) {
-        $rows = $this->service->getProcessRows($id)
+        $rows = $this->service->getProcessRows($job_id)
                 ->select(\DB::raw('*, zenon_data_monthly_process_status.id as key_id'))
                 ->where('is_execute', '=', true)
-                ->orderBy('zenon_data_csv_file_id', 'asc')
+                ->orderBy('zenon_format_id', 'asc')
+                ->orderBy('key_id', 'asc')
                 ->get()
         ;
+//        var_dump($job_id);
+//        dd($rows);
         $job  = \App\JobStatus::find($job_id);
         if ($job->is_import_end)
         {
             \Session::flash('success_message', '処理は終了しています。');
         }
-        else if ($job->is_import_start)
-        {
-            \Session::flash('warn_message', 'すでに処理は開始されています。');
-        }
+//        else if ($job->is_import_start)
+//        {
+//            dd($job);
+//            \Session::flash('warn_message', 'すでに処理は開始されています。');
+//        }
+//        var_dump($job);
         return view('admin.month.import', ['id' => $id, 'rows' => $rows, 'job_id' => $job_id]);
     }
 
     public function dispatchImportJob($id, $job_id, MonthlyImportForm $request) {
-        $in        = $request->input();
-        $processes = array_keys($in['process']);
-        $rows      = $this->service->getProcessRows($id, $processes)->get();
-        if (!isset($in['process']) && count($in['process']) <= 0)
+        $in          = $request->only(['process']);
+//        dd($in);
+        $job_status  = $this->service->setJobStatus($job_id)->getJobStatus();
+        $process_ids = array_keys($in['process']);
+        $rows        = $this->service->setJobStatusIdToMonthlyStatus($process_ids, $job_id)->getProcessRows($job_id)->get();
+//        dd($rows);
+        if (!isset($rows))
         {
             throw new \Exception('処理対象が選択されていません。');
         }
         // すでにDispatchされていたらリダイレクトさせる
-        $job = \App\JobStatus::find($job_id);
-        if ($job->is_import_start)
+//        $job = \App\JobStatus::find($job_id);
+        if ($job_status->is_import_start)
         {
             \Session::flash('warn_message', 'すでに処理は開始されています。');
             return redirect(route('admin::super::month::import', ['id' => $id, 'job_id' => $job_id]));
         }
-
-        $this->service->resetProcessStatus($rows, $id);
+        $this->service->resetProcessStatus($process_ids);
+        $this->service->setImportStartToJobStatus($job_status->id);
+//
+//        $this->service->resetProcessStatus($rows, $id);
         try {
-            $this->dispatch(new \App\Jobs\Suisin\CsvUpload($id, $processes, $job_id));
+            $this->dispatch(new \App\Jobs\Suisin\CsvUpload($id, $process_ids, $job_id));
         } catch (\Exception $exc) {
             echo $exc->getTraceAsString();
         }
@@ -191,59 +201,42 @@ class ProcessStatusController extends Controller
     }
 
     public function dispatchCopyJob($id) {
-        $job = \App\JobStatus::create(['is_copy_start' => true]);
+//        $job = \App\JobStatus::create(['is_copy_start' => true]);
+        $job = $this->service->createJobStatus()->getJobStatus();
         try {
             $this->dispatch(new \App\Jobs\Suisin\CsvFileCopy($id, $job->id));
-        } catch (\Exception $exc) {
-            echo $exc->getTraceAsString();
+        } catch (\Exception $e) {
+            \Session::flash('danger_message', $e->getMessage());
+            return back();
+//            echo $exc->getTraceAsString();
         }
         return redirect(route('admin::super::month::copy', ['id' => $id, 'job_id' => $job->id]));
     }
 
-    private function editJob($job_id) {
-        $job   = \App\JobStatus::find($job_id);
-        $array = [
-            'is_copy_start'   => $job->is_copy_start,
-            'is_copy_error'   => $job->is_copy_error,
-            'is_copy_end'     => $job->is_copy_end,
-            'is_import_start' => $job->is_import_start,
-            'is_import_error' => $job->is_import_error,
-            'is_import_end'   => $job->is_import_end,
-        ];
-        return $array;
-    }
+//    private function editJob($job_id) {
+//        $job   = \App\JobStatus::find($job_id);
+//        $array = [
+//            'is_copy_start'   => $job->is_copy_start,
+//            'is_copy_error'   => $job->is_copy_error,
+//            'is_copy_end'     => $job->is_copy_end,
+//            'is_import_start' => $job->is_import_start,
+//            'is_import_error' => $job->is_import_error,
+//            'is_import_end'   => $job->is_import_end,
+//        ];
+//        return $array;
+//    }
 
     public function copyAjax($id, $job_id) {
-        $status = $this->editJob($job_id);
+        $status = $this->service->getNowJobStatusArray($job_id);
         return response()->json(['status' => $status, 'id' => $id], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
     public function importAjax($id, $job_id) {
-        $in      = \Input::only('input')['input'];
-        $rows    = $this->service->getProcessRows($id, $in)->select(\DB::raw('*, zenon_data_monthly_process_status.id as key_id'))->get();
-        $max_cnt = $rows->count();
-        $now_cnt = $this->service->getProcessRows($id, $in)->where('is_post_process_end', '=', true)->count();
+//        $in      = \Input::only('input')['input'];
+        $status                     = $this->service->getNowJobStatusArray($job_id);
+        $csv_file_processing_status = $this->service->getNowMonthlyStatusArray($job_id);
 
-        $status = $this->editJob($job_id);
-        $arr    = [];
-        foreach ($rows as $r) {
-            $s               = (($r->process_started_at == '0000-00-00 00:00:00') ? '-' : date('G:i:s', strtotime($r->process_started_at)));
-            $e               = (($r->process_ended_at == '0000-00-00 00:00:00') ? '-' : date('G:i:s', strtotime($r->process_ended_at)));
-            $arr[$r->key_id] = [
-                'key_id'                => $r->key_id,
-                'is_pre_process_start'  => $r->is_pre_process_start,
-                'is_pre_process_end'    => $r->is_pre_process_end,
-                'is_post_process_start' => $r->is_post_process_start,
-                'is_post_process_end'   => $r->is_post_process_end,
-                'is_execute'            => $r->is_execute,
-                'is_import'             => $r->is_import,
-                'process_started_at'    => $s,
-                'process_ended_at'      => $e,
-                'row_count'             => $r->row_count,
-                'executed_row_count'    => $r->executed_row_count,
-            ];
-        }
-        $param = ['rows' => $arr, 'max_cnt' => $max_cnt, 'now_cnt' => $now_cnt, 'status' => $status,];
+        $param = ['rows' => $csv_file_processing_status, /* 'max_cnt' => $max_cnt, 'now_cnt' => $now_cnt, */ 'status' => $status,];
         return response()->json($param, 200, [], JSON_UNESCAPED_UNICODE);
     }
 
