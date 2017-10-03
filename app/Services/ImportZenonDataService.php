@@ -27,23 +27,24 @@ class ImportZenonDataService
         return $this;
     }
 
-    public function setTimeStamp($timestamp = null) {
-        if (empty($timestamp))
-        {
-            $timestamp = date('Y-m-d H:i:s');
-        }
+    private function setTimeStamp($option_timestamp = null) {
+//        if (empty($timestamp))
+//        {
+//            $timestamp = date('Y-m-d H:i:s');
+//        }
+        $timestamp               = (!empty($option_timestamp)) ? $option_timestamp : date('Y-m-d H:i:s');
         $this->row['created_at'] = $timestamp;
         $this->row['updated_at'] = $timestamp;
         return $this;
     }
 
-    public function convertRow($types, $is_ceil = true) {
+    private function convertRow($types, $is_ceil = true) {
         $row       = $this->convertTypes($types, $this->row, $is_ceil);
         $this->row = $row;
         return $this;
     }
 
-    public function setKeyToRow($keys) {
+    private function setKeyToRow($keys) {
         if (count($keys) !== count($this->row))
         {
             throw new \Exception("配列長が一致しませんでした。（想定：" . count($keys) . " 実際：" . count($this->row) . "）");
@@ -54,7 +55,7 @@ class ImportZenonDataService
         return $this;
     }
 
-    public function setMonthlyIdToRow($is_cumulative, $monthly_id = null) {
+    private function setMonthlyIdToRow($is_cumulative, $monthly_id = null) {
         if (!$is_cumulative)
         {
             return $this;
@@ -63,11 +64,16 @@ class ImportZenonDataService
         {
             throw new \Exception('月別IDが指定されていません。');
         }
-        $this->row['monthly_id'] = $monthly_id;
+        if (!$this->isDate($monthly_id))
+        {
+            throw new \Exception("月別IDの指定が不正です。（指定：{$monthly_id}）");
+        }
+        $date_obj = $this->setDate($monthly_id);
+        $this->row['monthly_id'] = $date_obj->format('Ym');
         return $this;
     }
 
-    public function setConvertedAccountToRow($is_account_convert, $account_convert_param = null) {
+    private function setConvertedAccountToRow($is_account_convert, $account_convert_param = null) {
         if (!$is_account_convert)
         {
             return $this;
@@ -114,7 +120,7 @@ class ImportZenonDataService
         return $this;
     }
 
-    public function splitRow($is_split, $pos_first = 0, $pos_last = 0, $split_key_configs = null) {
+    private function splitRow($is_split, $pos_first = 0, $pos_last = 0, $split_key_configs = null) {
         if (!$is_split)
         {
             return $this;
@@ -145,11 +151,11 @@ class ImportZenonDataService
         return $this;
     }
 
-    public function monthlyStatus($ym, $processes) {
+    public function monthlyStatus($ym, $process_ids) {
         $rows = \App\ZenonMonthlyStatus::month($ym)
                 ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
-                ->where(function($query) use($processes) {
-                    foreach ($processes as $id) {
+                ->where(function($query) use($process_ids) {
+                    foreach ($process_ids as $id) {
                         $query->orWhere('zenon_data_monthly_process_status.id', '=', $id);
                     }
                 })

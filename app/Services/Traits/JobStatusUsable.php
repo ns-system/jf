@@ -8,16 +8,26 @@ trait JobStatusUsable
     protected $monthly_status;
     protected $job_status;
 
-    private function cutStringTo250length($string) {
+    /**
+     * 文字を切り落とすメソッド。
+     * @param string $string : カットする対象の文字列。250文字で切り落とす。
+     * @return string        : カット後の文字列。
+     */
+    private function cutStringTo250length(string $string): string {
         return mb_substr($string, 0, 250);
     }
 
+    /**
+     * zenon_data_monthly_process_status（モデル）をセットするメソッド。
+     * @param type $id    : モデルID。
+     * @return $this      : チェーンメソッド。
+     * @throws \Exception : モデルが取得できなかった場合、エラー。
+     */
     public function setMonthlyStatus($id) {
         $monthly_status = \App\ZenonMonthlyStatus::find($id);
         if (empty($monthly_status->id))
         {
-//            var_dump($monthly_status);
-            throw new \Exception("不正な月次ステータスIDが指定されました。（型：" . gettype($id) . "）");
+            throw new \Exception("オブジェクトが取得できませんでした。（ID：{$id}）");
         }
         $this->monthly_status = $monthly_status;
         return $this;
@@ -75,16 +85,16 @@ trait JobStatusUsable
         $this->monthly_status->save();
     }
 
-    public function getErrorMessages($job_id) {
-        $month_status = \App\ZenonMonthlyStatus::where('job_status_id', '=', $job_id)
-                ->where(function($query) {
-                    $query->orWhere('is_pre_process_error', '=', true)->orWhere('is_post_process_error', '=', true);
-                })
-                ->get(['error_message', 'csv_file_name',])
-                ->toArray()
-        ;
-        return $month_status;
-    }
+//    public function getErrorMessages($job_id) {
+//        $month_status = \App\ZenonMonthlyStatus::where('job_status_id', '=', $job_id)
+//                ->where(function($query) {
+//                    $query->orWhere('is_pre_process_error', '=', true)->orWhere('is_post_process_error', '=', true);
+//                })
+//                ->get(['error_message', 'csv_file_name',])
+//                ->toArray()
+//        ;
+//        return $month_status;
+//    }
 
     public function createJobStatus() {
         $job              = \App\JobStatus::create(['is_copy_start' => true]);
@@ -147,7 +157,13 @@ trait JobStatusUsable
         return false;
     }
 
-    public function setJobStatusIdToMonthlyStatus($process_ids, $job_status_id) {
+    /**
+     * 処理IDをセットするメソッド。
+     * @param array $process_ids   : 処理対象のID（zenon_data_process_status_id）。
+     * @param int   $job_status_id : セットするID（job_status_id）。
+     * @return      $this          : チェーンメソッド。
+     */
+    public function setJobStatusIdToMonthlyStatus(array $process_ids, int $job_status_id) {
         $rows = \App\ZenonMonthlyStatus::where(function($query) use($process_ids) {
                     foreach ($process_ids as $p) {
                         $query->orWhere('id', '=', $p);

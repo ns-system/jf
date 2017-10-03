@@ -213,19 +213,6 @@ class ProcessStatusController extends Controller
         return redirect(route('admin::super::month::copy', ['id' => $id, 'job_id' => $job->id]));
     }
 
-//    private function editJob($job_id) {
-//        $job   = \App\JobStatus::find($job_id);
-//        $array = [
-//            'is_copy_start'   => $job->is_copy_start,
-//            'is_copy_error'   => $job->is_copy_error,
-//            'is_copy_end'     => $job->is_copy_end,
-//            'is_import_start' => $job->is_import_start,
-//            'is_import_error' => $job->is_import_error,
-//            'is_import_end'   => $job->is_import_end,
-//        ];
-//        return $array;
-//    }
-
     public function copyAjax($id, $job_id) {
         $status = $this->service->getNowJobStatusArray($job_id);
         return response()->json(['status' => $status, 'id' => $id], 200, [], JSON_UNESCAPED_UNICODE);

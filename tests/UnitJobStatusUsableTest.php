@@ -54,7 +54,7 @@ class UnitJobStatusUsableTest extends TestCase
             $this->setMonthlyStatus(-1);
             $this->fail("予期しないエラーです。");
         } catch (\Exception $e) {
-            $this->assertEquals("不正な月次ステータスIDが指定されました。（型：integer）", $e->getMessage());
+            $this->assertEquals("オブジェクトが取得できませんでした。（ID：-1）", $e->getMessage());
         }
     }
 
@@ -115,22 +115,22 @@ class UnitJobStatusUsableTest extends TestCase
         $this->assertEquals("致命的なエラー", $s->error_message);
     }
 
-    /**
-     * @tests
-     */
-    public function 正常系_エラーメッセージを配列で取得する() {
-        $s_1                = $this->setMonthlyStatus($this->monthly_status_id)->getMonthlyStatus();
-        $s_1->job_status_id = 99;
-        $s_1->save();
-        $errors_1           = $this->getErrorMessages(99);
-
-        $this->setPostErrorToMonthlyStatus($this->monthly_status_id, "致命的なエラー1");
-        $this->setMonthlyStatus($this->monthly_status_id)->getMonthlyStatus();
-        $errors_2 = $this->getErrorMessages(99);
-
-        $this->assertEquals([], $errors_1);
-        $this->assertEquals([['error_message' => '致命的なエラー1', 'csv_file_name' => 'K_D_902_M0332_20101001.csv']], $errors_2);
-    }
+//    /**
+//     * @tests
+//     */
+//    public function 正常系_エラーメッセージを配列で取得する() {
+//        $s_1                = $this->setMonthlyStatus($this->monthly_status_id)->getMonthlyStatus();
+//        $s_1->job_status_id = 99;
+//        $s_1->save();
+//        $errors_1           = $this->getErrorMessages(99);
+//
+//        $this->setPostErrorToMonthlyStatus($this->monthly_status_id, "致命的なエラー1");
+//        $this->setMonthlyStatus($this->monthly_status_id)->getMonthlyStatus();
+//        $errors_2 = $this->getErrorMessages(99);
+//
+//        $this->assertEquals([], $errors_1);
+//        $this->assertEquals([['error_message' => '致命的なエラー1', 'csv_file_name' => 'K_D_902_M0332_20101001.csv']], $errors_2);
+//    }
 
     /**
      * @tests
