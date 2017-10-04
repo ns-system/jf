@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 class CreateTableColumnConfigs extends Migration
 {
     /**
-     * Run the migrations.
+     * マイグレーション実行
      *
      * @return void
      */
@@ -25,7 +25,7 @@ class CreateTableColumnConfigs extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * マイグレーションを戻す
      *
      * @return void
      */

@@ -7,7 +7,7 @@ class CreateCommonAccountLedgers extends Migration
 {
 
     /**
-     * Run the migrations.
+     * マイグレーション実行
      *
      * @return void
      */
@@ -203,7 +203,7 @@ class CreateCommonAccountLedgers extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * マイグレーションを戻す
      *
      * @return void
      */

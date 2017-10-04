@@ -7,7 +7,7 @@ class CreateJifuriTradingFiles extends Migration
 {
 
     /**
-     * Run the migrations.
+     * マイグレーション実行
      *
      * @return void
      */
@@ -50,7 +50,7 @@ class CreateJifuriTradingFiles extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * マイグレーションを戻す
      *
      * @return void
      */

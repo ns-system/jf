@@ -7,7 +7,7 @@ class CreatePrefectureCodeMaster extends Migration
 {
 
     /**
-     * Run the migrations.
+     * マイグレーション実行
      *
      * @return void
      */
@@ -27,7 +27,7 @@ class CreatePrefectureCodeMaster extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * マイグレーションを戻す
      *
      * @return void
      */

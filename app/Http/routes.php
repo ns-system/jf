@@ -2,12 +2,12 @@
 
 /*
   |--------------------------------------------------------------------------
-  | Application Routes
+  | アプリケーションのルート
   |--------------------------------------------------------------------------
   |
-  | Here is where you can register all of the routes for an application.
-  | It's a breeze. Simply tell Laravel the URIs it should respond to
-  | and give it the controller to call when that URI is requested.
+  | ここでアプリケーションのルートを全て登録することが可能です。
+  | 簡単です。ただ、Laravelへ対応するURIと、そのURIがリクエスト
+  | されたときに呼び出されるコントローラを指定してください。
   |
  */
 
@@ -230,6 +230,12 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
                 Route::post('/update', ['as' => 'update', 'uses' => 'RosterChiefController@update']);
             });
         });
+    });
+
+    Route::group(['as' => 'nikocale::', 'prefix' => '/nikocale', /*'middleware'=>''*/], function() {
+        Route::get('/index/{monthly_id?}',            ['as' => 'index',  'uses' => 'NikocaleController@index']);
+        Route::post('/create/{user_id}/{entered_on}', ['as' => 'create', 'uses' => 'NikocaleController@create']);
+        Route::post('/update/{user_id}/{entered_on}', ['as' => 'create', 'uses' => 'NikocaleController@update']);
     });
 });
 // ===========================================================================================================================

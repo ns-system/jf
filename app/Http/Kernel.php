@@ -8,7 +8,7 @@ class Kernel extends HttpKernel
 {
 
     /**
-     * The application's global HTTP middleware stack.
+     * アプリケーションのグローバルHTTPミドルウェアスタック
      *
      * @var array
      */
@@ -22,7 +22,7 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * The application's route middleware.
+     * アプリケーションのルートミドルウェアスタック
      *
      * @var array
      */

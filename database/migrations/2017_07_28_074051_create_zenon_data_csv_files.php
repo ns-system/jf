@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 class CreateZenonDataCsvFiles extends Migration
 {
     /**
-     * Run the migrations.
+     * マイグレーション実行
      *
      * @return void
      */
@@ -38,7 +38,7 @@ class CreateZenonDataCsvFiles extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * マイグレーションを戻す
      *
      * @return void
      */

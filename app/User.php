@@ -20,21 +20,21 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $connection = 'mysql_laravel';
 
     /**
-     * The database table used by the model.
+     * モデルで使用するデータベーステーブル
      *
      * @var string
      */
     protected $table = 'users';
 
     /**
-     * The attributes that are mass assignable.
+     * 複数代入を行う属性
      *
      * @var array
      */
     protected $fillable = ['name', 'first_name', 'first_name_kana', 'last_name', 'last_name_kana', 'email', 'password', 'unencrypt_password'];
 
     /**
-     * The attributes excluded from the model's JSON form.
+     * モデルのJSON形式に含めない属性
      *
      * @var array
      */

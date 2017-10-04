@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 class AddJobStatusIdToZenonDataMonthlyProcessStatus extends Migration
 {
     /**
-     * Run the migrations.
+     * マイグレーション実行
      *
      * @return void
      */
@@ -16,7 +16,7 @@ class AddJobStatusIdToZenonDataMonthlyProcessStatus extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * マイグレーションを戻す
      *
      * @return void
      */

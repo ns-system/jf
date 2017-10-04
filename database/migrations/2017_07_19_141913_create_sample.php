@@ -7,7 +7,7 @@ class CreateSample extends Migration
 {
 
     /**
-     * Run the migrations.
+     * マイグレーション実行
      *
      * @return void
      */

@@ -7,7 +7,7 @@ class CreateFutsuAccountLedgers extends Migration
 {
 
     /**
-     * Run the migrations.
+     * マイグレーション実行
      *
      * @return void
      */
@@ -75,7 +75,7 @@ class CreateFutsuAccountLedgers extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * マイグレーションを戻す
      *
      * @return void
      */
