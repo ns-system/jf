@@ -1,6 +1,45 @@
 <form class="form-horizontal" role="form" method="POST" action="">
-    {{-- CSRF対策--}}
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">所属部署</div>
+            <div class="panel-body">
+                <small><label>部署</label></small>
+                <select class="form-control" name="division_id">
+                    @foreach($divs as $div)
+                    <option
+                        value="{{$div->division_id}}"
+                        @if($user->SinrenUser && $user->SinrenUser->division_id == $div->division_id)
+                        selected="selected"
+                        @endif>{{$div->division_name}}</option>
+                    @endforeach
+                </select>
+                <div class="text-right">
+                    <button type="submit" class="btn-primary btn-sm btn">変更する</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">ユーザー名</div>
+            <div class="panel-body">
+                パネルの内容
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+{{-- 
+
 
 
     <div class="well">
@@ -90,7 +129,6 @@
 
 
 <form class="form-horizontal" role="form" method="POST" action="{{route('app::user::icon', ['id'=>$user->id])}}" enctype="multipart/form-data">
-    {{-- CSRF対策--}}
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
     <div class="well">
@@ -112,4 +150,4 @@
             </div>
         </div>
     </div>
-</form>
+</form> --}}

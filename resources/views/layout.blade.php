@@ -57,6 +57,9 @@
             .bg-primary-important{border: #2c3e50 !important; background: #2c3e50 !important; color: #fff;};
             .bg-primary-important *{color: #fff;}
 
+            .bg-success-important{border: #18bc9c !important; background: #18bc9c !important; color: #fff;};
+            .bg-success-important *{color: #fff;}
+
             .bg-primary-important .close,
             .bg-primary-important .close:hover{ color: #fff; }
 
@@ -127,19 +130,8 @@
                                     <div class="media" style="height: 40px; width: 40px; border-radius: 20%; background: #eee;">
                                         <img style="width: 100%; height: 100%;" @if(\Auth::user()->user_icon != '') src="{{asset('/user_icon/' . \Auth::user()->user_icon)}}" @else src="{{asset('/user_icon/unset.png')}}" @endif>
                                     </div>
-
-{{-- 
-<div class="media" style="width: 250px;">
-    <div class="col-xs-4" style="height: 50px; width: 50px; padding: 0;">
-        <img style="width: 100%; height: 100%;" src="http://free-designer.net/design_img/0216053006.jpg">
-    </div>
-    <div class="col-xs-6">{{Auth::user()->name}}<small>さん</small> <span class="caret"></div>
-</div>
- --}}
-{{--                                 <span class="caret"></span></a> --}}
-{{--                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">{{Auth::user()->name}}<small>さん</small> <span class="caret"></span></a> --}}
                                 <div class="dropdown-menu list-group" role="menu" style="font-size: 80%; padding: 0; border-radius: 5px;">
-                                    <span class="list-group-item user-name">{{Auth::user()->name}}<small>さん</small></span>
+                                    <span class="list-group-item user-name">{{Auth::user()->last_name}} {{Auth::user()->first_name}}<small>さん</small></span>
                                     <a href="{{route('app::user::show', ['id'=>\Auth::user()->id])}}" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ユーザー情報確認</a>
                                     <a href="/auth/logout" class="list-group-item"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> ログアウト</a>
                         </ul>

@@ -35,7 +35,7 @@
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
             <strong>情報：</strong>
         </p>
-        <span>{{Session::get('flash_message')}}</span>
+        <span>{{Session::get('info_message')}}</span>
         @if(isset($info_message) && $info_message != null) <span>{{$info_message}}</span> @endif
     </p>
 </div>

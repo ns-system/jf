@@ -5,15 +5,15 @@
     <div style="padding: 20px 60px;">
 
         <div class="input-group" style="width: 100%; margin-bottom: 30px;">
-            <label class="input-group-addon control-label bg-primary-important">
-                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+            <label class="input-group-addon control-label bg-success-important" style="min-width: 150px;">
+                <small>メールアドレス</small>
             </label>
             <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="登録されているメールアドレスを入力してください">
         </div>
 
         <div class="input-group" style="margin-bottom: 10px;">
-            <label class="input-group-addon control-label bg-primary-important">
-                <span class="glyphicon glyphicon-search" aria-hidden="false"></span>
+            <label class="input-group-addon control-label bg-success-important" style="min-width: 150px;">
+                <small>パスワード</small>
             </label>
             <input type="password" class="form-control" name="password" placeholder="登録されているパスワードを入力してください">
         </div>
