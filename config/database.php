@@ -53,12 +53,12 @@ return [
       |
      */
     'connections' => [
-        'sqlite'        => [
+        'sqlite'         => [
             'driver'   => 'sqlite',
             'database' => database_path('database.sqlite'),
             'prefix'   => '',
         ],
-        'mysql'         => [
+        'mysql'          => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST', 'localhost'),
             'database'  => env('DB_DATABASE', 'forge'),
@@ -70,7 +70,7 @@ return [
             'strict'    => false,
             'port'      => $port,
         ],
-        'mysql_zenon'   => [
+        'mysql_zenon'    => [
             'driver'    => 'mysql',
             'host'      => $host,
             'database'  => 'zenon_data_db',
@@ -82,7 +82,7 @@ return [
             'strict'    => false,
             'port'      => $port,
         ],
-        'mysql_master'  => [
+        'mysql_master'   => [
             'driver'    => 'mysql',
             'host'      => $host,
             'database'  => 'master_data_db',
@@ -94,7 +94,7 @@ return [
             'strict'    => false,
             'port'      => $port,
         ],
-        'mysql_laravel' => [
+        'mysql_laravel'  => [
             'driver'    => 'mysql',
             'host'      => $host,
             'database'  => 'laravel_db',
@@ -106,7 +106,7 @@ return [
             'strict'    => false,
             'port'      => $port,
         ],
-        'mysql_suisin'  => [
+        'mysql_suisin'   => [
             'driver'    => 'mysql',
             'host'      => $host,
             'database'  => 'suisin_db',
@@ -118,7 +118,7 @@ return [
             'strict'    => false,
             'port'      => $port,
         ],
-        'mysql_sinren'  => [
+        'mysql_sinren'   => [
             'driver'    => 'mysql',
             'host'      => $host,
             'database'  => 'sinren_data_db',
@@ -130,7 +130,7 @@ return [
             'strict'    => false,
             'port'      => $port,
         ],
-        'mysql_roster'  => [
+        'mysql_roster'   => [
             'driver'    => 'mysql',
             'host'      => $host,
             'database'  => 'roster_data_db',
@@ -142,7 +142,7 @@ return [
             'strict'    => false,
             'port'      => $port,
         ],
-        'mysql_nikocale'  => [
+        'mysql_nikocale' => [
             'driver'    => 'mysql',
             'host'      => $host,
             'database'  => 'nikocale_db',
@@ -154,7 +154,7 @@ return [
             'strict'    => false,
             'port'      => $port,
         ],
-        'pgsql'         => [
+        'pgsql'          => [
             'driver'   => 'pgsql',
             'host'     => env('DB_HOST', 'localhost'),
             'database' => env('DB_DATABASE', 'forge'),
@@ -164,7 +164,7 @@ return [
             'prefix'   => '',
             'schema'   => 'public',
         ],
-        'sqlsrv'        => [
+        'sqlsrv'         => [
             'driver'   => 'sqlsrv',
             'host'     => env('DB_HOST', 'localhost'),
             'database' => env('DB_DATABASE', 'forge'),
@@ -172,6 +172,14 @@ return [
             'password' => env('DB_PASSWORD', ''),
             'charset'  => 'utf8',
             'prefix'   => '',
+        ],
+        'testing'         => [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
+            'options'=>[
+                PDO::ATTR_PERSISTENT  => true,
+            ],
         ],
     ],
     /*

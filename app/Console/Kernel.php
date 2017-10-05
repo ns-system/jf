@@ -14,6 +14,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\Inspire::class,
+        Commands\CreateDatabase::class,
+        Commands\DropDatabase::class,
 //        Commands\ImportCsv::class,
 //        Commands\CopyCsvFile::class,
        
