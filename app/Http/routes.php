@@ -209,7 +209,6 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
                     Route::get('/calendar/{ym}/{div}', ['as' => 'calendar', 'uses' => 'RosterAcceptController@calendar']);
                     Route::post('/calendar/edit', ['as' => 'calendar_accept', 'uses' => 'RosterAcceptController@calendarAccept']);
 
-
                     Route::post('/edit/{type}/part/{id}', ['as' => 'part', 'uses' => 'RosterAcceptController@part']);
                     Route::post('/edit/{type}/all', ['as' => 'all', 'uses' => 'RosterAcceptController@all']);
                 });
@@ -232,10 +231,11 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
         });
     });
 
-    Route::group(['as' => 'nikocale::', 'prefix' => '/nikocale', /*'middleware'=>''*/], function() {
-        Route::get('/index/{monthly_id?}',            ['as' => 'index',  'uses' => 'NikocaleController@index']);
-        Route::post('/create/{user_id}/{entered_on}', ['as' => 'create', 'uses' => 'NikocaleController@create']);
-        Route::post('/update/{user_id}/{entered_on}', ['as' => 'create', 'uses' => 'NikocaleController@update']);
+    Route::group(['as' => 'nikocale::', 'prefix' => '/nikocale', 'middleware'=>'nikocale'], function() {
+        Route::get('/index/{monthly_id?}', ['as' => 'index', 'uses' => 'NikocaleController@index']);
+        Route::post('/store/{user_id}/{entered_on}', ['as' => 'store', 'uses' => 'NikocaleController@store']);
+//        Route::post('/update/{id}',                   ['as' => 'update',  'uses' => 'NikocaleController@update']);
+        Route::get('/destroy/{id}', ['as' => 'destroy', 'uses' => 'NikocaleController@destroy']);
     });
 });
 // ===========================================================================================================================
@@ -300,11 +300,6 @@ Route::get('/phpmyadmin', function() {
 //Route::get('/admin/roster/home', function() {
 //    return view('roster.admin.home');
 //});
-
-Route::get('/isok', ['middleware' => 'auth', function() {
-        echo "ok";
-    }]);
-
 //Route::get('/my_error', function() {
 //    echo "err";
 //    Log::info('実はエラー', ['id' => 1]);
@@ -333,19 +328,15 @@ Route::get('/isok', ['middleware' => 'auth', function() {
 //Route::any('/sample/export', 'SampleController@exportSample');
 //Route::any('/sample', 'SampleController@showSample');
 
-Route::get('/walk', function() {
-//        $obj = new \App\Services\Sample();
-//        print $obj->warkKm(1200);
-//        print $obj->wark(1200);
-//        
-    $obj = new \App\Services\Swim();
-    $obj->swim(3000);
-});
-
 Route::any('/test/file_upload', function() {
     $file = \Request::file('file');
     var_dump($file->getClientOriginalExtension());
     return $file;
 //    return \Requrest::input();
 //    return Response::make();
+});
+
+Route::get('/create', function() {
+    $res = \DB::statement('CREATE DATABASE IF NOT EXISTS testing_db;');
+    dd($res);
 });

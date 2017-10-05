@@ -15,7 +15,7 @@ class CreateDatabase extends Command
      *
      * @var string
      */
-    protected $signature   = 'database:create {--name=all : 作成したいデータベース名を指定（省略時は全て）。配列[db_name_1,db_name_2...]として指定することも可能。}';
+    protected $signature   = 'db:create {--name=all : 作成したいデータベース名を指定（省略時は全て）。配列[db_name_1,db_name_2...]として指定することも可能。}';
     protected $description = 'データベースそのものを作成します。引数指定で作成するデータベースの指定が可能。設定ファイルはconfig/database.phpを使用。（driver="mysql"のものに限る）';
 
     public function __construct() {

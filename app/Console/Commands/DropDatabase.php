@@ -14,7 +14,7 @@ class DropDatabase extends Command
      *
      * @var string
      */
-    protected $signature   = 'database:drop {--name=all : 削除したいデータベース名を指定（省略時は全て）。配列[db_name_1,db_name_2...]として指定することも可能。}';
+    protected $signature   = 'db:drop {--name=all : 削除したいデータベース名を指定（省略時は全て）。配列[db_name_1,db_name_2...]として指定することも可能。}';
     protected $description = 'データベースそのものを削除します。引数指定で削除するデータベースの指定が可能。設定ファイルはconfig/database.phpを使用。（driver="mysql"のものに限る）';
 
     public function __construct() {
