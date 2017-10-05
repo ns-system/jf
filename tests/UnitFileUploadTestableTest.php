@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use App\Services\Traits\FileUploadTestable;
+use Illuminate\Foundation\Testing\FileUploadTestable;
 
 class UnitFileUploadTestableTest extends TestCase
 {
@@ -13,7 +13,7 @@ class UnitFileUploadTestableTest extends TestCase
     protected $s;
 
     public function __construct() {
-        $this->s = $this->getMockForTrait(\App\Services\Traits\FileUploadTestable::class);
+        $this->s = $this->getMockForTrait(FileUploadTestable::class);
     }
 
     /**

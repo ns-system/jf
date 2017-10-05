@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use App\Services\Traits\FileUploadTestable;
+use Illuminate\Foundation\Testing\FileUploadTestable;
 
 class UnitTableEditServiceTest extends TestCase
 {

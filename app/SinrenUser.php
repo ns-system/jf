@@ -11,7 +11,7 @@ class SinrenUser extends Model
     protected $table      = 'sinren_users';
     protected $guarded    = ['id'];
 
-    public function scopeUser($query) {
+    public function scopeUser($query, $id) {
         if (\Auth::Check())
         {
             $id = \Auth::user()->id;

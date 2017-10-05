@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class UnitCopyCsvFileServiceTest extends TestCase
 {
 
-    use DatabaseTransactions;
+//    use DatabaseTransactions;
 
     protected $directorys         = [
         'temp'    => 'temp',
@@ -52,9 +52,21 @@ class UnitCopyCsvFileServiceTest extends TestCase
         "created_at"            => "2017-09-26 08:56:17",
         "updated_at"            => "2017-09-26 08:56:17",
     ];
+    protected static $init = false;
 
     public function setUp() {
         parent::setUp();
+        echo "in ";
+
+        if (!static::$init)
+        {
+            echo "mig ";
+            static::$init = true;
+//            $this->artisan('db:drop');
+//            $this->artisan('db:create');
+//            $this->artisan('migrate');
+        }
+
         $base_path = storage_path() . '/tests/csv_files';
         if (file_exists($base_path))
         {
