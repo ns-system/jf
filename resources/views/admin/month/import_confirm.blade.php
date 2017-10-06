@@ -139,7 +139,7 @@
                         data-placement="right"
                         title="すでに当月データが累積されていた場合、データが二重で累積される恐れがあります。"
                         value="{{$f->key_id}}"
-                        @if(!$f->is_import || $counts[$f->key_id] <= 0) checked @endif
+                        @if(!$f->is_import || $record_counts[$f->key_id] <= 0) checked @endif
                     @else disabled @endif
                 >
 {{--                 <input type="hidden" name="id[{{$f->key_id}}]" value="{{$f->key_id}}"> --}}
@@ -166,7 +166,10 @@
                 </p>
             </td>
 
-            <td class="va-middle text-right">{{number_format((int) $counts[$f->key_id])}}件</td>
+            <td class="va-middle text-right">
+                <p>{{number_format((int) $column_counts[$f->key_id])}}件</p>
+                <p>{{number_format((int) $f->column_length)}}件</p>
+            </td>
             <td class="va-middle">{{$f->reference_return_date}}</td>
 
             <td>
