@@ -27,4 +27,10 @@ class Division extends Request
         ];
     }
 
+    public function attributes() {
+        return [
+            'division_id' => '部署',
+        ];
+    }
+
 }

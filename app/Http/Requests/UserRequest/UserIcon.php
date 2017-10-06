@@ -27,4 +27,10 @@ class UserIcon extends Request
         ];
     }
 
+    public function attributes() {
+        return [
+            'user_icon' => 'アイコン',
+        ];
+    }
+
 }

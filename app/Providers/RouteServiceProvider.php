@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 
 class RouteServiceProvider extends ServiceProvider
 {
+
     /**
      * この名前空間はルートファイルのコントローラルートへ適用されます。
      *
@@ -22,8 +23,7 @@ class RouteServiceProvider extends ServiceProvider
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function boot(Router $router)
-    {
+    public function boot(Router $router) {
         //
 
         parent::boot($router);
@@ -35,10 +35,11 @@ class RouteServiceProvider extends ServiceProvider
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function map(Router $router)
-    {
+    public function map(Router $router) {
         $router->group(['namespace' => $this->namespace], function ($router) {
             require app_path('Http/routes.php');
+            require app_path('Http/user_routes.php');
         });
     }
+
 }

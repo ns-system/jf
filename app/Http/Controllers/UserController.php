@@ -31,8 +31,8 @@ class UserController extends Controller
             }
             $user   = User::find($id);
             $divs   = \App\Division::get();
-            $prefs  = \App\Prefecture::get();
-            $stores = \App\Store::get();
+            $prefs  = \App\Models\Common\Prefecture::get();
+            $stores = \App\Models\Common\Store::get();
             $ctls   = \App\ControlStore::orderAsc()->get();
             $works  = \App\WorkType::get();
             return view('/app/user', ['user' => $user, 'divs' => $divs, 'prefs' => $prefs, 'stores' => $stores, 'ctls' => $ctls, 'works' => $works]);
@@ -42,31 +42,29 @@ class UserController extends Controller
     }
 
     public function name(UserRequest\UserName $request, $id) {
-        try {
-            if (!$this->isSelf($id))
-            {
-                return redirect(route('permission_error'));
-            }
-            $input       = $request->only(['name']);
-            $input['id'] = $id;
-            $this->service->editUserName($input);
-            \Session::flash('flash_message', "ユーザー名を変更しました。");
-            return back();
-        } catch (\Exception $e) {
-            echo $e->getTraceAsString();
+
+        if (!$this->isSelf($id))
+        {
+            return redirect(route('permission_error'));
         }
+//        $input = $request->except(['_token']);
+        $this->service->editUserName($id, $request);
+        \Session::flash('success_message', "ユーザー名を変更しました。");
+        return back();
     }
 
-    public function userIcon(Request $icon_object, UserRequest\UserIcon $request, $id) {
+    public function userIcon(/* Request $icon_object, */UserRequest\UserIcon $request, $id) {
+//        dd(\Input::all());
+//        dd($request->file('user_icon'));
         try {
             if (!$this->isSelf($id))
             {
                 return redirect(route('permission_error'));
             }
-            $input       = $request->all();
-            $input['id'] = $id;
-            $this->service->editUserIcon($input, $icon_object);
-            \Session::flash('flash_message', "アイコンを変更しました。");
+//            $input       = $request->all();
+//            $input['id'] = $id;
+            $this->service->editUserIcon($id, $request);
+            \Session::flash('success_message', "アイコンを変更しました。");
             return back();
         } catch (Exception $e) {
             echo $e->getTraceAsString();
@@ -75,13 +73,13 @@ class UserController extends Controller
 
     public function division($id, UserRequest\Division $request) {
         try {
-            var_dump("ok");
+//            var_dump("ok");
             if (!$this->isSelf($id))
             {
                 return redirect(route('permission_error'));
             }
-            $this->service->editUserDivision($request);
-            \Session::flash('flash_message', "部署を変更しました。");
+            $this->service->editUserDivision($id, $request);
+            \Session::flash('success_message', "部署を変更しました。");
             return back();
         } catch (Exception $exc) {
             echo $exc->getTraceAsString();
@@ -90,31 +88,31 @@ class UserController extends Controller
 
     public function password($id, UserRequest\Password $request) {
 
-        try {
-            if (!$this->isSelf($id))
-            {
-                return redirect(route('permission_error'));
-            }
-            $service     = $this->service;
-            $input       = $request->all();
-            $input['id'] = \Auth::user()->id;
-            if (!$service->isPasswordMatch($input))
-            {
-                \Session::flash('flash_message', "パスワードが一致しませんでした。");
-                return back();
-            }
-            $service->editUserPassword($input);
-            \Session::flash('flash_message', "パスワードを変更しました。");
-            return back();
-        } catch (Exception $exc) {
-            echo $exc->getTraceAsString();
+
+        if (!$this->isSelf($id))
+        {
+            return redirect(route('permission_error'));
         }
+        $service = $this->service;
+//        $input   = $request->except(['_token']);
+//        dd($input);
+//        $input['id'] = \Auth::user()->id;
+        if (!$service->isPasswordMatch($id, $request))
+        {
+            \Session::flash('warn_message', "パスワードが一致しませんでした。");
+            return back();
+        }
+        $service->editUserPassword($id, $request);
+        \Session::flash('success_message', "パスワードを変更しました。");
+        return back();
     }
 
-    private function isSelf($id){
-        if($id != \Auth::user()->id){
+    private function isSelf($id) {
+        if ($id != \Auth::user()->id)
+        {
             return false;
         }
         return true;
     }
+
 }

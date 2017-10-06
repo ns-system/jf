@@ -24,7 +24,19 @@ class UserName extends Request
      */
     public function rules() {
         return [
-            'name' => 'required|min:2|unique:users,name',
+            'first_name'      => 'required|min:2',
+            'last_name'       => 'required|min:2',
+            'first_name_kana' => 'required|min:2',
+            'last_name_kana'  => 'required|min:2',
+        ];
+    }
+
+    public function attributes() {
+        return [
+            'first_name'      => '名',
+            'first_name_kana' => '名（ひらがな）',
+            'last_name'       => '姓',
+            'last_name_kana'  => '姓（ひらがな）',
         ];
     }
 

@@ -28,4 +28,11 @@ class Password extends Request
         ];
     }
 
+    public function attributes() {
+        return [
+            'password'     => '現在のパスワード',
+            'new_password' => '新しいパスワード',
+        ];
+    }
+
 }

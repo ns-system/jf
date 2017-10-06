@@ -7,26 +7,32 @@ namespace App\Services;
 class UserService
 {
 
-    public function editUserName($input) {
+    // FIXME: 本当はセッター通してユーザーチェック→例外スローをキャッチ的な感じにしたほうがスマート
+    public function editUserName($id, $input) {
         try {
-            $user = \App\User::find($input['id']);
+            $user = \App\User::find($id);
             if (!$user->exists())
             {
                 throw new \Exception('ユーザーが存在しません。');
             }
-            $user->name = $input['name'];
+            $user->first_name      = $input['first_name'];
+            $user->first_name_kana = $input['first_name_kana'];
+            $user->last_name       = $input['last_name'];
+            $user->last_name_kana  = $input['last_name_kana'];
             $user->save();
         } catch (\Exception $e) {
             throw $e;
         }
     }
 
-    public function editUserIcon($input, $request) {
+    public function editUserIcon($id, $request) {
         try {
-            $file_name = $input['user_icon']->getClientOriginalName();
-            $file_name = $input['id'] . '_' . $file_name;
+            $icon      = $request->file('user_icon');
+            $file_name = $icon->getClientOriginalName();
+            $file_name = $id . '_' . $file_name;
+//            dd($icon);
             $request->file('user_icon')->move(public_path('user_icon'), $file_name);
-            $user      = \App\User::find($input['id']);
+            $user      = \App\User::find($id);
             if (!$user->exists())
             {
                 throw new \Exception('ユーザーが存在しません。');
@@ -38,9 +44,9 @@ class UserService
         }
     }
 
-    public function editUserPassword($input) {
+    public function editUserPassword($id, $input) {
         try {
-            $user = \App\User::find($input['id']);
+            $user = \App\User::find($id);
             if (!$user->exists())
             {
                 throw new \Exception('ユーザーが存在しません。');
@@ -53,11 +59,12 @@ class UserService
         }
     }
 
-    public function isPasswordMatch($input) {
-        $user = \App\User::find($input['id']);
+    public function isPasswordMatch($id, $input) {
+        $user = \App\User::find($id);
         if (!$user->exists())
         {
-            throw new \Exception('ユーザーが存在しません。');
+            return false;
+//            throw new \Exception('ユーザーが存在しません。');
         }
         if ($user->unencrypt_password !== $input['password'])
         {
@@ -66,12 +73,12 @@ class UserService
         return true;
     }
 
-    public function editUserDivision($input) {
+    public function editUserDivision($id, $input) {
         try {
-            $id                = \Auth::user()->id;
-            var_dump($id);
+//            $id                = \Auth::user()->id;
+//            var_dump($id);
             $user              = \App\SinrenUser::firstOrNew(['user_id' => $id]);
-            $user->id          = $id;
+//            $user->id          = $id;
             $user->division_id = (int) $input['division_id'];
             $user->save();
         } catch (\Exception $e) {
