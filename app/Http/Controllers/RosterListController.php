@@ -45,7 +45,7 @@ class RosterListController extends Controller
         $db    = \DB::connection('mysql_sinren')
                 ->table('sinren_users')
                 ->select(\DB::Raw('month_id, COUNT(*) AS cnt'))
-                ->join('roster_data_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
+                ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
                 ->where('is_plan_entry', '=', true)
                 ->where('rosters.month_id', '<>', 0)
                 ->groupBy('rosters.month_id')
@@ -103,8 +103,8 @@ class RosterListController extends Controller
         $calendar = [];
         foreach ($cal as $c) {
             $rows = \App\Roster::where('entered_on', '=', $c['date'])
-                    ->join('sinren_data_db.sinren_users', 'rosters.user_id', '=', 'sinren_users.user_id')
-                    ->join('sinren_data_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+                    ->join('sinren_db.sinren_users', 'rosters.user_id', '=', 'sinren_users.user_id')
+                    ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                     ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
                     ->where('sinren_users.division_id', '=', $div)
                     ->get()

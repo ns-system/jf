@@ -69,8 +69,8 @@ class RosterUserController extends Controller
     public function indexAdmin() {
         $users = \DB::connection('mysql_roster')
                 ->table('roster_users')
-                ->join('sinren_data_db.sinren_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-                ->join('sinren_data_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+                ->join('sinren_db.sinren_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+                ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->join('laravel_db.users', 'roster_users.user_id', '=', 'users.id')
                 ->orderBy('sinren_divisions.division_id', 'asc')
                 ->orderBy('users.id', 'asc')
@@ -79,7 +79,7 @@ class RosterUserController extends Controller
 
         $controls = \DB::connection('mysql_sinren')
                 ->table('control_divisions')
-                ->join('sinren_data_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')
+                ->join('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')
                 ->select(\DB::raw('control_divisions.id AS id, control_divisions.user_id AS user_id, control_divisions.division_id AS division_id, sinren_divisions.division_name AS division_name'))
                 ->get()
 //                ->toArray()
@@ -93,8 +93,8 @@ class RosterUserController extends Controller
 //        echo $id;
         $user = \DB::connection('mysql_roster')
                 ->table('roster_users')
-                ->join('sinren_data_db.sinren_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-                ->join('sinren_data_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+                ->join('sinren_db.sinren_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+                ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->join('laravel_db.users', 'roster_users.user_id', '=', 'users.id')
                 ->where('users.id', '=', $id)
                 ->first()
@@ -103,7 +103,7 @@ class RosterUserController extends Controller
 
         $controls = \DB::connection('mysql_sinren')
                 ->table('control_divisions')
-                ->join('sinren_data_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')
+                ->join('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')
                 ->select(\DB::raw('control_divisions.id AS id, control_divisions.user_id AS user_id, control_divisions.division_id AS division_id, sinren_divisions.division_name AS division_name'))
                 ->where('user_id', '=', $id)
                 ->get()

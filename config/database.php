@@ -73,7 +73,7 @@ return [
         'mysql_zenon'    => [
             'driver'    => 'mysql',
             'host'      => $host,
-            'database'  => 'zenon_data_db',
+            'database'  => 'zenon_db',
             'username'  => $user_name,
             'password'  => $password,
             'charset'   => 'utf8',
@@ -85,7 +85,7 @@ return [
         'mysql_master'   => [
             'driver'    => 'mysql',
             'host'      => $host,
-            'database'  => 'master_data_db',
+            'database'  => 'master_db',
             'username'  => $user_name,
             'password'  => $password,
             'charset'   => 'utf8',
@@ -121,7 +121,7 @@ return [
         'mysql_sinren'   => [
             'driver'    => 'mysql',
             'host'      => $host,
-            'database'  => 'sinren_data_db',
+            'database'  => 'sinren_db',
             'username'  => $user_name,
             'password'  => $password,
             'charset'   => 'utf8',
@@ -133,7 +133,7 @@ return [
         'mysql_roster'   => [
             'driver'    => 'mysql',
             'host'      => $host,
-            'database'  => 'roster_data_db',
+            'database'  => 'roster_db',
             'username'  => $user_name,
             'password'  => $password,
             'charset'   => 'utf8',
@@ -173,12 +173,12 @@ return [
             'charset'  => 'utf8',
             'prefix'   => '',
         ],
-        'testing'         => [
+        'testing'        => [
             'driver'   => 'sqlite',
             'database' => ':memory:',
             'prefix'   => '',
-            'options'=>[
-                PDO::ATTR_PERSISTENT  => true,
+            'options'  => [
+                PDO::ATTR_PERSISTENT => true,
             ],
         ],
     ],

@@ -255,8 +255,8 @@ class RosterCsvConfigService
             'object'        => '\App\RosterUser',
             'join'          => [
                 ['db' => 'laravel_db.users', 'left' => 'roster_users.user_id', 'right' => 'users.id',],
-                ['db' => 'sinren_data_db.sinren_users', 'left' => 'roster_users.user_id', 'right' => 'sinren_users.user_id',],
-                ['db' => 'sinren_data_db.sinren_divisions', 'left' => 'sinren_users.division_id', 'right' => 'sinren_divisions.division_id',],
+                ['db' => 'sinren_db.sinren_users', 'left' => 'roster_users.user_id', 'right' => 'sinren_users.user_id',],
+                ['db' => 'sinren_db.sinren_divisions', 'left' => 'sinren_users.division_id', 'right' => 'sinren_divisions.division_id',],
             ],
             'display'       => [
                 'title' => 'ユーザーマスタ',

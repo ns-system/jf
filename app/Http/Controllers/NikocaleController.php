@@ -15,8 +15,8 @@ class NikocaleController extends Controller
      * @return \Illuminate\Http\Response
      */
     private function getEmotion($monthly_id) {
-        return \App\Emotion::join('sinren_data_db.sinren_users', 'user_emotions.user_id', '=', 'sinren_users.user_id')
-                        ->join('sinren_data_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+        return \App\Emotion::join('sinren_db.sinren_users', 'user_emotions.user_id', '=', 'sinren_users.user_id')
+                        ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                         ->join('laravel_db.users', 'user_emotions.user_id', '=', 'users.id')
                         ->where('entered_on', '>=', date('Y-m-d', strtotime($monthly_id . '01')))
                         ->where('entered_on', '<=', date('Y-m-t', strtotime($monthly_id . '01')))
@@ -31,7 +31,7 @@ class NikocaleController extends Controller
         $calendar         = $calendar_service->convertCalendarToList($tmp_calendar);
 //        dd($calendar);
         // 部署の特定
-        $division         = \App\SinrenUser::join('sinren_data_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')->where('user_id', '=', \Auth::user()->id)->first();
+        $division         = \App\SinrenUser::join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')->where('user_id', '=', \Auth::user()->id)->first();
 //        // 部署＋日付から部署内感情リストを取得
 //        $users            = \App\SinrenUser::where('division_id', '=', $division->division_id)->get();
         // リストをキー化 - 日付も選択肢に入れてね

@@ -228,7 +228,7 @@ class AdminCsvConfigService
                 'h2'    => 'MySQL側 全オンテーブル設定',
             ],
             'join'          => [
-                ['db' => 'suisin_db.zenon_data_csv_files', 'left' => 'zenon_table_column_configs.zenon_format_id', 'right' => 'zenon_data_csv_files.zenon_format_id',],
+                ['db' => 'suisin_db.zenon_csv_files', 'left' => 'zenon_table_column_configs.zenon_format_id', 'right' => 'zenon_data_csv_files.zenon_format_id',],
             ],
             'as'            => [
                 'table'   => 'zenon_table_column_configs',

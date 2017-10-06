@@ -59,8 +59,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function RosterUser($id) {
         $roster_user = \DB::connection('mysql_laravel')
                 ->table('users')
-                ->join('sinren_data_db.sinren_users', 'sinren_users.user_id', '=', 'users.id')
-                ->join('roster_data_db.roster_users', 'roster_users.user_id', '=', 'users.id')
+                ->join('sinren_db.sinren_users', 'sinren_users.user_id', '=', 'users.id')
+                ->join('roster_db.roster_users', 'roster_users.user_id', '=', 'users.id')
                 ->where('users.id', $id)
                 ->first()
         ;

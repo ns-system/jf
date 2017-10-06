@@ -18,9 +18,9 @@ class RosterChiefController extends Controller
         $divs = \App\ControlDivision::user()->get();
         $rows = \DB::connection('mysql_sinren')
                 ->table('sinren_users')
-                ->join('sinren_data_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+                ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
-                ->join('roster_data_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+                ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
                 ->select(\DB::raw('*, roster_users.id as key_id, roster_users.created_at as create_time, roster_users.updated_at as update_time'))
                 ->where(function($query) use ($divs) {
                     foreach ($divs as $d) {

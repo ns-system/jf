@@ -15,13 +15,13 @@ class RosterAcceptController extends Controller
         $t  = \DB::connection('mysql_sinren')
                 ->table('control_divisions')
                 // connect to sinren_users
-                ->join('sinren_data_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
+                ->join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
                 // connect to roster_users
-                ->join('roster_data_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+                ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
                 // connect to rosters
-                ->join('roster_data_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
+                ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
                 // connect to divisions
-                ->join('sinren_data_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+                ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->select(\DB::raw('COUNT(*) AS cnt, sinren_divisions.division_id, rosters.month_id')) //, rosters.is_plan_accept, rosters.is_plan_reject, rosters.is_actual_accept, rosters.is_actual_reject
                 ->where('control_divisions.user_id', '=', $id)
                 ->where('rosters.month_id', '<>', 0)
@@ -88,7 +88,7 @@ class RosterAcceptController extends Controller
         $divs = \DB::connection('mysql_sinren')
                 ->table('control_divisions')
                 // connect to divisions
-                ->join('sinren_data_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')
+                ->join('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')
                 ->where('control_divisions.user_id', '=', \Auth::user()->id)
                 ->orderBy('sinren_divisions.division_id', 'asc')
                 ->get()
@@ -119,8 +119,8 @@ class RosterAcceptController extends Controller
         $calendar = [];
         foreach ($cal as $c) {
             $rows = \App\Roster::where('entered_on', '=', $c['date'])
-                    ->join('sinren_data_db.sinren_users', 'rosters.user_id', '=', 'sinren_users.user_id')
-                    ->join('sinren_data_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+                    ->join('sinren_db.sinren_users', 'rosters.user_id', '=', 'sinren_users.user_id')
+                    ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                     ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
                     ->select(\DB::raw('*, rosters.id as key_id'))
                     ->where('sinren_users.division_id', '=', $div)
@@ -350,7 +350,7 @@ class RosterAcceptController extends Controller
     public function show($ym, $div) {
         $plans   = \DB::connection('mysql_sinren')
                 ->table('sinren_users')
-                ->join('roster_data_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
+                ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
                 ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
                 ->select(\DB::raw('*, rosters.id as form_id'))
                 ->where('rosters.month_id', '=', $ym)
@@ -370,7 +370,7 @@ class RosterAcceptController extends Controller
          */
         $actuals = \DB::connection('mysql_sinren')
                 ->table('sinren_users')
-                ->join('roster_data_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
+                ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
                 ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
                 ->select(\DB::raw('*, rosters.id as form_id'))
                 ->where('rosters.month_id', '=', $ym)

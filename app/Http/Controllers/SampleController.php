@@ -46,8 +46,8 @@ class SampleController extends Controller
             $store_where = [];
         }
 
-        $customers = \App\Jifuri::join('master_data_db.small_stores', 'jifuri_trading_files.small_store_number', '=', 'small_stores.small_store_number')
-                ->join('zenon_data_db.customer_information_files', 'customer_information_files.customer_number', '=', 'jifuri_trading_files.customer_number')
+        $customers = \App\Jifuri::join('master_db.small_stores', 'jifuri_trading_files.small_store_number', '=', 'small_stores.small_store_number')
+                ->join('zenon_db.customer_information_files', 'customer_information_files.customer_number', '=', 'jifuri_trading_files.customer_number')
                 ->select(\DB::raw('count(*) as total_count, jifuri_trading_files.customer_number, customer_information_files.kanji_name, jifuri_trading_files.small_store_number, control_store_code'))
         ;
         if ($store_where !== [null])
@@ -142,8 +142,8 @@ class SampleController extends Controller
         }
 
 
-        $customers = \App\Jifuri::join('master_data_db.small_stores', 'jifuri_trading_files.small_store_number', '=', 'small_stores.small_store_number')
-                ->join('zenon_data_db.customer_information_files', 'customer_information_files.customer_number', '=', 'jifuri_trading_files.customer_number')
+        $customers = \App\Jifuri::join('master_db.small_stores', 'jifuri_trading_files.small_store_number', '=', 'small_stores.small_store_number')
+                ->join('zenon_db.customer_information_files', 'customer_information_files.customer_number', '=', 'jifuri_trading_files.customer_number')
                 ->select(\DB::raw('count(*) as total_count, jifuri_trading_files.customer_number, customer_information_files.kanji_name, jifuri_trading_files.small_store_number, control_store_code'))
         ;
         if ($store_where !== [null])

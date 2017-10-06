@@ -20,9 +20,9 @@ class SuperUserService
             $users = \DB::connection('mysql_laravel')
                     ->table('users')
                     ->select(\DB::raw('users.id as key_id'))
-                    ->leftJoin('sinren_data_db.sinren_users', 'users.id', '=', 'sinren_users.user_id')
+                    ->leftJoin('sinren_db.sinren_users', 'users.id', '=', 'sinren_users.user_id')
                     ->leftJoin('suisin_db.suisin_users', 'users.id', '=', 'suisin_users.user_id')
-                    ->leftJoin('roster_data_db.roster_users', 'users.id', '=', 'roster_users.user_id')
+                    ->leftJoin('roster_db.roster_users', 'users.id', '=', 'roster_users.user_id')
             ;
             return $users;
 //        } catch (\Exception $e) {

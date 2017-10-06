@@ -125,7 +125,7 @@ class ProcessStatusController extends Controller
     public function importConfirm($monthly_id, $job_id) {
         $files = $this->service->setRows($monthly_id)
                 ->getRows()
-                ->select(\DB::raw('*, zenon_data_monthly_process_status.id as key_id'))
+                ->select(\DB::raw('*, zenon_monthly_process_status.id as key_id'))
                 ->where('cycle', '=', 'M')
                 ->orderBy('is_process', 'desc')
                 ->orderBy('is_exist', 'desc')
@@ -155,7 +155,7 @@ class ProcessStatusController extends Controller
 
     public function import($id, $job_id) {
         $rows = $this->service->getProcessRows($job_id)
-                ->select(\DB::raw('*, zenon_data_monthly_process_status.id as key_id'))
+                ->select(\DB::raw('*, zenon_monthly_process_status.id as key_id'))
                 ->where('is_execute', '=', true)
                 ->orderBy('zenon_format_id', 'asc')
                 ->orderBy('key_id', 'asc')
