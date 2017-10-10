@@ -1,16 +1,28 @@
 <?php
 
-$host      = '127.0.0.1';
-$user_name = 'homestead';
-$password  = 'secret';
+//dd(env('APP_ENV'));
 
 $port = 3306;
-$ip   = gethostbyname(gethostname());
-
-if (php_sapi_name() === 'cli' && $ip !== $host)
+if (env('APP_ENV') === 'testing')
 {
-    $port = 33060;
+    $host      = '127.0.0.1';
+    $user_name = 'homestead';
+    $password  = 'secret';
+    $ip        = gethostbyname(gethostname());
+
+    if (php_sapi_name() === 'cli' && $ip !== $host)
+    {
+        $port = 33060; /* ubuntu = 3306, local_test(vagrant) = 33060 */
+    }
 }
+else
+{
+    $host      = '192.1.10.222';
+    $user_name = 'homestead';
+    $password  = 'secret';
+//    $port      = 3306;
+}
+//dd($port);
 //var_dump($port);
 
 return [
@@ -60,7 +72,7 @@ return [
         ],
         'mysql'          => [
             'driver'    => 'mysql',
-            'host'      => env('DB_HOST', 'localhost'),
+            'host'      => $host/* env('DB_HOST', 'localhost') */,
             'database'  => env('DB_DATABASE', 'forge'),
             'username'  => env('DB_USERNAME', 'forge'),
             'password'  => env('DB_PASSWORD', ''),
@@ -68,7 +80,7 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
             'strict'    => false,
-            'port'      => $port,
+            'port'      => 3306/* $port */,
         ],
         'mysql_zenon'    => [
             'driver'    => 'mysql',
@@ -174,10 +186,17 @@ return [
             'prefix'   => '',
         ],
         'testing'        => [
-            'driver'   => 'sqlite',
-            'database' => ':memory:',
-            'prefix'   => '',
-            'options'  => [
+            'driver'    => 'mysql',
+            'host'      => $host,
+            'database'  => 'nikocale_db',
+            'username'  => $user_name,
+            'password'  => $password,
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'strict'    => false,
+            'port'      => $port,
+            'options'   => [
                 PDO::ATTR_PERSISTENT => true,
             ],
         ],
