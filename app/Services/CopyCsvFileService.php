@@ -301,14 +301,12 @@ class CopyCsvFileService
                 //     -> DBに存在しているため、全てのファイルリストから生成できたCSVファイルデータを取り除く
                 //        残ったものがnot_exist_file_listとなる
                 unset($not_exist_file_list[$mst->identifier]);
-
                 $monthly_status->is_exist        = true;
                 $monthly_status->csv_file_name   = $file['csv_file_name'];
                 $monthly_status->csv_file_set_on = $file['csv_file_set_on'];
                 $monthly_status->is_exist        = (int) true;
                 $monthly_status->file_kb_size    = $file['kb_size'];
                 $monthly_status->save();
-
 //                var_dump($monthly_status->id . ' - ' . $monthly_status->zenon_data_csv_file_id . ' - ' . $monthly_status->csv_file_name);
             }
             return $not_exist_file_list;
