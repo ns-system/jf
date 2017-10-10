@@ -16,7 +16,7 @@ else
 $port = 3306;
 $ip   = gethostbyname(gethostname());
 
-if (php_sapi_name() === 'cli' && $ip !== '127.0.0.1')
+if (php_sapi_name() === 'cli' && $ip !== '127.0.0.1' && $host === '127.0.0.1')
 {
     $port = 33060; /* ubuntu = 3306, local_test(vagrant) = 33060 */
 }

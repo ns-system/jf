@@ -10,7 +10,7 @@ class CreateDatabase extends Command
 //    use \App\Services\Traits\JsonUsable;
     use \App\Console\Commands\Traits\DatabaseNameUsable;
 
-    protected $signature   = 'db:make
+    protected $signature   = 'db:create
         {--name=all      : 作成したいDB名を指定。配列指定可。実例：[db_name_1,db_name_2,...]}
         {--dbenv=testing : テスト環境->testing 本番環境->mysql。}
         {--hide=false    : 成功/失敗メッセージ出力不要時->true。}
