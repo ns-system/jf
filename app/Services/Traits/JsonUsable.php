@@ -81,8 +81,10 @@ trait JsonUsable
             }
         }
 
-        exec(escapeshellcmd("sudo touch {$json_output_path}"));
-        exec(escapeshellcmd("sudo chmod 777 {$json_output_path}"));
+        exec(escapeshellcmd("touch {$json_output_path}"));
+        exec(escapeshellcmd("chmod 777 {$json_output_path}"));
+//        exec(escapeshellcmd("sudo touch {$json_output_path}"));
+//        exec(escapeshellcmd("sudo chmod 777 {$json_output_path}"));
         $json_file = fopen($json_output_path, "wb");
         fwrite($json_file, json_encode($existing_data));
         fclose($json_file);

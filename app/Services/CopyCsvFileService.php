@@ -85,7 +85,8 @@ class CopyCsvFileService
     private function createDirectory($path) {
         if (!file_exists($path))
         {
-            exec("sudo mkdir -m=777 {$path}");
+            exec("mkdir -m=777 {$path}");
+//            exec("sudo mkdir -m=777 {$path}");
             return true;
         }
         return false;
@@ -103,7 +104,8 @@ class CopyCsvFileService
             $this->createDirectory($daily_dir);
             $this->createDirectory($f["destination"]);
             $dest      = $f["destination"] . "/" . $f["csv_file_name"];
-            exec("sudo cp -f -p {$src} {$dest}");
+            exec("cp -f -p {$src} {$dest}");
+//            exec("sudo cp -f -p {$src} {$dest}");
         }
         return $this;
     }
@@ -243,8 +245,7 @@ class CopyCsvFileService
         $csv_template_object = (empty($option_csv_template_object)) ? \App\ZenonCsv::all() : $option_csv_template_object;
         \DB::connection('mysql_suisin')->transaction(function() use($csv_template_object, $monthly_id) {
             foreach ($csv_template_object as $zenon_data_csv_file) {
-
-                $process_status = \App\ZenonMonthlyStatus::firstOrNew(['monthly_id' => $monthly_id, 'zenon_data_csv_file_id' => $zenon_data_csv_file->id]);
+                $process_status = \App\ZenonMonthlyStatus::firstOrCreate/* New -> Createへ */(['monthly_id' => $monthly_id, 'zenon_data_csv_file_id' => $zenon_data_csv_file->id]);
                 $process_status->save();
             }
         });
@@ -300,12 +301,14 @@ class CopyCsvFileService
                 //     -> DBに存在しているため、全てのファイルリストから生成できたCSVファイルデータを取り除く
                 //        残ったものがnot_exist_file_listとなる
                 unset($not_exist_file_list[$mst->identifier]);
+
                 $monthly_status->is_exist        = true;
                 $monthly_status->csv_file_name   = $file['csv_file_name'];
                 $monthly_status->csv_file_set_on = $file['csv_file_set_on'];
                 $monthly_status->is_exist        = (int) true;
                 $monthly_status->file_kb_size    = $file['kb_size'];
                 $monthly_status->save();
+
 //                var_dump($monthly_status->id . ' - ' . $monthly_status->zenon_data_csv_file_id . ' - ' . $monthly_status->csv_file_name);
             }
             return $not_exist_file_list;
@@ -357,7 +360,8 @@ class CopyCsvFileService
 
         $tmp_file_lists = glob($this->directory_path . "/" . $this->directorys['temp'] . "/*");
         foreach ($tmp_file_lists as $l) {
-            exec("sudo rm -rf {$l}");
+            exec("rm -rf {$l}");
+//            exec("sudo rm -rf {$l}");
         }
     }
 
