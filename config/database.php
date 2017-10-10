@@ -1,30 +1,27 @@
 <?php
 
-//dd(env('APP_ENV'));
-
-$port = 3306;
 if (env('APP_ENV') === 'testing')
 {
     $host      = '127.0.0.1';
     $user_name = 'homestead';
     $password  = 'secret';
-    $ip        = gethostbyname(gethostname());
-
-    if (php_sapi_name() === 'cli' && $ip !== $host)
-    {
-        $port = 33060; /* ubuntu = 3306, local_test(vagrant) = 33060 */
-    }
 }
 else
 {
     $host      = '192.1.10.222';
     $user_name = 'homestead';
     $password  = 'secret';
-//    $port      = 3306;
+}
+
+$port = 3306;
+$ip   = gethostbyname(gethostname());
+
+if (php_sapi_name() === 'cli' && $ip !== '127.0.0.1')
+{
+    $port = 33060; /* ubuntu = 3306, local_test(vagrant) = 33060 */
 }
 //dd($port);
-//var_dump($port);
-
+//dd($ip . '<=>' . $host);
 return [
     /*
       |--------------------------------------------------------------------------
@@ -187,10 +184,10 @@ return [
         ],
         'testing'        => [
             'driver'    => 'mysql',
-            'host'      => $host,
-            'database'  => 'nikocale_db',
-            'username'  => $user_name,
-            'password'  => $password,
+            'host'      => '127.0.0.1',
+            'database'  => 'laravel_db',
+            'username'  => 'homestead',
+            'password'  => 'secret',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',

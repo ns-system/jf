@@ -5,17 +5,24 @@ namespace App\Console\Commands\Traits;
 Trait DatabaseNameUsable
 {
 
+    public function echoMessage(bool $is_hide_message, string $message) {
+        if (!$is_hide_message)
+        {
+            echo($message) . PHP_EOL;
+        }
+    }
+
     public function connectDatabase(string $db_env) {
         if (empty($db_env))
         {
             $this->error("エラーが発生したため処理を中断しました。");
-            echo("データベース コネクションが指定されていません。") . PHP_EOL;
+            $this->echoMessage(false, "データベース コネクションが指定されていません。");
             exit();
         }
         elseif ($db_env !== 'testing' && $db_env !== 'mysql')
         {
             $this->error("エラーが発生したため処理を中断しました。");
-            echo("dbenvはtestingもしくはmysqlを指定してください。") . PHP_EOL;
+            $this->echoMessage(false, "dbenvはtestingもしくはmysqlを指定してください。");
             exit();
         }
         $db_config   = \Config::get("database.connections.{$db_env}");
@@ -23,12 +30,13 @@ Trait DatabaseNameUsable
         $password    = $db_config['password'];
 //      $connect_buf = "{$db_env}:host={$db_config['host']}; port={$db_config['port']};";
         $connect_buf = "mysql:host={$db_config['host']}; port={$db_config['port']};";
+//        dd($connect_buf);
 //      $connect_buf = "mysql:host={$db_config['host']}; dbname=mysql; port={$db_config['port']}; charset={$db_config['charset']};"; // Postgresだと色々面倒くさいことになるので簡略化した
         try {
             $pdo = new \PDO($connect_buf, $user, $password);
         } catch (\PDOException $e) {
             echo ($e->getMessage() . PHP_EOL);
-            echo "コネクション確立に失敗しました。（{$connect_buf} ユーザー：{$user}）" . PHP_EOL;
+            $this->echoMessage(false, "コネクション確立に失敗しました。（{$connect_buf} ユーザー：{$user}）");
             $this->error("エラーが発生したため処理を中断しました。");
             exit();
         }
@@ -52,13 +60,18 @@ Trait DatabaseNameUsable
                 {
                     continue;
                 }
-                if (!in_array($db['database'], $db_names))
+                if (isset($db['database']) && !in_array($db['database'], $db_names))
                 {
+//                    echo "a";
                     $db_names[] = $db['database'];
+                }else{
+//                    echo "b";
                 }
+//                var_dump($db_names);
+//                dd($db_names);
             }
-            return $db_names;
 //            dd($db_names);
+            return $db_names;
         }
         // Case : String
         $tmp_option_name = explode(',', $option);
