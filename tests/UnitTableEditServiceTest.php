@@ -3,12 +3,12 @@
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\FileUploadTestable;
+use App\Services\Traits\Testing\FileTestable;
 
 class UnitTableEditServiceTest extends TestCase
 {
 
-    use FileUploadTestable;
+    use FileTestable;
 
     /**
      * A basic test example.

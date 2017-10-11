@@ -9,20 +9,22 @@ class FuncNikocakeControllerTest extends TestCase
 
 //    use DatabaseMigrations;
 
-    protected $connection = ['mysql_laravel', 'mysql_suisin', 'mysql_sinren', 'mysql_nikocale'];
+    protected $connection  = ['mysql_laravel', 'mysql_suisin', 'mysql_sinren', 'mysql_nikocale'];
+    protected static $init = false;
 
     /**
      * @before
      */
     public function setUpDatabase() {
-            echo "in ";
-        if (!self::$migrated)
+//            echo "in ";
+        if (!static::$init)
         {
-            echo "mig ";
-            $this->artisan('db:drop');
-            $this->artisan('db:create');
-            $this->artisan('migrate');
-            self::$migrated = true;
+//            echo "mig ";
+            static::$init = true;
+
+            \Artisan::call('db:reset', ['--dbenv' => 'testing', '--hide' => 'true']);
+            \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
+            \Artisan::call('migrate');
         }
     }
 

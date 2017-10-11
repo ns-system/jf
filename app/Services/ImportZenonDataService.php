@@ -68,7 +68,7 @@ class ImportZenonDataService
         {
             throw new \Exception("月別IDの指定が不正です。（指定：{$monthly_id}）");
         }
-        $date_obj = $this->setDate($monthly_id);
+        $date_obj                = $this->setDate($monthly_id);
         $this->row['monthly_id'] = $date_obj->format('Ym');
         return $this;
     }
@@ -202,7 +202,6 @@ class ImportZenonDataService
             'account_column_name' => $monthly_state->account_column_name,
             'subject_column_name' => $monthly_state->subject_column_name,
         ];
-
         try {
             $table = $this->getTableObject('mysql_zenon', $monthly_state->table_name);
         } catch (\Exception $e) {
@@ -258,7 +257,8 @@ class ImportZenonDataService
         try {
             \DB::connection($connection)->table($table_name)->get();
         } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+            throw new \Exception("ベーステーブルが存在しないようです。（テーブル名：{$table_name}）");
+//            throw new \Exception($e->getMessage());
         }
 
         return \DB::connection($connection)->table($table_name);

@@ -19,7 +19,7 @@
                         @endforeach
                     </select>
                     <div class="text-right" style="margin-top: 10px;">
-                        <button type="submit" class="btn-primary btn-sm btn">変更する</button>
+                        <button type="submit" name="edit_division" class="btn-primary btn-sm btn">変更する</button>
                     </div>
                 </div>
             </div>

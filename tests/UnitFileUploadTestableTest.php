@@ -3,25 +3,26 @@
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\FileUploadTestable;
+use App\Services\Traits\Testing\FileTestable;
 
 class UnitFileUploadTestableTest extends TestCase
 {
 
-    use FileUploadTestable;
+    use FileTestable;
 
     protected $s;
 
     public function __construct() {
-        $this->s = $this->getMockForTrait(FileUploadTestable::class);
+        $this->s = $this->getMockForTrait(FileTestable::class);
     }
 
     /**
      * @tests
      */
     public function 正常系_パラメーターにトークンを付与() {
-        $res_1 = $this->s->getInputs(['name' => 'test user', 'age' => 20]);
+        $res_1 = $this->s->addToken(['name' => 'test user', 'age' => 20]);
         $this->assertEquals(count($res_1), 3);
+        $this->assertFalse(empty($res_1['_token']));
     }
 
     /**
@@ -38,9 +39,48 @@ class UnitFileUploadTestableTest extends TestCase
     public function 異常系_ファイルパスが存在しない() {
         try {
             $this->s->createUploadFile(storage_path() . '/not_exist_path', 'testfile.csv', 'text/csv');
+            $this->fail("予期しないエラーです。");
         } catch (Exception $exc) {
             $this->assertEquals("ファイルパス（" . storage_path() . "/not_exist_path/testfile.csv）が見つかりません。", $exc->getMessage());
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_空の偽装CSVファイルが生成できる() {
+        $path       = storage_path() . '/tests/';
+        $empty_file = 'empty_file.csv';
+        $this->s->createCsvFile($empty_file);
+        $this->assertTrue(file_exists($path . $empty_file));
+        $this->assertEquals(0, filesize($path . $empty_file));
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_中身のある偽装CSVファイルが生成できる() {
+        $path       = storage_path() . '/tests/';
+        $empty_file = 'not_empty_file.csv';
+        $csv_datas  = [
+            ['aaa', 'bbb', 'ccc'],
+            ['あああ', 'いいい', 'ううう',],
+        ];
+        $this->s->createCsvFile($empty_file, $csv_datas);
+        $this->assertTrue(file_exists($path . $empty_file));
+        $this->assertThat(filesize($path . $empty_file), $this->greaterThan(0));
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_ファイル削除ができる() {
+        $path       = storage_path() . '/tests/';
+        $empty_file = 'delete_file.csv';
+        $this->s->createCsvFile($empty_file);
+        $this->s->unlinkFile($path . $empty_file);
+
+        $this->assertFalse(file_exists($path . $empty_file));
     }
 
 }

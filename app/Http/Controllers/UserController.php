@@ -27,7 +27,8 @@ class UserController extends Controller
         try {
             if (!$this->isSelf($id))
             {
-                return redirect(route('permission_error'));
+                return redirect()->route('permission_error');
+//                return redirect(route('permission_error'));
             }
             $user   = User::find($id);
             $divs   = \App\Division::get();
@@ -45,7 +46,8 @@ class UserController extends Controller
 
         if (!$this->isSelf($id))
         {
-            return redirect(route('permission_error'));
+            return redirect()->route('permission_error');
+//            return redirect(route('permission_error'));
         }
 //        $input = $request->except(['_token']);
         $this->service->editUserName($id, $request);
@@ -59,7 +61,8 @@ class UserController extends Controller
         try {
             if (!$this->isSelf($id))
             {
-                return redirect(route('permission_error'));
+                return redirect()->route('permission_error');
+//                return redirect(route('permission_error'));
             }
 //            $input       = $request->all();
 //            $input['id'] = $id;
@@ -72,18 +75,17 @@ class UserController extends Controller
     }
 
     public function division($id, UserRequest\Division $request) {
-        try {
-//            var_dump("ok");
-            if (!$this->isSelf($id))
-            {
-                return redirect(route('permission_error'));
-            }
-            $this->service->editUserDivision($id, $request);
-            \Session::flash('success_message', "部署を変更しました。");
-            return back();
-        } catch (Exception $exc) {
-            echo $exc->getTraceAsString();
+//        try {
+        if (!$this->isSelf($id))
+        {
+            return redirect()->route('permission_error');
         }
+        $this->service->editUserDivision($id, $request);
+        \Session::flash('success_message', "部署を変更しました。");
+        return back();
+//        } catch (Exception $exc) {
+//            echo $exc->getTraceAsString();
+//        }
     }
 
     public function password($id, UserRequest\Password $request) {
@@ -91,7 +93,8 @@ class UserController extends Controller
 
         if (!$this->isSelf($id))
         {
-            return redirect(route('permission_error'));
+            return redirect()->route('permission_error');
+//            return redirect(route('permission_error'));
         }
         $service = $this->service;
 //        $input   = $request->except(['_token']);

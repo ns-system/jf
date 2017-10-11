@@ -231,7 +231,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
         });
     });
 
-    Route::group(['as' => 'nikocale::', 'prefix' => '/nikocale', 'middleware'=>'nikocale'], function() {
+    Route::group(['as' => 'nikocale::', 'prefix' => '/nikocale', 'middleware' => 'nikocale'], function() {
         Route::get('/index/{monthly_id?}', ['as' => 'index', 'uses' => 'NikocaleController@index']);
         Route::post('/store/{user_id}/{entered_on}', ['as' => 'store', 'uses' => 'NikocaleController@store']);
 //        Route::post('/update/{id}',                   ['as' => 'update',  'uses' => 'NikocaleController@update']);
@@ -257,14 +257,12 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
 //
 //Route::get('/roster/chief/proxy', 'ChiefController@show');
 //Route::post('/roster/chief/proxy/edit{id?}', 'ChiefController@edit');
-
-
-Route::get('/model', function() {
-    $t = '\App\Masters\Common\Prefecture';
-    $m = \App\Masters\Common\Prefecture::find(1);
-    $m = new \App\Masters\Common\Prefecture();
-    $m = new $t;
-});
+//Route::get('/model', function() {
+//    $t = '\App\Masters\Common\Prefecture';
+//    $m = \App\Masters\Common\Prefecture::find(1);
+//    $m = new \App\Masters\Common\Prefecture();
+//    $m = new $t;
+//});
 
 Route::get('/strlen/{str?}', function() {
     var_dump(\Input::all());
@@ -334,9 +332,4 @@ Route::any('/test/file_upload', function() {
     return $file;
 //    return \Requrest::input();
 //    return Response::make();
-});
-
-Route::get('/create', function() {
-    $res = \DB::statement('CREATE DATABASE IF NOT EXISTS testing_db;');
-    dd($res);
 });

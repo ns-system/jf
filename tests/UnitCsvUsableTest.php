@@ -4,14 +4,14 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Illuminate\Foundation\Testing\FileUploadTestable;
+use App\Services\Traits\Testing\FileTestable;
 
 //use App\Services\Traits\FileUploadTestable;
 
 class UnitCsvUsableTest extends TestCase
 {
 
-    use FileUploadTestable;
+    use FileTestable;
 
     protected $s;
 
