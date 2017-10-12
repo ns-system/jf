@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         @yield('meta')
 
-        <title>@yield('title'){{$configs['title'] or ''}}</title>
+        <title>[{{env('APP_ENV')}}] @yield('title'){{$configs['title'] or ''}}</title>
 
  {{--        <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet"> --}}
 <link rel="stylesheet" href="https://nkmr6194.github.io/Umi/css/bootstrap.css"></link>
@@ -112,7 +112,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="http://192.168.10.10">@yield('brand'){{$configs['brand'] or ''}}</a>
+                        <a class="navbar-brand" href="http://192.168.10.10">@yield('brand'){{$configs['brand'] or ''}} <small>：環境［{{env('APP_ENV')}}］</small></a>
                     </div>
 
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
