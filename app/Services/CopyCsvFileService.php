@@ -6,7 +6,10 @@
  * and open the template in the editor.
  */
 
-
+//なぜサービスでテストケースを利用しようと思ったのか。セキュリティ的にあうあう。
+//use Illuminate\Foundation\Testing\WithoutMiddleware;
+//use Illuminate\Foundation\Testing\DatabaseMigrations;
+//use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 namespace App\Services;
 
@@ -71,7 +74,10 @@ class CopyCsvFileService
                 throw new \Exception("格納先ファイルパスが存在しません。（格納先ファイル：{$tmp_dir}）");
             }
         }
-
+//        if (!file_exists($this->not_exist_json_output_path))
+//        {
+//            throw new \Exception("LogFile出力時に存在しないファイルパスが指定されました。（ログファイル出力先：{$this->not_exist_json_output_path}）");
+//        }
         $this->directory_path = $base_path;
         return $this;
     }
@@ -80,13 +86,14 @@ class CopyCsvFileService
         if (!file_exists($path))
         {
             exec("mkdir -m=777 {$path}");
+//            exec("sudo mkdir -m=777 {$path}");
             return true;
         }
         return false;
     }
 
     public function copyCsvFile() {
-
+//        $monthly_id            = $this->monthly_id;
         $temp_file_path        = $this->directory_path . "/" . $this->directorys['temp'];
         $accumulation_dir_path = $this->directory_path;
         $file_lists            = $this->getCsvFileList($temp_file_path, null, true);
@@ -98,6 +105,7 @@ class CopyCsvFileService
             $this->createDirectory($f["destination"]);
             $dest      = $f["destination"] . "/" . $f["csv_file_name"];
             exec("cp -f -p {$src} {$dest}");
+//            exec("sudo cp -f -p {$src} {$dest}");
         }
         return $this;
     }
@@ -175,7 +183,54 @@ class CopyCsvFileService
                 'kb_size'          => round(filesize($file_path) / 1024),
                 'file_create_time' => filemtime($file_path),
             ];
-
+//            $path    = $this->directory_path;
+//            if (!empty($f['extension']) && $f['extension'] == 'csv')
+//            {
+//                $date      = null;
+//                $file_path = $directory_path . '/' . $t;
+//                $date_text = mb_substr($t, 14, 8);
+//                $monthly   = null;
+//                $daily     = null;
+//
+////                if (!strptime($date_text, '%Y%m%d') && mb_strlen($date_text) !== 8 || !empty(strptime($date_text, '%Y%m%d')["unparsed"]))
+//                if (!$this->isDate($date_text))
+//                {
+//                    continue;
+//                }
+//                if (!\strptime($date_text, '%Y%m%d'))
+//                {
+//                    continue;
+//                }
+//                else
+//                {
+//                $date    = date('Y-m-d', strtotime($date_text));
+//                $monthly = date('Ym', strtotime($date_text));
+//                $daily   = date('d', strtotime($date_text));
+//                $path    = $this->directory_path;
+//                }
+//            if (mb_substr($t, 8, 1) == 'D')
+//            {
+//                $path .= "/{$this->directorys['daily']}/{$monthly}/{$daily}";
+//            }
+//            elseif (mb_substr($t, 8, 1) == 'M')
+//            {
+//                $monthly = date('Ym', strtotime($date_text . "-1 month"));
+//                $path    .= "/{$this->directorys['monthly']}/{$monthly}";
+//            }
+//            else
+//            {
+//                $path .= "/{$this->directorys['ignore']}/{$monthly}";
+//            }
+//            $lists[] = [
+//                'destination'      => $path,
+//                'csv_file_name'    => $t,
+//                'monthly_id'       => $monthly,
+//                'cycle'            => mb_substr($t, 8, 1),
+//                'csv_file_set_on'  => $date,
+//                'identifier'       => mb_substr($t, 8, 5),
+//                'kb_size'          => round(filesize($file_path) / 1024),
+//                'file_create_time' => filemtime($file_path),
+//            ];
         }
         array_multisort(array_column($lists, 'identifier'), $lists);
         if ($is_log_export)
@@ -203,7 +258,9 @@ class CopyCsvFileService
         $ignore_file_list = [];
         $monthly_id       = $this->monthly_id;
         $tmp_file_lists   = $this->getCsvFileList($this->directory_path . "/" . $this->directorys['temp'] . "/");
-
+//        $json_output_path  = storage_path() . "/jsonlogs";
+//
+//        $ignore_file_list_json_file_name = $monthly_id . "_ignore_file_list" . ".json";
         foreach ($tmp_file_lists as $l) {
             $file_set_month = date('Ym', strtotime($l['csv_file_set_on'] . ' -1 month'));
             if ($l['cycle'] == 'M' && $file_set_month == $monthly_id)
@@ -215,7 +272,7 @@ class CopyCsvFileService
                 $ignore_file_list[] = $l;
             }
         }
-
+//        $this->outputForJsonFile($ignore_file_lists, $json_output_path, $ignore_file_list_json_file_name);
 
         $csv_file_masters = \App\ZenonCsv::Where(function($query) use ($file_lists) {
                     foreach ($file_lists as $f) {
@@ -226,7 +283,7 @@ class CopyCsvFileService
                 ->get()
         ;
 
-
+//        $not_exist_file_list_json_name = $monthly_id . "_not_exist_file_list" . ".json";
 
         $not_exist_file_list = \DB::connection('mysql_suisin')->transaction(function() use($file_lists, $monthly_id, $csv_file_masters) {
             $not_exist_file_list = $file_lists;
@@ -234,6 +291,12 @@ class CopyCsvFileService
                 $monthly_status = \App\ZenonMonthlyStatus::month($monthly_id)->where('zenon_data_csv_file_id', '=', $mst->id)->first();
                 $file           = $file_lists[$mst->identifier];
 
+                // そもそも日付型がおかしいファイルはファイルリスト生成時に弾かれるのでこの処理自体が不要
+//                if (empty($monthly_status))
+//                {
+//                    $not_exist_file_list[] = $file;
+//                    continue;
+//                }
                 // identifier+monthly_idを指定してオブジェクトが生成できた場合
                 //     -> DBに存在しているため、全てのファイルリストから生成できたCSVファイルデータを取り除く
                 //        残ったものがnot_exist_file_listとなる
@@ -244,7 +307,7 @@ class CopyCsvFileService
                 $monthly_status->is_exist        = (int) true;
                 $monthly_status->file_kb_size    = $file['kb_size'];
                 $monthly_status->save();
-
+//                var_dump($monthly_status->id . ' - ' . $monthly_status->zenon_data_csv_file_id . ' - ' . $monthly_status->csv_file_name);
             }
             return $not_exist_file_list;
         });
@@ -252,7 +315,43 @@ class CopyCsvFileService
             'ignore'    => $ignore_file_list,
             'not_exist' => $not_exist_file_list,
         ];
-
+//        $this->outputForJsonFile($not_exist_file_list, $json_output_path, $not_exist_file_list_json_name);
+//        return $this;
+        // このやり方だとJoinした時にIDが混戦してしまってあまりよろしくないので別途IDのみ準備する
+        // 
+//        \DB::connection('mysql_suisin')->transaction(function() use($file_lists, $monthly_id, $json_output_path) {
+//            $not_exist_file_list = [];
+//            $rows                = \App\ZenonMonthlyStatus::month($monthly_id)
+//                    ->join("zenon_data_csv_files", "zenon_data_monthly_process_status.zenon_data_csv_file_id", "=", "zenon_data_csv_files.id")
+//                    ->get()
+//            ;
+//            //手元にあるがDB上にないファイルを出力できるように
+//            foreach ($file_lists as $file) {
+//                $is_exist = 0;
+//                foreach ($rows as $r) {
+//                    if ($file["identifier"] == $r->identifier)
+//                    {
+//                        $is_exist           = 1;
+//                        $r->csv_file_name   = $file['csv_file_name'];
+//                        $r->csv_file_set_on = $file['csv_file_set_on'];
+//                        $r->is_exist        = (int) true;
+//                        $r->file_kb_size    = $file['kb_size'];
+//                        $r->save();
+//                    }
+//                    var_dump($r->id);
+//                    var_dump($r->csv_file_name);
+//                }
+//                if ($is_exist == 0)
+//                {
+//                    $not_exist_file_list[] = $file;
+//                }
+//            }
+//
+//            $not_exist_file_list_json_file_name = $monthly_id . "_not_exist_file_list" . ".json";
+//            $this->outputForJsonFile($not_exist_file_list, $json_output_path, $not_exist_file_list_json_file_name);
+//        });
+//
+//        return $this;
     }
 
     public function tempFileErase() {
@@ -260,9 +359,21 @@ class CopyCsvFileService
         $tmp_file_lists = glob($this->directory_path . "/" . $this->directorys['temp'] . "/*");
         foreach ($tmp_file_lists as $l) {
             exec("rm -rf {$l}");
-
+//            exec("sudo rm -rf {$l}");
         }
     }
 
- 
+    // これ、わざわざ関数化しなくてもセッター通すときに潰せるんでは
+//    public function inputCheck($monthly_id, $accumulation_dir_path) {
+//        if (!file_exists($accumulation_dir_path))
+//        {
+//            //おかしかったらエラー処理
+//            throw new \Exception("累積先ディレクトリが存在しないようです。（想定：{$accumulation_dir_path}）");
+//        }
+//        if (!strptime($monthly_id, '%Y%m') || mb_strlen($monthly_id) !== 6 || nonEmptyArray(strptime($monthly_id, '%Y%m')["unparsed"]))
+//        {
+//            //おかしかったらエラー処理
+//            throw new \Exception("月別IDに誤りがあるようです。（投入された値：{$monthly_id}）");
+//        }
+//    }
 }
