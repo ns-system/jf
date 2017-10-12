@@ -160,8 +160,10 @@ function connectAjax(array){
             }
         },
         (error) => {
-            alert('エラーが発生しました。処理を最初から行ってください。');
+//            alert('エラーが発生しました。処理を最初から行ってください。');
+            console.log('エラーが発生しました。処理を最初から行ってください。');
             clearInterval(timer);
+            location.reload();
         }
     );
 //    console.log('hi');

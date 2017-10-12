@@ -27,7 +27,7 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
 
     public function failed() {
         \DB::connection('mysql_zenon')->rollback();
-        
+
 //        \DB::connection('mysql_suisin')->rollback();
     }
 
@@ -98,7 +98,10 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
                     $database_setting_not_exist_list[] = $error_array;
                     $import_zenon_data_service->setPostErrorToMonthlyStatus($r->id, $error_array['reason']);
                 }
-                $import_zenon_data_service->setPostEndToMonthlyStatus($r->id);
+                else
+                {
+                    $import_zenon_data_service->setPostEndToMonthlyStatus($r->id);
+                }
             }
 //                return $database_setting_not_exist_list;
 //            });
