@@ -9,7 +9,7 @@ class FuncUserControllerTest extends TestCase
 
 //    use WithoutMiddleware;
 //    use DatabaseMigrations;
-
+//test
     protected static $init = false;
     protected $user;
 
