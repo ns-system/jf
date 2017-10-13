@@ -24,10 +24,10 @@ class UserName extends Request
      */
     public function rules() {
         return [
-            'first_name'      => 'required|min:2',
-            'last_name'       => 'required|min:2',
-            'first_name_kana' => 'required|min:2',
-            'last_name_kana'  => 'required|min:2',
+            'first_name'      => 'required|min:1',
+            'last_name'       => 'required|min:1',
+            'first_name_kana' => 'required|min:1',
+            'last_name_kana'  => 'required|min:1',
         ];
     }
 

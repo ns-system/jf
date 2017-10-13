@@ -19,7 +19,7 @@
                         @endforeach
                     </select>
                     <div class="text-right" style="margin-top: 10px;">
-                        <button type="submit" name="edit_division" class="btn-primary btn-sm btn">変更する</button>
+                        <button type="submit" name="btn_division" class="btn-primary btn-sm btn">変更する</button>
                     </div>
                 </div>
             </div>
@@ -35,24 +35,24 @@
                 名前
             </div>
             <div class="panel-body">
-                <div class="col-md-6">
+               <div class="col-md-6">
                     <small><label>姓</label></small>
-                    <input type="text" name="first_name"      class="form-control" value="{{$user->first_name}}"      placeholder="山田" style="margin-bottom: 10px;">
+                    <input type="text" name="last_name"      class="form-control" value="{{$user->last_name}}"      placeholder="山田" style="margin-bottom: 10px;">
                 </div>
                 <div class="col-md-6">
                     <small><label>名</label></small>
-                    <input type="text" name="last_name"      class="form-control" value="{{$user->last_name}}"      placeholder="太郎" style="margin-bottom: 10px;">
+                    <input type="text" name="first_name"      class="form-control" value="{{$user->first_name}}"      placeholder="太郎" style="margin-bottom: 10px;">
                 </div>
                 <div class="col-md-6">
-                    <input type="text" name="first_name_kana" class="form-control" value="{{$user->first_name_kana}}" placeholder="やまだ">
+                    <input type="text" name="last_name_kana" class="form-control" value="{{$user->last_name_kana}}" placeholder="やまだ">
                 </div>
-                <div class="col-md-6">
-                    <input type="text" name="last_name_kana" class="form-control" value="{{$user->last_name_kana}}" placeholder="たろう">
+                 <div class="col-md-6">
+                    <input type="text" name="first_name_kana" class="form-control" value="{{$user->first_name_kana}}" placeholder="たろう">
                 </div>
 
                 <div class="col-md-12">
                     <div class="text-right" style="margin-top: 10px;">
-                        <button type="submit" class="btn-primary btn-sm btn">変更する</button>
+                        <button type="submit"　name="btn_name" id="btn_name" class="btn-primary btn-sm btn">変更する</button>
                     </div>
                 </div>
             </div>
@@ -77,7 +77,7 @@
                     <input type="password" name="new_password_confirmation" class="form-control">
 
                     <div class="text-right" style="margin-top: 10px;">
-                        <button type="submit" class="btn-primary btn-sm btn">変更する</button>
+                        <button type="submit" name= "btn_password" id= "btn_password" class ="btn-primary btn-sm btn">変更する</button>
                     </div>
 
                 </div>
@@ -108,7 +108,7 @@
                             <label class="btn btn-info btn-sm">
                                 アイコンを選択<input type="file" id="file" class="form-control" name="user_icon" style="display: none;">
                             </label>
-                            <button type="submit" class="btn btn-primary btn-sm" onclick="return checkFile();">アイコン変更</button>
+                            <button type="submit" name= "btn_icon" id= "btn_icon" class="btn btn-primary btn-sm" onclick="return checkFile();">アイコン変更</button>
                         </div>
                     </div>
                 </div>
