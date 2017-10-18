@@ -56,7 +56,8 @@ class ProcessStatusController extends Controller
         {
             return false;
         }
-        \App\Month::firstOrCreate(['monthly_id' => $in['monthly_id']]);
+        $displayed_on = date('Y-m-d', strtotime($in['monthly_id'] . '01'));
+        \App\Month::firstOrCreate(['monthly_id' => $in['monthly_id'], 'displayed_on' => $displayed_on]);
         \Session::flash('flash_message', "月別ID［{$in['monthly_id']}］を生成しました。");
         return redirect(route('admin::super::month::show'));
     }
@@ -150,7 +151,7 @@ class ProcessStatusController extends Controller
             $record_counts[$f->key_id] = $cnt;
         }
 //        dd($column_counts);
-        return view('admin.month.import_confirm', ['files' => $files, 'id' => $monthly_id, 'job_id' => $job_id, 'record_counts' => $record_counts,'column_counts'=>$column_counts]);
+        return view('admin.month.import_confirm', ['files' => $files, 'id' => $monthly_id, 'job_id' => $job_id, 'record_counts' => $record_counts, 'column_counts' => $column_counts]);
     }
 
     public function import($id, $job_id) {
