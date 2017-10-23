@@ -12,13 +12,15 @@
  * @author r-kawanishi
  */
 use App\Services\Traits\Testing\FileTestable;
+
 class UnitUserServicesTest extends TestCase
 {
-use FileTestable;
+
+    use FileTestable;
+
     protected static $init = false;
     protected $user;
     protected $service;
-
     public function setUp() {
         parent::setUp();
 
@@ -91,40 +93,39 @@ use FileTestable;
     /**
      * @tests
      */
-//    public function 異常系アイコン変更時ユーザーが存在しない() {
-//        \App\User::truncate();
-//        $user              = factory(\App\User::class)->create();
-//        $service           = new \App\Services\UserService();
-//         $image_file_name = "cat_image_for_success_change_user_icon_test.jpg";
-//        $path = storage_path() . '/tests/'.$image_file_name;
-//        $request=$this->actingAs($user)
-//                ->visit(route('app::user::show', ['id' => $user->id]))
-//                ->attach($path, 'user_icon')
-//                ->press('btn_icon');
-//        try {
-//            $service->editUserIcon($user->id + 1, $request);
-//            $this->fail('例外発生なし');
-//        } catch (Exception $ex) {
-//            $this->assertEquals("No query results for model [App\User].", $ex->getMessage());
-//        }
-//    }
-////リクエストの偽装方法がわからんので後回し
-//    /**
-//     * @tests
-//     */
-//    public function 正常系アイコンが変更できる() {
-//        \App\User::truncate();
-//        $user              = factory(\App\User::class)->create();
-//        $service           = new \App\Services\UserService();
-//        $image_file_name = "cat_image_for_success_change_user_icon_test.jpg";
-//         $mime_type = "image/ipg";
-//        $fake_data = [
-//             'user_icon'=>$this->createUploadFile(storage_path().'/tests/', $image_file_name, $mime_type),
-//             '_token' => csrf_token(),
-//             ];
-//        $request= $this->post('/app/user/icon/'.$user->id ,$fake_data );
-//        $service->editUserIcon($user->id, $request);
-//    }
+    public function 異常系_別ユーザーでアイコンを変更できない() {
+        \App\User::truncate();
+        \Session::start();
+
+        $user            = factory(\App\User::class)->create();
+        $image_file_name = "cat_image_for_success_change_user_icon_test.jpg";
+        $mime_type       = "image/jpeg";
+
+        $fake_icon  = $this->createUploadFile(storage_path() . '/tests/', $image_file_name, $mime_type);
+        $fake_token = csrf_token();
+        $this->actingAs($user);
+        $this->call(/* method = */'POST', /* uri = */ '/app/user/icon/' . ($user->id + 1), [/* params = */ '_token' => $fake_token,], [/* Cookie = */], [/* files = */ 'user_icon' => $fake_icon]);
+        $this->assertRedirectedTo('/permission_error');
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系_ファイルをPOSTしていない() {
+        \App\User::truncate();
+        \Session::start();
+
+        $user = factory(\App\User::class)->create();
+
+        $fake_token = csrf_token();
+        $this->actingAs($user);
+        try {
+            $this->call(/* method = */'POST', /* uri = */ '/app/user/icon/' . ($user->id + 1), [/* params = */ '_token' => $fake_token,], [], ['test' => null]);
+            $this->fail('予期しないエラーです。');
+        } catch (\Exception $e) {
+            $this->assertEquals('An uploaded file must be an array or an instance of UploadedFile.', $e->getMessage());
+        }
+    }
 
     /**
      * @tests
@@ -190,19 +191,19 @@ use FileTestable;
      * @tests
      */
     public function 正常系所属が変更できる() {
-        
+
         \App\SinrenDivision::insert([['division_id' => 1, 'division_name' => 'System'], ['division_id' => 2, 'division_name' => 'Sales']]);
-        $user    = factory(\App\User::class)->create(['unencrypt_password' => $this->password_match_input["password"]]);
-        $service = new \App\Services\UserService();
+        $user                  = factory(\App\User::class)->create(['unencrypt_password' => $this->password_match_input["password"]]);
+        $service               = new \App\Services\UserService();
         $service->editUserDivision($user->id, $this->division_change_input);
-        $user_changed_division = \App\SinrenUser::where('user_id',$user->id)->first();
+        $user_changed_division = \App\SinrenUser::where('user_id', $user->id)->first();
         $this->assertEquals($user_changed_division->division_id, $this->division_change_input['division_id']);
     }
+
 //    /**
 //     * @tests
 //     */
 //    public function 異常系所属変更時SQL例外発生() {
 //       
 //    }
-
 }
