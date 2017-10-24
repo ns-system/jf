@@ -2,10 +2,13 @@
 
 namespace App\Services\Roster;
 
-use App\Services\CsvService;
+//use App\Services\CsvService;
+use App\Services\Traits\CsvUsable;
 
 class CsvExport
 {
+
+    use CsvUsable;
 
     protected $rosters;
     protected $ym;
@@ -48,65 +51,68 @@ class CsvExport
 
     public function update($input) {
         \DB::connection()->transaction(function() use($input) {
-            $r                         = \App\Roster::finputd($input['id']);
-            $r->plan_work_type_id      = $input['plan_work_type_id'];
-            $r->actual_work_type_id    = $input['actual_work_type_id'];
-            $r->actual_rest_reason_id  = $input['actual_rest_reason_id'];
-            $r->plan_rest_reason_id    = $input['plan_rest_reason_id'];
-            $r->plan_overtime_reason   = $input['plan_overtime_reason'];
-            $r->actual_overtime_reason = $input['actual_overtime_reason'];
+            $r                             = \App\Roster::findOrFail($input['id']);
+            $r->plan_work_type_id          = $input['plan_work_type_id'];
+            $r->actual_work_type_id        = $input['actual_work_type_id'];
+            $r->actual_rest_reason_id      = $input['actual_rest_reason_id'];
+            $r->plan_rest_reason_id        = $input['plan_rest_reason_id'];
+            $r->plan_overtime_reason       = $input['plan_overtime_reason'];
+            $r->actual_overtime_reason     = $input['actual_overtime_reason'];
+            $r->plan_overtime_start_time   = (empty($input['plan_overtime_start_time'])) ? null : $input['plan_overtime_start_time'];
+            $r->plan_overtime_end_time     = (empty($input['plan_overtime_end_time'])) ? null : $input['plan_overtime_end_time'];
+            $r->actual_overtime_start_time = (empty($input['actual_overtime_start_time'])) ? null : $input['actual_overtime_start_time'];
+            $r->actual_overtime_end_time   = (empty($input['actual_overtime_end_time'])) ? null : $input['actual_overtime_end_time'];
 
-            if (!empty($input['plan_overtime_start_time']))
-            {
-                $r->plan_overtime_start_time = $input['plan_overtime_start_time'];
-            }
-            else
-            {
-                $r->plan_overtime_start_time = null;
-            }
-            if (!empty($input['plan_overtime_end_time']))
-            {
-                $r->plan_overtime_end_time = $input['plan_overtime_end_time'];
-            }
-            else
-            {
-                $r->plan_overtime_end_time = null;
-            }
-
-            if (!empty($input['actual_overtime_start_time']))
-            {
-                $r->actual_overtime_start_time = $input['actual_overtime_start_time'];
-            }
-            else
-            {
-                $r->actual_overtime_start_time = null;
-            }
-
-            if (!empty($input['actual_overtime_end_time']))
-            {
-                $r->actual_overtime_end_time = $input['actual_overtime_end_time'];
-            }
-            else
-            {
-                $r->actual_overtime_end_time = null;
-            }
+//            if (!empty($input['plan_overtime_start_time']))
+//            {
+//                $r->plan_overtime_start_time = $input['plan_overtime_start_time'];
+//            }
+//            else
+//            {
+//                $r->plan_overtime_start_time = null;
+//            }
+//            if (!empty($input['plan_overtime_end_time']))
+//            {
+//                $r->plan_overtime_end_time = $input['plan_overtime_end_time'];
+//            }
+//            else
+//            {
+//                $r->plan_overtime_end_time = null;
+//            }
+//            if (!empty($input['actual_overtime_start_time']))
+//            {
+//                $r->actual_overtime_start_time = $input['actual_overtime_start_time'];
+//            }
+//            else
+//            {
+//                $r->actual_overtime_start_time = null;
+//            }
+//            if (!empty($input['actual_overtime_end_time']))
+//            {
+//                $r->actual_overtime_end_time = $input['actual_overtime_end_time'];
+//            }
+//            else
+//            {
+//                $r->actual_overtime_end_time = null;
+//            }
 
             switch ($input['plan_accept']) {
-                case '0':
-                    $r->is_plan_entry       = (int) true;
-                    $r->is_plan_accept      = (int) false;
-                    $r->is_plan_reject      = (int) true;
-                    $r->plan_accept_user_id = \Auth::user()->id;
-                    $r->plan_accepted_at    = date('Y-m-d H:i:s');
-                    break;
-                case '1':
+                case '0': /* reject */
                     $r->is_plan_entry       = (int) true;
                     $r->is_plan_accept      = (int) false;
                     $r->is_plan_reject      = (int) true;
                     $r->plan_reject_user_id = \Auth::user()->id;
                     $r->plan_rejected_at    = date('Y-m-d H:i:s');
                     break;
-                case '2':
+                case '1': /* accept */
+                    $r->is_plan_entry       = (int) true;
+                    $r->is_plan_accept      = (int) true;
+                    $r->is_plan_reject      = (int) false;
+                    $r->plan_accept_user_id = \Auth::user()->id;
+                    $r->plan_accepted_at    = date('Y-m-d H:i:s');
+                    break;
+                case '2': /* reset */
+                    $r->is_plan_entry       = (int) false;
                     $r->is_plan_accept      = (int) false;
                     $r->is_plan_reject      = (int) false;
                     $r->plan_reject_user_id = 0;
@@ -116,21 +122,22 @@ class CsvExport
                     break;
             }
             switch ($input['actual_accept']) {
-                case '0':
-                    $r->is_actual_entry       = (int) true;
-                    $r->is_actual_accept      = (int) false;
-                    $r->is_actual_reject      = (int) true;
-                    $r->actual_accept_user_id = \Auth::user()->id;
-                    $r->actual_accepted_at    = date('Y-m-d H:i:s');
-                    break;
-                case '1':
+                case '0': /* reject */
                     $r->is_actual_entry       = (int) true;
                     $r->is_actual_accept      = (int) false;
                     $r->is_actual_reject      = (int) true;
                     $r->actual_reject_user_id = \Auth::user()->id;
                     $r->actual_rejected_at    = date('Y-m-d H:i:s');
                     break;
-                case '2':
+                case '1': /* accept */
+                    $r->is_actual_entry       = (int) true;
+                    $r->is_actual_accept      = (int) true;
+                    $r->is_actual_reject      = (int) false;
+                    $r->actual_accept_user_id = \Auth::user()->id;
+                    $r->actual_accepted_at    = date('Y-m-d H:i:s');
+                    break;
+                case '2': /* reset */
+                    $r->is_actual_entry       = (int) false;
                     $r->is_actual_accept      = (int) false;
                     $r->is_actual_reject      = (int) false;
                     $r->actual_reject_user_id = 0;
@@ -223,23 +230,8 @@ class CsvExport
             $ltdt002 = (!empty($r->actual_overtime_end_time) && $r->actual_overtime_end_time != '0000-00-00 00:00:00') ? date('G:i', strtotime($r->actual_overtime_end_time)) : '';
             $ltlt009 = $r->actual_overtime_reason;
 
-            $plan_rows[]   = [
-                $ebas001,
-                $lsls001,
-                $lsls002,
-                $lsls003,
-                $lsls004,
-            ];
-            $actual_rows[] = [
-                $ebas001,
-                $ltlt001,
-                $ltlt002,
-                $ltlt003,
-                $ltlt004,
-                $ltdt001,
-                $ltdt002,
-                $ltlt009,
-            ];
+            $plan_rows[]   = [$ebas001, $lsls001, $lsls002, $lsls003, $lsls004,];
+            $actual_rows[] = [$ebas001, $ltlt001, $ltlt002, $ltlt003, $ltlt004, $ltdt001, $ltdt002, $ltlt009,];
         }
         $this->plan_rows   = $plan_rows;
         $this->actual_rows = $actual_rows;
@@ -247,23 +239,17 @@ class CsvExport
     }
 
     public function getRows($type) {
-        if ($type == 'plan')
-        {
-            return $this->plan_rows;
-        }
-        elseif ($type == 'actual')
-        {
-            return $this->actual_rows;
-        }
-        else
+        if ($type !== 'plan' && $type !== 'actual')
         {
             throw new \Exception('予期しないデータ名が指定されました。');
         }
+
+        return ($type === 'plan') ? $this->plan_rows : $this->actual_rows;
     }
 
     public function export($rows, $file_name, $header) {
-        $obj = new CsvService();
-        return $obj->exportCsv($rows, $file_name, $header);
+//        $obj = new CsvService();
+        return $this->exportCsv($rows, $file_name, $header);
     }
 
 }
