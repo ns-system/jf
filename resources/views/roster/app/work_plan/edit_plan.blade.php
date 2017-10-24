@@ -18,7 +18,7 @@
 <div class="col-md-10">
 
 @include('partial.alert')
-<div class="border-bottom"><h2>勤務予定データ作成<small> - {{$user->name}}さん</small></h2></div>
+<div class="border-bottom"><h2>勤務予定データ作成<small> - {{$user->last_name}} {{$user->first_name}}さん</small></h2></div>
 
 <form method="POST" action="{{route('app::roster::work_plan::edit', ['month'=>$month, 'id'=>$id])}}">
 <input type="hidden" name="_token" value="{{ csrf_token() }}">

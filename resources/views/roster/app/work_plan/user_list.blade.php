@@ -33,7 +33,7 @@
 @foreach($users as $user)
 		<tr>
 			<td>{{$user->division_name}}</td>
-			<td><a href="{{route('app::roster::work_plan::list', ['month'=>$month, 'id'=>$user->user_id])}}">{{$user->name}}さん</a></td>
+			<td><a href="{{route('app::roster::work_plan::list', ['month'=>$month, 'id'=>$user->user_id])}}">{{$user->last_name}} {{$user->first_name}}さん</a></td>
 			<td>
 				@if($cnt[$user->user_id] > 0) <span class="label label-success">データ登録済み</span>
 				@else                         <span class="label label-default">データ未登録</span> @endif

@@ -36,7 +36,7 @@
             @foreach($users as $user)
             <tr>
                 <td>
-                <a href="{{route('admin::roster::user::show', ['id'=>$user->user_id])}}">{{$user->name}}さん</a>
+                <a href="{{route('admin::roster::user::show', ['id'=>$user->user_id])}}">{{$user->last_name}} {{$user->first_name}}さん</a>
                 </td>
                 <td>{{$user->division_name}}</td>
                 <td>
