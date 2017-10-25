@@ -18,10 +18,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
 
     use Traits\CsvUsable;
 
-    protected static $init             = false;
+    protected static $init = false;
     protected $user;
-    
-    
 
     public function setUp() {
         parent::setUp();
@@ -39,9 +37,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         }
     }
 
-
-
-         //貸付
+    //貸付
     //摘要コード 
     /**
      * @tests
@@ -52,7 +48,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanCategory')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanCategory')
-                
+
         ;
     }
 
@@ -75,16 +71,15 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanCategory')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Loan\Category::
-                    where('loan_category_code',trim($data[0]))->
-                    where('loan_category_name', trim($data[1]))->
-                    count(),1);
+                            where('loan_category_code', trim($data[0]))->
+                            where('loan_category_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -123,7 +118,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-       //貸付
+
+    //貸付
     //漁業形態 
     /**
      * @tests
@@ -134,7 +130,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanFishery')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFishery')
-                
+
         ;
     }
 
@@ -157,16 +153,15 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFishery')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Loan\Fishery::
-                    where('fishery_form_code',trim($data[0]))->
-                    where('fishery_form_name', trim($data[1]))->
-                    count(),1);
+                            where('fishery_form_code', trim($data[0]))->
+                            where('fishery_form_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -205,7 +200,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-        //貸付
+
+    //貸付
     //資金区分 
     /**
      * @tests
@@ -216,7 +212,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanFund')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFund')
-                
+
         ;
     }
 
@@ -239,16 +235,15 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFund')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Loan\Fund::
-                    where('fund_code',trim($data[0]))->
-                    where('fund_name', trim($data[1]))->
-                    count(),1);
+                            where('fund_code', trim($data[0]))->
+                            where('fund_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -287,7 +282,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-      //貸付
+
+    //貸付
     //資金使途区分 
     /**
      * @tests
@@ -298,7 +294,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanFundUsageCode')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsageCode')
-                
+
         ;
     }
 
@@ -321,16 +317,15 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsageCode')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Loan\FundUsageCode::
-                    where('fund_usage_code',trim($data[0]))->
-                    where('fund_usage_name', trim($data[1]))->
-                    count(),1);
+                            where('fund_usage_code', trim($data[0]))->
+                            where('fund_usage_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -369,7 +364,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-      //貸付
+
+    //貸付
     //資金補助区分 
     /**
      * @tests
@@ -380,7 +376,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanFundAuxiliary')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundAuxiliary')
-                
+
         ;
     }
 
@@ -403,17 +399,16 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundAuxiliary')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Loan\FundAuxiliary::
-                    where('fund_auxiliary_code',trim($data[0]))->
-                    where('fund_auxiliary_category', trim($data[1]))->
-                    where('fund_auxiliary_name', trim($data[2]))->
-                    count(),1);
+                            where('fund_auxiliary_code', trim($data[0]))->
+                            where('fund_auxiliary_category', trim($data[1]))->
+                            where('fund_auxiliary_name', trim($data[2]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -452,7 +447,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-          //貸付
+
+    //貸付
     //資金用途 
     /**
      * @tests
@@ -463,7 +459,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanFundUsage')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsage')
-                
+
         ;
     }
 
@@ -486,16 +482,15 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsage')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Loan\FundUsage::
-                    where('fund_usage',trim($data[0]))->
-                    where('fund_usage_name', trim($data[1]))->
-                    count(),1);
+                            where('fund_usage', trim($data[0]))->
+                            where('fund_usage_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -534,7 +529,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-            //貸付
+
+    //貸付
     //自振区分 
     /**
      * @tests
@@ -545,7 +541,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanJifuriCode')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanJifuriCode')
-                
+
         ;
     }
 
@@ -568,16 +564,15 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanJifuriCode')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Loan\JifuriCode::
-                    where('jifuri_code',trim($data[0]))->
-                    where('jifuri_name', trim($data[1]))->
-                    count(),1);
+                            where('jifuri_code', trim($data[0]))->
+                            where('jifuri_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -616,25 +611,26 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-             //貸付
+
+    //貸付
     //段階金利制区分 
     /**
      * @tests
      */
-    public function  段階金利制区分を表示できる() {
+    public function 段階金利制区分を表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Loan\PhasedMoneyRate::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanPhasedMoneyRate')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanPhasedMoneyRate')
-                
+
         ;
     }
 
     /**
      * @tests
      */
-    public function  段階金利制区分でCSVファイルインポートできる() {
+    public function 段階金利制区分でCSVファイルインポートできる() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Loan\PhasedMoneyRate::truncate();
         $file_name = '段階金利制区分.csv';
@@ -650,22 +646,21 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanPhasedMoneyRate')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Loan\PhasedMoneyRate::
-                    where('phased_money_rate_code',trim($data[0]))->
-                    where('phased_money_rate_name', trim($data[1]))->
-                    count(),1);
+                            where('phased_money_rate_code', trim($data[0]))->
+                            where('phased_money_rate_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
      * @tests
      */
-    public function  段階金利制区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
+    public function 段階金利制区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Loan\PhasedMoneyRate::truncate();
         $file_name = '段階金利制区分.csv';
@@ -683,7 +678,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function  段階金利制区分で誤ったCSVファイルがインポートされたときエラー() {
+    public function 段階金利制区分で誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Loan\PhasedMoneyRate::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -698,6 +693,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     //貸付
     //担保コード 
     /**
@@ -709,7 +705,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanCollateral')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanCollateral')
-                
+
         ;
     }
 
@@ -732,16 +728,15 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanCollateral')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Loan\Collateral::
-                    where('collateral_code',trim($data[0]))->
-                    where('collateral_name', trim($data[1]))->
-                    count(),1);
+                            where('collateral_code', trim($data[0]))->
+                            where('collateral_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -765,7 +760,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function  担保コードで誤ったCSVファイルがインポートされたときエラー() {
+    public function 担保コードで誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Loan\Collateral::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -780,6 +775,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     //貸付
     //保証機関コード 
     /**
@@ -791,7 +787,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanSecurityInstitution')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSecurityInstitution')
-                
+
         ;
     }
 
@@ -814,16 +810,15 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSecurityInstitution')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Loan\SecurityInstitution::
-                    where('security_institution_code',trim($data[0]))->
-                    where('security_institution_name', trim($data[1]))->
-                    count(),1);
+                            where('security_institution_code', trim($data[0]))->
+                            where('security_institution_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -847,7 +842,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function  保証機関コードで誤ったCSVファイルがインポートされたときエラー() {
+    public function 保証機関コードで誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Loan\SecurityInstitution::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -862,6 +857,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     //貸付
     //利子補給助成機関区分 
     /**
@@ -873,7 +869,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanSubsidyInstitution')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyInstitution')
-                
+
         ;
     }
 
@@ -896,16 +892,15 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyInstitution')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Loan\SubsidyInstitution::
-                    where('subsidy_institution_code',trim($data[0]))->
-                    where('subsidy_institution_name', trim($data[1]))->
-                    count(),1);
+                            where('subsidy_institution_code', trim($data[0]))->
+                            where('subsidy_institution_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -929,7 +924,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function  利子補給助成機関区分で誤ったCSVファイルがインポートされたときエラー() {
+    public function 利子補給助成機関区分で誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Loan\SecurityInstitution::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -944,6 +939,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     //貸付
     //利子補給助成区分
     /**
@@ -955,7 +951,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanSubsidy')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidy')
-                
+
         ;
     }
 
@@ -978,16 +974,15 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidy')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Loan\Subsidy::
-                    where('subsidy_code',trim($data[0]))->
-                    where('subsidy_name', trim($data[1]))->
-                    count(),1);
+                            where('subsidy_code', trim($data[0]))->
+                            where('subsidy_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -1011,7 +1006,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function  利子補給助成区分で誤ったCSVファイルがインポートされたときエラー() {
+    public function 利子補給助成区分で誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Loan\Subsidy::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -1026,7 +1021,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-       //貸付
+
+    //貸付
     //利子補給・助成計算区分
     /**
      * @tests
@@ -1037,7 +1033,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanSubsidyCalculation')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyCalculation')
-                
+
         ;
     }
 
@@ -1060,16 +1056,15 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyCalculation')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Loan\SubsidyCalculation::
-                    where('subsidy_calculation_code',trim($data[0]))->
-                    where('subsidy_calculation_name', trim($data[1]))->
-                    count(),1);
+                            where('subsidy_calculation_code', trim($data[0]))->
+                            where('subsidy_calculation_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -1093,7 +1088,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function  利子補給助成計算区分で誤ったCSVファイルがインポートされたときエラー() {
+    public function 利子補給助成計算区分で誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Loan\SubsidyCalculation::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -1108,6 +1103,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
 //    後回し
 //    /**
 //     * @tests
