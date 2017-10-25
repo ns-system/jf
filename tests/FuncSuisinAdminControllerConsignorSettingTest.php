@@ -118,7 +118,6 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                             where('split_foreign_key_2', trim($data[19]))->
                             where('split_foreign_key_3', trim($data[20]))->
                             where('split_foreign_key_4', trim($data[21]))->
-                           
                             count(), 1);
         }
     }
@@ -159,12 +158,13 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
     public function 全オン還元CSVファイル設定ファイルがエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Admin/ZenonCsv')
                 ->seePageIs('/admin/super_user/config/Admin/ZenonCsv')
@@ -218,7 +218,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                             where('zenon_format_id', trim($data[0]))->
                             where('column_name', trim($data[1]))->
                             where('japanese_column_name', trim($data[2]))->
-                            where('column_type', trim($data[3]))->                           
+                            where('column_type', trim($data[3]))->
                             count(), 1);
         }
     }
@@ -263,13 +263,13 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-    
-     /**
+
+    /**
      * @tests
      */
     public function テーブルカラム設定ファイルがエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Admin/ZenonTable')
                 ->seePageIs('/admin/super_user/config/Admin/ZenonTable')
@@ -278,6 +278,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
     //システム設定
     //全オンカテゴリ名 
     /**
@@ -359,11 +360,11 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
         ;
     }
 
-     /**
+    /**
      * @tests
      */
     public function 全オンカテゴリ名ファイルがエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\ZenonType::truncate();
 
         $this->actingAs($user)
@@ -374,4 +375,5 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
 }
