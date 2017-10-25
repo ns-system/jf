@@ -18,9 +18,8 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
 
     use Traits\CsvUsable;
 
-    protected static $init             = false;
+    protected static $init = false;
     protected $user;
-    
     protected $dummy_subject_code_data = [
         [
             "subject_code" => "1",
@@ -56,18 +55,18 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
         }
     }
 
-
     //科目コード
-     /**
+    /**
      * @tests
      */
     public function 科目コードを表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\Models\Common\Subject::truncate();;
+        \App\Models\Common\Subject::truncate();
+        ;
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Subject')
                 ->seePageIs('/admin/suisin/config/Suisin/Subject')
-                
+
         ;
     }
 
@@ -90,16 +89,15 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/Subject')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Common\Subject::
-                    where('subject_code',trim($data[0]))->
-                    where('subject_name', trim($data[1]))->
-                    count(),1);
+                            where('subject_code', trim($data[0]))->
+                            where('subject_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -138,12 +136,13 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
     public function 科目コードがエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Subject')
                 ->seePageIs('/admin/suisin/config/Suisin/Subject')
@@ -152,17 +151,19 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
     //業種コード
     /**
      * @tests
      */
     public function 業種コードを表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\Models\Common\Industry::truncate();;
+        \App\Models\Common\Industry::truncate();
+        ;
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Industry')
                 ->seePageIs('/admin/suisin/config/Suisin/Industry')
-                
+
         ;
     }
 
@@ -185,17 +186,16 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/Industry')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Common\Industry::
-                    where('industry_code',trim($data[0]))->
-                    where('industry_name', trim($data[1]))->
-                    where('industry_content', trim($data[2]))->
-                    count(),1);
+                            where('industry_code', trim($data[0]))->
+                            where('industry_name', trim($data[1]))->
+                            where('industry_content', trim($data[2]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -234,12 +234,13 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
     public function 業種コードがエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Industry')
                 ->seePageIs('/admin/suisin/config/Suisin/Industry')
@@ -248,17 +249,19 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
     //資格区分
     /**
      * @tests
      */
     public function 資格区分を表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\Models\Common\Qualification::truncate();;
+        \App\Models\Common\Qualification::truncate();
+        ;
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Qualification')
                 ->seePageIs('/admin/suisin/config/Suisin/Qualification')
-                
+
         ;
     }
 
@@ -281,17 +284,16 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/Qualification')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Common\Qualification::
-                    where('qualification_code',trim($data[0]))->
-                    where('qualification_type', trim($data[1]))->
-                    where('qualification_name', trim($data[2]))->
-                    count(),1);
+                            where('qualification_code', trim($data[0]))->
+                            where('qualification_type', trim($data[1]))->
+                            where('qualification_name', trim($data[2]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -330,12 +332,13 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-     /**
+
+    /**
      * @tests
      */
     public function 資格区分がエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Qualification')
                 ->seePageIs('/admin/suisin/config/Suisin/Qualification')
@@ -344,17 +347,19 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
     //人格コード 
     /**
      * @tests
      */
     public function 人格コードを表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\Models\Common\Personality::truncate();;
+        \App\Models\Common\Personality::truncate();
+        ;
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Personality')
                 ->seePageIs('/admin/suisin/config/Suisin/Personality')
-                
+
         ;
     }
 
@@ -377,16 +382,15 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/Personality')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Common\Personality::
-                    where('personality_code',trim($data[0]))->
-                    where('personality_name', trim($data[1]))->
-                    count(),1);
+                            where('personality_code', trim($data[0]))->
+                            where('personality_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -425,12 +429,13 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-     /**
+
+    /**
      * @tests
      */
     public function 人格コードがエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Personality')
                 ->seePageIs('/admin/suisin/config/Suisin/Personality')
@@ -439,6 +444,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
     //貯金
     //課税区分 
     /**
@@ -446,11 +452,12 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
      */
     public function 課税区分を表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\Models\Deposit\Taxation::truncate();;
+        \App\Models\Deposit\Taxation::truncate();
+        ;
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/DepositTaxation')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositTaxation')
-                
+
         ;
     }
 
@@ -473,16 +480,15 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositTaxation')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Deposit\Taxation::
-                    where('taxation_code',trim($data[0]))->
-                    where('taxation_name', trim($data[1]))->
-                    count(),1);
+                            where('taxation_code', trim($data[0]))->
+                            where('taxation_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -521,12 +527,13 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
     public function 課税区分がエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/DepositTaxation')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositTaxation')
@@ -535,6 +542,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
     //貯金
     //期間コード 
     /**
@@ -542,11 +550,12 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
      */
     public function 期間コードを表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\Models\Deposit\Term::truncate();;
+        \App\Models\Deposit\Term::truncate();
+        ;
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/DepositTerm')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositTerm')
-                
+
         ;
     }
 
@@ -569,16 +578,15 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositTerm')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Deposit\Term::
-                    where('term_code',trim($data[0]))->
-                    where('term_name', trim($data[1]))->
-                    count(),1);
+                            where('term_code', trim($data[0]))->
+                            where('term_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -617,12 +625,13 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
     public function 期間コードがエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/DepositTerm')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositTerm')
@@ -631,18 +640,20 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
-        //貯金
+
+    //貯金
     //継続区分 
     /**
      * @tests
      */
     public function 継続区分を表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\Models\Deposit\Continuation::truncate();;
+        \App\Models\Deposit\Continuation::truncate();
+        ;
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/DepositContinuation')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositContinuation')
-                
+
         ;
     }
 
@@ -665,16 +676,15 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositContinuation')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Deposit\Continuation::
-                    where('continuation_code',trim($data[0]))->
-                    where('continuation_name', trim($data[1]))->
-                    count(),1);
+                            where('continuation_code', trim($data[0]))->
+                            where('continuation_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -713,12 +723,13 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
     public function 継続区分がエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/DepositContinuation')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositContinuation')
@@ -727,6 +738,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
     //貯金
     //種類コード 
     /**
@@ -816,12 +828,13 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
     public function 貯金種類コードがエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/DepositCategory')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositCategory')
@@ -830,18 +843,20 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
-        //貯金
+
+    //貯金
     //通証タイプ 
     /**
      * @tests
      */
     public function 通証タイプを表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\Models\Deposit\BankbookType::truncate();;
+        \App\Models\Deposit\BankbookType::truncate();
+        ;
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/DepositBankbookType')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositBankbookType')
-                
+
         ;
     }
 
@@ -864,16 +879,15 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositBankbookType')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Deposit\BankbookType::
-                    where('bankbook_deed_type',trim($data[0]))->
-                    where('bankbook_deed_name', trim($data[1]))->
-                    count(),1);
+                            where('bankbook_deed_type', trim($data[0]))->
+                            where('bankbook_deed_name', trim($data[1]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -912,12 +926,13 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-     /**
+
+    /**
      * @tests
      */
     public function 通証タイプがエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/DepositBankbookType')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositBankbookType')
@@ -926,18 +941,20 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
-         //貯金
+
+    //貯金
     //摘要コード 
     /**
      * @tests
      */
     public function 摘要コードを表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\Models\Deposit\Gist::truncate();;
+        \App\Models\Deposit\Gist::truncate();
+        ;
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/DepositGist')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositGist')
-                
+
         ;
     }
 
@@ -960,20 +977,19 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositGist')
                 ->see('件の処理が終了しました。')
-        ;       
-        $csv_file =file($path);
-        for($i=1;$i<count($csv_file);$i++){
-            $data = explode(',',$csv_file[$i]);
+        ;
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Deposit\Gist::
-                    where('gist_code',trim($data[0]))->
-                    where('display_gist', trim($data[1]))->
-                    where('zenon_gist', trim($data[2]))->
-                    where('keizai_gist_kanji', trim($data[3]))->
-                    where('keizai_gist_half_kana', trim($data[4]))->
-                    where('keizai_gist_full_kana', trim($data[5]))->
-                    count(),1);
+                            where('gist_code', trim($data[0]))->
+                            where('display_gist', trim($data[1]))->
+                            where('zenon_gist', trim($data[2]))->
+                            where('keizai_gist_kanji', trim($data[3]))->
+                            where('keizai_gist_half_kana', trim($data[4]))->
+                            where('keizai_gist_full_kana', trim($data[5]))->
+                            count(), 1);
         }
-        
     }
 
     /**
@@ -1012,12 +1028,13 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-     /**
+
+    /**
      * @tests
      */
     public function 摘要コードがエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/DepositGist')
                 ->seePageIs('/admin/suisin/config/Suisin/DepositGist')
@@ -1026,4 +1043,5 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
 }
