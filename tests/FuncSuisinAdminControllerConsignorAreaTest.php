@@ -7,18 +7,18 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
 
     use Traits\CsvUsable;
 
-    protected static $init             = false;
+    protected static $init                    = false;
     protected $user;
-    protected $dummy_prefecture_data   = [
+    protected $dummy_prefecture_data          = [
         "prefecture_code" => "9491",
         "prefecture_name" => "長崎県",
     ];
-    protected $dummy_store_data        = [
+    protected $dummy_store_data               = [
         "prefecture_code" => "9491",
         "store_name"      => "本店",
         "store_number"    => "1",
     ];
-    protected $dummy_smallstore_data   = [
+    protected $dummy_smallstore_data          = [
         [
             "prefecture_code"    => "9491",
             "small_store_name"   => "本店",
@@ -34,7 +34,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
             "control_store_code" => "2",
         ]
     ];
-    protected $dummy_area_data         = [
+    protected $dummy_area_data                = [
         [
             "prefecture_code"    => "9491",
             "store_number"       => "1",
@@ -50,7 +50,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
             "area_name"          => "五島支店",
         ]
     ];
-    protected $dummy_subject_code_data = [
+    protected $dummy_subject_code_data        = [
         [
             "subject_code" => "1",
             "subject_name" => "test1"
@@ -68,49 +68,50 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
             "subject_name" => "test4"
         ],
     ];
-    protected $dummy_consignor_group_data = [
+    protected $dummy_consignor_group_data     = [
         [
-            "group_name" => "test1",
+            "group_name"     => "test1",
             "create_user_id" => "0",
             "modify_user_id" => "0",
         ],
-         [
-            "group_name" => "test2",
+        [
+            "group_name"     => "test2",
             "create_user_id" => "0",
             "modify_user_id" => "0",
         ],
-         [
-            "group_name" => "test3",
+        [
+            "group_name"     => "test3",
             "create_user_id" => "0",
             "modify_user_id" => "0",
         ],
     ];
- protected $preregistration_consignor_data = [
+    protected $preregistration_consignor_data = [
         [
-            "consignor_code"    => "11111",
-            "consignor_name"       => "consignorname1",
-            "total_count" => "1",
-            "reference_last_traded_on"          => "",
-            "display_consignor_name"          => "displayconsignorname1",
-            "consignor_group_id"          => "1",
+            "consignor_code"           => "11111",
+            "consignor_name"           => "consignorname1",
+            "total_count"              => "1",
+            "reference_last_traded_on" => "",
+            "display_consignor_name"   => "displayconsignorname1",
+            "consignor_group_id"       => "1",
         ],
-       [
-            "consignor_code"    => "22222",
-            "consignor_name"       => "consignorname2",
-            "total_count" => "2",
-            "reference_last_traded_on"          => "",
-            "display_consignor_name"          => "displayconsignorname2",
-            "consignor_group_id"          => "2",
+        [
+            "consignor_code"           => "22222",
+            "consignor_name"           => "consignorname2",
+            "total_count"              => "2",
+            "reference_last_traded_on" => "",
+            "display_consignor_name"   => "displayconsignorname2",
+            "consignor_group_id"       => "2",
         ],
-     [
-            "consignor_code"    => "33333",
-            "consignor_name"       => "consignorname3",
-            "total_count" => "3",
-            "reference_last_traded_on"          => "",
-            "display_consignor_name"          => "displayconsignorname3",
-            "consignor_group_id"          => "3",
+        [
+            "consignor_code"           => "33333",
+            "consignor_name"           => "consignorname3",
+            "total_count"              => "3",
+            "reference_last_traded_on" => "",
+            "display_consignor_name"   => "displayconsignorname3",
+            "consignor_group_id"       => "3",
         ],
     ];
+
     public function setUp() {
         parent::setUp();
 
@@ -150,6 +151,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->see('許可されていないアクセスを行おうとしました。')
         ;
     }
+
     //委託者リスト
     /**
      * @tests
@@ -192,20 +194,19 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Consignor::
-                    where('consignor_code', trim($data[0]))->
-                    where('consignor_name', trim($data[1]))->
-                    where('display_consignor_name', trim($data[2]))->
-                    where('consignor_group_id', trim($data[3]))->
-                    count(), 1);
+                            where('consignor_code', trim($data[0]))->
+                            where('consignor_name', trim($data[1]))->
+                            where('display_consignor_name', trim($data[2]))->
+                            where('consignor_group_id', trim($data[3]))->
+                            count(), 1);
         }
-        
     }
 
     /**
      * @tests
      */
     public function 委託者リストで内容に不備のあるCSVファイルがインポートされたときエラー() {
-      $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Consignor::truncate();
         \App\ConsignorGroup::truncate();
         \App\Consignor::insert($this->preregistration_consignor_data);
@@ -226,7 +227,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 委託者リストで誤ったCSVファイルがインポートされたときエラー() {
-      $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Consignor::truncate();
         \App\ConsignorGroup::truncate();
         \App\Consignor::insert($this->preregistration_consignor_data);
@@ -243,12 +244,13 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-     /**
+
+    /**
      * @tests
      */
     public function 委託者リストファイルがエクスポートできる() {
-     $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\Consignor::truncate();       
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\Consignor::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Consignor')
                 ->seePageIs('/admin/suisin/config/Suisin/Consignor')
@@ -257,7 +259,8 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
-     //委託者グループ
+
+    //委託者グループ
     /**
      * @tests
      */
@@ -334,12 +337,13 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-     /**
+
+    /**
      * @tests
      */
     public function 委託者グループがエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/ConsignorGroup')
                 ->seePageIs('/admin/suisin/config/Suisin/ConsignorGroup')
@@ -348,6 +352,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
     /**
      * @tests
      */
@@ -424,12 +429,13 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
     public function 県コードがエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Prefecture')
                 ->seePageIs('/admin/suisin/config/Suisin/Prefecture')
@@ -438,6 +444,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
     //店番
     /**
      * @tests
@@ -522,12 +529,13 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
     public function 店番がエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Store')
                 ->seePageIs('/admin/suisin/config/Suisin/Store')
@@ -581,11 +589,11 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Common\SmallStore::
-                    where('prefecture_code', trim($data[0]))->
-                    where('store_number', trim($data[1]))->
-                    where('control_store_code', trim($data[2]))->
-                    where('small_store_number', trim($data[3]))->
-                    where('small_store_name', trim($data[7]))->count(), 1);
+                            where('prefecture_code', trim($data[0]))->
+                            where('store_number', trim($data[1]))->
+                            where('control_store_code', trim($data[2]))->
+                            where('small_store_number', trim($data[3]))->
+                            where('small_store_name', trim($data[7]))->count(), 1);
         }
     }
 
@@ -633,12 +641,13 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
     public function 小規模店番がエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/SmallStore')
                 ->seePageIs('/admin/suisin/config/Suisin/SmallStore')
@@ -647,7 +656,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
-    
+
     //地区コード
     /**
      * @tests
@@ -694,10 +703,10 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\Models\Common\Area::
-                    where('prefecture_code', trim($data[0]))->
-                    where('store_number', trim($data[1]))->
-                    where('area_code', trim($data[3]))->
-                    where('area_name', trim($data[7]))->count(), 1);
+                            where('prefecture_code', trim($data[0]))->
+                            where('store_number', trim($data[1]))->
+                            where('area_code', trim($data[3]))->
+                            where('area_name', trim($data[7]))->count(), 1);
         }
     }
 
@@ -747,12 +756,13 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
     public function 地区コードがエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Area')
                 ->seePageIs('/admin/suisin/config/Suisin/Area')
@@ -761,6 +771,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
     //管轄店舗
     /**
      * @tests
@@ -811,10 +822,10 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
             $this->assertEquals(\App\ControlStore::
-                    where('prefecture_code', trim($data[0]))->
-                    where('control_store_code', trim($data[1]))->
-                    where('control_store_name', trim($data[3]))->
-                    count(), 1);
+                            where('prefecture_code', trim($data[0]))->
+                            where('control_store_code', trim($data[1]))->
+                            where('control_store_name', trim($data[3]))->
+                            count(), 1);
         }
     }
 
@@ -870,12 +881,13 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
     public function 管轄店舗がエクスポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-        \App\ZenonType::truncate();        
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/ControlStore')
                 ->seePageIs('/admin/suisin/config/Suisin/ControlStore')
@@ -884,4 +896,5 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
 }
