@@ -118,6 +118,20 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+    /**
+     * @tests
+     */
+    public function 貸付種類設定ファイルがエクスポートできる() {
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Suisin/LoanCategory')
+                ->seePageIs('/admin/super_user/config/Suisin/LoanCategory')
+                ->see('ExportCSV')
+                ->click('ExportCSV')
+                ->assertResponseStatus(200)
+        ;
+    }
 
     //貸付
     //漁業形態 
@@ -198,6 +212,20 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFishery')
                 ->see('警告')
                 ->see('CSVファイル列数が一致しませんでした')
+        ;
+    }
+    /**
+     * @tests
+     */
+    public function 漁業形態設定ファイルがエクスポートできる() {
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Suisin/LoanFishery')
+                ->seePageIs('/admin/super_user/config/Suisin/LoanFishery')
+                ->see('ExportCSV')
+                ->click('ExportCSV')
+                ->assertResponseStatus(200)
         ;
     }
 
@@ -282,6 +310,20 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+    /**
+     * @tests
+     */
+    public function 資金区分設定ファイルがエクスポートできる() {
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Suisin/LoanFund')
+                ->seePageIs('/admin/super_user/config/Suisin/LoanFund')
+                ->see('ExportCSV')
+                ->click('ExportCSV')
+                ->assertResponseStatus(200)
+        ;
+    }
 
     //貸付
     //資金使途区分 
@@ -362,6 +404,20 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsageCode')
                 ->see('警告')
                 ->see('CSVファイル列数が一致しませんでした')
+        ;
+    }
+    /**
+     * @tests
+     */
+    public function 資金使途区分ファイルがエクスポートできる() {
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Suisin/LoanFundUsageCode')
+                ->seePageIs('/admin/super_user/config/Suisin/LoanFundUsageCode')
+                ->see('ExportCSV')
+                ->click('ExportCSV')
+                ->assertResponseStatus(200)
         ;
     }
 
@@ -447,6 +503,20 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+    /**
+     * @tests
+     */
+    public function 資金補助区分ファイルがエクスポートできる() {
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Suisin/LoanFundAuxiliary')
+                ->seePageIs('/admin/super_user/config/Suisin/LoanFundAuxiliary')
+                ->see('ExportCSV')
+                ->click('ExportCSV')
+                ->assertResponseStatus(200)
+        ;
+    }
 
     //貸付
     //資金用途 
@@ -527,6 +597,20 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsage')
                 ->see('警告')
                 ->see('CSVファイル列数が一致しませんでした')
+        ;
+    }
+    /**
+     * @tests
+     */
+    public function 資金用途区分ファイルがエクスポートできる() {
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Suisin/LoanFundUsage')
+                ->seePageIs('/admin/super_user/config/Suisin/LoanFundUsage')
+                ->see('ExportCSV')
+                ->click('ExportCSV')
+                ->assertResponseStatus(200)
         ;
     }
 
@@ -611,6 +695,20 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+    /**
+     * @tests
+     */
+    public function 自振区分ファイルがエクスポートできる() {
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Suisin/LoanJifuriCode')
+                ->seePageIs('/admin/super_user/config/Suisin/LoanJifuriCode')
+                ->see('ExportCSV')
+                ->click('ExportCSV')
+                ->assertResponseStatus(200)
+        ;
+    }
 
     //貸付
     //段階金利制区分 
@@ -691,6 +789,20 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->seePageIs('/admin/suisin/config/Suisin/LoanPhasedMoneyRate')
                 ->see('警告')
                 ->see('CSVファイル列数が一致しませんでした')
+        ;
+    }
+    /**
+     * @tests
+     */
+    public function 段階金利制区分ファイルがエクスポートできる() {
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Suisin/LoanPhasedMoneyRate')
+                ->seePageIs('/admin/super_user/config/Suisin/LoanPhasedMoneyRate')
+                ->see('ExportCSV')
+                ->click('ExportCSV')
+                ->assertResponseStatus(200)
         ;
     }
 
@@ -775,6 +887,20 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+    /**
+     * @tests
+     */
+    public function 担保コードファイルがエクスポートできる() {
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Suisin/LoanCollateral')
+                ->seePageIs('/admin/super_user/config/Suisin/LoanCollateral')
+                ->see('ExportCSV')
+                ->click('ExportCSV')
+                ->assertResponseStatus(200)
+        ;
+    }
 
     //貸付
     //保証機関コード 
@@ -855,6 +981,20 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSecurityInstitution')
                 ->see('警告')
                 ->see('CSVファイル列数が一致しませんでした')
+        ;
+    }
+    /**
+     * @tests
+     */
+    public function 保証機関コードファイルがエクスポートできる() {
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Suisin/LoanSecurityInstitution')
+                ->seePageIs('/admin/super_user/config/Suisin/LoanSecurityInstitution')
+                ->see('ExportCSV')
+                ->click('ExportCSV')
+                ->assertResponseStatus(200)
         ;
     }
 
@@ -939,6 +1079,20 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+     /**
+     * @tests
+     */
+    public function 利子補給助成機関区分ファイルがエクスポートできる() {
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Suisin/LoanSubsidyInstitution')
+                ->seePageIs('/admin/super_user/config/Suisin/LoanSubsidyInstitution')
+                ->see('ExportCSV')
+                ->click('ExportCSV')
+                ->assertResponseStatus(200)
+        ;
+    }
 
     //貸付
     //利子補給助成区分
@@ -1019,6 +1173,20 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidy')
                 ->see('警告')
                 ->see('CSVファイル列数が一致しませんでした')
+        ;
+    }
+    /**
+     * @tests
+     */
+    public function 利子補給助成区分ファイルがエクスポートできる() {
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Suisin/LoanSubsidy')
+                ->seePageIs('/admin/super_user/config/Suisin/LoanSubsidy')
+                ->see('ExportCSV')
+                ->click('ExportCSV')
+                ->assertResponseStatus(200)
         ;
     }
 
@@ -1103,20 +1271,18 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-
-//    後回し
-//    /**
-//     * @tests
-//     */
-//    public function 委託者グループでCSVファイルをエクスポートできる() {
-//        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
-//        \App\Consignor::truncate();
-//        $file_name = '委託者グループ.csv';
-//        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
-//        $this->actingAs($user)
-//                ->visit('/admin/suisin/config/Suisin/ConsignorGroup')
-//                ->seePageIs('/admin/suisin/config/Suisin/ConsignorGroup')                
-//                ->press('ExportCSV')
-//        ;
-//    }
+/**
+     * @tests
+     */
+    public function 利子補給助成計算区分ファイルがエクスポートできる() {
+        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        \App\ZenonType::truncate();
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Suisin/LoanSubsidyCalculation')
+                ->seePageIs('/admin/super_user/config/Suisin/LoanSubsidyCalculation')
+                ->see('ExportCSV')
+                ->click('ExportCSV')
+                ->assertResponseStatus(200)
+        ;
+    }
 }
