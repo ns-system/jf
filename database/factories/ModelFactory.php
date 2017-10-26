@@ -41,3 +41,9 @@ $factory->define(App\Emotion::class, function (Faker\Generator $faker) {
         'comment'    => $faker->sentence,
     ];
 });
+$factory->define(App\SinrenDivision::class, function (Faker\Generator $faker) {
+    return [
+        'division_name'     => $faker->randomDigitNotNull,
+        'division_id' => $faker->randomDigitNotNull,
+    ];
+});
