@@ -235,6 +235,66 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
+    public function is_super_userに誤った入力がされるとエラー() {
+        \Session::start();
+        \App\User::truncate();
+        \App\RosterUser::truncate();
+        \App\SinrenUser::truncate();
+        \App\SinrenDivision::truncate();
+        factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
+        $supar_user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $target_user = factory(\App\User::class)->create(['is_super_user' => '0']);
+        factory(\App\SinrenUser::class)->create(['user_id'=>$target_user->id,'division_id' => '1']);
+        factory(\App\RosterUser::create(['user_id'=>$target_user->id,"is_administrator"=>'0']));
+        $this->actingAs($supar_user)
+                ->POST('/admin/super_user/user/edit/'.$target_user->id, ['_token' => csrf_token(),'is_super_user'=> "jat@e"])
+                ->assertSessionHasErrors()                
+        ;
+        
+    }
+    /**
+     * @tests
+     */
+    public function suisin_is_administratorに誤った入力がされるとエラー() {
+        \Session::start();
+        \App\User::truncate();
+        \App\RosterUser::truncate();
+        \App\SinrenUser::truncate();
+        \App\SinrenDivision::truncate();
+        factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
+        $supar_user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $target_user = factory(\App\User::class)->create(['is_super_user' => '0']);
+        factory(\App\SinrenUser::class)->create(['user_id'=>$target_user->id,'division_id' => '1']);
+        factory(\App\RosterUser::create(['user_id'=>$target_user->id,"is_administrator"=>'0']));
+        $this->actingAs($supar_user)
+                ->POST('/admin/super_user/user/edit/'.$target_user->id, ['_token' => csrf_token(),'suisin_is_administrator'=> "jat@e"])
+                ->assertSessionHasErrors()                
+        ;
+        
+    }
+    /**
+     * @tests
+     */
+    public function roster_is_administratorに誤った入力がされるとエラー() {
+        \Session::start();
+        \App\User::truncate();
+        \App\RosterUser::truncate();
+        \App\SinrenUser::truncate();
+        \App\SinrenDivision::truncate();
+        factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
+        $supar_user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $target_user = factory(\App\User::class)->create(['is_super_user' => '0']);
+        factory(\App\SinrenUser::class)->create(['user_id'=>$target_user->id,'division_id' => '1']);
+        factory(\App\RosterUser::create(['user_id'=>$target_user->id,"is_administrator"=>'0']));
+        $this->actingAs($supar_user)
+                ->POST('/admin/super_user/user/edit/'.$target_user->id, ['_token' => csrf_token(),'roster_is_administrator'=> "jat@e"])
+                ->assertSessionHasErrors()                
+        ;
+        
+    }
+    /**
+     * @tests
+     */
     public function ユーザーを名前で検索できる() {
         \App\User::truncate();
         $supar_user = factory(\App\User::class)->create(['is_super_user' => '1']);
