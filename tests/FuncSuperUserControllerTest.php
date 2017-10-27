@@ -82,7 +82,7 @@ class FuncSuperUserControllerTest extends TestCase
                 ->visit('/admin/super_user/user/'.$target_user->id)
                 ->see($target_user->first_name." ".$target_user->last_name)
                 ->select('0', 'is_super_user')
-                ->press('update')
+                ->press('更新する')
                 ->seePageIs('/admin/super_user/user')
         ;
         $changed_user = \App\User::find($target_user->id);
@@ -135,7 +135,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 勤怠一般ユーザーを勤怠スーパーユーザに変更できる() {
+    public function 勤怠一般ユーザーを勤怠管理ユーザに変更できる() {
         \App\User::truncate();
         \App\SinrenUser::truncate();
         \App\SinrenDivision::truncate();
@@ -160,7 +160,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 勤怠スーパーユーザーを勤怠一般ユーザに変更できる() {
+    public function 勤怠管理ユーザを勤怠一般ユーザに変更できる() {
         \App\User::truncate();
         \App\SinrenUser::truncate();
         \App\SinrenDivision::truncate();
@@ -181,6 +181,56 @@ class FuncSuperUserControllerTest extends TestCase
         $roster_changed_user = \App\RosterUser::where('user_id',$target_user->id)->first();
         $this->assertEquals(1, $roster_unchanged_user->is_administrator);
         $this->assertEquals(0, $roster_changed_user->is_administrator);
+    }
+    /**
+     * @tests
+     */
+    public function スーパーユーザー以外がユーザーをスーパーユーザーにしようとするとエラー() {
+        \Session::start();
+        \App\User::truncate();
+        $supar_user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $target_user = factory(\App\User::class)->create(['is_super_user' => '0']);
+        $a=$this->actingAs($target_user)
+                ->POST('/admin/super_user/user/edit/'.$target_user->id, ['_token' => csrf_token(),'is_super_user'=> "1"])
+                ->assertRedirectedTo('/permission_error')
+        ;
+        
+    }
+    /**
+     * @tests
+     */
+    public function スーパーユーザー以外がユーザーを推進管理ユーザーにしようとするとエラー() {
+        \Session::start();
+        \App\User::truncate();
+        \App\SuisinUser::truncate();
+        $supar_user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $target_user = factory(\App\User::class)->create(['is_super_user' => '0']);
+        factory(\App\SuisinUser::create(['user_id'=>$target_user->id,"is_administrator"=>'0']));
+        $this->actingAs($target_user)
+                ->POST('/admin/super_user/user/edit/'.$target_user->id, ['_token' => csrf_token(),'suisin_is_administrator'=> "1"])
+                ->assertRedirectedTo('/permission_error')
+        ;
+        
+    }
+    /**
+     * @tests
+     */
+    public function スーパーユーザー以外がユーザーを勤怠管理ユーザーにしようとするとエラー() {
+        \Session::start();
+        \App\User::truncate();
+        \App\RosterUser::truncate();
+        \App\SinrenUser::truncate();
+        \App\SinrenDivision::truncate();
+        factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
+        $supar_user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $target_user = factory(\App\User::class)->create(['is_super_user' => '0']);
+        factory(\App\SinrenUser::class)->create(['user_id'=>$target_user->id,'division_id' => '1']);
+        factory(\App\RosterUser::create(['user_id'=>$target_user->id,"is_administrator"=>'0']));
+        $this->actingAs($target_user)
+                ->POST('/admin/super_user/user/edit/'.$target_user->id, ['_token' => csrf_token(),'roster_is_administrator'=> "1"])
+                ->assertRedirectedTo('/permission_error')
+        ;
+        
     }
     /**
      * @tests
