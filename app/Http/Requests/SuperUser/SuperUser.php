@@ -12,6 +12,10 @@ class SuperUser extends Request
      *
      * @return bool
      */
+    public function authorize() {
+        return true;
+    }
+
     public function rules() {
         $input = \Input::all();
         $rules = [];
