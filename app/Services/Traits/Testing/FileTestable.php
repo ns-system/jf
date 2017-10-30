@@ -43,10 +43,10 @@ trait FileTestable
     }
 
     public function unlinkFile($file_path) {
-        if (file_exists($file_path))
-        {
-            exec("rm -rf {$file_path}");
-        }
+//        if (file_exists($file_path))
+//        {
+//            exec("rm -rf {$file_path}");
+//        }
     }
 
 }

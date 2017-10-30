@@ -62,16 +62,4 @@ class UnitFileUploadTestableTest extends TestCase
         $this->assertThat(filesize($path . $empty_file), $this->greaterThan(0));
     }
 
-    /**
-     * @tests
-     */
-    public function 正常系_ファイル削除ができる() {
-        $path       = storage_path() . '/tests/';
-        $empty_file = 'delete_file.csv';
-        $this->s->createCsvFile($empty_file);
-        $this->s->unlinkFile($path . $empty_file);
-
-        $this->assertFalse(file_exists($path . $empty_file));
-    }
-
 }

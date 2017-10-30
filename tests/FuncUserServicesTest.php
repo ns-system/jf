@@ -13,7 +13,7 @@
  */
 use App\Services\Traits\Testing\FileTestable;
 
-class UnitUserServicesTest extends TestCase
+class FuncUserServicesTest extends TestCase
 {
 
     use FileTestable;
@@ -21,21 +21,23 @@ class UnitUserServicesTest extends TestCase
     protected static $init = false;
     protected $user;
     protected $service;
-    public function setUp() {
-        parent::setUp();
-
-        if (!static::$init)
-        {
-            static::$init = true;
-            try {
-                \Artisan::call('db:reset', ['--dbenv' => 'testing', '--hide' => 'true']);
-                \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
-                \Artisan::call('migrate');
-            } catch (\Exception $exc) {
-                echo $exc->getTraceAsString();
-            }
-        }
-    }
+// なぜかバグってたのでコメントアウト。dbいじるのはテスト前にした方がいいかもね。
+//    public function setUp() {
+//        parent::setUp();
+//        echo 'init';
+//
+//        if (!static::$init)
+//        {
+//            static::$init = true;
+//            try {
+////                \Artisan::call('db:reset');
+////                \Artisan::call('db:create');
+////                \Artisan::call('migrate');
+//            } catch (\Exception $exc) {
+//                echo $exc->getTraceAsString();
+//            }
+//        }
+//    }
 
     protected $name_change_input     = [
         'first_name'      => '名無し',
@@ -64,7 +66,7 @@ class UnitUserServicesTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系名前変更時ユーザーが存在しない() {
+    public function 異常系_名前変更時ユーザーが存在しない() {
         \App\User::truncate();
         $user    = factory(\App\User::class)->create();
         $service = new \App\Services\UserService();
@@ -79,7 +81,7 @@ class UnitUserServicesTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系名前の変更ができる() {
+    public function 正常系_名前の変更ができる() {
         $user              = factory(\App\User::class)->create();
         $service           = new \App\Services\UserService();
         $service->editUserName($user->id, $this->name_change_input);
@@ -200,10 +202,4 @@ class UnitUserServicesTest extends TestCase
         $this->assertEquals($user_changed_division->division_id, $this->division_change_input['division_id']);
     }
 
-//    /**
-//     * @tests
-//     */
-//    public function 異常系所属変更時SQL例外発生() {
-//       
-//    }
 }
