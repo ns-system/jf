@@ -13,7 +13,7 @@
  */
 use App\Services\Traits\Testing\FileTestable;
 
-class FuncUserServicesTest extends TestCase
+class UnitUserServicesTest extends TestCase
 {
 
     use FileTestable;
@@ -132,7 +132,7 @@ class FuncUserServicesTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系パスワード変更時ユーザーが存在しない() {
+    public function 異常系_パスワード変更時ユーザーが存在しない() {
         \App\User::truncate();
         $user    = factory(\App\User::class)->create();
         $service = new \App\Services\UserService();
@@ -147,7 +147,7 @@ class FuncUserServicesTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系パスワードの変更ができる() {
+    public function 正常系_パスワードの変更ができる() {
         $user                  = factory(\App\User::class)->create();
         $service               = new \App\Services\UserService();
         $service->editUserPassword($user->id, $this->password_change_input);
@@ -159,7 +159,7 @@ class FuncUserServicesTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系パスワードがマッチする() {
+    public function 正常系_パスワードがマッチする() {
         $user    = factory(\App\User::class)->create(['unencrypt_password' => $this->password_match_input["password"]]);
         $service = new \App\Services\UserService();
         $this->assertTrue($service->isPasswordMatch($user->id, $this->password_match_input));
@@ -168,7 +168,7 @@ class FuncUserServicesTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系パスワードがマッチしない() {
+    public function 異常系_パスワードがマッチしない() {
         $user    = factory(\App\User::class)->create(['unencrypt_password' => $this->password_match_input["password"] . "falsse"]);
         $service = new \App\Services\UserService();
         $this->assertFalse($service->isPasswordMatch($user->id, $this->password_match_input));
@@ -177,7 +177,7 @@ class FuncUserServicesTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系パスワードをマッチさせるユーザーが存在しない() {
+    public function 異常系_パスワードをマッチさせるユーザーが存在しない() {
         \App\User::truncate();
         $user    = factory(\App\User::class)->create(['unencrypt_password' => $this->password_match_input["password"]]);
         $service = new \App\Services\UserService();
@@ -192,7 +192,7 @@ class FuncUserServicesTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系所属が変更できる() {
+    public function 正常系_所属が変更できる() {
 
         \App\SinrenDivision::insert([['division_id' => 1, 'division_name' => 'System'], ['division_id' => 2, 'division_name' => 'Sales']]);
         $user                  = factory(\App\User::class)->create(['unencrypt_password' => $this->password_match_input["password"]]);
