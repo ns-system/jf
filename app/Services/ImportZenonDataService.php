@@ -68,7 +68,7 @@ class ImportZenonDataService
         {
             throw new \Exception("月別IDの指定が不正です。（指定：{$monthly_id}）");
         }
-        $date_obj                = $this->setDate($monthly_id);
+        $date_obj                = $this->setDate($monthly_id)->getDate();
         $this->row['monthly_id'] = $date_obj->format('Ym');
         return $this;
     }
