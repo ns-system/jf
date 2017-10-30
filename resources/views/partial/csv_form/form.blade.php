@@ -21,7 +21,10 @@
             data-toggle="tooltip"
             data-placement="bottom"
             title="表示されているデータをCSVファイルに出力します。"
+            name ="ExportCSV"
+            id ="ExportCSV"
             data-placement="top"
+            
             >ExportCSV</a><span></span>
 
         <label
@@ -46,6 +49,8 @@
                 style="min-width: 100px;"
                 data-toggle="tooltip"
                 data-placement="bottom"
+                name ="ImportCSV"
+                id ="ImportCSV"
                 title="選択したCSVファイルを取り込みます。先に取り込むファイルを指定してください。"
                 data-placement="top"
                 onclick="return checkFile(document.getElementById('csv_file').value);"

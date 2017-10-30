@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 //use Illuminate\Http\Request;
 //use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use App\Http\Requests\SuperUser\SuperUser;
 class SuperUserController extends Controller
 {
 
@@ -56,14 +56,14 @@ class SuperUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id) {
+    public function edit($id,SuperUser $res) {
         try {
             $super = $this->users;
-            $res   = $super->editUser(\Input::all(), $id);
-            if ($res !== true)
-            {
-                return back()->withErrors($res);
-            }
+            $super->editUser($res, $id);
+//            if ($res !== true)
+//            {
+//                return back()->withErrors($res);
+//            }
             \Session::flash('flash_message', \App\User::find($id)->name . "さんの情報を変更しました。");
             return redirect(route('admin::super::user::show'));
 //            return redirect('/admin/app/admin_user');
