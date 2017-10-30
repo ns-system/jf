@@ -44,25 +44,25 @@ class SuperUserService
         $users = $this->getUsers();
         if ($input['name'] != '')
         {
-            echo "name";
+//            echo "name";
             $users->where('name', 'like', "%{$input['name']}%");
         }
 
         if ($input['mail'] != '')
         {
-            echo "mail";
+//            echo "mail";
             $users->where('email', 'like', "%{$input['mail']}%");
         }
 
         if ($input['super'] != '')
         {
-            echo "super";
+//            echo "super";
             $users->where('is_super_user', '=', $input['super']);
         }
 
         if ($input['suisin'] != '')
         {
-            echo "suisin";
+//            echo "suisin";
             $users->where('suisin_users.is_administrator', '=', $this->setNull($input['suisin']));
         }
 
