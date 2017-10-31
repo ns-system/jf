@@ -13,6 +13,6 @@ class jenkinsTest extends TestCase
      */
     public function testExample()
     {
-        $this->assertTrue(true);
+        $this->assertTrue(false);
     }
 }
