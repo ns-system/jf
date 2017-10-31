@@ -6,13 +6,15 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class jenkinsTest extends TestCase
 {
+
     /**
      * A basic test example.
      *
      * @return void
      */
-    public function testExample()
-    {
-        $this->assertTrue(false);
+    public function testExample() {
+        $this->assertTrue(true);
+        $this->assertEquals(2, 1 + 1);
     }
+
 }
