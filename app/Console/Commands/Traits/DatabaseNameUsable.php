@@ -36,7 +36,7 @@ Trait DatabaseNameUsable
             $pdo = new \PDO($connect_buf, $user, $password);
         } catch (\PDOException $e) {
             echo ($e->getMessage() . PHP_EOL);
-            $this->echoMessage(false, "コネクション確立に失敗しました。（{$connect_buf} ユーザー：{$user}）");
+            $this->echoMessage(false, "コネクション確立に失敗しました。（環境：{$db_env} コネクション：{$connect_buf} ユーザー：{$user}）");
             $this->error("エラーが発生したため処理を中断しました。");
             exit();
         }
