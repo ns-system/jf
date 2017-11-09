@@ -79,8 +79,8 @@ class FuncNikocakeControllerTest extends TestCase
         $this->actingAs($acter)
                 ->visit(route('app::nikocale::index', ['monthly_id' => $monthly_id]))
                 ->seePageIs('/app/nikocale/index/' . $monthly_id)
-                ->see("destroy_{$date}_{$acter->id}")
-                ->click("destroy_{$date}_{$acter->id}")
+                ->see("destroy_{$result_2['id']}_{$acter->id}")
+                ->click("destroy_{$result_2['id']}_{$acter->id}")
                 ->see("データが削除されました。")
         ;
         $result_3 = \App\Emotion::where(['user_id' => $acter->id, 'entered_on' => $date])->get();
