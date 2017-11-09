@@ -178,4 +178,10 @@ trait JobStatusUsable
         return $this;
     }
 
+    public function resetJobStatus($job_status) {
+        foreach ($job_status as $job) {
+            $job->is_import = false;
+        }
+    }
+
 }

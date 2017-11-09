@@ -33,21 +33,25 @@
         <td class="va-middle">
             @if(!empty($r->staff_number))
                 <p>{{$r->staff_number}}</p>
-            @else <p class="text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> 職員番号が<a href="{{route('admin::roster::index', ['system'=>'Roster','category'=>'RosterUser'])}}">登録</a>されていません</p> @endif
+            @else <p class="text-danger"><a href="{{route('admin::roster::index', ['system'=>'Roster','category'=>'RosterUser'])}}"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> 職員番号が登録されていません</a></p> @endif
             <p>{{$r->division_name}}</p>
-            <p>{{$r->name}}さん</p>
+            <p>{{$r->last_name}} {{$r->first_name}}さん</p>
         </td>
         {{-- 予定状態ラベル --}}
         <td>
             @if($r->is_plan_entry)
                 @if($r->is_plan_accept)
                     <p><span class="label label-success" style="min-width: 75px;">承認済み</span></p>
-                    <p>{{\App\User::where('id','=',$r->plan_accept_user_id)->first()->name}}さん</p>
-                    <p>{{date('n月j日 G:i', strtotime($r->plan_accepted_at))}}</p>
+                    @if(!empty($r->plan_accept_last_name))
+                        <p>{{$r->plan_accept_last_name}}さん</p>
+                        <p>{{date('n月j日 G:i', strtotime($r->plan_accepted_at))}}</p>
+                    @endif
                 @elseif($r->is_plan_reject)
                     <p><span class="label label-danger" style="min-width: 75px;">却下</span></p>
-                    <p>{{\App\User::where('id','=',$r->plan_reject_user_id)->first()->name}}さん</p>
-                    <p>{{date('n月j日 G:i', strtotime($r->plan_rejected_at))}}</p>
+                    @if(!empty($r->plan_reject_last_name))
+                        <p>{{$r->plan_reject_name}}さん</p>
+                        <p>{{date('n月j日 G:i', strtotime($r->plan_rejected_at))}}</p>
+                    @endif
                 @else
                     <p><span class="label label-warning" style="min-width: 75px;">承認待ち</span></p>
                 @endif
@@ -62,12 +66,16 @@
             @if($r->is_actual_entry)
                 @if($r->is_actual_accept)
                     <p><span class="label label-success" style="min-width: 75px;">承認済み</span></p>
-                    <p>{{\App\User::where('id','=',$r->actual_accept_user_id)->first()->name}}さん</p>
-                    <p>{{date('n月j日 G:i', strtotime($r->actual_accepted_at))}}</p>
+                    @if(!empty($r->actual_accept_last_name))
+                        <p>{{$r->actual_accept_last_name}}さん</p>
+                        <p>{{date('n月j日 G:i', strtotime($r->actual_accepted_at))}}</p>
+                    @endif
                 @elseif($r->is_actual_reject)
                     <p><span class="label label-danger" style="min-width: 75px;">却下</span></p>
-                    @if(!empty($r->actual_reject_user_id)) <p>{{\App\User::where('id','=',$r->actual_reject_user_id)->first()->name}}さん</p> @endif
-                    @if(!empty($r->actual_rejected_at))    <p>{{date('n月j日 G:i', strtotime($r->actual_rejected_at))}}</p> @endif
+                    @if(!empty($r->actual_reject_last_name))
+                        <p>{{$r->actual_reject_last_name}}さん</p>
+                        <p>{{date('n月j日 G:i', strtotime($r->actual_rejected_at))}}</p>
+                    @endif
                 @else
                     <p><span class="label label-warning" style="min-width: 75px;">承認待ち</span></p>
                 @endif
@@ -122,7 +130,7 @@
         {{-- 残業実績 --}}
 
         <td class="va-middle">
-            <a href="{{route('admin::roster::csv::edit', ['id'=>$r->key_id, 'ym'=>$ym])}}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 編集</a>
+            <a href="{{route('admin::roster::csv::edit', ['id'=>$r->key_id, 'ym'=>$ym])}}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 強制変更</a>
         </td>
     </tr>
 @endforeach

@@ -19,6 +19,15 @@ Route::get('/home', function() {
     return redirect('/');
 });
 
+Route::get('/email', function() {
+    return view('emails.sample_email_form');
+});
+Route::post('/email/send', function() {
+    $addr = \Input::only('addr');
+    Queue::push(new \App\Jobs\SampleMailJob($addr));
+    echo 'At ' . date('Y-m-d H:i:s') . ', mail send.';
+});
+
 // ===========================================================================================================================
 /**
  * Role       : auth user

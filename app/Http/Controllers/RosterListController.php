@@ -10,7 +10,7 @@ class RosterListController extends Controller
 {
 
     public function is_valid_division($id) {
-        $div = \App\SinrenUser::user()->first()->division_id;
+        $div = \App\SinrenUser::user($id)->first()->division_id;
 //        var_dump("{$div} <=> {$id}");
 //        exit();
         if ($id == $div)
@@ -21,11 +21,12 @@ class RosterListController extends Controller
     }
 
     public function check() {
-        if (empty(\App\SinrenUser::user()))
+        $id = \Auth::user()->id;
+        if (empty(\App\SinrenUser::user($id)))
         {
-            return redirect(route('app::roster::user::show'));
+            return redirect()->route('app::roster::user::show');
         }
-        return redirect(route('app::roster::division::index', ['div' => \App\SinrenUser::user()->first()->division_id]));
+        return redirect()->route('app::roster::division::index', ['div' => \App\SinrenUser::user($id)->first()->division_id]);
     }
 
     /**

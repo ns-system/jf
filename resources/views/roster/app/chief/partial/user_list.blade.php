@@ -14,11 +14,11 @@
 	<tr>
 		<td>{{$r->division_name}}</td>
 		@if($r->is_chief)
-			<td class="text-left">{{$r->name}}さん</td>
+			<td class="text-left">{{$r->last_name}} {{$r->first_name}}さん</td>
 			<td><span class="label label-warning" style="display: inline-block; min-width: 100px;">責任者</span></td>
 		@else
 			<td class="text-left">
-				<a href="" data-toggle="modal" data-target="#form_{{$r->key_id}}">{{$r->name}}さん</a>
+				<a href="" data-toggle="modal" data-target="#form_{{$r->key_id}}">{{$r->last_name}} {{$r->first_name}}さん</a>
 				@include('roster.app.chief.partial.form')
 			</td>
 			<td>
