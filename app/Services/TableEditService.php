@@ -51,9 +51,7 @@ class TableEditService
 //            throw new \Exception("設定ファイルが見つかりませんでした。");
 //        }
         $this->setModel($parameter['object'], (
-                isset($parameter['join'])) ? $parameter['join'] : [],
-                $parameter['table_orders'],
-                (isset($parameter['as'])) ? $parameter['as'] : null
+                isset($parameter['join'])) ? $parameter['join'] : [], $parameter['table_orders'], (isset($parameter['as'])) ? $parameter['as'] : null
         );
         $this->model_name              = $parameter['object'];
         $this->html_titles             = $parameter['display'];
@@ -273,13 +271,27 @@ class TableEditService
             {
                 continue;
             }
-            if(count($keys) !== count($line)){
-                throw new \Exception("CSVファイル列数が一致しませんでした。（想定：".count($keys)."列 実際：".count($line)."列）");
+            if (count($keys) !== count($line))
+            {
+                throw new \Exception("CSVファイル列数が一致しませんでした。（想定：" . count($keys) . "列 実際：" . count($line) . "列）");
             }
 //            var_dump(count($keys), count($line));
 //            dd($line);
             $tmp_row    = array_combine($keys, $line);
             $csv_rows[] = $this->convertTypes($convert_rules, $tmp_row);
+        }
+
+        /*
+         * 全てのPOST数をカウントし、上限を超えていたらエラーを投げる
+         * 上限はphp.ini -> max_input_varsで調整可能
+         * counts関数の第二引数にCOUNT_RECURSIVEを与えることで再帰的に要素数を取得する
+         * そのため、配列の一次元目をマイナスしてPOSTの数として揃えている
+         */
+        $posts_count = count($csv_rows, COUNT_RECURSIVE) - count($csv_rows);
+        $max_posts   = (int) ini_get('max_input_vars');
+        if ($posts_count > $max_posts)
+        {
+            throw new \Exception("一度に取り込めるデータ件数をオーバーしました。フィールド数が" . number_format($max_posts) . "を超えないように調整してください。（フィールド数：" . number_format($posts_count) . "）");
         }
         return $csv_rows;
     }
