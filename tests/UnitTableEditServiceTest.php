@@ -10,6 +10,44 @@ class UnitTableEditServiceTest extends TestCase
 
     use FileTestable;
 
+    const GIST_FILE_NAME       = 'gist_code_limit.csv';
+    const GIST_LIMIT_FILE_NAME = 'test_gist_code.csv';
+
+    protected static $init        = false;
+    protected static $limit_count = 0;
+
+    public function setUp() {
+        parent::setUp();
+        if (static::$init)
+        {
+            return;
+        }
+        static::$init = true;
+        try {
+            $limit_datas = [];
+            $header      = ['code', 'name_1', 'name_2', 'name_3', 'name_4', 'name_5'];
+
+            $limit_datas[] = $header;
+            $success_datas = [
+                $header,
+                [1, 'test', 'test', '', '', '',],
+                [2, 'test', 'test', '', '', '',],
+            ];
+
+            $max_posts = (int) ini_get('max_input_vars');
+            $loops     = (int) ($max_posts / count($header));
+            for ($i = 0; $i < ($loops + 10); $i++) {
+                $limit_datas[] = [$i + 1, 'test', 'test', '', '', '',];
+            }
+            static::$limit_count = count($limit_datas, 1) - (count($limit_datas) + count($header));
+
+            $this->createCsvFile(self::GIST_LIMIT_FILE_NAME, $limit_datas);
+            $this->createCsvFile(self::GIST_FILE_NAME, $success_datas);
+        } catch (\Exception $exc) {
+            echo $exc->getTraceAsString();
+        }
+    }
+
     /**
      * A basic test example.
      *
@@ -55,7 +93,7 @@ class UnitTableEditServiceTest extends TestCase
     public function 異常系_CSV型変換用の配列が作れない() {
         $s = $this->setReflection('makeCsvValueConvertType');
         try {
-            $res_1 = $s->invoke($this->s, null, null);
+            $s->invoke($this->s, null, null);
             $this->fail('例外発生なし');
         } catch (\Exception $ex) {
             $this->assertEquals('変換用カラム名が入力されていません。', $ex->getMessage());
@@ -66,7 +104,7 @@ class UnitTableEditServiceTest extends TestCase
      * @tests
      */
     public function 異常系_CSVの配列とキー値の個数が違った場合_エラーを吐く() {
-        $request_csv_file = $this->createUploadFile(storage_path() . '/tests', 'test_gist_code.csv', 'text/csv');
+        $request_csv_file = $this->createUploadFile(storage_path() . '/tests', self::GIST_FILE_NAME, 'text/csv');
         $csv_object       = $this->s->setHtmlPageGenerateConfigs('App\Services\SuisinCsvConfigService', 'Area')
                 ->setCsvFileObject($request_csv_file)
                 ->getCsvFileObject()
@@ -143,7 +181,7 @@ class UnitTableEditServiceTest extends TestCase
      * @tests
      */
     public function 正常系_CSVファイルを配列に変換できる() {
-        $request_csv_file = $this->createUploadFile(storage_path() . '/tests', 'test_gist_code.csv', 'text/csv');
+        $request_csv_file = $this->createUploadFile(storage_path() . '/tests', self::GIST_FILE_NAME, 'text/csv');
         $csv_object       = $this->s->setHtmlPageGenerateConfigs('App\Services\SuisinCsvConfigService', 'DepositGist')
                 ->setCsvFileObject($request_csv_file)
                 ->getCsvFileObject()
@@ -156,8 +194,8 @@ class UnitTableEditServiceTest extends TestCase
         $jp_keys = ["摘要コード", "表示摘要名", "全オン摘要", "ビジネスネット 漢字摘要", "ビジネスネット カナ摘要", "ビジネスネット ｶﾅ摘要",];
 
         $rows = [
-            ["1", "その他自振１", "その他自振１", "", "", "",],
-            ["2", "その他自振２", "その他自振２", "", "", "",]
+            [1, "test", "test", "", "", "",],
+            [2, "test", "test", "", "", "",]
         ];
 
         $expection_1 = [];
@@ -168,14 +206,13 @@ class UnitTableEditServiceTest extends TestCase
         }
         $this->assertEquals($expection_1, $res_1);
         $this->assertEquals($expection_2, $res_2);
-//        var_dump($res_1);
     }
 
     /**
      * @tests
      */
     public function 正常系_バリデーションルールが生成できる() {
-        $request_csv_file = $this->createUploadFile(storage_path() . '/tests', 'test_gist_code.csv', 'text/csv');
+        $request_csv_file = $this->createUploadFile(storage_path() . '/tests', self::GIST_FILE_NAME, 'text/csv');
         $csv_object       = $this->s->setHtmlPageGenerateConfigs('App\Services\SuisinCsvConfigService', 'DepositGist')
                 ->setCsvFileObject($request_csv_file)
                 ->getCsvFileObject()
@@ -216,7 +253,6 @@ class UnitTableEditServiceTest extends TestCase
         ];
         $s        = $this->setReflection('swapPostColumnAndRow');
         $result_1 = $s->invoke($this->s, $post);
-//        $result_1 = $this->s->swapPostColumnAndRow($post);
         $this->assertEquals($expect_1, $result_1);
     }
 
@@ -340,8 +376,33 @@ class UnitTableEditServiceTest extends TestCase
             echo $exc->getTraceAsString();
             throw new \Exception('予期しないエラーです。');
         }
-//        dd($counts);
         $this->assertEquals(['insert_count' => 1, 'update_count' => 1], $res_1);
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系_POST値がサーバーで設定されている数をオーバーした場合にエラーとなる() {
+        $path      = storage_path() . '/tests';
+//        $datas     = [];
+//        $datas[]   = ['code', 'name_1', 'name_2', 'name_3', 'name_4', 'name_5'];
+        $max_posts = (int) ini_get('max_input_vars');
+//        $loops     = (int) ($max_posts / count($datas[0]));
+//        for ($i = 0; $i < ($loops + 10); $i++) {
+//            $datas[] = [$i + 1, 'test', 'test', '', '', '',];
+//        }
+//        $actual_size = count($datas, 1) - (count($datas) + count($datas[0]));
+        try {
+            $request_csv_file = $this->createUploadFile($path, self::GIST_LIMIT_FILE_NAME, 'text/csv');
+            $csv_object       = $this->s->setHtmlPageGenerateConfigs('App\Services\SuisinCsvConfigService', 'DepositGist')
+                    ->setCsvFileObject($request_csv_file)
+                    ->getCsvFileObject()
+            ;
+            $this->s->convertCsvFileToArray('en', true, $csv_object);
+            $this->fail('予期しないエラーです。');
+        } catch (\Exception $exc) {
+            $this->assertEquals("一度に取り込めるデータ件数をオーバーしました。フィールド数が" . number_format($max_posts) . "を超えないように調整してください。（フィールド数：" . number_format(static::$limit_count) . "）", $exc->getMessage());
+        }
     }
 
 }

@@ -275,7 +275,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
-            $res  = \App\ZenonType:: here('data_type_name', trim($data[1]))->count();
+            $res  = \App\ZenonType::where('data_type_name', trim($data[1]))->count();
             $this->assertEquals($res, 1);
         }
     }
