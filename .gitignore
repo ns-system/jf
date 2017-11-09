@@ -7,3 +7,4 @@ Homestead.yaml
 Vagrantfile
 *.box
 report/
+config/database.php
