@@ -33,7 +33,7 @@ class CreateDatabase extends Command
         $db              = $this->connectDatabase($db_env);
         if ($db_env === 'mysql')
         {
-            $this->confirm("テスト環境以外が指定されたようです。削除してもよろしいですか？");
+            $this->confirm("テスト環境以外が指定されたようです。作成してもよろしいですか？");
         }
         try {
             $database_names = $this->getDatabaseName($this->option('name'));

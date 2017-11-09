@@ -7,6 +7,7 @@ trait DateUsable
 
     protected $date;
     protected $time;
+    protected $date_object;
 
     public function isDate($date_buf) {
         try {
@@ -16,9 +17,7 @@ trait DateUsable
         }
         return true;
     }
-    
 
-    // setterでGetさせるのまずい非常に。
     public function setDate($date_time_buf) {
         if (
                 empty($date_time_buf) ||
@@ -26,7 +25,8 @@ trait DateUsable
                 $date_time_buf === '00000000'
         )
         {
-            return null;
+            $this->date_object = null;
+            return $this;
         }
 
         $array    = $this->parseDateTime($date_time_buf);
@@ -47,10 +47,16 @@ trait DateUsable
             throw new \Exception("日付型以外のものが指定されました。（引数：{$date_buf}）");
         }
 
-        $time_array = $this->setTime($time_buf);
-        $d          = "{$date_array['year']}-{$date_array['month']}-{$date_array['day']}";
-        $t          = "{$time_array['hour']}:{$time_array['min']}:{$time_array['sec']}";
-        return new \DateTime("{$d} {$t}");
+        $time_array        = $this->setTime($time_buf);
+        $d                 = "{$date_array['year']}-{$date_array['month']}-{$date_array['day']}";
+        $t                 = "{$time_array['hour']}:{$time_array['min']}:{$time_array['sec']}";
+        $this->date_object = new \DateTime("{$d} {$t}");
+        return $this;
+//        return new \DateTime("{$d} {$t}");
+    }
+
+    public function getDate() {
+        return $this->date_object;
     }
 
     private function parseDateTime($date_time_buf) {

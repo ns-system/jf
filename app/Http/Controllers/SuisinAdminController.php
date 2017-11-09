@@ -78,24 +78,24 @@ class SuisinAdminController extends Controller
             $rows             = $service->convertCsvFileToArray(/* language = */'en', /* is_header_exist = */ true, /* csv_file_object = */ $csv_file_object);
             $import_setttings = $service->getImportSettings();
             $rules            = $service->makeValidationRules($rows);
-            $validator        = \Validator::make($rows, $rules);
         } catch (\Exception $e) {
             \Session::flash('danger_message', $e->getMessage());
             return back();
         }
 
-
-//        dd($rows);
-        $page_settings['title']         = '確認 - ' . $page_settings['title'];
-        $page_settings['h2']            = "CSVファイル確認 <small> - {$service->getFileName()}</small>";
-        $page_settings['key']           = $import_setttings['keys'];
-        $page_settings['table_columns'] = $import_setttings['table_columns'];
-        $view                           = strtolower($system) . '.admin.import';
+        // バリデーションチェック処理
+        $validator = \Validator::make($rows, $rules);
         if ($validator->fails())
         {
             \Session::flash('danger_message', "CSVファイルの内容に不備がありました。");
             return back()->withErrors($validator);
         }
+
+        $page_settings['title']         = '確認 - ' . $page_settings['title'];
+        $page_settings['h2']            = "CSVファイル確認 <small> - {$service->getFileName()}</small>";
+        $page_settings['key']           = $import_setttings['keys'];
+        $page_settings['table_columns'] = $import_setttings['table_columns'];
+        $view                           = strtolower($system) . '.admin.import';
         \Session::flash('success_message', 'CSVデータの取り込みが完了しました。');
         \Session::flash('warn_message', '現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。');
         return view($view, ['configs' => $page_settings, 'rows' => $rows]);

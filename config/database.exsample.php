@@ -1,22 +1,22 @@
 <?php
-// 各環境ごとにこの設定ファイルを編集して使う
+// 各環境ごとにコピーしてこの設定ファイルを編集して使う
 $host      = '127.0.0.1';
 $user_name = 'homestead';
 $password  = 'secret';
 
 $port = 3306;
-$ip   = gethostbyname(gethostname());
-$sapi = php_sapi_name();
 
+// $ip   = gethostbyname(gethostname());
+// $sapi = php_sapi_name();
 // Laravelサーバーからアクセスした場合に設定を変える場合
-// 実例：データベースの作成のみ管理者にさせたい場合など
-//  特権ユーザーのID・パスワードを記述する
-// 注意：実際の環境で利用しているパスワードをここに記述しないこと
-if ($ip === '127.0.0.1' && $sapi === 'cli')
-{
-    $user_name = 'homestead';
-    $password  = 'password';
-}
+// 実例：データベースの作成のみ管理者にさせたい場合などに特権ユーザーのID・パスワードを記述する
+//       が、うまく動いてない
+// 注意：exampleには実際の環境で利用しているパスワードをここに記述しないこと
+//if ($ip === '127.0.0.1' && $sapi === 'cli')
+//{
+//    $user_name = 'homestead';
+//    $password  = 'password';
+//}
 return [
     /*
       |--------------------------------------------------------------------------
