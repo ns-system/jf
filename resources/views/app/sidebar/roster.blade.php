@@ -21,6 +21,19 @@
     title="部署内の勤務状況を確認します。"
     data-placement="right">部署内勤務データ確認</a><span></span>
 
+<a
+    role="presentation"
+    class="list-group-item collapse list-second"
+    href="{{route('app::roster::user::show', ['id'=>\Auth::user()->id])}}"
+{{--     @if(\App\SinrenUser::user()->first() != null)
+    href="{{route('app::roster::division::index', ['div'=>\App\SinrenUser::user()->first()->division_id])}}"
+    @else
+    href="{{route('app::roster::user::show')}}"
+    @endif --}}
+    data-toggle="tooltip"
+    title="勤怠管理システムのユーザー情報を変更します。"
+    data-placement="right">勤怠管理情報</a><span></span>
+
 <?php $s_user = \App\RosterUser::user()->first(); ?>
 @if($s_user != null)
 @if($s_user->is_chief || ($s_user->is_proxy && $s_user->is_proxy_active))

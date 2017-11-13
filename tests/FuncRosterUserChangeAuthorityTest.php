@@ -14,6 +14,11 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
 
     public function setUp() {
         parent::setUp();
+        \App\User::truncate();
+        \App\SinrenUser::truncate();
+        \App\SinrenDivision::truncate();
+        \App\RosterUser::truncate();
+        \App\ControlDivision::truncate();
 
         if (!static::$init)
         {
@@ -44,20 +49,17 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
     /**
      * @tests
      */
-    public function 非勤怠責任者ユーザを勤怠責任者ユーザに変更できる() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
+    public function 非勤怠責任者ユーザーを勤怠責任者ユーザーに変更できる() {
+
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '0', "is_proxy_active" => '0']));
         $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
-        $this->actingAs($supar_user)
+        $this->actingAs($super_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => 2, 'is_chief' => '1', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => 2, 'is_chief' => '1', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/admin/roster/user')
         ;
         $roster_changed_user   = \App\RosterUser::where('user_id', $target_user->id)->first();
@@ -70,20 +72,16 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
     /**
      * @tests
      */
-    public function 権限のないユーザーが非勤怠責任者ユーザを勤怠責任者ユーザに変更するとエラー() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
+    public function 権限のないユーザーが非勤怠責任者ユーザーを勤怠責任者ユーザーに変更するとエラー() {
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '0', "is_proxy_active" => '0']));
         $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
         $this->actingAs($target_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '1', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '1', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/permission_error')
         ;
     }
@@ -91,24 +89,19 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
     /**
      * @tests
      */
-    public function 勤怠責任者ユーザを非勤怠責任者ユーザに変更できる() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
+    public function 勤怠責任者ユーザーを非勤怠責任者ユーザーに変更できる() {
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '1', "is_proxy" => '0', "is_proxy_active" => '0']));
         $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
-        $this->actingAs($supar_user)
+        $this->actingAs($super_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/admin/roster/user')
         ;
         $roster_changed_user   = \App\RosterUser::where('user_id', $target_user->id)->first();
-
 
         $this->assertEquals(1, $roster_unchanged_user->is_chief);
         $this->assertEquals(0, $roster_changed_user->is_chief);
@@ -117,20 +110,16 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
     /**
      * @tests
      */
-    public function 権限のないユーザーが勤怠責任者ユーザを非勤怠責任者ユーザに変更するとエラー() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
+    public function 権限のないユーザーが勤怠責任者ユーザーを非勤怠責任者ユーザーに変更するとエラー() {
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '1', "is_proxy" => '0', "is_proxy_active" => '0']));
         $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
         $this->actingAs($target_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/permission_error')
         ;
     }
@@ -138,24 +127,19 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
     /**
      * @tests
      */
-    public function 非勤怠責任者代理ユーザを非勤怠責任者代理ユーザに変更できる() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
+    public function 非勤怠責任者代理ユーザーを非勤怠責任者代理ユーザーに変更できる() {
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '0', "is_proxy_active" => '0']));
         $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
-        $this->actingAs($supar_user)
+        $this->actingAs($super_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/admin/roster/user')
         ;
         $roster_changed_user   = \App\RosterUser::where('user_id', $target_user->id)->first();
-
 
         $this->assertEquals(0, $roster_unchanged_user->is_proxy);
         $this->assertEquals(1, $roster_changed_user->is_proxy);
@@ -164,20 +148,16 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
     /**
      * @tests
      */
-    public function 権限のないユーザーが非勤怠責任者代理ユーザを非勤怠責任者代理ユーザに変更するとエラー() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
+    public function 権限のないユーザーが非勤怠責任者代理ユーザーを非勤怠責任者代理ユーザーに変更するとエラー() {
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '0', "is_proxy_active" => '0']));
         $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
         $this->actingAs($target_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/permission_error')
         ;
     }
@@ -185,20 +165,16 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
     /**
      * @tests
      */
-    public function 勤怠責任者代理ユーザを非勤怠責任者代理ユーザに変更できる() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
+    public function 勤怠責任者代理ユーザーを非勤怠責任者代理ユーザーに変更できる() {
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '1', "is_proxy_active" => '0']));
         $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
-        $this->actingAs($supar_user)
+        $this->actingAs($super_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/admin/roster/user')
         ;
         $roster_changed_user   = \App\RosterUser::where('user_id', $target_user->id)->first();
@@ -210,20 +186,16 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
     /**
      * @tests
      */
-    public function 権限のないユーザーが勤怠責任者代理ユーザを非勤怠責任者代理ユーザに変更するとエラー() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
+    public function 権限のないユーザーが勤怠責任者代理ユーザーを非勤怠責任者代理ユーザーに変更するとエラー() {
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '1', "is_proxy_active" => '0']));
         $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
         $this->actingAs($target_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/permission_error')
         ;
     }
@@ -232,19 +204,15 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
      * @tests
      */
     public function 責任者代理機能を有効に変更できる() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '1', "is_proxy_active" => '0']));
         $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
-        $this->actingAs($supar_user)
+        $this->actingAs($super_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '1', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '1', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/admin/roster/user')
         ;
         $roster_changed_user   = \App\RosterUser::where('user_id', $target_user->id)->first();
@@ -258,19 +226,15 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
      * @tests
      */
     public function 権限のないユーザーが責任者代理機能を有効に変更するとエラー() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '1', "is_proxy_active" => '0']));
         $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
         $this->actingAs($target_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '1', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '1', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/permission_error')
         ;
     }
@@ -279,23 +243,18 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
      * @tests
      */
     public function 責任者代理機能を無効に変更できる() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '1', "is_proxy_active" => '1']));
         $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
-        $this->actingAs($supar_user)
+        $this->actingAs($super_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/admin/roster/user')
         ;
         $roster_changed_user   = \App\RosterUser::where('user_id', $target_user->id)->first();
-
 
         $this->assertEquals(1, $roster_unchanged_user->is_proxy_active);
         $this->assertEquals(0, $roster_changed_user->is_proxy_active);
@@ -305,19 +264,15 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
      * @tests
      */
     public function 権限のないユーザーが責任者代理機能を無効に変更するとエラー() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '1', "is_proxy_active" => '1']));
         $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
         $this->actingAs($target_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/permission_error')
         ;
     }
@@ -326,18 +281,14 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
      * @tests
      */
     public function 勤怠管理に登録されていないユーザーを変更するとエラー() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user  = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user  = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '0', "is_proxy_active" => '0']));
-        $this->actingAs($supar_user)
+        $this->actingAs($super_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => 61, 'is_chief' => '1', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => 61, 'is_chief' => '1', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/admin/roster/user/' . $target_user->id)
         ;
     }
@@ -346,18 +297,14 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
      * @tests
      */
     public function 責任者と責任者代理に同時にしようとするとするとエラー() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user  = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user  = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '0', "is_proxy_active" => '0']));
-        $this->actingAs($supar_user)
+        $this->actingAs($super_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => 61, 'is_chief' => '1', 'is_proxy' => '1', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => 61, 'is_chief' => '1', 'is_proxy' => '1', 'is_proxy_active' => '0', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/admin/roster/user/' . $target_user->id)
         ;
     }
@@ -366,19 +313,15 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
      * @tests
      */
     public function 責任者代理以外のユーザーに責任者代理機能を有効にしようとするとエラー() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
-        $supar_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '0', "is_proxy_active" => '0']));
         $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
-        $this->actingAs($supar_user)
+        $this->actingAs($super_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => 61, 'is_chief' => '', 'is_proxy' => '', 'is_proxy_active' => '1', 'control_division' => [0 => 0]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => 61, 'is_chief' => '', 'is_proxy' => '', 'is_proxy_active' => '1', 'control_division' => [0 => 0]])
                 ->assertRedirectedTo('/admin/roster/user/' . $target_user->id)
         ;
         $roster_changed_user   = \App\RosterUser::where('user_id', $target_user->id)->first();
@@ -388,25 +331,19 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
      * @tests
      */
     public function 管理者が管轄部署を登録できる() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
-        \App\ControlDivision::truncate();
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
         factory(\App\SinrenDivision::class)->create(['division_id' => '2']);
-        $supar_user                = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user                = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user               = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '1', "is_proxy" => '0', "is_proxy_active" => '0']));
         $before_control_divisionsr = \App\ControlDivision::where('user_id', $target_user->id)->count();
-        $this->actingAs($supar_user)
+        $this->actingAs($super_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '1', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 1]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '1', 'is_proxy' => '0', 'is_proxy_active' => '0', 'control_division' => [0 => 1]])
                 ->assertRedirectedTo('/admin/roster/user')
         ;
         $after_control_divisionsr  = \App\ControlDivision::where('user_id', $target_user->id)->count();
-
 
         $this->assertEquals(0, $before_control_divisionsr);
         $this->assertEquals(1, $after_control_divisionsr);
@@ -416,25 +353,19 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
      * @tests
      */
     public function 管理者代理が管轄部署を登録できる() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
-        \App\ControlDivision::truncate();
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
         factory(\App\SinrenDivision::class)->create(['division_id' => '2']);
-        $supar_user                = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $super_user                = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user               = factory(\App\User::class)->create(['is_super_user' => '0']);
         factory(\App\SinrenUser::class)->create(['user_id' => $target_user->id, 'division_id' => '1']);
         factory(\App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '0', "is_proxy_active" => '0']));
         $before_control_divisionsr = \App\ControlDivision::where('user_id', $target_user->id)->count();
-        $this->actingAs($supar_user)
+        $this->actingAs($super_user)
                 ->visit('/admin/roster/user/' . $target_user->id)
-                ->post('/admin/roster/user/edit', ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '0', 'control_division' => [0 => 1]])
+                ->post('/admin/roster/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'id' => $target_user->id, 'is_chief' => '0', 'is_proxy' => '1', 'is_proxy_active' => '0', 'control_division' => [0 => 1]])
                 ->assertRedirectedTo('/admin/roster/user')
         ;
         $after_control_divisionsr  = \App\ControlDivision::where('user_id', $target_user->id)->count();
-
 
         $this->assertEquals(0, $before_control_divisionsr);
         $this->assertEquals(1, $after_control_divisionsr);
