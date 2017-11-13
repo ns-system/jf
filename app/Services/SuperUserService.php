@@ -6,17 +6,11 @@ class SuperUserService
 {
 
     public function registerUsers($pages = 25) {
-//        try {
         $users = $this->getUsers();
         return $users->paginate($pages);
-//        } catch (\Exception $e) {
-//            throw $e;
-////            echo $exc->getTraceAsString();
-//        }
     }
 
     private function getUsers() {
-//        try {
         $users = \DB::connection('mysql_laravel')
                 ->table('users')
                 ->select(\DB::raw('users.id as key_id'))
@@ -25,9 +19,6 @@ class SuperUserService
                 ->leftJoin('roster_db.roster_users', 'users.id', '=', 'roster_users.user_id')
         ;
         return $users;
-//        } catch (\Exception $e) {
-//            throw $e;
-//        }
     }
 
     private function setNull($val) {
@@ -40,30 +31,20 @@ class SuperUserService
 
     public function searchUsers($input, $pages = 25) {
 
-//        try {
         $users = $this->getUsers();
         if ($input['name'] != '')
         {
-//            echo "name";
             $users->where('name', 'like', "%{$input['name']}%");
         }
 
         if ($input['mail'] != '')
         {
-//            echo "mail";
             $users->where('email', 'like', "%{$input['mail']}%");
         }
 
         if ($input['super'] != '')
         {
-//            echo "super";
             $users->where('is_super_user', '=', $input['super']);
-        }
-
-        if ($input['suisin'] != '')
-        {
-//            echo "suisin";
-            $users->where('suisin_users.is_administrator', '=', $this->setNull($input['suisin']));
         }
 
         if ($input['roster'] != '')
@@ -76,9 +57,6 @@ class SuperUserService
             $users->where('division_id', '=', $input['div']);
         }
         return $users->paginate($pages);
-//        } catch (Exception $e) {
-//            throw $e;
-//        }
     }
 
     public function parameter($input) {
@@ -101,45 +79,20 @@ class SuperUserService
                 'div'    => $input['div'],
                 'mail'   => $input['mail'],
                 'super'  => $input['super'],
-                'suisin' => $input['suisin'],
                 'roster' => $input['roster'],
             ];
         }
     }
 
-//    public function editLaravelUser($input, $id) {
-//        try {
-//            $user                = \App\User::find($id);
-//            $user->is_super_user = (int) $input['is_super_user'];
-//            $user->save();
-//        } catch (Exception $ex) {
-//            
-//        }
-//    }
-//
-//    public function editSuisinUser($input, $id) {
-//        
-//    }
-
     public function editUser($input, $id) {
 
         try {
-//            $validator = \Validator::make($input, ['is_super_user' => 'required|boolean']);
-//            if ($validator->fails())
-//            {
-//                return $validator;
-//            }
             $user                = \App\User::find($id);
             $user->is_super_user = (int) $input['is_super_user'];
             $user->save();
 
             if (isset($input['suisin_is_administrator']) && !empty($user->SuisinUser))
             {
-//                $validator = \Validator::make($input, ['suisin_is_administrator' => 'required|boolean']);
-//                if ($validator->fails())
-//                {
-//                    return $validator;
-//                }
                 $suisin_users = \App\SuisinUser::where('user_id', '=', $id)->get();
                 foreach ($suisin_users as $suisin_user) {
                     $suisin_user->is_administrator = $input['suisin_is_administrator'];

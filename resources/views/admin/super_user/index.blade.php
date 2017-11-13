@@ -31,7 +31,7 @@
                     <th class="bg-primary">部署</th>
                     <th class="bg-primary">メールアドレス</th>
                     <th class="bg-primary">管理ユーザー</th>
-                    <th class="bg-primary">推進支援</th>
+{{--                     <th class="bg-primary">推進支援</th> --}}
                     <th class="bg-primary">勤怠管理</th>
                 </tr>
             </thead>
@@ -39,19 +39,19 @@
                 @foreach($users as $tmp_user)
                 <?php $user = \App\User::find($tmp_user->key_id); ?>
                 <tr>
-                    <td><a href="{{route('admin::super::user::detail', ['id'=>$user->id])}}">{{$user->name}}さん</a></td>
+                    <td><a href="{{route('admin::super::user::detail', ['id'=>$user->id])}}">{{$user->last_name}} {{$user->first_name}} <small>さん</small></a></td>
                     <td>@if($user->SinrenUser) {{$user->SinrenUser->SinrenDivision->division_name}} @else 登録なし @endif</td>
                     <td>{{$user->email}}</td>
                     <td>
                         @if(!$user->is_super_user) <span class="bolder">一般</span> @else <span class="bolder text-danger">スーパーユーザー</span> @endif
                     </td>
-                    <td>
+{{--                     <td>
                         @if($user->SuisinUser)
                         @if(!$user->SuisinUser->is_administrator) <span class="bolder">一般</span> @else <span class="bolder text-danger">管理</span> @endif
                         @else
                         <span class="bolder text-warning"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>未登録</span>
                         @endif
-                    </td>
+                    </td> --}}
                     <td>
                         @if($user->RosterUser($user->id))
                         @if(!$user->RosterUser($user->id)->is_administrator) <span class="bolder">一般</span> @else <span class="bolder text-danger">管理</span> @endif
