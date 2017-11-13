@@ -23,17 +23,27 @@ class RosterUser extends Request
      */
     public function rules() {
 //        $input = \Request::only(['is_chief', 'work_type_id']);
-//        $input = \Request::all();
+        $input = \Request::all();
         $rules = [
             'division_id' => 'required|exists:mysql_sinren.sinren_divisions,division_id',
-//            'is_chief'    => 'required|boolean',
         ];
-//        if (!isset($input['is_chief']) || $input['is_chief'] !== '1')
+
+//        if (!isset($input['work_type_id']))
 //        {
-            $rules['work_type_id'] = 'required|exists:mysql_roster.work_types,work_type_id';
+//            
 //        }
+
+        if (isset($input['is_chief']))
+        {
+            $rules['is_chief'] = 'required|boolean';
+        }
+        else
+        {
+            $rules['work_type_id'] = 'required|exists:mysql_roster.work_types,work_type_id';
+        }
 //        var_dump($input);
 //        var_dump($rules);
+//        dd($rules);
         return $rules;
     }
 

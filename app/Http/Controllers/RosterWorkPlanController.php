@@ -15,7 +15,7 @@ class RosterWorkPlanController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $current_month = \App\Roster::max('month_id');
+        $current_month = (!empty(\App\Roster::max('month_id'))) ? \App\Roster::max('month_id') : date('Ym');
 //        var_dump($current_month);
 
         $months = [];
@@ -33,6 +33,7 @@ class RosterWorkPlanController extends Controller
 
     public function division($month) {
         $divs  = \App\ControlDivision::user()->get();
+        $cnt =[];
         $users = \App\SinrenUser::join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
                 ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
@@ -132,7 +133,7 @@ class RosterWorkPlanController extends Controller
                 $r->save();
             }
         });
-        \Session::flash('flash_message', "{$name}さんのデータを更新しました。");
+        \Session::flash('success_message', "{$name}さんのデータを更新しました。");
         return redirect(route('app::roster::work_plan::division', ['month' => $month]));
     }
 

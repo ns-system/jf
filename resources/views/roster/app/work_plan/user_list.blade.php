@@ -48,19 +48,19 @@
 
 <div class="text-right">
     <div class="btn-group">
-        <a href="{{route('app::roster::work_plan::index')}}" class="btn btn-primary" style="min-width: 125px;">
+        <a href="{{route('app::roster::work_plan::index')}}" class="btn btn-primary btn-sm" style="min-width: 125px;">
             <span class="glyphicon glyphicon-backward" aria-hidden="true"></span> 戻る
         </a>
         <span></span>
         <a
             href="{{route('app::roster::work_plan::division', ['month'=>$next])}}"
-            class="btn btn-success"
+            class="btn btn-success btn-sm"
             style="min-width: 125px;"
         ><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> 翌月へ</a>
         <span></span>
         <a
             href="{{route('app::roster::work_plan::division', ['month'=>$prev])}}"
-            class="btn btn-warning"
+            class="btn btn-warning btn-sm"
             style="min-width: 125px;"
         ><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> 前月へ</a>
     </div>

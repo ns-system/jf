@@ -64,7 +64,7 @@ class SuperUserController extends Controller
 //            {
 //                return back()->withErrors($res);
 //            }
-            \Session::flash('flash_message', \App\User::find($id)->name . "さんの情報を変更しました。");
+            \Session::flash('success_message', \App\User::find($id)->name . "さんの情報を変更しました。");
             return redirect(route('admin::super::user::show'));
 //            return redirect('/admin/app/admin_user');
         } catch (\Exception $exc) {

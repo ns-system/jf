@@ -88,7 +88,7 @@ class RosterController extends Controller
 
     public function editPlan($ym, $id, Plan $request) {
         $this->service->editPlan($id, $request);
-        \Session::flash('flash_message', '予定データを更新しました。');
+        \Session::flash('success_message', '予定データを更新しました。');
         return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
     }
 
@@ -96,7 +96,7 @@ class RosterController extends Controller
 
         try {
             $param = $this->service->delete($id);
-            \Session::flash('flash_message', "{$param['date']}のデータを削除しました。");
+            \Session::flash('success_message', "{$param['date']}のデータを削除しました。");
             return redirect(route('app::roster::calendar::show', ['ym' => $param['ym']]));
         } catch (\Exception $e) {
 //            echo $e->getTraceAsString();
@@ -109,7 +109,7 @@ class RosterController extends Controller
         try {
             $this->service->editActual($id, $request);
 //            exit();
-            \Session::flash('flash_message', '実績データを更新しました。');
+            \Session::flash('success_message', '実績データを更新しました。');
             return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
         } catch (\Exception $e) {
             echo $e->getTraceAsString();
