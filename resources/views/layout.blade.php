@@ -39,7 +39,7 @@
             {
                 font-size: 12px;
             }
-            small{font-size: 80% !important;}
+            small, .text-sm {font-size: 80% !important;}
             .margin-0{margin: 0 !important;}
             .va-middle,
             .va-middle *{
@@ -101,6 +101,8 @@
             .btn-danger{ border-color: #ce3323; }
             .btn-warning{ border-color: #da8300; }
             .btn-info{ border-color: #1b7fc2; }
+            .tooltip.top{ background: rgba(255,255,255,0); }
+
         </style>
     </head>
     <body class="no-thank-yu">
