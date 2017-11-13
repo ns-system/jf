@@ -107,7 +107,7 @@ class AcceptController extends Controller
                 $roster->save();
             }
         });
-        \Session::flash('flash_message', '承認が完了しました。');
+        \Session::flash('success_message', '承認が完了しました。');
         return \Redirect('/roster/chief/accept');
     }
 
@@ -143,7 +143,7 @@ class AcceptController extends Controller
             $roster->reject_reason = $input['reject_reason'];
             $roster->save();
         });
-        \Session::flash('flash_message', '承認が完了しました。');
+        \Session::flash('success_message', '承認が完了しました。');
         return \Redirect('/roster/chief/accept');
     }
 

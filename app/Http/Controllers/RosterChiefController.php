@@ -53,7 +53,7 @@ class RosterChiefController extends Controller
         $user->is_proxy_active = $in['active'];
         $user->save();
         
-        \Session::flash('flash_message', "データを更新しました。");
+        \Session::flash('success_message', "データを更新しました。");
         return redirect(route('app::roster::chief::index'));
     }
 

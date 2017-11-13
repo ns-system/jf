@@ -121,7 +121,7 @@ class RosterCsvExportController extends Controller
     public function update(ForceEdit $request, $ym) {
         $in = $request->input();
         $this->service->update($in);
-        \Session::flash('flash_message', 'データの更新が完了しました。');
+        \Session::flash('success_message', 'データの更新が完了しました。');
         return redirect(route('admin::roster::csv::show', ['ym' => $ym]));
     }
 

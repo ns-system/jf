@@ -71,7 +71,7 @@ class SinrenUserController extends Controller
         }
 
 //        var_dump($input);
-        \Session::flash('flash_message', 'ユーザー登録が完了しました。');
+        \Session::flash('success_message', 'ユーザー登録が完了しました。');
         return \Redirect('/roster/app/home');
 
     }

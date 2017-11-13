@@ -239,7 +239,7 @@ class RosterAcceptController extends Controller
             }
         });
 
-        \Session::flash('flash_message', 'データの一括更新が完了しました。');
+        \Session::flash('success_message', 'データの一括更新が完了しました。');
         return back();
 
         // ==== debug ====
@@ -448,7 +448,7 @@ class RosterAcceptController extends Controller
 //        exit();
         $roster->reject_reason = $input['reject'];
         $roster->save();
-        \Session::flash('flash_message', 'データの更新が完了しました。');
+        \Session::flash('success_message', 'データの更新が完了しました。');
         return back();
     }
 
@@ -489,7 +489,7 @@ class RosterAcceptController extends Controller
                 $roster->save();
             }
         });
-        \Session::flash('flash_message', 'データの一括更新が完了しました。');
+        \Session::flash('success_message', 'データの一括更新が完了しました。');
         return back();
     }
 

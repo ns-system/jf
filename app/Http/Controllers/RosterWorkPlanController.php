@@ -132,7 +132,7 @@ class RosterWorkPlanController extends Controller
                 $r->save();
             }
         });
-        \Session::flash('flash_message', "{$name}さんのデータを更新しました。");
+        \Session::flash('success_message', "{$name}さんのデータを更新しました。");
         return redirect(route('app::roster::work_plan::division', ['month' => $month]));
     }
 

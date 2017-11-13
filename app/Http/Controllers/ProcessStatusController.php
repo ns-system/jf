@@ -58,7 +58,7 @@ class ProcessStatusController extends Controller
         }
         $displayed_on = date('Y-m-d', strtotime($in['monthly_id'] . '01'));
         \App\Month::firstOrCreate(['monthly_id' => $in['monthly_id'], 'displayed_on' => $displayed_on]);
-        \Session::flash('flash_message', "月別ID［{$in['monthly_id']}］を生成しました。");
+        \Session::flash('success_message', "月別ID［{$in['monthly_id']}］を生成しました。");
         return redirect(route('admin::super::month::show'));
     }
 
@@ -66,7 +66,7 @@ class ProcessStatusController extends Controller
         $month = \App\Month::find($id);
         if ($month == null)
         {
-            \Session::flash('flash_message', '不正な月別IDが指定されました。');
+            \Session::flash('success_message', '不正な月別IDが指定されました。');
             return back();
         }
 
@@ -81,7 +81,7 @@ class ProcessStatusController extends Controller
 
         $month->is_current = true;
         $month->save();
-        \Session::flash('flash_message', "月別ID［{$month->monthly_id}］のデータを公開しました。");
+        \Session::flash('success_message', "月別ID［{$month->monthly_id}］のデータを公開しました。");
         return redirect(route('admin::super::month::show'));
     }
 
