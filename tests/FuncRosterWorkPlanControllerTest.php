@@ -24,9 +24,9 @@ class FuncRosterWorkPlanControllerTest extends TestCase
         {
             try {
 
-//                \Artisan::call('db:reset', ['--dbenv' => 'testing', '--hide' => 'true']);
-//                \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
-//                \Artisan::call('migrate');
+                \Artisan::call('db:reset', ['--dbenv' => 'testing', '--hide' => 'true']);
+                \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
+                \Artisan::call('migrate');
                 factory(\App\Division::create(["division_id" => '1', 'division_name' => 'test']));
                 factory(\App\WorkType::create(["work_type_id" => '1', "work_type_name" => "テスト用"]));
             } catch (\Exception $exc) {
@@ -160,12 +160,91 @@ class FuncRosterWorkPlanControllerTest extends TestCase
                 ->visit('/app/roster/accept/calendar/201712/1')
                 ->see("予定データ承認")
                 ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "plan" => ['1' => 0], "id" => ['1' => 1], "plan_reject" => [1 => "却下"]])
-//                ->assertRedirectedTo('/app/roster/accept/calendar/201712/1')
+                ->assertRedirectedTo('/app/roster/accept/calendar/201712/1')
         ;
 
         $accept_plan = \App\Roster::where('id', 1)->first();
         $this->assertEquals(0, $unaccept_plan->is_plan_reject);
         $this->assertEquals(1, $accept_plan->is_plan_reject);
+    }
+
+    //管理者ができることのテスト(異常系)
+    /**
+     * @tests
+     */
+    public function 異常系権限のないユーザーが勤務予定データを作成しようとするとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        $this->actingAs($this->normal_user)
+                ->post('/app/roster/work_plan/list/edit/201712/' . $this->normal_user->id, ['_token' => csrf_token(), "work_type" => ['2017-12-01' => 1, '2017-12-02' => 1], "id" => ['1' => 1], "rest" => ['2017-12-01' => 0, '2017-12-02' => 0], "entered_on" => ['2017-12-01', '2017-12-02']])
+                ->assertRedirectedTo('/permission_error')
+        ;
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系権限のないユーザーがユーザーを責任者代理_代理人機能無効状態にしようとするとエラー() {
+        \Session::start();
+        $roster_unchanged_user = \App\RosterUser::where('user_id', $this->normal_user->id)->first();
+        $this->actingAs($this->normal_user)
+                ->post('/app/roster/chief/update', ['_token' => csrf_token(), 'id' => $roster_unchanged_user->id, 'proxy' => '1', 'active' => '0',])
+                ->assertRedirectedTo('/permission_error')
+        ;
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系権限のないユーザーがユーザーを責任者代理_代理人機能有効状態にしようとするとエラー() {
+        \Session::start();
+        $roster_unchanged_user = \App\RosterUser::where('user_id', $this->normal_user->id)->first();
+        $this->actingAs($this->normal_user)
+                ->post('/app/roster/chief/update', ['_token' => csrf_token(), 'id' => $roster_unchanged_user->id, 'proxy' => '1', 'active' => '1',])
+                ->assertRedirectedTo('/permission_error')
+        ;
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系権限のないユーザーが責任者代理ユーザーを一般ユーザーにしようとするとエラー() {
+        \Session::start();
+        $roster_unchanged_user = \App\RosterUser::where('user_id', $this->proxy_user->id)->first();
+        $this->actingAs($this->normal_user)
+                ->post('/app/roster/chief/update', ['_token' => csrf_token(), 'id' => $roster_unchanged_user->id, 'proxy' => '0', 'active' => '0',])
+                ->assertRedirectedTo('/permission_error')
+        ;
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系権限のないユーザーが勤務予定データを承認しようとするとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            factory(\App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1]));
+        }
+        $this->actingAs($this->normal_user)
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "plan" => [1 => 1], "id" => [1 => 1]])
+                ->assertRedirectedTo('/permission_error')
+        ;
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系権限のないユーザーが勤務予定データを却下しようとするとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            factory(\App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1]));
+        }
+        $this->actingAs($this->normal_user)
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "plan" => ['1' => 0], "id" => ['1' => 1], "plan_reject" => [1 => "却下"]])
+                ->assertRedirectedTo('/permission_error')
+        ;
     }
 
 }
