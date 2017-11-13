@@ -15,7 +15,7 @@ class RosterWorkPlanController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $current_month = \App\Roster::max('month_id');
+        $current_month = (!empty(\App\Roster::max('month_id'))) ? \App\Roster::max('month_id') : date('Ym');
 //        var_dump($current_month);
 
         $months = [];
