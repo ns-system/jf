@@ -103,6 +103,8 @@
             .btn-info{ border-color: #1b7fc2; }
             .tooltip.top{ background: rgba(255,255,255,0); }
 
+            .alert-fixed { width: 300px; padding: 10px; padding-right: 30px; font-size: 80%; z-index: 2; right: 10px; position: fixed; bottom: 30px; margin-bottom: 0; };
+
         </style>
     </head>
     <body class="no-thank-yu">

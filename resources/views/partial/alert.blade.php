@@ -14,7 +14,7 @@
 
 
 @if (Session::has('success_message') > 0 || (isset($success_message) && $success_message != null))
-<div class="alert alert-success alert-dismissible fade in" rore="alert">
+<div class="alert alert-success alert-dismissible fade in alert-fixed" rore="alert">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <p>
         <p>
@@ -28,7 +28,7 @@
 @endif
 
 @if (Session::has('info_message') > 0 || (isset($info_message) && $info_message != null))
-<div class="alert alert-info alert-dismissible fade in" rore="alert">
+<div class="alert alert-info alert-dismissible fade in alert-fixed" rore="alert">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <p>
         <p>
@@ -42,21 +42,21 @@
 @endif
 
 @if(!empty($warn_message) || Session::has('warn_message') > 0)
-<div class="alert alert-warning alert-dismissible fade in" rore="alert">
+<div class="alert alert-warning alert-dismissible fade in alert-fixed" rore="alert">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-        <p>
-            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-            <strong>注意：</strong>
-        </p>
-        <p>
-            @if(!empty($warn_message)) {{$warn_message}} @endif
-            @if(Session::has('warn_message') > 0) {{Session::get('warn_message')}} @endif
-        </p>
+    <p>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <strong>注意：</strong>
+    </p>
+    <p>
+        @if(!empty($warn_message)) {{$warn_message}} @endif
+        @if(Session::has('warn_message') > 0) {{Session::get('warn_message')}} @endif
+    </p>
 </div>
 @endif
 
 @if (!empty($danger_message) || Session::has('danger_message') > 0)
-<div class="alert alert-danger alert-dismissible fade in" rore="alert">
+<div class="alert alert-danger alert-dismissible fade in alert-fixed" rore="alert">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <p>
         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
