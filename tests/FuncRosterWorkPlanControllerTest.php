@@ -168,6 +168,47 @@ class FuncRosterWorkPlanControllerTest extends TestCase
         $this->assertEquals(1, $accept_plan->is_plan_reject);
     }
 
+    /**
+     * @tests
+     */
+    public function 正常系責任者が勤務実績データを承認できる() {
+        \App\Roster::truncate();
+        for ($i = 1; $i <= 31; $i++) {
+            factory(\App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]));
+        }
+        $unaccept_plan = \App\Roster::where('id', 1)->first();
+        $this->actingAs($this->admin_user)
+                ->visit('/app/roster/accept/calendar/201712/1')
+                ->see("予定データ承認")
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => [1 => 1], "id" => [1 => 1]])
+                ->assertRedirectedTo('/app/roster/accept/calendar/201712/1')
+        ;
+        $accept_plan   = \App\Roster::where('id', 1)->first();
+        $this->assertEquals(0, $unaccept_plan->is_actual_accept);
+        $this->assertEquals(1, $accept_plan->is_actual_accept);
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系責任者が勤務実績データを却下できる() {
+        \App\Roster::truncate();
+        for ($i = 1; $i <= 31; $i++) {
+            factory(\App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]));
+        }
+        $unaccept_plan = \App\Roster::where('id', 1)->first();
+        $this->actingAs($this->admin_user)
+                ->visit('/app/roster/accept/calendar/201712/1')
+                ->see("予定データ承認")
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => ['1' => 0], "id" => ['1' => 1], "actual_reject" => [1 => "却下"]])
+                ->assertRedirectedTo('/app/roster/accept/calendar/201712/1')
+        ;
+
+        $accept_plan = \App\Roster::where('id', 1)->first();
+        $this->assertEquals(0, $unaccept_plan->is_actual_reject);
+        $this->assertEquals(1, $accept_plan->is_actual_reject);
+    }
+
     //管理者ができることのテスト(異常系)
     /**
      * @tests
@@ -247,4 +288,36 @@ class FuncRosterWorkPlanControllerTest extends TestCase
         ;
     }
 
+    /**
+     * @tests
+     */
+    public function 異常系権限のないユーザーが勤務実績データを承認しようとするとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            factory(\App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]));
+        }
+        $this->actingAs($this->normal_user)
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => [1 => 1], "id" => [1 => 1]])
+                ->assertRedirectedTo('/permission_error')
+        ;
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系権限のないユーザーが勤務実績データを却下しようとするとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            factory(\App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]));
+        }
+
+        $this->actingAs($this->normal_user)
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => ['1' => 0], "id" => ['1' => 1], "actual_reject" => [1 => "却下"]])
+                ->assertRedirectedTo('/permission_error')
+        ;
+    }
+
+    //一般ユーザーが行えること
 }
