@@ -5,30 +5,27 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\Roster\WorkPlan;
 use App\Http\Controllers\Controller;
+use App\Services\Roster\RosterWorkPlan;
 
 class RosterWorkPlanController extends Controller
 {
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    const INT_MONTH_LATER = 2;  // 何ヶ月後先まで表示するか
+    const INT_MONTH_COUNT = 12; // 表示される月数
+
     public function index() {
+        // 勤務データが登録されていれば最新のもの、でなければ今月を当月扱いとする
         $current_month = (!empty(\App\Roster::max('month_id'))) ? \App\Roster::max('month_id') : date('Ym');
-//        var_dump($current_month);
 
         $months = [];
         $tmp    = $current_month . '01';
-        for ($i = 2; $i > -4; $i--) {
+        for ($i = self::INT_MONTH_LATER; $i > self::INT_MONTH_LATER - self::INT_MONTH_COUNT; $i--) {
             $months[] = [
                 'id'      => date('Ym', strtotime($tmp . " {$i} month")),
                 'display' => date('Y年n月', strtotime($tmp . " {$i} month")),
             ];
         }
-//        var_dump($months);
-        $current = date('Ym');
-        return view('roster.app.work_plan.index', ['months' => $months, 'current' => $current]);
+        return view('roster.app.work_plan.index', ['months' => $months, 'current' => date('Ym')]);
     }
 
     public function division($month) {
@@ -56,85 +53,42 @@ class RosterWorkPlanController extends Controller
         return view('roster.app.work_plan.user_list', ['users' => $users, 'month' => $month, 'cnt' => $cnt, 'next' => $next, 'prev' => $prev,]);
     }
 
-    public function userList($month, $id) {
-//        var_dump($month . $id);
-        $plans = \App\Roster::where('month_id', '=', $month)
-                ->where('user_id', '=', $id)
-                ->get()
-        ;
-//        $count = $plans->count();
-//        $plans = $plans->get();
-//        foreach($plans as $p){
-//        var_dump($p);
-//        }
-//        exit();
-
-        $user = \App\RosterUser::user($id)->join('laravel_db.users', 'roster_users.user_id', '=', 'users.id')->first();
-
+    public function userList($month, $user_id) {
+        $plans     = \App\Roster::where(['month_id' => $month, 'user_id' => $user_id])->get();
+        $user      = \App\RosterUser::user($user_id)->join('laravel_db.users', 'roster_users.user_id', '=', 'users.id')->first();
         $obj       = new \App\Services\Roster\Calendar();
         $calendar  = $obj->setId($month)->makeCalendar($plans);
         $tmp_rests = \App\Rest::orderBy('rest_reason_id')->get();
-        $tmp_types = \App\WorkType::orderBy('work_type_id')->get();
+        $tmp_types = \App\WorkType::workTypeList()->get();
         $types     = [];
         $rests     = [];
         foreach ($tmp_rests as $r) {
-            $rests[$r->rest_reason_id] = [
-                'rest_reason_id'   => $r->rest_reason_id,
-                'rest_reason_name' => $r->rest_reason_name,
-            ];
+            $rests[$r->rest_reason_id] = ['rest_reason_id' => $r->rest_reason_id, 'rest_reason_name' => $r->rest_reason_name,];
         }
 
         foreach ($tmp_types as $t) {
-            $work_time = null;
-            if ($t->work_start_time !== $t->work_end_time)
-            {
-                $work_time = '（' . date('G:i', strtotime($t->work_start_time)) . " ～ " . date('G:i', strtotime($t->work_end_time)) . '）';
-            }
             $types[$t->work_type_id] = [
                 'work_type_id'   => $t->work_type_id,
                 'work_type_name' => $t->work_type_name,
-                'work_time'      => $work_time,
+                'work_time'      => (empty($t->display_time)) ? '' : '（' . $t->display_time . '）',
             ];
         }
-
-//        var_dump($calendar);
-//        var_dump($count);
-//        var_dump($plans);
-        return view('roster.app.work_plan.edit_plan', ['days' => $calendar, 'id' => $id, 'types' => $types, 'rests' => $rests, 'user' => $user, 'month' => $month]);
+        return view('roster.app.work_plan.edit_plan', ['days' => $calendar, 'id' => $user_id, 'types' => $types, 'rests' => $rests, 'user' => $user, 'month' => $month]);
     }
 
-    public function edit($month, $id, WorkPlan $request) {
-//        var_dump("edit");
-        $in   = $request->input();
-//        var_dump($in);
-        $name = \App\User::find($id)->name;
-        \DB::connection('mysql_roster')->transaction(function () use($in, $month, $id) {
-            foreach ($in['entered_on'] as $i => $key) {
-                $r          = \App\Roster::firstOrNew(['user_id' => $id, 'month_id' => $month, 'entered_on' => $key]);
-//                var_dump($r->id);
-                $r->user_id = $id;
-                if (!empty($in['work_type'][$key]))
-                {
-                    $r->plan_work_type_id = $in['work_type'][$key];
-                }
-                if (!empty($in['rest'][$key]))
-                {
-                    $r->plan_rest_reason_id = $in['rest'][$key];
-                }
-                $r->entered_on = $key;
-                if ($r->id == null)
-                {
-                    $r->create_user_id = \Auth::user()->id;
-                }
-                else
-                {
-                    $r->edit_user_id = \Auth::user()->id;
-                }
-                $r->save();
-            }
-        });
+    public function edit($month_id, $user_id, WorkPlan $request) {
+        $input    = $request->input();
+        $name     = \App\User::find($user_id)->last_name;
+        $service  = new RosterWorkPlan();
+        $chief_id = \Auth::user()->id;
+        try {
+            $service->updateWorkPlan($input, $user_id, $month_id, $chief_id);
+        } catch (\Exception $e) {
+            \Session::flash('warn_message', 'エラーがあったため処理を中断しました。');
+            return back();
+        }
         \Session::flash('success_message', "{$name}さんのデータを更新しました。");
-        return redirect(route('app::roster::work_plan::division', ['month' => $month]));
+        return redirect()->route('app::roster::work_plan::division', ['month' => $month_id]);
     }
 
 }

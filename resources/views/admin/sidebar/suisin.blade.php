@@ -1,5 +1,5 @@
-<a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#consignor"><span class="caret"></span> <small>委託者情報</small></a>
-<div class="collapse" id="consignor">
+<a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#1-1_consignor"><span class="caret"></span> <small>委託者情報</small></a>
+<div class="collapse" id="1-1_consignor">
 
     <a
         role="presentation"
@@ -18,8 +18,8 @@
         data-placement="right">委託者グループ</a>
     <span class="list-group-item collapse list-divider"></span>
 </div>
-<a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#area"><span class="caret"></span> <small>エリア情報</small></a>
-<div class="collapse" id="area">
+<a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#1-2_area"><span class="caret"></span> <small>エリア情報</small></a>
+<div class="collapse" id="1-2_area">
 
     <a
         role="presentation"
@@ -64,11 +64,11 @@
     <span class="list-group-item collapse list-divider"></span>
 </div>
 
-<a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#master"><span class="caret"></span> <small>マスタファイル</small></a>
-<div class="collapse" id="master">
+<a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#1-3_master"><span class="caret"></span> <small>マスタファイル</small></a>
+<div class="collapse" id="1-3_master">
 
-    <a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#common"><span class="caret"></span> <small>共通</small></a>
-    <div class="collapse" id="common">
+    <a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#1-3-1_common"><span class="caret"></span> <small>共通</small></a>
+    <div class="collapse" id="1-3-1_common">
         <a
             role="presentation"
             class="list-group-item collapse list-second"
@@ -102,8 +102,8 @@
         <span class="list-group-item collapse list-divider"></span>
     </div>
 
-    <a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#deposit"><span class="caret"></span> <small>貯金</small></a>
-    <div class="collapse" id="deposit">
+    <a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#1-3-2_deposit"><span class="caret"></span> <small>貯金</small></a>
+    <div class="collapse" id="1-3-2_deposit">
 
         <a
             role="presentation"
@@ -155,8 +155,8 @@
     </div>
 
 
-    <a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#loan"><span class="caret"></span> <small>貸付</small></a>
-    <div class="collapse" id="loan">
+    <a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#1-3-3_loan"><span class="caret"></span> <small>貸付</small></a>
+    <div class="collapse" id="1-3-3_loan">
         <a
             role="presentation"
             class="list-group-item collapse list-second"
