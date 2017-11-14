@@ -185,13 +185,13 @@ class Calendar
     }
 
     public function delete($id) {
-        $roster = \App\Roster::find($id);
-        if (!$roster->exists())
-        {
-            throw new \Exception('予定データが見つかりませんでした。');
-//            \Session::flash('warn_message', '予定データが見つかりませんでした。');
-//            return back();
-        }
+        $roster = \App\Roster::findOrFail($id);
+//        if (!$roster->exists())
+//        {
+//            throw new \Exception('予定データが見つかりませんでした。');
+////            \Session::flash('warn_message', '予定データが見つかりませんでした。');
+////            return back();
+//        }
         
         if($roster->is_plan_accept || $roster->is_actual_accept){
             throw new \Exception('データはすでに承認されているため、削除できません。');
