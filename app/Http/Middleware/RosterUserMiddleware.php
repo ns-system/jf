@@ -19,7 +19,7 @@ class RosterUserMiddleware
         if (!\App\RosterUser::user($id)->exists())
         {
             \Session::flash('warn_message', '勤怠管理システムのユーザーが登録されていないようです。');
-            return redirect(route('app::roster::user::show'));
+            return redirect()->route('app::roster::user::show', ['user_id' => $id]);
         }
 //        if (!\App\SinrenUser::where('user_id', '=', $id)->exists())
 //        {

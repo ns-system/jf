@@ -11,13 +11,13 @@
         </select>
     </div>
 
-    <div class="form-group">
+{{--     <div class="form-group">
         <select name="suisin" class="form-control input-sm">
             <option value="" @if($suisin === '') selected="selected" @endif>全て（推進）</option>
             <option value="0" @if($suisin === '0') selected="selected" @endif>一般</option>
             <option value="1" @if($suisin === '1') selected="selected" @endif>管理</option>
         </select>
-    </div>
+    </div> --}}
 
     <div class="form-group">
         <select name="roster" class="form-control input-sm">

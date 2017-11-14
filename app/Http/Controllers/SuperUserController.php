@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 //use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SuperUser\SuperUser;
+
 class SuperUserController extends Controller
 {
 
@@ -34,15 +35,11 @@ class SuperUserController extends Controller
     }
 
     public function search() {
-        try {
-            $divs      = \App\Division::get();
-            $super     = $this->users;
-            $users     = $super->searchUsers(\Input::all());
-            $parameter = $super->parameter(\Input::all());
-            return view('admin.super_user.index', ['users' => $users, 'divs' => $divs])->with($parameter);
-        } catch (\Exception $exc) {
-            echo $exc->getTraceAsString();
-        }
+        $divs      = \App\Division::get();
+        $super     = $this->users;
+        $users     = $super->searchUsers(\Input::all());
+        $parameter = $super->parameter(\Input::all());
+        return view('admin.super_user.index', ['users' => $users, 'divs' => $divs])->with($parameter);
     }
 
     public function user($id) {
@@ -56,17 +53,12 @@ class SuperUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id,SuperUser $res) {
+    public function edit($id, SuperUser $res) {
         try {
             $super = $this->users;
             $super->editUser($res, $id);
-//            if ($res !== true)
-//            {
-//                return back()->withErrors($res);
-//            }
-            \Session::flash('success_message', \App\User::find($id)->name . "さんの情報を変更しました。");
-            return redirect(route('admin::super::user::show'));
-//            return redirect('/admin/app/admin_user');
+            \Session::flash('success_message', \App\User::find($id)->last_name . "さんの情報を変更しました。");
+            return redirect()->route('admin::super::user::show');
         } catch (\Exception $exc) {
             echo $exc->getTraceAsString();
         }

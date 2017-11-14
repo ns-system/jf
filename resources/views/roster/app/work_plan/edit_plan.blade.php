@@ -16,7 +16,6 @@
 
 @section('content')
 <div class="col-md-10">
-
 @include('partial.alert')
 <div class="border-bottom"><h2>勤務予定データ作成<small> - {{$user->last_name}} {{$user->first_name}}さん</small></h2></div>
 
@@ -125,11 +124,11 @@
 
 <div class="text-right">
     <div class="btn-group">
-        <a href="{{route('app::roster::work_plan::division', ['month'=>$month])}}" class="btn btn-primary" style="min-width: 125px;">
+        <a href="{{route('app::roster::work_plan::division', ['month'=>$month])}}" class="btn btn-primary btn-sm" style="min-width: 100px;">
             <span class="glyphicon glyphicon-backward" aria-hidden="true"></span> 戻る
         </a>
         <span></span>
-        <button type="submit" class="btn btn-success" style="min-width: 125px;">更新する</button>
+        <button type="submit" class="btn btn-success btn-sm" style="min-width: 100px;">更新する</button>
     </div>
 </div>
 

@@ -21,14 +21,15 @@
     @include('partial.alert')
 
     @if(empty($divs))
-    <div class="alert alert-warning" role="alert">部署が登録されていないようです。</div>
-    @else
-    <div class="panel panel-default">
-        <div class="panel-heading">担当部署</div>
-        <div class="panel-body">
-            <ul>@foreach($divs as $d) <li><small>{{$d->division_name}}</small></li> @endforeach</ul>
-        </div>
+    <div class="alert alert-warning" role="alert">
+        <p><b>管轄部署が登録されていないようです。</b></p>
+        <p><small>担当部署に部署の登録を行ってもらうよう連絡してください。</small></p>
     </div>
+    @else
+    <p class="margin-bottom"><b>担当部署</b></p>
+    <ul class="list-group" style="width: 300px;">
+        @foreach($divs as $d) <li class="list-group-item"><small>{{$d->division_name}}</small></li> @endforeach
+    </ul>
     @endif
 
     @foreach($divs as $d)
