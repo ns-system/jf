@@ -9,7 +9,6 @@
         @yield('title'){{$configs['title'] or ''}}
     </title>
 
-    {{--        <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet"> --}}
     <link rel="stylesheet" href="https://nkmr6194.github.io/Umi/css/bootstrap.css"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://nkmr6194.github.io/Umi/js/bootstrap.min.js"></script>
@@ -22,29 +21,17 @@
 <script src="https://unpkg.com/bootstrap-material-design@4.0.0-beta.3/dist/js/bootstrap-material-design.js" integrity="sha384-hC7RwS0Uz+TOt6rNG8GX0xYCJ2EydZt1HeElNwQqW+3udRol4XwyBfISrNDgQcGA" crossorigin="anonymous"></script> --}}
 
 <style type="text/css">
-body{word-wrap: break-word; overflow-y: scroll;}
-th,
-td
-{
-    text-align: center;
-}
-table{
-    width: 100%;
-}
+body {word-wrap: break-word; overflow-y: scroll;}
+th,td{text-align: center;}
+table{width: 100%;}
 
 .table-small th,
 .table-small th *,
 .table-small td,
-.table-small td *
-{
-    font-size: 12px;
-}
+.table-small td * {font-size: 12px;}
 small, .text-sm {font-size: 80% !important;}
 .margin-0{margin: 0 !important;}
-.va-middle,
-.va-middle *{
-    vertical-align: middle !important;
-}
+.va-middle,.va-middle *{vertical-align: middle !important;}
 .margin-bottom{margin-bottom: 10px;}
 p{margin: 3px 0;}
 input[type=file]{display: none;}
@@ -69,23 +56,19 @@ input[type=file]{display: none;}
 .close{opacity: 0.6; outline: none;}
 .tooltip-inner{min-width: 200px; max-width: 300px;}
 
-/*            .small{font-size: 75% !important; font-weight: bolder;}*/
-/*            .label-default{ background: #668; }*/
+.text-primary-light {color: #597ea2;}
+.text-danger-light  {color: #f08b80;}
+.text-warning-light {color: #f7bb5b;}
+.text-info-light    {color: #75b9e7;}
+.text-warning-light {color: #fbb23d;}
 
-
-.text-primary-light{color: #597ea2;}
-.text-danger-light{color: #f08b80;}
-.text-warning-light{color: #f7bb5b;}
-.text-info-light{color: #75b9e7;}
-.text-warning-light{/*color: #3ae6c4;*/ color: #fbb23d;}
-
-.bolder{font-weight: bolder;}
+.bolder       {font-weight: bolder;}
 .border-bottom{border-bottom: 2px solid #aaa; margin-bottom: 15px;}
 
 .list-divider{border-bottom: none; padding: 1px; /*background: #fcfcfc;*/}
-.list-second{padding-left: 30px; font-size: 0.8em;}
+.list-second {padding-left: 30px; font-size: 0.8em;}
 .list-group-item:last-child{ margin: -1px; }
-.user-name{border-bottom: none; color: #444; cursor: default;}
+.user-name   {border-bottom: none; color: #444; cursor: default;}
 .user-name:hover{text-decoration: none;}
 
 .label{display: inline-block; padding: 5px 10px;}
@@ -98,12 +81,13 @@ input[type=file]{display: none;}
 
 .btn-success{ border-color: #00a383; }
 .btn-primary{ border-color: #132537; }
-.btn-danger{ border-color: #ce3323; }
+.btn-danger { border-color: #ce3323; }
 .btn-warning{ border-color: #da8300; }
-.btn-info{ border-color: #1b7fc2; }
+.btn-info   { border-color: #1b7fc2; }
 .tooltip.top{ background: rgba(255,255,255,0); }
 
 .alert-fixed { width: 300px; padding: 10px; padding-right: 30px; font-size: 80%; z-index: 2; left: 20px; position: fixed; bottom: 40px; margin-bottom: 0; };
+.margin-bottom{margin-bottom: 10px;}
 
 </style>
 </head>
@@ -165,8 +149,8 @@ input[type=file]{display: none;}
         </div>
 
         @section('footer')
-        {{--         <script src="{{asset('/toggle-button/js/bootstrap-toggle.min.js')}}"></script> --}}
         <script src="{{asset('/js/js.cookie.js')}}"></script>
+
         <script type="text/javascript">
             $(function () {
                 $('[data-toggle="tooltip"]').tooltip();
@@ -212,18 +196,19 @@ input[type=file]{display: none;}
                 // | Cookieに開いたタブ情報があればinクラスを与えて開いた状態にする
                 // +==========================================================
                 // Cookie情報の読み込み
-                var raw_tabs = Cookies.get('activeAccordionGroup'); // console.log(raw_tabs);
+                var raw_tabs = Cookies.get('activeAccordionGroup'); /* console.log(raw_tabs); */
                 // 配列情報が文字列で取得されるため、不要な文字を削除して配列に変換する
                 if(raw_tabs != null) {
                     raw_tabs     = raw_tabs.replace(/\[/g, '').replace(/]/g, '').replace(/"/g, '');
                     var tabs     = raw_tabs.split(',');
-                    $.each(tabs, function(i, tab){ // console.log(i + ' : ' + tab);
+                    $.each(tabs, function(i, tab){
+                        // console.log(i + ' : ' + tab);
                         $(tab).addClass('in');
                     });
                 }
                 // cookie情報を扱う配列にセット
                 // 注意：この時点ではまだcookieを操作していない
-                var cookie_array = tabs; // console.log('cookie_array : ' + cookie_array);
+                var cookie_array = tabs; /* console.log('cookie_array : ' + cookie_array); */
                 // #### アコーディオンパネルをクリックしたタイミングで発火する ####
                 $('.collapse[data-toggle="collapse"]').click(function() {
                     // 共通処理：idを取得してcookie配列に追加
@@ -231,10 +216,11 @@ input[type=file]{display: none;}
                     if(id != null && cookie_array.indexOf(id) == -1) cookie_array.push(id);
                     // タブが閉じられたときの処理：アクティブなタブとその子タブを配列から削除する
                     if($(this).next().hasClass('in')){  console.log('close -> ' + id);
-                        var remove_id = getGroupId(id);
+                    var remove_id = getGroupId(id);
                         // 削除する要素を検出して子要素を全て消す
                         if(cookie_array.length == 0) { /*console.log('undefined');*/ return false; }
-                        $.each(cookie_array, function(i, buf) { // console.log(buf + ' <=> ' + remove_id);
+                        $.each(cookie_array, function(i, buf) {
+                            //console.log(buf + ' <=> ' + remove_id);
                             if(buf == null) return false;
                             if(buf.indexOf(remove_id) != -1) cookie_array.splice(i /* i番目の要素から */, 1 /* つ削除 */);
                         });
@@ -244,16 +230,13 @@ input[type=file]{display: none;}
                     Cookies.set('activeAccordionGroup', cookie_array, { expires: 7 });
                 });
             });
-
-            
             function getGroupId(id) {
                 var tmp_id = id.replace(/#/g, '');
                 var arr_id = tmp_id.split('_');
                 if(!(arr_id instanceof Array) || arr_id.length < 2) return false;
                 return arr_id[0];
             }
-            </script>
-            @show
-
-        </body>
-        </html>
+        </script>
+        @show
+    </body>
+</html>

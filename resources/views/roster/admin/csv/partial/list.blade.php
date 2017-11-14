@@ -3,7 +3,7 @@
     <thead>
         <tr>
             <th class="bg-primary">日付</th>
-            <th class="bg-primary">部署・氏名</th>
+            <th class="bg-primary">部署・社員番号・氏名</th>
             <th class="bg-primary">予定承認</th>
             <th class="bg-primary">実績承認</th>
             <th class="bg-primary">勤務予定</th>
@@ -30,12 +30,12 @@
                 @endif
             >{{date('n月j日', strtotime($r->entered_on))}} （{{$day['week_name']}}）</p>
         </th>
-        <td class="va-middle">
+        <td class="va-middle text-left">
             @if(!empty($r->staff_number))
-                <p>{{$r->staff_number}}</p>
+{{--                 <p>{{$r->staff_number}}</p> --}}
             @else <p class="text-danger"><a href="{{route('admin::roster::index', ['system'=>'Roster','category'=>'RosterUser'])}}"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> 職員番号が登録されていません</a></p> @endif
             <p>{{$r->division_name}}</p>
-            <p>{{$r->last_name}} {{$r->first_name}}さん</p>
+            <p><b>{{$r->staff_number}} : </b>{{$r->last_name}} {{$r->first_name}}<small>さん</small></p>
         </td>
         {{-- 予定状態ラベル --}}
         <td>

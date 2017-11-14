@@ -28,9 +28,7 @@
                 href="{{route('admin::super::month::show')}}"
                 data-toggle="tooltip"
                 data-placement="right"
-                title="（スーパーユーザー用機能）公開する年月およびその処理状況を確認できます。">
-                <span class="text-danger"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 年月・処理状況確認</span>
-            </a><span></span>
+                title="（スーパーユーザー用機能）公開する年月およびその処理状況を確認できます。">年月・処理状況確認</a><span></span>
             
             <a
                 role="presentation"
@@ -38,8 +36,7 @@
                 href="{{route('admin::super::user::show')}}"
                 data-toggle="tooltip"
                 data-placement="right"
-                title="（スーパーユーザー用機能）一般ユーザーと管理ユーザーの昇格・降格などが行えます。">
-                <span class="text-danger"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> ユーザー権限変更</span></a>
+                title="（スーパーユーザー用機能）一般ユーザーと管理ユーザーの昇格・降格などが行えます。">ユーザー権限変更</a>
         <span></span>
     {{--     <a role="presentation" class="list-group-item collapse" href="{{route('admin::super::user::show')}}">処理状況確認</a> --}}
 
