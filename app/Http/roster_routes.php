@@ -85,10 +85,10 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
                     Route::post('/edit/{type}/all', ['as' => 'all', 'uses' => 'RosterAcceptController@all']);
                 });
                 Route::group(['as' => 'work_plan::', 'prefix' => '/work_plan'], function() {
-                    Route::get('', ['as' => 'index', 'uses' => 'RosterWorkPlanController@index']);
-                    Route::get('/{month}', ['as' => 'division', 'uses' => 'RosterWorkPlanController@division']);
-                    Route::get('/list/{month}/{id}', ['as' => 'list', 'uses' => 'RosterWorkPlanController@userList']);
-                    Route::post('/list/edit/{month}/{id}', ['as' => 'edit', 'uses' => 'RosterWorkPlanController@edit']);
+                    Route::get('/',                                      ['as' => 'index', 'uses' => 'RosterWorkPlanController@index']);
+                    Route::get('/{year_and_month}',                      ['as' => 'division', 'uses' => 'RosterWorkPlanController@division']);
+                    Route::get('/list/{year_and_month}/{user_id}',       ['as' => 'list', 'uses' => 'RosterWorkPlanController@userList']);
+                    Route::post('/list/edit/{year_and_month}/{user_id}', ['as' => 'edit', 'uses' => 'RosterWorkPlanController@edit']);
                 });
             });
             /**
@@ -97,7 +97,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
              * Prefix     : /accept
              */
             Route::group(['middleware' => 'roster_chief', 'as' => 'chief::', 'prefix' => '/chief'], function() {
-                Route::get('/home', ['as' => 'index', 'uses' => 'RosterChiefController@index']);
+                Route::get('/home',    ['as' => 'index',  'uses' => 'RosterChiefController@index']);
                 Route::post('/update', ['as' => 'update', 'uses' => 'RosterChiefController@update']);
             });
         });
