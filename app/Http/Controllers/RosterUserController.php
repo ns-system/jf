@@ -11,7 +11,6 @@ class RosterUserController extends Controller
 {
 
     public function index($user_id) {
-
         // 自分自身もしくは管理ユーザーで入った場合のみ処理を通す
         $u = \Auth::user();
         $r = \App\RosterUser::user($user_id)->first();
@@ -20,7 +19,7 @@ class RosterUserController extends Controller
         {
             return redirect()->route('permission_error');
         }
-        
+
         $divs  = \App\Division::orderBy('division_id', 'asc')->get();
         $types = \App\WorkType::workTypeList()->get();
         $user  = \App\User::where('users.id', '=', $user_id)
@@ -55,8 +54,11 @@ class RosterUserController extends Controller
 
         \DB::connection('mysql_roster')->transaction(function() use($user_id, $roster, $request) {
             $roster->user_id      = $user_id;
-            $roster->is_chief     = (isset($request['is_chief'])) ? true : false;
-            $roster->work_type_id = (isset($request['work_type_id'])) ? $request['work_type_id'] : null;
+            $roster->work_type_id = $request['work_type_id'];
+            if (empty($request['work_type_id']) && $request['is_chief'])
+            {
+                $roster->work_type_id = 0;
+            }
             $roster->save();
         });
         \Session::flash('success_message', 'ユーザーの更新が完了しました。');
@@ -99,15 +101,15 @@ class RosterUserController extends Controller
         }
 
         // ユーザー情報の取得
-        $user = \DB::connection('mysql_roster')
+        $user     = \DB::connection('mysql_roster')
                 ->table('roster_users')
-                ->join('sinren_db.sinren_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-                ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
-                ->join('laravel_db.users', 'roster_users.user_id', '=', 'users.id')
+                ->leftJoin('sinren_db.sinren_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+                ->leftJoin('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+                ->leftJoin('laravel_db.users', 'roster_users.user_id', '=', 'users.id')
                 ->where('users.id', '=', $id)
                 ->first()
         ;
-
+//        dd($user);
         // 管轄部署情報の取得
         $controls = \DB::connection('mysql_sinren')
                 ->table('control_divisions')
@@ -121,14 +123,12 @@ class RosterUserController extends Controller
     }
 
     public function editAdmin(AdminChief $request, $user_id) {
-
         try {
             $user = \App\RosterUser::where('user_id', '=', $user_id)->firstOrFail();
         } catch (\Exception $e) {
             \Session::flash('warn_message', 'ユーザーが登録されていないようです。');
             return back();
         }
-
         if ($request['is_chief'] || $request['is_proxy'])
         {
             foreach ($request['control_division'] as $div) {
