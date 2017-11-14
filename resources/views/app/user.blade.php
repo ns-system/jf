@@ -8,10 +8,11 @@
 @endsection
 
 @section('sidebar')
-<div class="col-md-2">
-    @include('admin.sidebar.sidebar')
-</div>
+    <div class="col-md-2">
+        @include('app.sidebar.sidebar')
+    </div>
 @endsection
+
 
 
 @section('content')
