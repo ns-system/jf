@@ -196,6 +196,7 @@ input[type=file]{display: none;}
                 // | Cookieに開いたタブ情報があればinクラスを与えて開いた状態にする
                 // +==========================================================
                 // Cookie情報の読み込み
+                var cookie_array = [];
                 var raw_tabs = Cookies.get('activeAccordionGroup'); /* console.log(raw_tabs); */
                 // 配列情報が文字列で取得されるため、不要な文字を削除して配列に変換する
                 if(raw_tabs != null) {
@@ -205,10 +206,10 @@ input[type=file]{display: none;}
                         // console.log(i + ' : ' + tab);
                         $(tab).addClass('in');
                     });
+                    var cookie_array = tabs; console.log('cookie_array : ' + cookie_array);
                 }
                 // cookie情報を扱う配列にセット
                 // 注意：この時点ではまだcookieを操作していない
-                var cookie_array = tabs; /* console.log('cookie_array : ' + cookie_array); */
                 // #### アコーディオンパネルをクリックしたタイミングで発火する ####
                 $('.collapse[data-toggle="collapse"]').click(function() {
                     // 共通処理：idを取得してcookie配列に追加
