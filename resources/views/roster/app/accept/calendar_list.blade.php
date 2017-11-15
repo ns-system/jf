@@ -46,7 +46,7 @@
         <div style="margin-bottom: 20px;">
             <ul class="nav nav-tabs">
                 @foreach($users as $i => $u)
-                <li @if($i == 0) class="active" @endif><a href="#id-{{$u->user_id}}" data-toggle="tab">{{$u->last_name}}さん</a></li>
+                <li @if($i == 0) class="active" @endif><a href="#id-{{$u->user_id}}" data-toggle="tab"><b>{{$u->last_name}}</b><small>さん</small></a></li>
                 @endforeach
             </ul>
         </div>
