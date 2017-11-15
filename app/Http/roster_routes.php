@@ -81,8 +81,8 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
                     Route::get('/calendar/{year_and_month}/{division_id}', ['as' => 'calendar', 'uses' => 'RosterAcceptController@calendar']);
                     Route::post('/calendar/edit',                          ['as' => 'calendar_accept', 'uses' => 'RosterAcceptController@calendarAccept']);
 
-                    Route::post('/edit/{type}/part/{id}', ['as' => 'part', 'uses' => 'RosterAcceptController@part']);
-                    Route::post('/edit/{type}/all',       ['as' => 'all', 'uses' => 'RosterAcceptController@all']);
+//                    Route::post('/edit/{type}/part/{id}', ['as' => 'part', 'uses' => 'RosterAcceptController@part']);
+//                    Route::post('/edit/{type}/all',       ['as' => 'all', 'uses' => 'RosterAcceptController@all']);
                 });
                 Route::group(['as' => 'work_plan::', 'prefix' => '/work_plan'], function() {
                     Route::get('/',                                      ['as' => 'index',    'uses' => 'RosterWorkPlanController@index']);
