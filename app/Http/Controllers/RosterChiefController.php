@@ -15,7 +15,7 @@ class RosterChiefController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $divs = \App\ControlDivision::user()->get();
+        $divs = \App\ControlDivision::joinUsers(\Auth::user()->id)->get();
         $rows = \DB::connection('mysql_sinren')
                 ->table('sinren_users')
                 ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
