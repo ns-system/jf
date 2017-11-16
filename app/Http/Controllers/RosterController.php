@@ -22,9 +22,9 @@ class RosterController extends Controller
         $this->service = new Calendar();
     }
 
-    public function home() {
-        return view('roster.app.index', ['count' => 1]);
-    }
+//    public function home() {
+//        return view('roster.app.index', ['count' => 1]);
+//    }
 
     public function show($ym) {
         $d = \DateTime::createFromFormat('Ymd', $ym . '01');
