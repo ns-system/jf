@@ -13,6 +13,9 @@ class ProcessStatusController extends Controller
 
     use JsonUsable;
 
+    const INT_MAX_PREV_MONTH = -3;
+    const INT_MAX_NEXT_MONTH = 9;
+
     protected $service;
 //    protected $json_service;
     protected $path;
@@ -25,13 +28,9 @@ class ProcessStatusController extends Controller
 
     public function index() {
         $rows     = \App\Month::orderBy('monthly_id', 'desc')->paginate(25);
-        $max_date = \App\Month::max('monthly_id');
-        if (empty($max_date))
-        {
-            $max_date = date('Ym');
-        }
-        $months = [];
-        for ($i = -3; $i < 3; $i++) {
+        $max_date = date('Ym');
+        $months   = [];
+        for ($i = self::INT_MAX_PREV_MONTH; $i < self::INT_MAX_NEXT_MONTH; $i++) {
             $tmp    = date('Y-m-d', strtotime($max_date . '01'));
             $serial = strtotime("{$tmp} -{$i} month");
             if (!\App\Month::where('monthly_id', '=', date('Ym', $serial))->exists())
