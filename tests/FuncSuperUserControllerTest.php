@@ -65,7 +65,7 @@ class FuncSuperUserControllerTest extends TestCase
      * @tests
      */
     public function 一般ユーザーをスーパーユーザに変更できる() {
-//        \App\User::truncate();
+
         $super_user   = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user  = factory(\App\User::class)->create(['is_super_user' => false]);
         $this->actingAs($super_user)
@@ -84,7 +84,7 @@ class FuncSuperUserControllerTest extends TestCase
      * @tests
      */
     public function スーパーユーザを一般ユーザーに変更できる() {
-//        \App\User::truncate();
+
         $super_user   = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $this->actingAs($super_user)
@@ -99,58 +99,13 @@ class FuncSuperUserControllerTest extends TestCase
         $this->assertEquals(0, $changed_user->is_super_user);
     }
 
-//    /**
-//     * @tests
-//     */
-//    public function 推進一般ユーザーを推進管理ユーザーに変更できる() {
-//        \App\User::truncate();
-//        \App\SuisinUser::truncate();
-//        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
-//        $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
-//        factory(\App\SuisinUser::create(['user_id' => $target_user->id, "is_administrator" => '0']));
-//        $suisin_unchanged_user = \App\SuisinUser::where('user_id', $target_user->id)->first();
-//        $this->actingAs($super_user)
-//                ->visit('/admin/super_user/user/' . $target_user->id)
-//                ->see($target_user->first_name . " " . $target_user->last_name)
-//                ->select('1', 'suisin_is_administrator')
-//                ->press('更新する')
-//                ->seePageIs('/admin/super_user/user')
-//        ;
-//        $suisin_changed_user   = \App\SuisinUser::where('user_id', $target_user->id)->first();
-//        $this->assertEquals(0, $suisin_unchanged_user->is_administrator);
-//        $this->assertEquals(1, $suisin_changed_user->is_administrator);
-//    }
-//
-//    /**
-//     * @tests
-//     */
-//    public function 推進管理ユーザーを推進一般ユーザーに変更できる() {
-//        \App\User::truncate();
-//        \App\SuisinUser::truncate();
-//        $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
-//        $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
-//        factory(\App\SuisinUser::create(['user_id' => $target_user->id, "is_administrator" => '1']));
-//        $suisin_unchanged_user = \App\SuisinUser::where('user_id', $target_user->id)->first();
-//        $this->actingAs($super_user)
-//                ->visit('/admin/super_user/user/' . $target_user->id)
-//                ->see($target_user->first_name . " " . $target_user->last_name)
-//                ->select('0', 'suisin_is_administrator')
-//                ->press('更新する')
-//                ->seePageIs('/admin/super_user/user')
-//        ;
-//        $suisin_changed_user   = \App\SuisinUser::where('user_id', $target_user->id)->first();
-//        $this->assertEquals(1, $suisin_unchanged_user->is_administrator);
-//        $this->assertEquals(0, $suisin_changed_user->is_administrator);
-//    }
+
 
     /**
      * @tests
      */
     public function 勤怠一般ユーザーを勤怠管理ユーザに変更できる() {
-//        \App\User::truncate();
-//        \App\SinrenUser::truncate();
-//        \App\SinrenDivision::truncate();
-//        \App\RosterUser::truncate();
+
         $div                   = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
         $super_user            = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => false]);
@@ -173,10 +128,7 @@ class FuncSuperUserControllerTest extends TestCase
      * @tests
      */
     public function 勤怠管理ユーザを勤怠一般ユーザに変更できる() {
-//        \App\User::truncate();
-//        \App\SinrenUser::truncate();
-//        \App\SinrenDivision::truncate();
-//        \App\RosterUser::truncate();
+
         $div                   = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
         $super_user            = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => false]);
@@ -200,7 +152,7 @@ class FuncSuperUserControllerTest extends TestCase
      */
     public function スーパーユーザー以外がユーザーをスーパーユーザーにしようとするとエラー() {
         \Session::start();
-//        \App\User::truncate();
+
         $super_user  = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user = factory(\App\User::class)->create(['is_super_user' => '0']);
         $this->actingAs($target_user)
@@ -214,8 +166,7 @@ class FuncSuperUserControllerTest extends TestCase
      */
     public function スーパーユーザー以外がユーザーを推進管理ユーザーにしようとするとエラー() {
         \Session::start();
-//        \App\User::truncate();
-//        \App\SuisinUser::truncate();
+
         $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user = factory(\App\User::class)->create(['is_super_user' => false]);
         \App\SuisinUser::create(['user_id' => $target_user->id, "is_administrator" => false]);
@@ -230,10 +181,7 @@ class FuncSuperUserControllerTest extends TestCase
      */
     public function スーパーユーザー以外がユーザーを勤怠管理ユーザーにしようとするとエラー() {
         \Session::start();
-//        \App\User::truncate();
-//        \App\RosterUser::truncate();
-//        \App\SinrenUser::truncate();
-//        \App\SinrenDivision::truncate();
+
         $div         = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
         $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user = factory(\App\User::class)->create(['is_super_user' => false]);
@@ -250,10 +198,7 @@ class FuncSuperUserControllerTest extends TestCase
      */
     public function is_super_userに誤った入力がされるとエラー() {
         \Session::start();
-//        \App\User::truncate();
-//        \App\RosterUser::truncate();
-//        \App\SinrenUser::truncate();
-//        \App\SinrenDivision::truncate();
+
         $div         = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
         $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user = factory(\App\User::class)->create(['is_super_user' => false]);
@@ -270,10 +215,7 @@ class FuncSuperUserControllerTest extends TestCase
      */
     public function suisin_is_administratorに誤った入力がされるとエラー() {
         \Session::start();
-//        \App\User::truncate();
-//        \App\RosterUser::truncate();
-//        \App\SinrenUser::truncate();
-//        \App\SinrenDivision::truncate();
+
         $div         = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
         $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user = factory(\App\User::class)->create(['is_super_user' => false]);
@@ -290,10 +232,6 @@ class FuncSuperUserControllerTest extends TestCase
      */
     public function roster_is_administratorに誤った入力がされるとエラー() {
         \Session::start();
-//        \App\User::truncate();
-//        \App\RosterUser::truncate();
-//        \App\SinrenUser::truncate();
-//        \App\SinrenDivision::truncate();
         $div         = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
         $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user = factory(\App\User::class)->create(['is_super_user' => false]);
@@ -309,7 +247,7 @@ class FuncSuperUserControllerTest extends TestCase
      * @tests
      */
     public function ユーザーを名前で検索できる() {
-//        \App\User::truncate();
+
         $super_user   = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $this->actingAs($super_user)
@@ -326,7 +264,7 @@ class FuncSuperUserControllerTest extends TestCase
      * @tests
      */
     public function ユーザーをメールアドレスで検索できる() {
-//        \App\User::truncate();
+
         $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user = factory(\App\User::class)->create(['is_super_user' => true]);
         $this->actingAs($super_user)
@@ -342,7 +280,7 @@ class FuncSuperUserControllerTest extends TestCase
      * @tests
      */
     public function スーパーユーザーを検索できる() {
-//        \App\User::truncate();
+
         $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $normal_user = factory(\App\User::class)->create(['is_super_user' => false]);
         $this->actingAs($super_user)
@@ -358,7 +296,7 @@ class FuncSuperUserControllerTest extends TestCase
      * @tests
      */
     public function 一般ユーザーを検索できる() {
-//        \App\User::truncate();
+
         $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $normal_user = factory(\App\User::class)->create(['is_super_user' => false]);
         $this->actingAs($super_user)
@@ -370,45 +308,7 @@ class FuncSuperUserControllerTest extends TestCase
         ;
     }
 
-//    /**
-//     * @tests
-//     */
-//    public function 推進管理者ユーザーを検索できる() {
-//        \App\User::truncate();
-//        \App\SuisinUser::truncate();
-//        $super_user                = factory(\App\User::class)->create(['is_super_user' => '1']);
-//        $normal_user               = factory(\App\User::class)->create(['is_super_user' => '0']);
-//        $suisin_administrator_user = factory(\App\User::class)->create(['is_super_user' => '0']);
-//        factory(\App\SuisinUser::create(['user_id' => $normal_user->id, "is_administrator" => '0']));
-//        factory(\App\SuisinUser::create(['user_id' => $suisin_administrator_user->id, "is_administrator" => '1']));
-//        $this->actingAs($super_user)
-//                ->visit('/admin/super_user/user')
-//                ->select('1', 'suisin')
-//                ->press('検索する')
-//                ->see($suisin_administrator_user->name)
-//                ->dontSee($normal_user->name)
-//        ;
-//    }
-//
-//    /**
-//     * @tests
-//     */
-//    public function 推進一般ユーザーを検索できる() {
-//        \App\User::truncate();
-//        \App\SuisinUser::truncate();
-//        $super_user                = factory(\App\User::class)->create(['is_super_user' => '1']);
-//        $normal_user               = factory(\App\User::class)->create(['is_super_user' => '0']);
-//        $suisin_administrator_user = factory(\App\User::class)->create(['is_super_user' => '0']);
-//        factory(\App\SuisinUser::create(['user_id' => $normal_user->id, "is_administrator" => '0']));
-//        factory(\App\SuisinUser::create(['user_id' => $suisin_administrator_user->id, "is_administrator" => '1']));
-//        $this->actingAs($super_user)
-//                ->visit('/admin/super_user/user')
-//                ->select('0', 'suisin')
-//                ->press('検索する')
-//                ->see($normal_user->name)
-//                ->dontSee($suisin_administrator_user->name)
-//        ;
-//    }
+
 
     /**
      * @tests
@@ -435,10 +335,7 @@ class FuncSuperUserControllerTest extends TestCase
      * @tests
      */
     public function 勤怠一般ユーザを検索できる() {
-        \App\User::truncate();
-        \App\SinrenUser::truncate();
-        \App\SinrenDivision::truncate();
-        \App\RosterUser::truncate();
+
         $div                = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
         $super_user         = factory(\App\User::class)->create(['is_super_user' => true]);
         $roster_admin_user  = factory(\App\User::class)->create(['is_super_user' => false]);
@@ -460,10 +357,7 @@ class FuncSuperUserControllerTest extends TestCase
      * @tests
      */
     public function 部署で検索できる() {
-//        \App\User::truncate();
-//        \App\SinrenUser::truncate();
-//        \App\SinrenDivision::truncate();
-//        \App\RosterUser::truncate();
+
         $div_1           = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
         $div_2           = \App\SinrenDivision::create(['division_id' => 2, 'division_name' => 'division_2']);
         $super_user      = factory(\App\User::class)->create(['is_super_user' => true]);

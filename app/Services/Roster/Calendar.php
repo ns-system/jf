@@ -156,11 +156,11 @@ class Calendar
     }
 
     public function editActual($id, $request) {
-        $roster = \App\Roster::find($id);
-        if (empty($roster))
-        {
-            throw new \Exception('予定データが入力されていないようです。');
-        }
+        $roster = \App\Roster::findOrFail($id);
+//        if (empty($roster))
+//        {
+//            throw new \Exception('予定データが入力されていないようです。');
+//        }
         $start_time = null;
         $end_time   = null;
         if (empty($request['actual_rest_reason_id']))
@@ -185,13 +185,13 @@ class Calendar
     }
 
     public function delete($id) {
-        $roster = \App\Roster::find($id);
-        if (!$roster->exists())
-        {
-            throw new \Exception('予定データが見つかりませんでした。');
-//            \Session::flash('warn_message', '予定データが見つかりませんでした。');
-//            return back();
-        }
+        $roster = \App\Roster::findOrFail($id);
+//        if (!$roster->exists())
+//        {
+//            throw new \Exception('予定データが見つかりませんでした。');
+////            \Session::flash('warn_message', '予定データが見つかりませんでした。');
+////            return back();
+//        }
         
         if($roster->is_plan_accept || $roster->is_actual_accept){
             throw new \Exception('データはすでに承認されているため、削除できません。');

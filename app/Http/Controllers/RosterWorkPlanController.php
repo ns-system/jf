@@ -29,7 +29,9 @@ class RosterWorkPlanController extends Controller
     }
 
     public function division($month) {
+
         $divs  = \App\ControlDivision::user(\Auth::user()->id)->get();
+        $cnt =[];
         $users = \App\SinrenUser::join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
                 ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
