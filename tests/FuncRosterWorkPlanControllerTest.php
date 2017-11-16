@@ -80,7 +80,7 @@ class FuncRosterWorkPlanControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系系責任者が勤務予定データを作成できる() {
+    public function 異常系勤務予定データ作成時日付が入るべきところに日付以外が入るとエラー() {
         \App\Roster::truncate();
         $this->actingAs($this->admin_user)
                 ->visit('/app/roster/work_plan')
