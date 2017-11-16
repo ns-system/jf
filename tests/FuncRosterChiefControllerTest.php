@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-class FuncRosterChiefControllertest extends TestCase
+class FuncRosterChiefControllerTest extends TestCase
 {
 
     protected static $init                     = false;
