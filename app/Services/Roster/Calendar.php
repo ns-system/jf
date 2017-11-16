@@ -156,11 +156,11 @@ class Calendar
     }
 
     public function editActual($id, $request) {
-        $roster = \App\Roster::find($id);
-        if (empty($roster))
-        {
-            throw new \Exception('予定データが入力されていないようです。');
-        }
+        $roster = \App\Roster::findOrFail($id);
+//        if (empty($roster))
+//        {
+//            throw new \Exception('予定データが入力されていないようです。');
+//        }
         $start_time = null;
         $end_time   = null;
         if (empty($request['actual_rest_reason_id']))

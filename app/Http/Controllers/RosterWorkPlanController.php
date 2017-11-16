@@ -29,7 +29,8 @@ class RosterWorkPlanController extends Controller
     }
 
     public function division($month) {
-        $divs  = \App\ControlDivision::user()->get();
+
+        $divs  = \App\ControlDivision::user(\Auth::user()->id)->get();
         $cnt =[];
         $users = \App\SinrenUser::join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
@@ -40,6 +41,7 @@ class RosterWorkPlanController extends Controller
                     }
                 })
                 ->where('roster_users.user_id', '<>', \Auth::user()->id)
+                ->where('roster_users.is_administrator', '<>', true)
                 ->orderBy('sinren_users.division_id', 'asc')
                 ->get()
         ;

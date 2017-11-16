@@ -47,7 +47,7 @@
 		</td>
         @if(!empty($day['data']))
             <?php $data = $day['data']; ?>
-            {{-- 承認済み→入力。削除不可 --}}
+            {{-- 承認済み→入力不可 --}}
             @if($data->is_plan_accept || $data->is_actual_accept || $data->is_plan_entry || $data->is_actual_entry)
                 @if($data->is_plan_accept || $data->is_actual_accept)
                     <td><span class="label label-success" data-toggle="tooltip" title="データは承認されています。以降の修正は行えません。">勤務データ承認済</span></td>
@@ -65,7 +65,7 @@
                     {{$rests[$data->plan_rest_reason_id]['rest_reason_name']}}
                     @endif
                 </td>
-            {{-- 未承認→入力・削除可能 --}}
+            {{-- 未承認→入力可能 --}}
             @else
                 <td><span class="label label-info" data-toggle="tooltip" title="予定データは入力されていますが、修正できます。">予定データ入力済</span></td>
                 <td>
@@ -115,7 +115,6 @@
                 </select>
             </td>
         @endif
-        <td>{{--var_dump($day)--}}</td>
 	</tr>
 @endforeach
 </tbody>

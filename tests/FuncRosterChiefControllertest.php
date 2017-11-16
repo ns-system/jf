@@ -56,10 +56,10 @@ class FuncRosterChiefControllertest extends TestCase
     public function 正常系責任者がユーザーを責任者代理_代理人機能無効状態にできる() {
         $roster_unchanged_user = \App\RosterUser::where('user_id', $this->normal_user->id)->first();
         $this->actingAs($this->admin_user)
-                ->visit('/app/roster/chief/home')
+                ->visit('/app/roster/chief/')
                 ->see("責任者代理設定")
                 ->post('/app/roster/chief/update', ['_token' => csrf_token(), 'id' => $roster_unchanged_user->id, 'proxy' => '1', 'active' => '0',])
-                ->assertRedirectedTo('/app/roster/chief/home')
+                ->assertRedirectedTo('/app/roster/chief/')
         ;
         $roster_changed_user   = \App\RosterUser::where('user_id', $this->normal_user->id)->first();
         $this->assertEquals(0, $roster_unchanged_user->is_proxy);
@@ -74,10 +74,10 @@ class FuncRosterChiefControllertest extends TestCase
     public function 正常系責任者がユーザーを責任者代理_代理人機能有効状態にできる() {
         $roster_unchanged_user = \App\RosterUser::where('user_id', $this->normal_user->id)->first();
         $this->actingAs($this->admin_user)
-                ->visit('/app/roster/chief/home')
+                ->visit('/app/roster/chief/')
                 ->see("責任者代理設定")
                 ->post('/app/roster/chief/update', ['_token' => csrf_token(), 'id' => $roster_unchanged_user->id, 'proxy' => '1', 'active' => '1',])
-                ->assertRedirectedTo('/app/roster/chief/home')
+                ->assertRedirectedTo('/app/roster/chief/')
         ;
         $roster_changed_user   = \App\RosterUser::where('user_id', $this->normal_user->id)->first();
         $this->assertEquals(0, $roster_unchanged_user->is_proxy);
@@ -92,10 +92,10 @@ class FuncRosterChiefControllertest extends TestCase
     public function 正常系責任者が責任者代理ユーザーを一般ユーザーにできる() {
         $roster_unchanged_user = \App\RosterUser::where('user_id', $this->proxy_user->id)->first();
         $this->actingAs($this->admin_user)
-                ->visit('/app/roster/chief/home')
+                ->visit('/app/roster/chief/')
                 ->see("責任者代理設定")
                 ->post('/app/roster/chief/update', ['_token' => csrf_token(), 'id' => $roster_unchanged_user->id, 'proxy' => '0', 'active' => '0',])
-                ->assertRedirectedTo('/app/roster/chief/home')
+                ->assertRedirectedTo('/app/roster/chief/')
         ;
         $roster_changed_user   = \App\RosterUser::where('user_id', $this->normal_user->id)->first();
         $this->assertEquals(1, $roster_unchanged_user->is_proxy);

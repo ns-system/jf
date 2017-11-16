@@ -126,7 +126,8 @@ class SuisinAdminController extends Controller
             \DB::connection('mysql_master')->rollback();
             \DB::connection('mysql_suisin')->rollback();
             \Session::flash('danger_message', $e->getMessage());
-            return back();
+            return redirect($page_settings['index_route']);
+            
         }
         \Session::flash('success_message', ($cnt['insert_count'] + $cnt['update_count']) . "件の処理が終了しました。（新規：{$cnt['insert_count']}件，更新：{$cnt['update_count']}件）");
         return redirect($page_settings['index_route']);
