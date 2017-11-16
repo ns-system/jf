@@ -202,4 +202,28 @@ class UnitUserServicesTest extends TestCase
         $this->assertEquals($user_changed_division->division_id, $this->division_change_input['division_id']);
     }
 
+    /**
+     * @tests
+     */
+    public function 異常系_ユーザーアイコン変更時にエラーが起きる() {
+        \App\User::truncate();
+        \Session::start();
+
+        $user = factory(\App\User::class)->create();
+
+        $service = new \App\Services\UserService();
+        try {
+            $service->editUserIcon(null, null);
+            $this->fail('エラー：例外が発生しませんでした。');
+        } catch (\Exception $e) {
+            $this->assertEquals('データが送信されていないようです。', $e->getMessage());
+        }
+        try {
+            $service->editUserIcon(0, 1);
+            $this->fail('エラー：例外が発生しませんでした。');
+        } catch (\Exception $e) {
+            $this->assertEquals('ユーザーが登録されていないようです。', $e->getMessage());
+        }
+    }
+
 }

@@ -20,7 +20,7 @@
         <div class="modal-content">
             <div class="modal-header bg-primary-important">
                 <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
-                <h4 class="modal-title">タイトル</h4>
+                <h4 class="modal-title">検索条件</h4>
             </div>
             <div class="modal-body">
                 <div class="col-md-10 col-md-offset-1">
