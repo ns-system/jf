@@ -28,10 +28,10 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
         $this->job_id      = $job_id;
     }
 
-    public function failed() {
-        echo "error!";
-        \DB::connection('mysql_zenon')->rollback();
-    }
+//    public function failed() {
+//        echo "error!";
+//        \DB::connection('mysql_zenon')->rollback();
+//    }
 
     public function handle() {
         echo "==== CsvFileUpload ====" . PHP_EOL;
