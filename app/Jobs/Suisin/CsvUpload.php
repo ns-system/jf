@@ -41,7 +41,7 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
         $process_ids = $this->process_ids;
 
         $import_zenon_data_service = new ImportZenonDataService();
-//        \DB::connection('mysql_zenon')->beginTransaction();
+        \DB::connection('mysql_zenon')->beginTransaction();
 
         // 事前チェック
         try {
@@ -78,32 +78,32 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             echo "  -- upload : " . date('Y-m-d H:i:s') . PHP_EOL;
 
             // 全オンデータ反映
-//            $database_setting_not_exist_list = [];
+            $database_setting_not_exist_list = [];
             foreach ($rows as $r) {
                 echo "     --> {$r->csv_file_name}" . PHP_EOL;
-                $this->debugMemory('phase1');
+//                $this->debugMemory('phase1');
                 $import_zenon_data_service->setPostStartToMonthlyStatus($r->id);
                 $csv_file_object = $import_zenon_data_service->setCsvFileObject($file_path . '/' . $r->csv_file_name)->getCsvFileObject();
 
                 // データベース反映処理
-                /*$error_array = */$import_zenon_data_service->uploadToDatabase($r, $csv_file_object, $ym);
+                $error_array = $import_zenon_data_service->uploadToDatabase($r, $csv_file_object, $ym);
 
-//                // エラーメッセージ処理
-//                if (!empty($error_array))
-//                {
-//                    $database_setting_not_exist_list[] = $error_array;
-//                    $import_zenon_data_service->setPostErrorToMonthlyStatus($r->id, $error_array['reason']);
-//                }
-//                else
-//                {
-//                    $import_zenon_data_service->setPostEndToMonthlyStatus($r->id);
-//                }
-                $this->debugMemory('phase2');
+                // エラーメッセージ処理
+                if (!empty($error_array))
+                {
+                    $database_setting_not_exist_list[] = $error_array;
+                    $import_zenon_data_service->setPostErrorToMonthlyStatus($r->id, $error_array['reason']);
+                }
+                else
+                {
+                    $import_zenon_data_service->setPostEndToMonthlyStatus($r->id);
+                }
+//                $this->debugMemory('phase2');
             }
-//            if (!empty($database_setting_not_exist_list))
-//            {
-//                $import_zenon_data_service->outputForJsonFile($database_setting_not_exist_list, storage_path() . '/jsonlogs', date('Ymd_His') . '_database_setting_not_exist_files.json');
-//            }
+            if (!empty($database_setting_not_exist_list))
+            {
+                $import_zenon_data_service->outputForJsonFile($database_setting_not_exist_list, storage_path() . '/jsonlogs', date('Ymd_His') . '_database_setting_not_exist_files.json');
+            }
 
             // 委託者マスタ創生
             echo "  -- consignors : " . date('Y-m-d H:i:s') . PHP_EOL;
@@ -132,7 +132,7 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             exit();
         }
 
-//        \DB::connection('mysql_zenon')->commit();
+        \DB::connection('mysql_zenon')->commit();
 
         echo "[end   : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
     }
