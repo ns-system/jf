@@ -195,7 +195,7 @@ class RosterCsvExportController extends Controller
         try {
             $obj  = $this->service->setMonth($ym)->makeExportData($in);
             $rows = $obj->getRows($type);
-        } catch (Exception $exc) {
+        } catch (\Exception $exc) {
             \Session::flash('warn_message', '予期しないデータが入力されたため、処理が中断されました。');
             return back();
         }
