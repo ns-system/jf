@@ -15,7 +15,7 @@
     <tbody>
 
         @foreach($rows as $day)
-        <?php (!empty($day['data'][$u->user_id])) ? $r = $day['data'][$u->user_id] : null; ?>
+        <?php $r = (!empty($day['data'][$u->user_id])) ? $day['data'][$u->user_id] : null; ?>
         <tr
             id="{{$i}}-{{$day['day']}}"
             width="16%"
