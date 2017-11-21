@@ -374,4 +374,22 @@ class FuncSuperUserControllerTest extends TestCase
         ;
     }
 
+    /**
+     * @tests
+     */
+    public function 異常系存在しないIDを変更しようとするとエラー() {
+
+        \Session::start();
+
+        $div         = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
+        $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
+        $target_user = factory(\App\User::class)->create(['is_super_user' => false]);
+        \App\SinrenUser::create(['user_id' => $target_user->id, 'division_id' => $div->division_id]);
+        \App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => false]);
+        $res=$this->actingAs($super_user)
+                ->POST('/admin/super_user/user/edit/' . 99999, ['_token' => csrf_token(), 'is_super_user' => "1"])             
+        ;
+        $res->assertRedirectedTo('/');
+        $res ->assertSessionHas("warn_message");
+    }
 }
