@@ -92,7 +92,55 @@ class FuncRosterCsvExportControllerTest extends TestCase
         \App\WorkType::firstOrCreate(["work_type_id" => '1', "work_type_name" => "テスト用"]);
         \App\WorkType::firstOrCreate(["work_type_id" => '2', "work_type_name" => "テスト用その二"]);
     }
+ private function createRosterSample(){
+        \App\Roster::create([
+                    'user_id'           => $this->nomaluser1->id,
+                    "plan_work_type_id" => "1",
+                    "entered_on"        => "2017-12-1",
+                    "month_id"          => "201712",
+                    "is_plan_entry"     => 1,
+                    "is_plan_accept"    => 1,
+                    "is_plan_reject"    => 0,
+                    "is_actual_entry"   => 1,
+                    "is_actual_accept"  => 1,
+                    "is_actual_reject"  => 0]);
 
+        \App\Roster::create([
+                    'user_id'           => $this->nomaluser2->id,
+                    "plan_work_type_id" => "1",
+                    "entered_on"        => "2017-12-10",
+                    "month_id"          => "201712",
+                    "is_plan_entry"     => 1,
+                    "is_plan_accept"    => 0,
+                    "is_plan_reject"    => 0,
+                    "is_actual_entry"   => 1,
+                    "is_actual_accept"  => 0,
+                    "is_actual_reject"  => 0]);
+
+        \App\Roster::create([
+                    'user_id'           => $this->nomaluser3->id,
+                    "plan_work_type_id" => "1",
+                    "entered_on"        => "2017-12-15",
+                    "month_id"          => "201712",
+                    "is_plan_entry"     => 1,
+                    "is_plan_accept"    => 0,
+                    "is_plan_reject"    => 1,
+                    "is_actual_entry"   => 1,
+                    "is_actual_accept"  => 0,
+                    "is_actual_reject"  => 1]);
+        \App\Roster::create([
+                    'user_id'           => $this->nomaluser4->id,
+                    "plan_work_type_id" => "1",
+                    "entered_on"        => "2017-12-31",
+                    "month_id"          => "201712",
+                    "is_plan_entry"     => 1,
+                    "is_plan_accept"    => 0,
+                    "is_plan_reject"    => 1,
+                    "is_actual_entry"   => 1,
+                    "is_actual_accept"  => 0,
+                    "is_actual_reject"  => 1]);
+
+    }
 
     /**
      * @tests
@@ -335,6 +383,8 @@ class FuncRosterCsvExportControllerTest extends TestCase
         $this->assertEquals($changed_roster->is_plan_accept, $roster->is_plan_accept);
         $this->assertEquals($changed_roster->is_actual_accept, $roster->is_actual_accept);
     }
+   
+        
 
     /**
      * @tests
@@ -413,41 +463,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
     public function 正常系検索_予定未承認ができる() {
         \App\Roster::truncate();
         \Session::start();
-          \App\Roster::create([
-                    'user_id'           => $this->nomaluser1->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 1,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 1,
-                    "is_actual_reject"  => 0]);
-
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser2->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 0]);
-
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser3->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
+          $this->createRosterSample();
 
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
@@ -476,41 +492,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
     public function 正常系検索_予定承認ができる() {
         \App\Roster::truncate();
         \Session::start();
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser1->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 1,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 1,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser2->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 0]);
-
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser3->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
+         $this->createRosterSample();
 
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
@@ -539,41 +521,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
     public function 正常系検索_予定却下ができる() {
         \App\Roster::truncate();
         \Session::start();
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser1->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 1,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 1,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser2->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser3->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
+         $this->createRosterSample();
 
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
@@ -607,41 +555,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
     public function 正常系検索_実績未承認ができる() {
         \App\Roster::truncate();
         \Session::start();
-          \App\Roster::create([
-                    'user_id'           => $this->nomaluser1->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 1,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 1,
-                    "is_actual_reject"  => 0]);
-
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser2->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 0]);
-
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser3->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
+          $this->createRosterSample();
 
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
@@ -670,42 +584,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
     public function 正常系検索_実績承認ができる() {
         \App\Roster::truncate();
         \Session::start();
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser1->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 1,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 1,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser2->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 0]);
-
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser3->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
-
+         $this->createRosterSample();
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
                 ->see("勤怠管理システム")
@@ -733,41 +612,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
     public function 正常系検索_実績却下ができる() {
         \App\Roster::truncate();
         \Session::start();
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser1->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 1,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 1,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser2->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser3->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
+         $this->createRosterSample();
 
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
@@ -798,41 +643,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
     public function 正常系検索_ユーザー名_苗字ができる() {
         \App\Roster::truncate();
         \Session::start();
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser1->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 1,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 1,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser2->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser3->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
+         $this->createRosterSample();
 
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
@@ -861,52 +672,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
     public function 正常系検索_部署指定ができる() {
         \App\Roster::truncate();
         \Session::start();
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser1->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 1,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 1,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser2->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser3->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser4->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
+         $this->createRosterSample();
 
 
         $this->actingAs($this->superuser)
@@ -943,52 +709,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
     public function 正常系検索_年月指定ができる() {
         \App\Roster::truncate();
         \Session::start();
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser1->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 1,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 1,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser2->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-10",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser3->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-15",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser4->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-31",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
+         $this->createRosterSample();
 
 
         $this->actingAs($this->superuser)
@@ -1023,52 +744,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
     public function 正常系検索で該当者がいない場合誰も表示されない() {
         \App\Roster::truncate();
         \Session::start();
-         \App\Roster::create([
-                    'user_id'           => $this->nomaluser1->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 1,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 1,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser2->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-10",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 0]);
-
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser3->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-15",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
-        \App\Roster::create([
-                    'user_id'           => $this->nomaluser4->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-31",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
+         $this->createRosterSample();
 
 
         $this->actingAs($this->superuser)
@@ -1096,5 +772,248 @@ class FuncRosterCsvExportControllerTest extends TestCase
 
         ;
     }
+    
+//    
+//    
+//    //異常系
+//     /**
+//     * @tests
+//     */
+//    public function 異常系権限のないユーザーが勤怠管理システムCSV出力で予定出力するとエラー() {
+//
+//        for ($i = 1; $i <= 31; $i++) {
+//            \App\Roster::create(['user_id' => $this->nomaluser1->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
+//        }
+//        $this->actingAs($this->nomaluser1)
+//                ->visit("/admin/roster/csv/export/201712/plan")
+//                ->seePageIs("/permission_error")
+//        ;
+//    }
+//
+//    /**
+//     * @tests
+//     */
+//    public function 異常系権限のないユーザーが勤怠管理システムCSV出力で実績出力するとエラー() {
+//        for ($i = 1; $i <= 31; $i++) {
+//            \App\Roster::create(['user_id' => $this->nomaluser1->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
+//        }
+//        $this->actingAs($this->nomaluser1) 
+//                ->visit('/admin/roster/csv/export/201712/actual')
+//                ->seePageIs("/permission_error")
+//        ;
+//    }
+//    /**
+//     * @tests
+//     */
+//    public function 異常系権限のないユーザーが勤怠管理システムCSV出力で生データ出力するとエラー() {
+//        for ($i = 1; $i <= 31; $i++) {
+//            \App\Roster::create(['user_id' => $this->nomaluser1->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
+//        }
+//        $this->actingAs($this->nomaluser1)
+//                ->visit('/admin/roster/csv/export/201712/all')
+//                ->seePageIs("/permission_error")
+//        ;
+//    }
+//    
+// /**
+//     * @tests
+//     */
+//    public function 異常系権限のないユーザーが勤務データ修正を行うとエラー() {
+//        \App\Roster::truncate();
+//        \Session::start();
+//        $roster         = \App\Roster::create([
+//                    'user_id'           => $this->nomaluser1->id,
+//                    "plan_work_type_id" => "1",
+//                    "entered_on"        => "2017-12-1",
+//                    "month_id"          => "201712",
+//                    "is_plan_entry"     => 1,
+//                    "is_plan_accept"    => 1,
+//                    "is_plan_reject"    => 1,
+//                    "is_actual_entry"   => 1,
+//                    "is_actual_accept"  => 1,
+//                    "is_actual_reject"  => 1]);
+//      $this->actingAs($this->nomaluser1)
+//                ->post('/admin/roster/csv/update/201712', [
+//                    '_token'                     => csrf_token(),
+//                    "id"                         => $roster->id,
+//                    "plan_work_type_id"          => "2",
+//                    "plan_rest_reason_id"        => "2",
+//                    "plan_overtime_start_time"   => "13:40",
+//                    "plan_overtime_end_time"     => "15:30",
+//                    "plan_overtime_reason"       => "予定残業理由",
+//                    "plan_accept"                => "2",
+//                    "actual_work_type_id"        => "2",
+//                    "actual_rest_reason_id"      => "2",
+//                    "actual_overtime_start_time" => "20:00",
+//                    "actual_overtime_end_time"   => "21:15",
+//                    "actual_overtime_reason"     => "実残業理由",
+//                    "actual_accept"              => "2"
+//                ])
+//                ->assertRedirectedTo('/permission_error')
+//        ;
+//    }
+    
+    
+     /**
+     * @tests
+     */
+    public function 異常系検索_予定に三文字より多く入力されるとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        $this->createRosterSample();
 
+        $this->actingAs($this->superuser)
+                ->visit("/admin/roster/csv/search/201712")
+                ->see("勤怠管理システム")
+                ->see("CSV出力")
+                ->see($this->nomaluser1->first_name)
+                ->see($this->nomaluser1->last_name)
+                ->see($this->nomaluser2->first_name)
+                ->see($this->nomaluser2->last_name)
+                ->see($this->nomaluser3->first_name)
+                ->see($this->nomaluser3->last_name)
+                ->see($this->nomaluser4->first_name)
+                ->see($this->nomaluser4->last_name)
+                ->visit("/admin/roster/csv/search/201712?plan=1234&actual=0&name=&division=&min_date=&max_date=")
+                ->see("予定は3文字以下にしてください。")
+                
+
+        ;
+    }
+     /**
+     * @tests
+     */
+    public function 異常系検索_実績に三文字より多く入力されるとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        $this->createRosterSample();
+
+        $this->actingAs($this->superuser)
+                ->visit("/admin/roster/csv/search/201712")
+                ->see("勤怠管理システム")
+                ->see("CSV出力")
+                ->see($this->nomaluser1->first_name)
+                ->see($this->nomaluser1->last_name)
+                ->see($this->nomaluser2->first_name)
+                ->see($this->nomaluser2->last_name)
+                ->see($this->nomaluser3->first_name)
+                ->see($this->nomaluser3->last_name)
+                ->see($this->nomaluser4->first_name)
+                ->see($this->nomaluser4->last_name)
+                ->visit("/admin/roster/csv/search/201712?plan=&actual=1234&name=&division=2&min_date=&max_date=")
+                ->see("実績は3文字以下にしてください。")
+                
+
+        ;
+    }
+    /**
+     * @tests
+     */
+    public function 異常系検索_存在しない部署が入力されるとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        $this->createRosterSample();
+
+        $this->actingAs($this->superuser)
+                ->visit("/admin/roster/csv/search/201712")
+                ->see("勤怠管理システム")
+                ->see("CSV出力")
+                ->see($this->nomaluser1->first_name)
+                ->see($this->nomaluser1->last_name)
+                ->see($this->nomaluser2->first_name)
+                ->see($this->nomaluser2->last_name)
+                ->see($this->nomaluser3->first_name)
+                ->see($this->nomaluser3->last_name)
+                ->see($this->nomaluser4->first_name)
+                ->see($this->nomaluser4->last_name)
+                ->visit("/admin/roster/csv/search/201712?plan=&actual=&name=&division=999&min_date=&max_date=")
+                ->see("選択された部署は正しくありません。")
+                
+
+        ;
+    }
+    /**
+     * @tests
+     */
+    public function 異常系検索_部署に文字列が入力されるとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        $this->createRosterSample();
+
+        $this->actingAs($this->superuser)
+                ->visit("/admin/roster/csv/search/201712")
+                ->see("勤怠管理システム")
+                ->see("CSV出力")
+                ->see($this->nomaluser1->first_name)
+                ->see($this->nomaluser1->last_name)
+                ->see($this->nomaluser2->first_name)
+                ->see($this->nomaluser2->last_name)
+                ->see($this->nomaluser3->first_name)
+                ->see($this->nomaluser3->last_name)
+                ->see($this->nomaluser4->first_name)
+                ->see($this->nomaluser4->last_name)
+                ->visit("/admin/roster/csv/search/201712?plan=&actual=&name=&division=99fgasd9&min_date=&max_date=")
+                ->see("選択された部署は正しくありません。")
+                
+
+        ;
+    }
+    /**
+     * @tests
+     */
+    public function 異常系勤怠管理システムCSV出力で想定されていないデータ名が指定されるとエラー() {
+
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->nomaluser1->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
+        }
+        $this->actingAs($this->superuser)
+                ->visit('admin/roster/csv')
+                ->see('CSV出力 ')
+                ->see("2017年12月")
+                ->visit('/admin/roster/csv/list/201712')
+                ->visit("/admin/roster/csv/export/201712/unassumption")
+               ->see('/admin/roster/csv/list/201712')
+                ->see("予期しないデータが入力されたため、処理が中断されました。")
+        ;
+    }
+    
+ // エラーの内容が取得できないからとりあえず後回し  
+    /**
+     * @tests
+     */
+    public function 異常系異常な値がPOSTされた時エラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        $roster         = \App\Roster::create([
+                    'user_id'           => $this->nomaluser1->id,
+                    "plan_work_type_id" => "1",
+                    "entered_on"        => "2017-12-1",
+                    "month_id"          => "201712",
+                    "is_plan_entry"     => 1,
+                    "is_plan_accept"    => 1,
+                    "is_plan_reject"    => 1,
+                    "is_actual_entry"   => 1,
+                    "is_actual_accept"  => 1,
+                    "is_actual_reject"  => 1]);
+      $a=$this->actingAs($this->superuser)
+              ->visit('/admin/roster/csv/edit/201712/1')
+                ->post('/admin/roster/csv/update/201712', [
+                    '_token'                     => csrf_token(),
+                    "id"                         => $roster->id,
+                    "plan_work_type_id"          => "9",
+                    "plan_rest_reason_id"        => "6",
+                    "plan_overtime_start_time"   => "28:40",
+                    "plan_overtime_end_time"     => "30:30",
+                    "plan_overtime_reason"       => "予定残業理由",
+                    "plan_accept"                => "5",
+                    "actual_work_type_id"        => "5",
+                    "actual_rest_reason_id"      => "6",
+                    "actual_overtime_start_time" => "2:70",
+                    "actual_overtime_end_time"   => "21:185",
+                    "actual_overtime_reason"     => "実残業理由",
+                    "actual_accept"              => "9"
+                ]);
+              $a->assertSessionHasErrors();
+         $a->assertRedirectedTo('/admin/roster/csv/edit/201712/1') ;
+    }
 }
