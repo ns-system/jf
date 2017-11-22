@@ -1,10 +1,12 @@
 <?php
 
-
 use App\Services\Traits\Testing\FileTestable;
+
 class FuncUserControllerTest extends TestCase
 {
-use FileTestable;
+
+    use FileTestable;
+
 //    use WithoutMiddleware;
 //    use DatabaseMigrations;
 //test
@@ -30,7 +32,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function 部署が無いときに変更しようとするとエラーになる() {
+    public function 異常系部署が無いときに変更しようとするとエラーになる() {
         $user = factory(\App\User::class)->create();
 
         $this->actingAs($user)
@@ -47,7 +49,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function 部署の変更ができる() {
+    public function 正常系部署の変更ができる() {
         $user = factory(\App\User::class)->create();
         \App\SinrenDivision::insert([['division_id' => 1, 'division_name' => 'System'], ['division_id' => 2, 'division_name' => 'Sales']]);
         $this->actingAs($user)
@@ -63,7 +65,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function 自分以外が部署を変更しようとするとエラーになる() {
+    public function 異常系自分以外が部署を変更しようとするとエラーになる() {
         \Session::start();
         $user = factory(\App\User::class)->create();
         $this->actingAs($user)
@@ -75,7 +77,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function 名前を変更時姓を空欄にするとエラーになる() {
+    public function 異常系名前を変更時姓を空欄にするとエラーになる() {
         $user = factory(\App\User::class)->create();
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
@@ -91,7 +93,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function 名前を変更時名を空欄にするとエラーになる() {
+    public function 異常系名前を変更時名を空欄にするとエラーになる() {
         $user = factory(\App\User::class)->create();
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
@@ -107,7 +109,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function 名前を変更時姓仮名を空欄にするとエラーになる() {
+    public function 異常系名前を変更時姓仮名を空欄にするとエラーになる() {
         $user = factory(\App\User::class)->create();
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
@@ -123,7 +125,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function 名前を変更時名仮名を空欄にするとエラーになる() {
+    public function 異常系名前を変更時名仮名を空欄にするとエラーになる() {
         $user = factory(\App\User::class)->create();
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
@@ -139,7 +141,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function 名前の変更ができる() {
+    public function 正常系名前の変更ができる() {
         $user = factory(\App\User::class)->create();
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
@@ -160,7 +162,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function 自分以外が名前を変更しようとするとエラーになる() {
+    public function 異常系自分以外が名前を変更しようとするとエラーになる() {
         \Session::start();
         $user = factory(\App\User::class)->create();
         $this->actingAs($user)
@@ -172,7 +174,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function パスワードを変更時現在のパスワードを空欄にするとエラーになる() {
+    public function 異常系パスワードを変更時現在のパスワードを空欄にするとエラーになる() {
         $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
@@ -190,7 +192,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function パスワードを変更時新しいパスワードを空欄にするとエラーになる() {
+    public function 異常系パスワードを変更時新しいパスワードを空欄にするとエラーになる() {
         $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
@@ -208,7 +210,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function パスワードを変更時をパスワード再入力を空欄にするとエラーになる() {
+    public function 異常系パスワードを変更時をパスワード再入力を空欄にするとエラーになる() {
         $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
@@ -228,7 +230,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function パスワードを変更時現在のパスワード六文字未満にするとエラーになる() {
+    public function 異常系パスワードを変更時現在のパスワード六文字未満にするとエラーになる() {
         $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
@@ -247,7 +249,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function パスワードを変更時新しいパスワードを六文字未満にするとエラーになる() {
+    public function 異常系パスワードを変更時新しいパスワードを六文字未満にするとエラーになる() {
         $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
@@ -266,7 +268,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function パスワードを変更時新しいパスワードと再入力を異なる値にするとエラーになる() {
+    public function 異常系パスワードを変更時新しいパスワードと再入力を異なる値にするとエラーになる() {
         $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
@@ -284,7 +286,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function パスワードを変更できる() {
+    public function 正常系パスワードを変更できる() {
 
         $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
         $this->actingAs($user)
@@ -303,7 +305,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function パスワードが異なるとエラーになる() {
+    public function 異常系パスワードが異なるとエラーになる() {
         $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
@@ -321,7 +323,7 @@ use FileTestable;
     /**
      * @tests
      */
-    public function 自分以外がパスワードを変更しようとするとエラーになる() {
+    public function 異常系自分以外がパスワードを変更しようとするとエラーになる() {
         \Session::start();
         $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
         $this->actingAs($user)
@@ -333,17 +335,16 @@ use FileTestable;
     /**
      * @tests
      */
-    public function アイコンを変更できる() {
-        $user = factory(\App\User::class)->create();
+    public function 正常系アイコンを変更できる() {
+        $user            = factory(\App\User::class)->create();
         $image_file_name = "cat_image_for_success_change_user_icon_test.jpg";
-        $path = storage_path() . '/tests/'.$image_file_name;
+        $path            = storage_path() . '/tests/' . $image_file_name;
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
                 ->attach($path, 'user_icon')
                 ->press('btn_icon')
                 ->seePageIs('/app/user/' . $user->id)
                 ->see('アイコンを変更しました。')
-//                ->see($user->id. '_' . 'cat_image_for_success_change_user_icon_test.jpg')
                 ->dontSee('成功：要修正')
         ;
     }
@@ -351,10 +352,10 @@ use FileTestable;
     /**
      * @tests
      */
-    public function アイコンの画像のサイズが500kb以上だとエラーになる() {
-        $user = factory(\App\User::class)->create();
+    public function 正常系アイコンの画像のサイズが500kb以上だとエラーになる() {
+        $user            = factory(\App\User::class)->create();
         $image_file_name = "over_500kb_image.png";
-        $path = storage_path() . '/tests/'.$image_file_name;
+        $path            = storage_path() . '/tests/' . $image_file_name;
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
                 ->attach($path, 'user_icon')
@@ -364,10 +365,11 @@ use FileTestable;
                 ->dontSee('成功：要修正')
         ;
     }
-     public function アイコンにイメージファイル以外を選択するとエラーになる() {
-        $user = factory(\App\User::class)->create();
+
+    public function 異常系アイコンにイメージファイル以外を選択するとエラーになる() {
+        $user            = factory(\App\User::class)->create();
         $image_file_name = "testfile.txt";
-        $path = storage_path() . '/tests/'.$image_file_name;
+        $path            = storage_path() . '/tests/' . $image_file_name;
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id]))
                 ->attach($path, 'user_icon')
@@ -377,14 +379,26 @@ use FileTestable;
                 ->dontSee('成功：要修正')
         ;
     }
-    public function 自分以外がアイコンを変えようとするとエラーになる() {
-         \Session::start();
-        $user = factory(\App\User::class)->create();
-         $image_file_name = "cat_image_for_success_change_user_icon_test.jpg";
-         $mime_type = "image/ipg";
+
+    public function 異常系自分以外がアイコンを変えようとするとエラーになる() {
+        \Session::start();
+        $user            = factory(\App\User::class)->create();
+        $image_file_name = "cat_image_for_success_change_user_icon_test.jpg";
+        $mime_type       = "image/ipg";
         $this->actingAs($user)
-                ->POST('/app/user/icon/999999', ['_token' => csrf_token(),'user_icon'=> $this->createUploadFile(storage_path(), $image_file_name, $mime_type)])
+                ->POST(root("app::user::icon", ['id' => $user->id + 1]), ['_token' => csrf_token(), 'user_icon' => $this->createUploadFile(storage_path(), $image_file_name, $mime_type)])
                 ->assertRedirectedTo('/permission_error')
+        ;
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系自分以外のユーザーのユーザー情報を見ようとするとエラー() {
+        $user = factory(\App\User::class)->create();
+        $this->actingAs($user)
+                ->visit(route('app::user::show', ['id' => $user->id + 1]))
+                ->seePageIs('/permission_error')
         ;
     }
 
