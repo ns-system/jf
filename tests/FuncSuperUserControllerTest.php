@@ -40,7 +40,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function スーパーユーザーが管理ユーザー設定を見ることができる() {
+    public function 正常系スーパーユーザーが管理ユーザー設定を見ることができる() {
 
         $user = factory(\App\User::class)->create(['is_super_user' => true]);
 
@@ -53,7 +53,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function スーパーユーザー以外のユーザーが管理ユーザーページを見たときエラーになる() {
+    public function 異常系スーパーユーザー以外のユーザーが管理ユーザーページを見たときエラーになる() {
         $user = factory(\App\User::class)->create();
         $this->actingAs($user)
                 ->visit('/admin/super_user/user')
@@ -64,7 +64,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 一般ユーザーをスーパーユーザに変更できる() {
+    public function 正常系一般ユーザーをスーパーユーザに変更できる() {
 
         $super_user   = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user  = factory(\App\User::class)->create(['is_super_user' => false]);
@@ -83,7 +83,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function スーパーユーザを一般ユーザーに変更できる() {
+    public function 正常系スーパーユーザを一般ユーザーに変更できる() {
 
         $super_user   = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user  = factory(\App\User::class)->create(['is_super_user' => true]);
@@ -104,7 +104,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 勤怠一般ユーザーを勤怠管理ユーザに変更できる() {
+    public function 正常系勤怠一般ユーザーを勤怠管理ユーザに変更できる() {
 
         $div                   = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
         $super_user            = factory(\App\User::class)->create(['is_super_user' => true]);
@@ -127,7 +127,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 勤怠管理ユーザを勤怠一般ユーザに変更できる() {
+    public function 正常系勤怠管理ユーザを勤怠一般ユーザに変更できる() {
 
         $div                   = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
         $super_user            = factory(\App\User::class)->create(['is_super_user' => true]);
@@ -150,7 +150,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function スーパーユーザー以外がユーザーをスーパーユーザーにしようとするとエラー() {
+    public function 異常系スーパーユーザー以外がユーザーをスーパーユーザーにしようとするとエラー() {
         \Session::start();
 
         $super_user  = factory(\App\User::class)->create(['is_super_user' => '1']);
@@ -164,7 +164,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function スーパーユーザー以外がユーザーを推進管理ユーザーにしようとするとエラー() {
+    public function 異常系スーパーユーザー以外がユーザーを推進管理ユーザーにしようとするとエラー() {
         \Session::start();
 
         $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
@@ -179,7 +179,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function スーパーユーザー以外がユーザーを勤怠管理ユーザーにしようとするとエラー() {
+    public function 異常系スーパーユーザー以外がユーザーを勤怠管理ユーザーにしようとするとエラー() {
         \Session::start();
 
         $div         = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
@@ -196,7 +196,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function is_super_userに誤った入力がされるとエラー() {
+    public function 異常系is_super_userに誤った入力がされるとエラー() {
         \Session::start();
 
         $div         = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
@@ -213,7 +213,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function suisin_is_administratorに誤った入力がされるとエラー() {
+    public function 異常系suisin_is_administratorに誤った入力がされるとエラー() {
         \Session::start();
 
         $div         = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
@@ -230,7 +230,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function roster_is_administratorに誤った入力がされるとエラー() {
+    public function 異常系roster_is_administratorに誤った入力がされるとエラー() {
         \Session::start();
         $div         = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
         $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
@@ -246,7 +246,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function ユーザーを名前で検索できる() {
+    public function 正常系ユーザーを名前で検索できる() {
 
         $super_user   = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user  = factory(\App\User::class)->create(['is_super_user' => true]);
@@ -263,7 +263,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function ユーザーをメールアドレスで検索できる() {
+    public function 正常系ユーザーをメールアドレスで検索できる() {
 
         $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $target_user = factory(\App\User::class)->create(['is_super_user' => true]);
@@ -279,7 +279,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function スーパーユーザーを検索できる() {
+    public function 正常系スーパーユーザーを検索できる() {
 
         $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $normal_user = factory(\App\User::class)->create(['is_super_user' => false]);
@@ -295,7 +295,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 一般ユーザーを検索できる() {
+    public function 正常系一般ユーザーを検索できる() {
 
         $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $normal_user = factory(\App\User::class)->create(['is_super_user' => false]);
@@ -313,7 +313,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 勤怠スーパーユーザを検索できる() {
+    public function 正常系勤怠スーパーユーザを検索できる() {
         $div                = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1',]);
         $super_user         = factory(\App\User::class)->create(['is_super_user' => true]);
         $roster_admin_user  = factory(\App\User::class)->create(['is_super_user' => false]);
@@ -334,7 +334,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 勤怠一般ユーザを検索できる() {
+    public function 正常系勤怠一般ユーザを検索できる() {
 
         $div                = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
         $super_user         = factory(\App\User::class)->create(['is_super_user' => true]);
@@ -356,7 +356,7 @@ class FuncSuperUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 部署で検索できる() {
+    public function 正常系部署で検索できる() {
 
         $div_1           = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
         $div_2           = \App\SinrenDivision::create(['division_id' => 2, 'division_name' => 'division_2']);
@@ -374,4 +374,22 @@ class FuncSuperUserControllerTest extends TestCase
         ;
     }
 
+    /**
+     * @tests
+     */
+    public function 異常系存在しないIDを変更しようとするとエラー() {
+
+        \Session::start();
+
+        $div         = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
+        $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
+        $target_user = factory(\App\User::class)->create(['is_super_user' => false]);
+        \App\SinrenUser::create(['user_id' => $target_user->id, 'division_id' => $div->division_id]);
+        \App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => false]);
+        $res=$this->actingAs($super_user)
+                ->POST('/admin/super_user/user/edit/' . 99999, ['_token' => csrf_token(), 'is_super_user' => "1"])             
+        ;
+        $res->assertRedirectedTo('/');
+        $res ->assertSessionHas("warn_message");
+    }
 }

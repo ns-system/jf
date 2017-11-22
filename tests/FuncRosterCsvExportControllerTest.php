@@ -773,85 +773,85 @@ class FuncRosterCsvExportControllerTest extends TestCase
         ;
     }
     
-//    
-//    
-//    //異常系
-//     /**
-//     * @tests
-//     */
-//    public function 異常系権限のないユーザーが勤怠管理システムCSV出力で予定出力するとエラー() {
-//
-//        for ($i = 1; $i <= 31; $i++) {
-//            \App\Roster::create(['user_id' => $this->nomaluser1->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
-//        }
-//        $this->actingAs($this->nomaluser1)
-//                ->visit("/admin/roster/csv/export/201712/plan")
-//                ->seePageIs("/permission_error")
-//        ;
-//    }
-//
-//    /**
-//     * @tests
-//     */
-//    public function 異常系権限のないユーザーが勤怠管理システムCSV出力で実績出力するとエラー() {
-//        for ($i = 1; $i <= 31; $i++) {
-//            \App\Roster::create(['user_id' => $this->nomaluser1->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
-//        }
-//        $this->actingAs($this->nomaluser1) 
-//                ->visit('/admin/roster/csv/export/201712/actual')
-//                ->seePageIs("/permission_error")
-//        ;
-//    }
-//    /**
-//     * @tests
-//     */
-//    public function 異常系権限のないユーザーが勤怠管理システムCSV出力で生データ出力するとエラー() {
-//        for ($i = 1; $i <= 31; $i++) {
-//            \App\Roster::create(['user_id' => $this->nomaluser1->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
-//        }
-//        $this->actingAs($this->nomaluser1)
-//                ->visit('/admin/roster/csv/export/201712/all')
-//                ->seePageIs("/permission_error")
-//        ;
-//    }
-//    
-// /**
-//     * @tests
-//     */
-//    public function 異常系権限のないユーザーが勤務データ修正を行うとエラー() {
-//        \App\Roster::truncate();
-//        \Session::start();
-//        $roster         = \App\Roster::create([
-//                    'user_id'           => $this->nomaluser1->id,
-//                    "plan_work_type_id" => "1",
-//                    "entered_on"        => "2017-12-1",
-//                    "month_id"          => "201712",
-//                    "is_plan_entry"     => 1,
-//                    "is_plan_accept"    => 1,
-//                    "is_plan_reject"    => 1,
-//                    "is_actual_entry"   => 1,
-//                    "is_actual_accept"  => 1,
-//                    "is_actual_reject"  => 1]);
-//      $this->actingAs($this->nomaluser1)
-//                ->post('/admin/roster/csv/update/201712', [
-//                    '_token'                     => csrf_token(),
-//                    "id"                         => $roster->id,
-//                    "plan_work_type_id"          => "2",
-//                    "plan_rest_reason_id"        => "2",
-//                    "plan_overtime_start_time"   => "13:40",
-//                    "plan_overtime_end_time"     => "15:30",
-//                    "plan_overtime_reason"       => "予定残業理由",
-//                    "plan_accept"                => "2",
-//                    "actual_work_type_id"        => "2",
-//                    "actual_rest_reason_id"      => "2",
-//                    "actual_overtime_start_time" => "20:00",
-//                    "actual_overtime_end_time"   => "21:15",
-//                    "actual_overtime_reason"     => "実残業理由",
-//                    "actual_accept"              => "2"
-//                ])
-//                ->assertRedirectedTo('/permission_error')
-//        ;
-//    }
+    
+    
+    //異常系
+     /**
+     * @tests
+     */
+    public function 異常系権限のないユーザーが勤怠管理システムCSV出力で予定出力するとエラー() {
+
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->nomaluser1->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
+        }
+        $this->actingAs($this->nomaluser1)
+                ->visit("/admin/roster/csv/export/201712/plan")
+                ->seePageIs("/permission_error")
+        ;
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系権限のないユーザーが勤怠管理システムCSV出力で実績出力するとエラー() {
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->nomaluser1->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
+        }
+        $this->actingAs($this->nomaluser1) 
+                ->visit('/admin/roster/csv/export/201712/actual')
+                ->seePageIs("/permission_error")
+        ;
+    }
+    /**
+     * @tests
+     */
+    public function 異常系権限のないユーザーが勤怠管理システムCSV出力で生データ出力するとエラー() {
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->nomaluser1->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
+        }
+        $this->actingAs($this->nomaluser1)
+                ->visit('/admin/roster/csv/export/201712/all')
+                ->seePageIs("/permission_error")
+        ;
+    }
+    
+ /**
+     * @tests
+     */
+    public function 異常系権限のないユーザーが勤務データ修正を行うとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        $roster         = \App\Roster::create([
+                    'user_id'           => $this->nomaluser1->id,
+                    "plan_work_type_id" => "1",
+                    "entered_on"        => "2017-12-1",
+                    "month_id"          => "201712",
+                    "is_plan_entry"     => 1,
+                    "is_plan_accept"    => 1,
+                    "is_plan_reject"    => 1,
+                    "is_actual_entry"   => 1,
+                    "is_actual_accept"  => 1,
+                    "is_actual_reject"  => 1]);
+      $this->actingAs($this->nomaluser1)
+                ->post('/admin/roster/csv/update/201712', [
+                    '_token'                     => csrf_token(),
+                    "id"                         => $roster->id,
+                    "plan_work_type_id"          => "2",
+                    "plan_rest_reason_id"        => "2",
+                    "plan_overtime_start_time"   => "13:40",
+                    "plan_overtime_end_time"     => "15:30",
+                    "plan_overtime_reason"       => "予定残業理由",
+                    "plan_accept"                => "2",
+                    "actual_work_type_id"        => "2",
+                    "actual_rest_reason_id"      => "2",
+                    "actual_overtime_start_time" => "20:00",
+                    "actual_overtime_end_time"   => "21:15",
+                    "actual_overtime_reason"     => "実残業理由",
+                    "actual_accept"              => "2"
+                ])
+                ->assertRedirectedTo('/permission_error')
+        ;
+    }
     
     
      /**

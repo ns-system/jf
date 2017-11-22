@@ -22,9 +22,9 @@ class RosterListController extends Controller
 
     public function check() {
         $id = \Auth::user()->id;
-        if (empty(\App\SinrenUser::user($id)))
+        if (empty(\App\SinrenUser::user($id)->first()))
         {
-            return redirect()->route('app::roster::user::show');
+            return redirect()->route('app::roster::user::show', ['id' => $id]);
         }
         return redirect()->route('app::roster::division::index', ['div' => \App\SinrenUser::user($id)->first()->division_id]);
     }

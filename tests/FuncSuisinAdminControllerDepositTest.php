@@ -59,7 +59,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 科目コードを表示できる() {
+    public function 正常系科目コードを表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Subject::truncate();
         ;
@@ -73,7 +73,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 科目コードでCSVファイルインポートできる() {
+    public function 正常系科目コードでCSVファイルインポートできる() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Subject::truncate();
         $file_name = '科目コード.csv';
@@ -103,7 +103,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 科目コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
+    public function 異常系科目コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Subject::truncate();
         $file_name = '科目コード.csv';
@@ -121,7 +121,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 科目コードで誤ったCSVファイルがインポートされたときエラー() {
+    public function 異常系科目コードで誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Subject::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -140,7 +140,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 科目コードがエクスポートできる() {
+    public function 正常系科目コードがエクスポートできる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\ZenonType::truncate();
         $this->actingAs($user)
@@ -156,7 +156,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 業種コードを表示できる() {
+    public function 正常系業種コードを表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Industry::truncate();
         ;
@@ -170,7 +170,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 業種コードでCSVファイルインポートできる() {
+    public function 正常系業種コードでCSVファイルインポートできる() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Industry::truncate();
         $file_name = '業種コード.csv';
@@ -201,7 +201,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 業種コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
+    public function 異常系業種コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Industry::truncate();
         $file_name = '業種コード.csv';
@@ -219,7 +219,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 業種コードで誤ったCSVファイルがインポートされたときエラー() {
+    public function 異常系業種コードで誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Industry::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -238,7 +238,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 業種コードがエクスポートできる() {
+    public function 正常系業種コードがエクスポートできる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\ZenonType::truncate();
         $this->actingAs($user)
@@ -254,7 +254,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 資格区分を表示できる() {
+    public function 正常系資格区分を表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Qualification::truncate();
         ;
@@ -268,7 +268,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 資格区分でCSVファイルインポートできる() {
+    public function 正常系資格区分でCSVファイルインポートできる() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Qualification::truncate();
         $file_name = '資格区分.csv';
@@ -299,7 +299,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 資格区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
+    public function 異常系資格区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Qualification::truncate();
         $file_name = '資格区分.csv';
@@ -317,7 +317,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 資格区分で誤ったCSVファイルがインポートされたときエラー() {
+    public function 異常系資格区分で誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Qualification::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -336,7 +336,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 資格区分がエクスポートできる() {
+    public function 正常系資格区分がエクスポートできる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\ZenonType::truncate();
         $this->actingAs($user)
@@ -352,7 +352,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 人格コードを表示できる() {
+    public function 正常系人格コードを表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Personality::truncate();
         ;
@@ -366,7 +366,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 人格コードでCSVファイルインポートできる() {
+    public function 正常系人格コードでCSVファイルインポートできる() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Personality::truncate();
         $file_name = '人格コード.csv';
@@ -396,7 +396,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 人格コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
+    public function 異常系人格コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Personality::truncate();
         $file_name = '人格コード.csv';
@@ -414,7 +414,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 人格コードで誤ったCSVファイルがインポートされたときエラー() {
+    public function 異常系人格コードで誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Common\Personality::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -433,7 +433,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 人格コードがエクスポートできる() {
+    public function 正常系人格コードがエクスポートできる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\ZenonType::truncate();
         $this->actingAs($user)
@@ -450,7 +450,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 課税区分を表示できる() {
+    public function 正常系課税区分を表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Taxation::truncate();
         ;
@@ -464,7 +464,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 課税区分でCSVファイルインポートできる() {
+    public function 正常系課税区分でCSVファイルインポートできる() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Taxation::truncate();
         $file_name = '課税区分.csv';
@@ -494,7 +494,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 課税区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
+    public function 異常系課税区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Taxation::truncate();
         $file_name = '課税区分.csv';
@@ -512,7 +512,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 課税区分で誤ったCSVファイルがインポートされたときエラー() {
+    public function 異常系課税区分で誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Taxation::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -531,7 +531,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 課税区分がエクスポートできる() {
+    public function 正常系課税区分がエクスポートできる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\ZenonType::truncate();
         $this->actingAs($user)
@@ -548,7 +548,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 期間コードを表示できる() {
+    public function 正常系期間コードを表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Term::truncate();
         ;
@@ -562,7 +562,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 期間コードでCSVファイルインポートできる() {
+    public function 正常系期間コードでCSVファイルインポートできる() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Term::truncate();
         $file_name = '期間コード.csv';
@@ -592,7 +592,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 期間コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
+    public function 異常系期間コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Term::truncate();
         $file_name = '期間コード.csv';
@@ -610,7 +610,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 期間コードで誤ったCSVファイルがインポートされたときエラー() {
+    public function 異常系期間コードで誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Term::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -629,7 +629,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 期間コードがエクスポートできる() {
+    public function 正常系期間コードがエクスポートできる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\ZenonType::truncate();
         $this->actingAs($user)
@@ -646,7 +646,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 継続区分を表示できる() {
+    public function 正常系継続区分を表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Continuation::truncate();
         ;
@@ -660,7 +660,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 継続区分でCSVファイルインポートできる() {
+    public function 正常系継続区分でCSVファイルインポートできる() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Continuation::truncate();
         $file_name = '継続区分.csv';
@@ -690,7 +690,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 継続区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
+    public function 異常系継続区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Continuation::truncate();
         $file_name = '継続区分.csv';
@@ -708,7 +708,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 継続区分で誤ったCSVファイルがインポートされたときエラー() {
+    public function 異常系継続区分で誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Continuation::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -727,7 +727,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 継続区分がエクスポートできる() {
+    public function 正常系継続区分がエクスポートできる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\ZenonType::truncate();
         $this->actingAs($user)
@@ -744,7 +744,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 貯金種類コードを表示できる() {
+    public function 正常系貯金種類コードを表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Category::truncate();
         ;
@@ -758,7 +758,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 貯金種類コードでCSVファイルインポートできる() {
+    public function 正常系貯金種類コードでCSVファイルインポートできる() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Category::truncate();
         \App\Models\Common\Subject::truncate();
@@ -791,7 +791,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 貯金種類コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
+    public function 異常系貯金種類コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Category::truncate();
         \App\Models\Common\Subject::truncate();
@@ -811,7 +811,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 貯金種類コードで誤ったCSVファイルがインポートされたときエラー() {
+    public function 異常系貯金種類コードで誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Category::truncate();
         \App\Models\Common\Subject::truncate();
@@ -832,7 +832,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 貯金種類コードがエクスポートできる() {
+    public function 正常系貯金種類コードがエクスポートできる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\ZenonType::truncate();
         $this->actingAs($user)
@@ -849,7 +849,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 通証タイプを表示できる() {
+    public function 正常系通証タイプを表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\BankbookType::truncate();
         ;
@@ -863,7 +863,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 通証タイプでCSVファイルインポートできる() {
+    public function 正常系通証タイプでCSVファイルインポートできる() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\BankbookType::truncate();
         $file_name = '通証タイプ.csv';
@@ -893,7 +893,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 通証タイプで内容に不備のあるCSVファイルがインポートされたときエラー() {
+    public function 異常系通証タイプで内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\BankbookType::truncate();
         $file_name = '通証タイプ.csv';
@@ -911,7 +911,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 通証タイプで誤ったCSVファイルがインポートされたときエラー() {
+    public function 異常系通証タイプで誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\BankbookCode::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -930,7 +930,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 通証タイプがエクスポートできる() {
+    public function 正常系通証タイプがエクスポートできる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\ZenonType::truncate();
         $this->actingAs($user)
@@ -947,7 +947,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 摘要コードを表示できる() {
+    public function 正常系摘要コードを表示できる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Gist::truncate();
         ;
@@ -961,7 +961,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 摘要コードでCSVファイルインポートできる() {
+    public function 正常系摘要コードでCSVファイルインポートできる() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Gist::truncate();
         $file_name = '摘要コード.csv';
@@ -995,7 +995,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 摘要コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
+    public function 異常系摘要コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Gist::truncate();
         $file_name = '摘要コード.csv';
@@ -1013,7 +1013,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 摘要コードで誤ったCSVファイルがインポートされたときエラー() {
+    public function 異常系摘要コードで誤ったCSVファイルがインポートされたときエラー() {
         $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\Models\Deposit\Gist::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
@@ -1032,7 +1032,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
-    public function 摘要コードがエクスポートできる() {
+    public function 正常系摘要コードがエクスポートできる() {
         $user = factory(\App\User::class)->create(['is_super_user' => '1']);
         \App\ZenonType::truncate();
         $this->actingAs($user)
