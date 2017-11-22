@@ -8,12 +8,15 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Services\ImportZenonDataService;
+use \App\Services\Traits\MemoryCheckable;
 
 class CsvUpload extends Job implements SelfHandling, ShouldQueue
 {
 
     use InteractsWithQueue,
-        SerializesModels;
+        SerializesModels,
+        MemoryCheckable
+    ;
 
     protected $process_ids;
     protected $ym;
@@ -25,10 +28,10 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
         $this->job_id      = $job_id;
     }
 
-    public function failed() {
-        echo "error!";
-        \DB::connection('mysql_zenon')->rollback();
-    }
+//    public function failed() {
+//        echo "error!";
+//        \DB::connection('mysql_zenon')->rollback();
+//    }
 
     public function handle() {
         echo "==== CsvFileUpload ====" . PHP_EOL;
@@ -67,6 +70,7 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
         } catch (\Exception $e) {
             $import_zenon_data_service->setImportErrorToJobStatus($this->job_id, mb_substr($e->getMessage(), 0, 250));
             echo $e->getMessage();
+            \DB::connection('mysql_zenon')->rollback();
             exit();
         }
 
@@ -78,6 +82,7 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             $database_setting_not_exist_list = [];
             foreach ($rows as $r) {
                 echo "     --> {$r->csv_file_name}" . PHP_EOL;
+//                $this->debugMemory('phase1');
                 $import_zenon_data_service->setPostStartToMonthlyStatus($r->id);
                 $csv_file_object = $import_zenon_data_service->setCsvFileObject($file_path . '/' . $r->csv_file_name)->getCsvFileObject();
 
@@ -94,6 +99,7 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
                 {
                     $import_zenon_data_service->setPostEndToMonthlyStatus($r->id);
                 }
+//                $this->debugMemory('phase2');
             }
             if (!empty($database_setting_not_exist_list))
             {
@@ -124,6 +130,7 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             $import_zenon_data_service->resetJobStatus($rows);
             echo $e->getMessage();
             $import_zenon_data_service->setImportErrorToJobStatus($this->job_id, $e->getMessage());
+            \DB::connection('mysql_zenon')->rollback();
             exit();
         }
 

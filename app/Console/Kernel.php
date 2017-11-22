@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         Commands\Inspire::class,
         Commands\CreateDatabase::class,
         Commands\DropDatabase::class,
+        Commands\CreateUser::class,
 //        Commands\ImportCsv::class,
 //        Commands\CopyCsvFile::class,
        

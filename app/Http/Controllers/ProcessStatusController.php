@@ -13,6 +13,9 @@ class ProcessStatusController extends Controller
 
     use JsonUsable;
 
+    const INT_MAX_PREV_MONTH = -3;
+    const INT_MAX_NEXT_MONTH = 9;
+
     protected $service;
 //    protected $json_service;
     protected $path;
@@ -25,13 +28,9 @@ class ProcessStatusController extends Controller
 
     public function index() {
         $rows     = \App\Month::orderBy('monthly_id', 'desc')->paginate(25);
-        $max_date = \App\Month::max('monthly_id');
-        if (empty($max_date))
-        {
-            $max_date = date('Ym');
-        }
-        $months = [];
-        for ($i = -3; $i < 3; $i++) {
+        $max_date = date('Ym');
+        $months   = [];
+        for ($i = self::INT_MAX_PREV_MONTH; $i < self::INT_MAX_NEXT_MONTH; $i++) {
             $tmp    = date('Y-m-d', strtotime($max_date . '01'));
             $serial = strtotime("{$tmp} -{$i} month");
             if (!\App\Month::where('monthly_id', '=', date('Ym', $serial))->exists())
@@ -58,7 +57,7 @@ class ProcessStatusController extends Controller
         }
         $displayed_on = date('Y-m-d', strtotime($in['monthly_id'] . '01'));
         \App\Month::firstOrCreate(['monthly_id' => $in['monthly_id'], 'displayed_on' => $displayed_on]);
-        \Session::flash('flash_message', "月別ID［{$in['monthly_id']}］を生成しました。");
+        \Session::flash('success_message', "月別ID［{$in['monthly_id']}］を生成しました。");
         return redirect(route('admin::super::month::show'));
     }
 
@@ -66,7 +65,7 @@ class ProcessStatusController extends Controller
         $month = \App\Month::find($id);
         if ($month == null)
         {
-            \Session::flash('flash_message', '不正な月別IDが指定されました。');
+            \Session::flash('success_message', '不正な月別IDが指定されました。');
             return back();
         }
 
@@ -81,7 +80,7 @@ class ProcessStatusController extends Controller
 
         $month->is_current = true;
         $month->save();
-        \Session::flash('flash_message', "月別ID［{$month->monthly_id}］のデータを公開しました。");
+        \Session::flash('success_message', "月別ID［{$month->monthly_id}］のデータを公開しました。");
         return redirect(route('admin::super::month::show'));
     }
 

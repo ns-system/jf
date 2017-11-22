@@ -9,9 +9,12 @@ use App\Http\Requests\Roster\Actual;
 use App\Http\Controllers\Controller;
 //use Validator;
 use App\Services\Roster\Calendar;
+use App\Services\Traits;
 
 class RosterController extends Controller
 {
+
+    use \App\Services\Traits\DateUsable;
 
     protected $service;
 
@@ -19,9 +22,9 @@ class RosterController extends Controller
         $this->service = new Calendar();
     }
 
-    public function home() {
-        return view('roster.app.index', ['count' => 1]);
-    }
+//    public function home() {
+//        return view('roster.app.index', ['count' => 1]);
+//    }
 
     public function show($ym) {
         $d = \DateTime::createFromFormat('Ymd', $ym . '01');
@@ -87,20 +90,27 @@ class RosterController extends Controller
     }
 
     public function editPlan($ym, $id, Plan $request) {
+        if (!$this->isDate($ym))
+        {
+           
+            \Session::flash('warn_message', '日付以外のデータが入力されました。');
+            return back();
+        }
         $this->service->editPlan($id, $request);
-        \Session::flash('flash_message', '予定データを更新しました。');
+        \Session::flash('success_message', '予定データを更新しました。');
         return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
     }
 
     public function delete($id) {
 
         try {
+            
             $param = $this->service->delete($id);
-            \Session::flash('flash_message', "{$param['date']}のデータを削除しました。");
+            \Session::flash('success_message', "{$param['date']}のデータを削除しました。");
             return redirect(route('app::roster::calendar::show', ['ym' => $param['ym']]));
         } catch (\Exception $e) {
 //            echo $e->getTraceAsString();
-            \Session::flash('warn_message', $e->getMessage());
+             \Session::flash('warn_message', '予定データが見つかりませんでした。');
             return back();
         }
     }
@@ -109,11 +119,10 @@ class RosterController extends Controller
         try {
             $this->service->editActual($id, $request);
 //            exit();
-            \Session::flash('flash_message', '実績データを更新しました。');
+            \Session::flash('success_message', '実績データを更新しました。');
             return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
         } catch (\Exception $e) {
-            echo $e->getTraceAsString();
-            \Session::flash('warn_message', $e->getMessage());
+            \Session::flash('warn_message', '予定データが見つかりませんでした。');
             return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
 //            return back();
         }

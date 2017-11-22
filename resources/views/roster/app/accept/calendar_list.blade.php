@@ -35,8 +35,8 @@
             <div class="btn-group">
                 <a href="{{route('app::roster::accept::index')}}" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span> 戻る</a>
                 <a href="#top" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> トップへ</a>
-                <a class="btn btn-warning btn-sm" id="plan">未承認</a>
-                <a class="btn btn-success btn-sm" id="reset">全て</a>
+                <a href="{{route('app::roster::accept::calendar', ['ym'=>$ym, 'div'=>$div, 'all'=>'part'])}}" class="btn btn-warning btn-sm" id="plan">未承認</a>
+                <a href="{{route('app::roster::accept::calendar', ['ym'=>$ym, 'div'=>$div])}}" class="btn btn-success btn-sm" id="reset">全て</a>
                 <button type="submit" class="btn btn-info btn-sm" onclick="return confirm('チェックしたデータが一括で更新されますがよろしいですか？');"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 一括で更新する</button>
             </div>
         </div>
@@ -46,7 +46,7 @@
         <div style="margin-bottom: 20px;">
             <ul class="nav nav-tabs">
                 @foreach($users as $i => $u)
-                <li @if($i == 0) class="active" @endif><a href="#id-{{$u->user_id}}" data-toggle="tab">{{$u->last_name}}さん</a></li>
+                <li @if($i == 0) class="active" @endif><a href="#id-{{$u->user_id}}" data-toggle="tab"><b>{{$u->last_name}}</b><small>さん</small></a></li>
                 @endforeach
             </ul>
         </div>
@@ -67,17 +67,17 @@
 @parent
 <script type="text/javascript">
     $(function(){
-        $('#plan').click(function(){
-            $('tr').show();
-            $('tr[data-plan="false"][data-actual="false"]').hide();
-        });
-        $('#actual').click(function(){
-            $('tr').show();
-            $('tr[data-actual="false"]').hide();
-        });
-        $('#reset').click(function(){
-            $('tr').show();
-        });
+        // $('#plan').click(function(){
+        //     $('tr').show();
+        //     $('tr[data-plan="false"][data-actual="false"]').hide();
+        // });
+        // $('#actual').click(function(){
+        //     $('tr').show();
+        //     $('tr[data-actual="false"]').hide();
+        // });
+        // $('#reset').click(function(){
+        //     $('tr').show();
+        // });
 
         $('.activate').click(function(){
             var trg = $(this).attr('data-target');

@@ -137,7 +137,7 @@ class AdminCsvConfigService
             ],
             'import'        => [
                 'table_columns' => [
-                    /* display_flag, kanji_name, [format], [class] */
+                    /* POST_flag, kanji_name, [format], [class] */
                     [1, 'id', 'No',],
                     [1, 'identifier', '識別子',],
                     [1, 'zenon_data_type_id', '全オンデータ種類',],
@@ -280,7 +280,7 @@ class AdminCsvConfigService
             ],
             'import'        => [
                 'table_columns' => [
-                    /* display_flag, kanji_name, [format], [class] */
+                    /* POST_flag, kanji_name, [format], [class] */
 //                    [1, 'id', 'No',],
                     [1, 'zenon_format_id', 'フォーマットID',],
                     [1, 'column_name', 'カラム名', 'class' => 'text-left',],
@@ -343,7 +343,7 @@ class AdminCsvConfigService
             ],
             'import'        => [
                 'table_columns' => [
-                    /* display_flag, kanji_name, [format], [class] */
+                    /* POST_flag, kanji_name, [format], [class] */
                     [1, 'id', 'No',],
                     [1, 'data_type_name', 'データ種類名', 'class' => 'text-left',],
                 ],

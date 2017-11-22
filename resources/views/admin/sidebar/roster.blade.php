@@ -3,7 +3,7 @@
     class="list-group-item collapse list-second"
     href="{{route('admin::roster::csv::index')}}"
     data-toggle="tooltip"
-    title="祝日マスタの登録を行います。"
+    title="登録データを給与奉行で取り込める形に出力します。"
     data-placement="right">CSVファイル出力</a>
 
 <a
@@ -11,11 +11,11 @@
     class="list-group-item collapse list-second"
     href="{{route('admin::roster::user::index')}}"
     data-toggle="tooltip"
-    title="祝日マスタの登録を行います。"
+    title="責任者ユーザーの選任他、ユーザーの管理を行います。"
     data-placement="right">ユーザー権限変更</a>
 
-<a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#roster-master"><span class="caret"></span> <small>マスタファイル</small></a>
-<div class="collapse" id="roster-master">
+<a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#2-1_roster_master"><span class="caret"></span> <small>マスタファイル</small></a>
+<div class="collapse" id="2-1_roster_master">
     <a
         role="presentation"
         class="list-group-item collapse list-second"

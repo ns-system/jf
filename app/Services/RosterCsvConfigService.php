@@ -52,7 +52,7 @@ class RosterCsvConfigService
             ],
             'import'        => [
                 'table_columns' => [
-                    /* display_flag, kanji_name, [format], [class] */
+                    /* POST_flag, kanji_name, [format], [class] */
                     [1, 'division_id', '部署コード'],
                     [1, 'division_name', '部署名', 'class' => 'text-left'],
                 ],
@@ -113,7 +113,7 @@ class RosterCsvConfigService
             ],
             'import'        => [
                 'table_columns' => [
-                    /* display_flag, kanji_name, [format], [class] */
+                    /* POST_flag, kanji_name, [format], [class] */
                     [1, 'work_type_id', '勤務形態コード',],
                     [1, 'work_type_name', '勤務形態名', 'class' => 'text-left'],
                     [1, 'work_start_time', '勤務開始時間', 'class' => 'text-left'],
@@ -174,7 +174,7 @@ class RosterCsvConfigService
             ],
             'import'        => [
                 'table_columns' => [
-                    /* display_flag, kanji_name, [format], [class] */
+                    /* POST_flag, kanji_name, [format], [class] */
                     [1, 'rest_reason_id', '休暇理由コード',],
                     [1, 'rest_reason_name', '休暇理由名', 'class' => 'text-left'],
                 ],
@@ -229,7 +229,7 @@ class RosterCsvConfigService
             ],
             'import'        => [
                 'table_columns' => [
-                    /* display_flag, kanji_name, [format], [class] */
+                    /* POST_flag, kanji_name, [format], [class] */
                     [1, 'holiday', '祝日',],
                     [1, 'holiday_name', '祝日名', 'class' => 'text-left'],
                 ],
@@ -295,10 +295,10 @@ class RosterCsvConfigService
             ],
             'import'        => [
                 'table_columns' => [
-                    /* display_flag, kanji_name, [format], [class] */
+                    /* POST_flag, kanji_name, [format], [class] */
                     [1, 'user_id', 'ユーザーID',],
-                    [1, 'division_name', '部署名',],
-                    [1, 'name', 'ユーザー名',],
+                    [0, 'division_name', '部署名',],
+                    [0, 'name', 'ユーザー名',],
                     [1, 'staff_number', '職員番号', 'class' => 'text-left'],
                 ],
                 'rules'         => [
