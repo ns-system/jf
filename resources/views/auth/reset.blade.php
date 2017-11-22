@@ -15,7 +15,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
-                @include('suisin.partial.alert')
+                @include('partial.alert')
 
             <div class="panel panel-default">
                 <div class="panel-heading">パスワード再設定</div>
