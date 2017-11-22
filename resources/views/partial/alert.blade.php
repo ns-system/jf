@@ -70,7 +70,7 @@
 @endif
 
 @if (count($errors) > 0)
-<div class="alert alert-danger alert-dismissible fade in" rore="alert">
+<div class="alert alert-danger alert-dismissible fade in alert-fixed" rore="alert">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <p><strong>エラー：</strong></p>
     <ul>
