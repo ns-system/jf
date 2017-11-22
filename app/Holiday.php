@@ -15,7 +15,7 @@ class Holiday extends Model
         $first_day = date('Y-m-d', strtotime($month_id . '01'));
         $last_day  = date('Y-m-t', strtotime($month_id . '01'));
 
-        var_dump($first_day. $last_day);
+//        var_dump($first_day. $last_day);
         return $query->where('holiday', '>=', $first_day)
                         ->where('holiday', '<=', $last_day)
         ;

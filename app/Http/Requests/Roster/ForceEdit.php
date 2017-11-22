@@ -23,7 +23,7 @@ class ForceEdit extends Request
      */
     public function rules() {
         $in    = \Input::get();
-        var_dump($in);
+//        var_dump($in);
         $rules = [
             'id'            => 'required|exists:mysql_roster.rosters,id',
             'plan_accept'   => 'required|integer|min:-1|max:2',
