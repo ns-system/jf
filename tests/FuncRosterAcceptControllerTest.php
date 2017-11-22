@@ -13,7 +13,8 @@
  */
 class FuncRosterAcceptControllerTest extends TestCase
 {
-   protected static $init                     = false;
+
+    protected static $init                     = false;
     protected $super_user;
     protected $admin_user;
     protected $normal_user;
@@ -28,9 +29,9 @@ class FuncRosterAcceptControllerTest extends TestCase
         {
             try {
 
-//                \Artisan::call('db:reset', ['--dbenv' => 'testing', '--hide' => 'true']);
-//                \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
-//                \Artisan::call('migrate');
+                \Artisan::call('db:reset', ['--dbenv' => 'testing', '--hide' => 'true']);
+                \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
+                \Artisan::call('migrate');
                 \App\Division::create(["division_id" => '1', 'division_name' => 'test']);
                 \App\WorkType::firstOrCreate(["work_type_id" => '1', "work_type_name" => "テスト用"]);
             } catch (\Exception $exc) {
@@ -54,9 +55,9 @@ class FuncRosterAcceptControllerTest extends TestCase
         \App\SinrenUser::create(['user_id' => $this->normal_user->id, "division_id" => '1']);
         \App\SinrenUser::create(['user_id' => $this->proxy_user->id, "division_id" => '1']);
         \App\ControlDivision::create(['user_id' => $this->admin_user->id, "division_id" => '1']);
-        \App\Rest::create(["rest_reason_id"=>1,"rest_reason_name"=>"テスト用理由"]);
+        \App\Rest::create(["rest_reason_id" => 1, "rest_reason_name" => "テスト用理由"]);
     }
-     
+
     /**
      * @tests
      */
@@ -89,7 +90,7 @@ class FuncRosterAcceptControllerTest extends TestCase
         }
         $unaccept_plan = \App\Roster::where('id', 1)->first();
         $this->actingAs($this->admin_user)
-                 ->visit('/app/roster/accept/')
+                ->visit('/app/roster/accept/')
                 ->see("2017年12月")
                 ->visit('/app/roster/accept/calendar/201712/1')
                 ->see("予定データ承認")
@@ -112,7 +113,7 @@ class FuncRosterAcceptControllerTest extends TestCase
         }
         $unaccept_plan = \App\Roster::where('id', 1)->first();
         $this->actingAs($this->admin_user)
-                 ->visit('/app/roster/accept/')
+                ->visit('/app/roster/accept/')
                 ->see("2017年12月")
                 ->visit('/app/roster/accept/calendar/201712/1')
                 ->see("予定データ承認")
@@ -134,7 +135,7 @@ class FuncRosterAcceptControllerTest extends TestCase
         }
         $unaccept_plan = \App\Roster::where('id', 1)->first();
         $this->actingAs($this->admin_user)
-                 ->visit('/app/roster/accept/')
+                ->visit('/app/roster/accept/')
                 ->see("2017年12月")
                 ->visit('/app/roster/accept/calendar/201712/1')
                 ->see("予定データ承認")
@@ -146,12 +147,10 @@ class FuncRosterAcceptControllerTest extends TestCase
         $this->assertEquals(0, $unaccept_plan->is_actual_reject);
         $this->assertEquals(1, $accept_plan->is_actual_reject);
     }
-    
-    
-    
+
     //異常系
-    
-     /**
+
+    /**
      * @tests
      */
     public function 異常系権限のないユーザーが勤務予定データを作成しようとするとエラー() {
@@ -163,7 +162,6 @@ class FuncRosterAcceptControllerTest extends TestCase
         ;
     }
 
-    
     /**
      * @tests
      */
@@ -224,4 +222,7 @@ class FuncRosterAcceptControllerTest extends TestCase
                 ->assertRedirectedTo('/permission_error')
         ;
     }
+
+    
+
 }
