@@ -182,7 +182,7 @@ class ImportZenonDataService
         $types   = [];
         $keys    = [];
         $configs = \App\ZenonTable::format($monthly_state->zenon_format_id)->select(['column_name', 'column_type',])->get();
-        $this->debugMemory('uploadToDatabase - init');
+//        $this->debugMemory('uploadToDatabase - init');
         foreach ($configs as $c) {
             $types[$c->column_name] = $c->column_type;
             $keys[]                 = $c->column_name;
@@ -205,14 +205,14 @@ class ImportZenonDataService
             'account_column_name' => $monthly_state->account_column_name,
             'subject_column_name' => $monthly_state->subject_column_name,
         ];
-        $this->debugMemory('uploadToDatabase - beforeGetTableObject');
+//        $this->debugMemory('uploadToDatabase - beforeGetTableObject');
         try {
             $table = $this->getTableObject('mysql_zenon', $monthly_state->table_name);
         } catch (\Exception $e) {
             $this->setPreErrorToMonthlyStatus($monthly_state->id, $e->getMessage());
             return $this->makeErrorLog($monthly_state, $e->getMessage());
         }
-        $this->debugMemory('uploadToDatabase - afterGetTableObject');
+//        $this->debugMemory('uploadToDatabase - afterGetTableObject');
 
         $this->setPreStartToMonthlyStatus($monthly_state->id);
 
@@ -237,7 +237,7 @@ class ImportZenonDataService
             // MySQLのバージョンによってはプリペアドステートメントが65536までに制限されているため、動的にしきい値を設ける
             if ($line_number > 0 && (count($bulk) * count($tmp_bulk) + count($tmp_bulk)) > 65000)
             {
-                $this->debugMemory('uploadToDatabase - beforeBulkInsert');
+//                $this->debugMemory('uploadToDatabase - beforeBulkInsert');
                 $table->insert($bulk);
                 $this->setExecutedRowCountToMonthlyStatus($monthly_state->id, $line_number);
                 unset($bulk);
@@ -262,7 +262,9 @@ class ImportZenonDataService
             throw new \Exception("コネクションもしくはテーブル名が指定されていないようです。");
         }
         try {
+            // なんかキャッチできない不具合発生したのでコメントアウトしてます
             $res = \DB::connection($connection)->table($table_name);
+            $res->first();
         } catch (\Exception $e) {
             throw new \Exception("ベーステーブルが存在しないようです。（テーブル名：{$table_name}）");
         }
