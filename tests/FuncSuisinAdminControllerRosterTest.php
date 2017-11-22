@@ -528,44 +528,6 @@ class FuncSuisinAdminControllerRosterTest extends TestCase
         ;
     }
 
-    /**
-     * @tests
-     */
-    public function 正常系勤怠管理システムCSV出力で予定出力ができる() {
-
-        for ($i = 1; $i <= 31; $i++) {
-            \App\Roster::create(['user_id' => $this->user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
-        }
-        $this->actingAs($this->user)
-                ->visit('admin/roster/csv')
-                ->see('CSV出力 ')
-                ->see("2017年12月")
-                ->visit('/admin/roster/csv/list/201712')
-                ->seePageIs('/admin/roster/csv/list/201712')
-                ->see('予定出力')
-                ->press('予定出力')
-                ->assertResponseStatus(200)
-        ;
-    }
-    /**
-     * @tests
-     */
-    public function 正常系勤怠管理システムCSV出力で実績出力ができる() {
-        
-
-        for ($i = 1; $i <= 31; $i++) {
-            \App\Roster::create(['user_id' => $this->user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
-        }
-        $this->actingAs($this->user)
-                ->visit('admin/roster/csv')
-                ->see('CSV出力 ')
-                ->see("2017年12月")
-                ->visit('/admin/roster/csv/list/201712')
-                ->seePageIs('/admin/roster/csv/list/201712')
-                ->see('実績出力')
-                ->press('実績出力')
-                ->assertResponseStatus(200)
-        ;
-    }
+    
 
 }

@@ -227,7 +227,7 @@ class CsvExport
 
         if (!empty($input['name']))
         {
-            $rosters->where('users.last_name', 'LIKE', "%{$input['name']}%");
+            $rosters->where('USER.last_name', 'LIKE', "%{$input['name']}%");
         }
 
         if (!empty($input['division']))
