@@ -15,7 +15,7 @@
 
 @section('sidebar')
 <div class="col-md-2">
-    <div data-spy="affix" style="min-width: 200px;">
+    {{--     <div data-spy="affix" style="min-width: 200px; max-width: 300px; width: 100%;"> --}}
         <div class="nav nav-pills nav-stacked list-group">
             <p role="presentation" class="list-group-item collapse bg-primary-important" style="color: #fff;">メニュー</p>
 
@@ -62,28 +62,9 @@
                 id="uncheck"
                 >チェックを外す</a>
                 <span></span>
-        </div>{{-- <span class="list-group-item collapse list-divider"></span>
-        
-        <a role="presentation" class="list-group-item collapse" data-toggle="collapse" href="#list"><span class="caret"></span> リ<small>スト出力</small></a>
-        <span></span>
-        <div class="collapse" id="list">
-            <a role="presentation"
-                class="list-group-item collapse list-second"
-                href="#"
-                onclick="return false;"
-                id="check"
-            >全てにチェック</a>
-
-            <a role="presentation"
-                class="list-group-item collapse list-second"
-                href="#"
-                onclick="return false;"
-                id="uncheck"
-            >チェックを外す</a>
-        <span></span>
-    </div> --}}
-</div>
-</div>
+            </div>
+        </div>
+    {{--     </div> --}}
 </div>
 @endsection
 
