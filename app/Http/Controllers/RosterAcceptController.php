@@ -86,22 +86,38 @@ class RosterAcceptController extends Controller
         return view('roster.app.accept.index', $params);
     }
 
-    public function calendar($ym, $div) {
-        $obj      = new \App\Services\Roster\Calendar();
-        $tmp      = $obj->setId($ym)->makeCalendar();
-        $cal      = $obj->convertCalendarToList($tmp);
-        $calendar = [];
+    public function calendar($ym, $div, $all = 'all') {
+        $is_show_all = ($all == 'all') ? true : false;
+//        dd($is_show_all);
+        $obj         = new \App\Services\Roster\Calendar();
+        $tmp         = $obj->setId($ym)->makeCalendar();
+        $cal         = $obj->convertCalendarToList($tmp);
+        $calendar    = [];
 
-        $tmp_rows = \App\Roster::join('sinren_db.sinren_users', 'rosters.user_id', '=', 'sinren_users.user_id')
-                ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+        $sql = \App\Roster::join('sinren_db.sinren_users as S_USER', 'rosters.user_id', '=', 'S_USER.user_id')
+                ->join('roster_db.roster_users as R_USER', 'rosters.user_id', '=', 'R_USER.user_id')
+                ->join('sinren_db.sinren_divisions', 'S_USER.division_id', '=', 'sinren_divisions.division_id')
                 ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
                 ->select(\DB::raw('*, rosters.id as key_id'))
-                ->where('sinren_users.division_id', '=', $div)
-                ->where('sinren_users.user_id', '<>', \Auth::user()->id)
-                ->get()
+                ->where('S_USER.division_id', '=', $div)
+                ->where('S_USER.user_id', '<>', \Auth::user()->id)
+                ->where('users.is_super_user', '=', false)
+                ->where('R_USER.is_administrator', '=', false)
         ;
-        $rows     = [];
-        foreach ($tmp_rows as $t) {
+
+        if ($is_show_all === false)
+        {
+            $sql = $sql->where('rosters.is_plan_entry', '=', true)
+                    ->where(function($query) {
+                $query->orWhere('rosters.is_plan_accept', '<>', true)->orWhere('rosters.is_actual_accept', '<>', true);
+            })
+            ;
+        }
+
+//        dd($sql->toSql());
+//        $tmp_rows = $sql->get();
+        $rows = [];
+        foreach ($sql->get() as $t) {
             $rows[date('Y-m-d', strtotime($t->entered_on))] = $t;
         }
         foreach ($cal as $c) {
@@ -129,11 +145,11 @@ class RosterAcceptController extends Controller
         foreach ($tmp_rests as $r) {
             $rests[$r->rest_reason_id] = $r->rest_reason_name;
         }
-        $users = \DB::connection('mysql_sinren')
-                ->table('sinren_users')
-                ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
+        $users = \App\SinrenUser::join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
+                ->join('roster_db.roster_users as R_USER', 'users.id', '=', 'R_USER.user_id')
                 ->where('sinren_users.division_id', '=', $div)
                 ->where('sinren_users.user_id', '<>', \Auth::user()->id)
+                ->where('R_USER.is_administrator', '=', false)
                 ->get()
         ;
         $param = [
@@ -160,6 +176,14 @@ class RosterAcceptController extends Controller
         }
         \Session::flash('success_message', 'データの一括更新が完了しました。');
         return back();
+    }
+
+    public function getNotAccept($monthly_id, $division_id) {
+        \App\Roster::where('month_id', '=', $monthly_id)
+                ->leftJoin('sinren_db.sinren_users as S_USER', 'rosters.user_id', '=', 'S_USER.user_id')
+                ->leftJoin('sinren_db.sinren_divisions as S_DIV', 'S_USER.division_id', '=', 'S_DIV.division_id')
+
+        ;
     }
 
 //    public function show($ym, $div) {
@@ -307,5 +331,4 @@ class RosterAcceptController extends Controller
 //        \Session::flash('success_message', 'データの一括更新が完了しました。');
 //        return back();
 //    }
-
 }

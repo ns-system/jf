@@ -4,22 +4,26 @@
 
 @section('header')
 @parent
-    @section('brand', 'ホーム')
+@section('brand', 'ホーム')
 @endsection
 
 @section('sidebar')
-    <div class="col-md-2">
-        @include('app.sidebar.sidebar')
-    </div>
+<div class="col-md-2">
+    @include('app.sidebar.sidebar')
+</div>
 @endsection
 
 
 @section('content')
-    <div class="col-md-9">
-<div class="container-fluid">
+<div class="col-md-9">
+    <div class="container-fluid">
         @include('partial.alert')
-    <h1>main content</h1>
-</div><!-- .container-fluid -->
+
+        @include('roster.home_notice.chief')
+        @include('roster.home_notice.user')
+
+        {{--     <h1>main content</h1> --}}
+    </div><!-- .container-fluid -->
 </div>
 @endsection
 

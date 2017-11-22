@@ -4,9 +4,11 @@
         <ul class="text-danger-light" id="danger-list"></ul>
 
         <strong class="text-warning" id="warning-list-title" style="display: none;">注意：</strong>
-        <ul class="text-warning-light" id="warning-list"></ul>
-
+        <ul class="text-warning-light" id="warning-list" style="margin-bottom: 0;"></ul>
     </small>
+    <div id="process-list" class="text-left">
+        <a href="{{route('admin::super::month::status', ['id'=>$id])}}"><small><b>処理結果を確認する</b></small></a>
+    </div>
 </div>
 <button class="btn btn-primary btn-xs" id="error-box-list-visiblity" data-visible="true">表示／非表示</button>
 
@@ -15,7 +17,8 @@
     width: 400px;
     position: fixed;
     background: rgba(0, 0, 0, 0.8);
-    padding: 10px 20px;
+    padding: 5px 20px;
+    padding-bottom: 24px;
     border-radius: 3px;
     box-shadow: 0 0 3px rgba(0,0,0,0.8);
     right: 30px;
@@ -43,12 +46,12 @@
  * 配列で引き渡す場合、必ず連想配列のキーに'error_message'を指定すること
  * JSON形式くらいしか想定してません
  */
-function setErrorList(error_messages){
+ function setErrorList(error_messages){
     $('#warning-list').html('');
     var error_counter = 0;
 
     if(error_messages['danger_message']){
-//        console.log('1st');
+        // console.log('1st');
         $('#danger-list-title').show();
         $('#danger-list').append('<li>'+error_messages['danger_message']+'</li>');
         error_counter++;
@@ -60,7 +63,7 @@ function setErrorList(error_messages){
     }
 
     $.each(error_messages, function(array_key, array_val){
-//        console.log('2nd');
+        // console.log('2nd');
         if($.isPlainObject(error_messages[array_key])){
             $.each(error_messages[array_key], function(key, val){
                 if(key == 'danger_message' && val){
