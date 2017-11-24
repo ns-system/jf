@@ -33,6 +33,7 @@ class FuncRosterAcceptControllerTest extends TestCase
                 \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
                 \Artisan::call('migrate');
                 \App\Division::create(["division_id" => '1', 'division_name' => 'test']);
+                \App\Division::create(["division_id" => '2', 'division_name' => 'test2']);
                 \App\WorkType::firstOrCreate(["work_type_id" => '1', "work_type_name" => "テスト用"]);
             } catch (\Exception $exc) {
                 echo $exc->getTraceAsString();
@@ -62,6 +63,7 @@ class FuncRosterAcceptControllerTest extends TestCase
      * @tests
      */
     public function 正常系責任者が勤務予定データを承認できる() {
+     
         \App\Roster::truncate();
         for ($i = 1; $i <= 31; $i++) {
             \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1]);
@@ -148,6 +150,82 @@ class FuncRosterAcceptControllerTest extends TestCase
         $this->assertEquals(1, $accept_plan->is_actual_reject);
     }
 
+    /**
+     * @tests
+     */
+    public function 正常系勤務実績データの未承認の物を表示できる() {
+        \App\Roster::truncate();
+        for ($i = 1; $i <= 31; $i++) {
+            if ($i == 15)
+            {
+                \App\Roster::create([
+                    'user_id'           => $this->normal_user->id,
+                    "plan_work_type_id" => "1",
+                    "entered_on"        => "2017-12-" . $i,
+                    "month_id"          => "201712",
+                    "is_plan_entry"     => 1,
+                    "is_plan_accept"    => 1,
+                    "is_actual_entry"   => 0,
+                    "is_actual_accept"  => 0]);
+            } else
+            {
+                \App\Roster::create([
+                    'user_id'           => $this->normal_user->id,
+                    "plan_work_type_id" => "1",
+                    "entered_on"        => "2017-12-" . $i,
+                    "month_id"          => "201712",
+                    "is_plan_entry"     => 1,
+                    "is_plan_accept"    => 1,
+                    "is_actual_entry"   => 1,
+                    "is_actual_accept"  => 1]);
+            }
+        }
+        $unaccept_plan = \App\Roster::where('id', 1)->first();
+        $this->actingAs($this->admin_user)
+                ->visit('/app/roster/accept/')
+                ->see("2017年12月")
+                ->visit('/app/roster/accept/calendar/201712/1/part')
+                ->see("予定データ承認")
+                ->see("12月15日")
+        ;
+        for ($j = 1; $j <= 31; $j++) {
+            if ($j != 15)
+            {
+                $this->dontsee("12月" . $j . "日");
+            }
+        }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系月毎のレコード件数がNULLの時空配列が返ってくる() {
+        $class      = new \App\Http\Controllers\RosterAcceptController;
+        $reflection = new \ReflectionClass($class);
+        $method     = $reflection->getMethod("editKey");
+        $method->setAccessible(true);
+        $res        = $method->invoke($class, null);
+        $this->assertEmpty($res);
+    }
+        /**
+     * @tests
+     */
+    public function 正常系勤務データIDがnullでも実行される() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
+        }
+        $input   = ['_token' => csrf_token(), "actual" => ['1' => 1,"2"=>1], "id" => ['1' => null,"2"=>2]];
+        $service = new App\Services\Roster\RosterAccept($this->admin_user->id);
+        try {
+            $service->updateRoster($input);
+            $this->assertTrue(TRUE);
+        } catch (Exception $ex) {
+           $this->fail("想定していない例外発生");
+        }
+    }
+
     //異常系
 
     /**
@@ -223,6 +301,212 @@ class FuncRosterAcceptControllerTest extends TestCase
         ;
     }
 
-    
+    /**
+     * @tests
+     */
+    public function 異常系自分自身を承認しようとするとエラー() {
+        \App\Roster::truncate();
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->admin_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
+        }
+        $unaccept_plan = \App\Roster::where('id', 1)->first();
+        $a             = $this->actingAs($this->admin_user)
+                ->visit('/app/roster/accept/')
+                ->see("2017年12月")
+                ->visit('/app/roster/accept/calendar/201712/1')
+                ->see("予定データ承認")
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => ['1' => 1], "id" => ['1' => "1"]])
+        ;
+        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertSessionHas("danger_message", "自分自身のデータを承認しようとしました。");
+    }
 
+    /**
+     * @tests
+     */
+    public function 異常系自分の担当以外の部署の予定を承認しようとするとエラー() {
+        \App\Roster::truncate();
+        $user = factory(\App\User::class)->create();
+        \App\RosterUser::create(['user_id' => $user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '1', "is_proxy_active" => '1', "work_type_id" => '1']);
+        \App\SinrenUser::create(['user_id' => $user->id, "division_id" => '2']);
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
+        }
+        $a = $this->actingAs($this->admin_user)
+                ->visit('/app/roster/accept/')
+                ->see("2017年12月")
+                ->visit('/app/roster/accept/calendar/201712/1')
+                ->see("予定データ承認")
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => ['1' => 1], "id" => ['1' => "1"]])
+        ;
+        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertSessionHas("danger_message", "許可されていない部署のデータを承認しようとしました。");
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系予定が登録されていないのに承認しようとするとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 0, "is_plan_accept" => 0, "is_actual_entry" => 0]);
+        }
+
+        $a = $this->actingAs($this->admin_user)
+                ->visit('/app/roster/accept/')
+                ->see("2017年12月")
+                ->visit('/app/roster/accept/calendar/201712/1')
+                ->see("予定データ承認")
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "plan" => [1 => 1], "id" => ['1' => 1]])
+        ;
+        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertSessionHas("danger_message", "2017-12-01の予定データが入力されていないようです。");
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系既に承認されている予定を承認しようとするとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1, "is_actual_accept" => 1]);
+        }
+
+        $a = $this->actingAs($this->admin_user)
+                ->visit('/app/roster/accept/')
+                ->see("2017年12月")
+                ->visit('/app/roster/accept/calendar/201712/1')
+                ->see("予定データ承認")
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "plan" => [1 => 1], "id" => ['1' => 1]])
+        ;
+        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertSessionHas("danger_message", "すでに2017-12-01のデータは承認されています。");
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系予定がないのに実績を承認しようとするとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 0, "is_plan_accept" => 0, "is_actual_entry" => 0, "is_actual_accept" => 0]);
+        }
+
+        $a = $this->actingAs($this->admin_user)
+                ->visit('/app/roster/accept/')
+                ->see("2017年12月")
+                ->visit('/app/roster/accept/calendar/201712/1')
+                ->see("予定データ承認")
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => [1 => 1], "id" => ['1' => 1]])
+        ;
+        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertSessionHas("danger_message", "2017-12-01の予定データが入力されていないようです。");
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系予定が承認されていないのに実績を承認しようとするとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 0, "is_actual_entry" => 0, "is_actual_accept" => 0]);
+        }
+
+        $a = $this->actingAs($this->admin_user)
+                ->visit('/app/roster/accept/')
+                ->see("2017年12月")
+                ->visit('/app/roster/accept/calendar/201712/1')
+                ->see("予定データ承認")
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => [1 => 1], "id" => ['1' => 1]])
+        ;
+        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertSessionHas("danger_message", "2017-12-01の予定データが承認されていないようです。");
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系実績が登録されていないのに実績を承認しようとするとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 0, "is_actual_accept" => 0]);
+        }
+
+        $a = $this->actingAs($this->admin_user)
+                ->visit('/app/roster/accept/')
+                ->see("2017年12月")
+                ->visit('/app/roster/accept/calendar/201712/1')
+                ->see("予定データ承認")
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => [1 => 1], "id" => ['1' => 1]])
+        ;
+        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertSessionHas("danger_message", "2017-12-01の実績データが入力されていないようです。");
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系実績が登録されているのに実績を承認しようとするとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1, "is_actual_accept" => 1]);
+        }
+
+        $a = $this->actingAs($this->admin_user)
+                ->visit('/app/roster/accept/')
+                ->see("2017年12月")
+                ->visit('/app/roster/accept/calendar/201712/1')
+                ->see("予定データ承認")
+                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => [1 => 1], "id" => ['1' => 1]])
+        ;
+        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertSessionHas("danger_message", "すでに2017-12-01のデータは承認されています。");
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系勤務データIDがセットされていないとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
+        }
+        $input   = ['_token' => csrf_token(), "actual" => ['1' => 0], "actual_reject" => [1 => "却下"]];
+        $service = new App\Services\Roster\RosterAccept($this->admin_user->id);
+        try {
+            $service->updateRoster($input);
+            $this->fail("例外がキャッチできてない");
+        } catch (Exception $ex) {
+            $this->assertEquals($ex->getMessage(), "勤務データIDがセットされていないようです。");
+        }
+    }
+
+
+     /**
+     * @tests
+     */
+    public function 異常系責任者の管轄部署が存在しないとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
+        }
+        \App\ControlDivision::truncate();
+        $input   = ['_token' => csrf_token(), "actual" => ['1' => 0], "actual_reject" => [1 => "却下"]];
+        
+        try {
+            $service = new App\Services\Roster\RosterAccept($this->admin_user->id);
+            $service->updateRoster($input);
+            $this->fail("例外がキャッチできてない");
+        } catch (Exception $ex) {
+            $this->assertEquals($ex->getMessage(), "責任者の管轄部署が存在しません。");
+        }
+    }
 }
