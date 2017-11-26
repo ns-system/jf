@@ -10,6 +10,7 @@ class IndexController extends Controller
 {
 
     public function show() {
+        $new_users = [];
         if (!\Auth::check())
         {
             return view('auth.login');
@@ -18,16 +19,13 @@ class IndexController extends Controller
 
         if ($user->is_super_user)
         {
-            return view('admin.home');
-        }
-        if ($user->SuisinUser && $user->SuisinUser->is_administrator)
-        {
-            return view('admin.home');
+            $new_users = $this->getNewUser();
+            return view('admin.home', ['new_users' => $new_users]);
         }
         $roster = \App\RosterUser::user($user->id);
         if ($roster->exists() && $roster->first()->is_administrator)
         {
-            return view('admin.home');
+            return view('admin.home', ['new_users' => $new_users]);
         }
         if (!$roster->exists())
         {
@@ -42,6 +40,17 @@ class IndexController extends Controller
 
     public function permissionError() {
         return view('admin.permission_error');
+    }
+
+    public function getNewUser() {
+        $start = date('Y-m-d', strtotime('-1 month'));
+        $res   = \App\User::select(\DB::raw('first_name, last_name, updated_at, created_at = updated_at as is_new'))
+                ->where('updated_at', '>=', $start)
+                ->orderBy('updated_at')
+                ->take(10)
+                ->get()
+        ;
+        return $res;
     }
 
     private function getRosterChiefNotice($user_id) {

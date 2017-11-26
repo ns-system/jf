@@ -14,7 +14,7 @@ class ProcessStatusController extends Controller
     use JsonUsable;
 
     const INT_MAX_PREV_MONTH = -3;
-    const INT_MAX_NEXT_MONTH = 9;
+    const INT_MAX_NEXT_MONTH = 30;
 
     protected $service;
 //    protected $json_service;
