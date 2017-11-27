@@ -76,7 +76,7 @@
         @include('partial.alert')
         @include('admin.month.partial.breadcrumbs')
         <div class="border-bottom">
-            <h2>CSVファイルコピー処理<small> - 月次処理</small></h2>
+            <h2>CSVファイルコピー処理<small> - {{date('Y年n月', strtotime($id.'01'))}} 月次処理</small></h2>
         </div>
 
         <form method="POST" action="{{route('admin::super::month::import_dispatch', ['id'=>$id, 'job_id'=>$job_id])}}">
@@ -171,7 +171,7 @@
                         </p>
                         <p>
                             @if($f->is_import)       <label class="label label-success" style="min-width: 75px;">処理済</label>
-                            @else                    <label class="label label-default" style="min-width: 75px;">未処理</label> @endif
+                            @else                    <label class="label label-warning" style="min-width: 75px;">未処理</label> @endif
                         </p>
                     </td>
 
@@ -272,7 +272,7 @@
             alert('最低でも一つにチェックを入れてください。');
             return false;
         }else{
-            return true;
+            return confirm('すでに当月データが累積されていた場合、データが二重で累積される恐れがあります。処理を継続してよろしいですか？');
         }
     }
 </script>

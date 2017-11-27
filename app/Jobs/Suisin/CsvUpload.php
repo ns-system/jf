@@ -28,11 +28,6 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
         $this->job_id      = $job_id;
     }
 
-//    public function failed() {
-//        echo "error!";
-//        \DB::connection('mysql_zenon')->rollback();
-//    }
-
     public function handle() {
         echo "==== CsvFileUpload ====" . PHP_EOL;
         echo "[start : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
@@ -43,8 +38,7 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
         echo "monthly_id = {$ym}, job_id = {$this->job_id}" . PHP_EOL;
 
         $import_zenon_data_service = new ImportZenonDataService();
-        \DB::connection('mysql_zenon')->beginTransaction();
-
+//        \DB::connection('mysql_zenon')->beginTransaction();
         // 事前チェック
         try {
             echo "  -- check : " . date('Y-m-d H:i:s') . PHP_EOL;
@@ -87,10 +81,10 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
 //                $this->debugMemory('phase1');
                 $import_zenon_data_service->setPostStartToMonthlyStatus($r->id);
                 $csv_file_object = $import_zenon_data_service->setCsvFileObject($file_path . '/' . $r->csv_file_name)->getCsvFileObject();
-
                 // データベース反映処理
-                $error_array = $import_zenon_data_service->uploadToDatabase($r, $csv_file_object, $ym);
-
+                \DB::connection('mysql_zenon')->beginTransaction();
+                $error_array     = $import_zenon_data_service->uploadToDatabase($r, $csv_file_object, $ym);
+                \DB::connection('mysql_zenon')->commit();
                 // エラーメッセージ処理
                 if (!empty($error_array))
                 {
@@ -107,8 +101,8 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             {
                 $import_zenon_data_service->outputForJsonFile($database_setting_not_exist_list, storage_path() . '/jsonlogs', date('Ymd_His') . '_database_setting_not_exist_files.json');
             }
-
             // 委託者マスタ創生
+            \DB::connection('mysql_zenon')->beginTransaction();
             echo "  -- consignors : " . date('Y-m-d H:i:s') . PHP_EOL;
             $sql        = "consignor_code, COUNT(*) as total_count, MAX(scheduled_transfer_payment_on) as reference_last_traded_on, MAX(last_traded_on) as last_traded_on";
             $consignors = \App\Jifuri::where(['monthly_id' => $ym])->select(\DB::raw($sql))->groupBy('consignor_code')->get();
@@ -116,19 +110,19 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
                 $tmp_cns        = \App\Jifuri::where(['consignor_code' => $cns->consignor_code, 'monthly_id' => $ym,])->orderBy('last_traded_on', 'desc')->first();
                 $consignor_name = (!empty($tmp_cns)) ? $tmp_cns->consignor_name : '';
 
-                $keys      = ['consignor_code' => $cns->consignor_code];
-                $table     = \App\Consignor::firstOrNew($keys);
-                $last_date = (empty($cns->reference_last_traded_on) || $cns->reference_last_traded_on === '0000-00-00' || $cns->reference_last_traded_on === '00000000') ?
+                $keys                            = ['consignor_code' => $cns->consignor_code];
+                $table                           = \App\Consignor::firstOrNew($keys);
+                $last_date                       = (empty($cns->reference_last_traded_on) || $cns->reference_last_traded_on === '0000-00-00' || $cns->reference_last_traded_on === '00000000') ?
                         $cns->last_traded_on :
                         $cns->reference_last_traded_on
                 ;
-
                 $table->consignor_code           = $cns->consignor_code;
                 $table->consignor_name           = $consignor_name;
                 $table->total_count              = $cns->total_count;
                 $table->reference_last_traded_on = $last_date;
                 $table->save();
             }
+            \DB::connection('mysql_zenon')->commit();
             $import_zenon_data_service->setImportEndToJobStatus($this->job_id);
         } catch (\Exception $e) {
             // エラー発生時、フラグをリセット
@@ -140,9 +134,7 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             \DB::connection('mysql_zenon')->rollback();
             exit();
         }
-
-        \DB::connection('mysql_zenon')->commit();
-
+//        \DB::connection('mysql_zenon')->commit();
         echo "[end   : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
     }
 

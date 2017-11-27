@@ -99,7 +99,8 @@ trait JobStatusUsable
     public function createJobStatus() {
         $job              = \App\JobStatus::create(['is_copy_start' => true]);
         $this->job_status = $job;
-        return $this;
+//        return $this;
+        return $job;
     }
 
     public function setJobStatus($id) {
