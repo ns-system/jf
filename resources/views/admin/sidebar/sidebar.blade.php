@@ -33,6 +33,14 @@
             <a
                 role="presentation"
                 class="list-group-item collapse list-second"
+                href="{{route('admin::super::month::consignor::show')}}"
+                data-toggle="tooltip"
+                data-placement="right"
+                title="（スーパーユーザー用機能）委託者マスタを更新できます。"><span class="text-danger">委託者マスタセットアップ処理</span></a><span></span>
+            
+            <a
+                role="presentation"
+                class="list-group-item collapse list-second"
                 href="{{route('admin::super::user::show')}}"
                 data-toggle="tooltip"
                 data-placement="right"

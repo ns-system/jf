@@ -83,8 +83,11 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
             Route::any('/importing/{id}/{job_id}', ['as' => 'importing', 'uses' => 'ProcessStatusController@importAjax']);
             Route::any('/copying/{id}/{job_id}', ['as' => 'copying', 'uses' => 'ProcessStatusController@copyAjax']);
 
-            Route::get('/export/{id}', ['as' => 'export', 'uses' => 'ProcessStatusController@exportProcessList']);
-            Route::get('/export_nothing/{id}', ['as' => 'export_nothing', 'uses' => 'ProcessStatusController@exportNothingList']);
+            Route::get('/export/{id}',         ['as' => 'export',            'uses' => 'ProcessStatusController@exportProcessList']);
+            Route::get('/export_nothing/{id}', ['as' => 'export_nothing',    'uses' => 'ProcessStatusController@exportNothingList']);
+            Route::get('/consignor/show',      ['as' => 'consignor::show',   'uses' => 'ProcessStatusController@showConsignors']);
+            Route::get('/consignor/create',    ['as' => 'consignor::create', 'uses' => 'ProcessStatusController@createConsignors']);
+            
 //            Route::get('/export_not_exist/{id}',          ['as' => 'export_not_exist', 'uses' => 'ProcessStatusController@exportNotExistList']);
         });
         /**
