@@ -262,9 +262,8 @@ class ImportZenonDataService
             throw new \Exception("コネクションもしくはテーブル名が指定されていないようです。");
         }
         try {
-            // なんかキャッチできない不具合発生したのでコメントアウトしてます
+            \DB::connection($connection)->table($table_name)->first();
             $res = \DB::connection($connection)->table($table_name);
-            $res->first();
         } catch (\Exception $e) {
             throw new \Exception("ベーステーブルが存在しないようです。（テーブル名：{$table_name}）");
         }
