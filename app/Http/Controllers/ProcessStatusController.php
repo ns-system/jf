@@ -353,10 +353,10 @@ class ProcessStatusController extends Controller
         return view('admin.month.consignor.list', ['consignors' => $consignors, 'monthly_id' => $monthly_id]);
     }
 
-    public function createConsignors() {
+    public function createConsignors($monthly_id) {
         // 委託者マスタ創生
         try {
-            \DB::connection('mysql_zenon')->transaction(function() {
+            \DB::connection('mysql_zenon')->transaction(function() use ($monthly_id) {
                 $sql        = "consignor_code, COUNT(*) as total_count, MAX(consignor_name) as consignor_name, MAX(scheduled_transfer_payment_on) as reference_last_traded_on, MAX(last_traded_on) as last_traded_on";
                 $consignors = \App\Jifuri::where(['monthly_id' => $monthly_id])->select(\DB::raw($sql))->groupBy('consignor_code')->orderBy('consignor_code', 'asc')->get();
                 foreach ($consignors as $cns) {
