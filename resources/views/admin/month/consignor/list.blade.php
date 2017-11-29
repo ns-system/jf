@@ -30,7 +30,7 @@
                 {!! $consignors->render() !!}
             </div>
             <div class="btn-group" style="margin-bottom: 10px;">
-                <a class="btn btn-success btn-sm" href="{{route('admin::super::month::consignor::create')}}" onclick="return confirm('この内容でデータを更新してよろしいですか？');">委託者マスタ更新</a>
+                <a class="btn btn-success btn-sm" href="{{route('admin::super::month::consignor::create', ['monthly_id'=>$monthly_id])}}" onclick="return confirm('この内容でデータを更新してよろしいですか？');">委託者マスタ更新</a>
             </div>
         </div>
 

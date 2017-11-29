@@ -347,10 +347,10 @@ class ProcessStatusController extends Controller
         return $this->service->exportCsv($lists, $file_name, $headers);
     }
 
-    public function showConsignors() {
+    public function showConsignors($monthly_id) {
         $sql        = "consignor_code, COUNT(*) as total_count, MAX(consignor_name) as consignor_name, MAX(scheduled_transfer_payment_on) as reference_last_traded_on, MAX(last_traded_on) as last_traded_on";
-        $consignors = \App\Jifuri::/* where(['monthly_id' => $monthly_id])-> */select(\DB::raw($sql))->groupBy('consignor_code')->orderBy('consignor_code', 'asc')->paginate(50);
-        return view('admin.month.consignor.list', ['consignors' => $consignors]);
+        $consignors = \App\Jifuri::where(['monthly_id' => $monthly_id])->select(\DB::raw($sql))->groupBy('consignor_code')->orderBy('consignor_code', 'asc')->paginate(50);
+        return view('admin.month.consignor.list', ['consignors' => $consignors, 'monthly_id' => $monthly_id]);
     }
 
     public function createConsignors() {
@@ -358,7 +358,7 @@ class ProcessStatusController extends Controller
         try {
             \DB::connection('mysql_zenon')->transaction(function() {
                 $sql        = "consignor_code, COUNT(*) as total_count, MAX(consignor_name) as consignor_name, MAX(scheduled_transfer_payment_on) as reference_last_traded_on, MAX(last_traded_on) as last_traded_on";
-                $consignors = \App\Jifuri::select(\DB::raw($sql))->groupBy('consignor_code')->orderBy('consignor_code', 'asc')->get();
+                $consignors = \App\Jifuri::where(['monthly_id' => $monthly_id])->select(\DB::raw($sql))->groupBy('consignor_code')->orderBy('consignor_code', 'asc')->get();
                 foreach ($consignors as $cns) {
                     $keys      = ['consignor_code' => $cns->consignor_code];
                     $table     = \App\Consignor::firstOrNew($keys);
@@ -373,31 +373,6 @@ class ProcessStatusController extends Controller
                     $table->reference_last_traded_on = $last_date;
                     $table->save();
                 }
-
-
-
-
-
-//                echo "  -- consignors : " . date('Y-m-d H:i:s') . PHP_EOL;
-//                $sql        = "consignor_code, COUNT(*) as total_count, MAX(scheduled_transfer_payment_on) as reference_last_traded_on, MAX(last_traded_on) as last_traded_on";
-//                $consignors = \App\Jifuri::where(['monthly_id' => $ym])->select(\DB::raw($sql))->groupBy('consignor_code')->get();
-//                foreach ($consignors as $cns) {
-//                    $tmp_cns        = \App\Jifuri::where(['consignor_code' => $cns->consignor_code, 'monthly_id' => $ym,])->orderBy('last_traded_on', 'desc')->first();
-//                    $consignor_name = (!empty($tmp_cns)) ? $tmp_cns->consignor_name : '';
-//
-//                    $keys      = ['consignor_code' => $cns->consignor_code];
-//                    $table     = \App\Consignor::firstOrNew($keys);
-//                    $last_date = (empty($cns->reference_last_traded_on) || $cns->reference_last_traded_on === '0000-00-00' || $cns->reference_last_traded_on === '00000000') ?
-//                            $cns->last_traded_on :
-//                            $cns->reference_last_traded_on
-//                    ;
-//
-//                    $table->consignor_code           = $cns->consignor_code;
-//                    $table->consignor_name           = $consignor_name;
-//                    $table->total_count              = $cns->total_count;
-//                    $table->reference_last_traded_on = $last_date;
-//                    $table->save();
-//                }
             });
         } catch (\Exception $e) {
             // エラー発生時、フラグをリセット
