@@ -6,6 +6,7 @@ use \App\Services\Traits\JsonUsable;
 use \App\Services\Traits\CsvUsable;
 use \App\Services\Traits\TypeConvertable;
 use \App\Services\Traits\JobStatusUsable;
+use \App\Services\Traits\MemoryCheckable;
 
 class ImportZenonDataService
 {
@@ -13,7 +14,8 @@ class ImportZenonDataService
     use JsonUsable,
         CsvUsable,
         TypeConvertable,
-        JobStatusUsable;
+        JobStatusUsable,
+        MemoryCheckable;
 
     protected $row;
     protected $status;
@@ -68,7 +70,7 @@ class ImportZenonDataService
         {
             throw new \Exception("月別IDの指定が不正です。（指定：{$monthly_id}）");
         }
-        $date_obj                = $this->setDate($monthly_id);
+        $date_obj                = $this->setDate($monthly_id)->getDate();
         $this->row['monthly_id'] = $date_obj->format('Ym');
         return $this;
     }
@@ -107,7 +109,6 @@ class ImportZenonDataService
                 {
                     throw new \Exception("口座番号が短すぎるようです。（科目：{$subject_code}， 口座番号：{$account_number}）");
                 }
-//                return mb_substr($buf, 0, /* mb_strlen($row[$sb_key]) - 3 */ -3);
                 $key_account = mb_substr($account_number, 0, -3);
 
                 break;
@@ -181,10 +182,12 @@ class ImportZenonDataService
         $types   = [];
         $keys    = [];
         $configs = \App\ZenonTable::format($monthly_state->zenon_format_id)->select(['column_name', 'column_type',])->get();
+//        $this->debugMemory('uploadToDatabase - init');
         foreach ($configs as $c) {
             $types[$c->column_name] = $c->column_type;
             $keys[]                 = $c->column_name;
         }
+        unset($configs);
         if ($this->isArrayEmpty($keys))
         {
             $this->setPreErrorToMonthlyStatus($monthly_state->id, 'テーブル設定が取り込まれていないようです。');
@@ -202,12 +205,14 @@ class ImportZenonDataService
             'account_column_name' => $monthly_state->account_column_name,
             'subject_column_name' => $monthly_state->subject_column_name,
         ];
+//        $this->debugMemory('uploadToDatabase - beforeGetTableObject');
         try {
             $table = $this->getTableObject('mysql_zenon', $monthly_state->table_name);
         } catch (\Exception $e) {
             $this->setPreErrorToMonthlyStatus($monthly_state->id, $e->getMessage());
             return $this->makeErrorLog($monthly_state, $e->getMessage());
         }
+//        $this->debugMemory('uploadToDatabase - afterGetTableObject');
 
         $this->setPreStartToMonthlyStatus($monthly_state->id);
 
@@ -216,8 +221,6 @@ class ImportZenonDataService
             $line = $this->lineEncode($raw_line);
             if ($this->isArrayEmpty($line))
             {
-//                var_dump($raw_line);
-//                $line_number--;
                 continue;
             }
             $line_number++;
@@ -230,14 +233,17 @@ class ImportZenonDataService
                     ->setTimeStamp(date('Y-m-d H:i:s'))
                     ->getRow()
             ;
+            unset($line);
             // MySQLのバージョンによってはプリペアドステートメントが65536までに制限されているため、動的にしきい値を設ける
             if ($line_number > 0 && (count($bulk) * count($tmp_bulk) + count($tmp_bulk)) > 65000)
             {
+//                $this->debugMemory('uploadToDatabase - beforeBulkInsert');
                 $table->insert($bulk);
                 $this->setExecutedRowCountToMonthlyStatus($monthly_state->id, $line_number);
-                $bulk = null;
+                unset($bulk);
             }
             $bulk[] = $tmp_bulk;
+            unset($tmp_bulk);
         }
         // 端数分をここでINSERT
         if (count($bulk) !== 0)
@@ -245,6 +251,7 @@ class ImportZenonDataService
             $table->insert($bulk);
             $this->setExecutedRowCountToMonthlyStatus($monthly_state->id, $line_number);
         }
+        unset($table);
         $this->setPostEndToMonthlyStatus($monthly_state->id);
         return [];
     }
@@ -255,21 +262,12 @@ class ImportZenonDataService
             throw new \Exception("コネクションもしくはテーブル名が指定されていないようです。");
         }
         try {
-            \DB::connection($connection)->table($table_name)->get();
+            \DB::connection($connection)->table($table_name)->first();
+            $res = \DB::connection($connection)->table($table_name);
         } catch (\Exception $e) {
             throw new \Exception("ベーステーブルが存在しないようです。（テーブル名：{$table_name}）");
-//            throw new \Exception($e->getMessage());
         }
-
-        return \DB::connection($connection)->table($table_name);
+        return $res;
     }
 
-//    public function getLastTraded($reference_last_traded_on, $last_traded_on) {
-////        $date = $row->reference_last_traded_on;
-//        if (empty($reference_last_traded_on) || $reference_last_traded_on === '0000-00-00' || $reference_last_traded_on === '00000000')
-//        {
-//            return $last_traded_on;
-//        }
-//        return $reference_last_traded_on;
-//    }
 }

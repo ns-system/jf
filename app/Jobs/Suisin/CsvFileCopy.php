@@ -50,12 +50,13 @@ class CsvFileCopy extends Job implements SelfHandling, ShouldQueue
                     ->copyCsvFile()
                     ->tableTemplateCreation()
                     ->registrationCsvFileToDatabase()
-//                ->tempFileErase()
             ;
+            $copy_csv_file_service->tempFileErase();
             $copy_csv_file_service->outputForJsonFile($ignore_and_not_exist_file_lists['ignore'], storage_path() . '/jsonlogs', $this->ym . '_ignore_file_list.json');
             $copy_csv_file_service->outputForJsonFile($ignore_and_not_exist_file_lists['not_exist'], storage_path() . '/jsonlogs', $this->ym . '_not_exist_file_list.json');
         } catch (\Exception $exc) {
-            echo $exc->getTraceAsString();
+            echo '[' . date('Y-m-d H:i:s') . '] ' . $exc->getMessage() . PHP_EOL;
+            echo $exc->getTraceAsString() . PHP_EOL;
             $job->is_copy_error = true;
             $job->save();
         } finally {

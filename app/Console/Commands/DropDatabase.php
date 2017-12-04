@@ -32,7 +32,8 @@ class DropDatabase extends Command
      */
     public function handle() {
         // Make Database Connection
-        $db_env          = $this->option('dbenv');
+//        $db_env          = $this->option('dbenv');
+        $db_env          = ($this->option('dbenv') === 'testing') ? 'testing' : 'mysql';
         $is_hide_message = ($this->option('hide') === 'true' && $db_env === 'testing') ? true : false;
         $db              = $this->connectDatabase($db_env);
 

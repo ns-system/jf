@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <div class="well">
+{{--     <div class="well">
                 <div class="form-group">
                     <div class="col-md-10 col-md-offset-1">
                         <label for="InputSelect">推進支援システム ユーザー</label>
@@ -31,7 +31,7 @@
                         @endif
                     </div>
                 </div>
-        </div>
+        </div> --}}
 
         <div class="well">
             <div class="form-group">

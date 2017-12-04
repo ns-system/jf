@@ -3,7 +3,7 @@
 		<tr>
 			<th class="bg-primary">日付</th>
 			@foreach($users as $u)
-				<th class="bg-primary" colspan="2">{{$u->name}}さん</th>
+				<th class="bg-primary" colspan="2">{{$u->last_name}} {{$u->first_name}} <small>さん</small></th>
 			@endforeach
 		</tr>
 	</thead>

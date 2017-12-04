@@ -37,22 +37,35 @@ trait TypeConvertable
                 return round((double) $column, 0);
 
             case 'date':
+                if (empty($column))
+                {
+                    return null;
+                }
                 if (!$this->isDate($column))
                 {
                     throw new \Exception("値が日付型ではありません。（引数：'{$column}'）");
                 }
-                $obj   = $this->setDate($column);
+                $obj = $this->setDate($column)->getDate();
                 return (empty($obj)) ? null : $obj->format('Y-m-d');
             case 'time':
+                if (empty($column))
+                {
+                    return null;
+                }
+
                 $times = $this->setTime($column);
                 $time  = "{$times['hour']}:{$times['min']}:{$times['sec']}";
                 return $time;
             case 'dateTime':
+                if (empty($column))
+                {
+                    return null;
+                }
                 if (!$this->isDate($column))
                 {
                     throw new \Exception("値が日付時刻型ではありません。（引数：'{$column}'）");
                 }
-                $obj = $this->setDate($column);
+                $obj = $this->setDate($column)->getDate();
                 return (empty($obj)) ? null : $obj->format('Y-m-d H:i:s');
             case 'boolean':
                 return ($column === 'false') ? false : (bool) $column;

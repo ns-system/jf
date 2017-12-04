@@ -126,7 +126,7 @@
                                                     <div class="btn-group">
 
                                                         @if(isset($emotions[$id][$c['date']]))
-                                                        <a id="destroy_{{$c['date']}}_{{$id}}" href="{{route('app::nikocale::destroy', ['id'=>$emotions[$id][$c['date']]->key_id])}}" class="btn btn-sm btn-danger" onclick="本当に削除してもよろしいですか？">削除する</a>
+                                                        <a id="destroy_{{$emotions[$id][$c['date']]->key_id}}_{{$id}}" href="{{route('app::nikocale::destroy', ['id'=>$emotions[$id][$c['date']]->key_id])}}" class="btn btn-sm btn-danger" onclick="本当に削除してもよろしいですか？">削除する</a>
                                                         @endif
                                                         <button
                                                             name="submit_{{$c['date']}}_{{$id}}"

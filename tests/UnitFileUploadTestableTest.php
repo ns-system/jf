@@ -19,15 +19,6 @@ class UnitFileUploadTestableTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系_パラメーターにトークンを付与() {
-        $res_1 = $this->s->addToken(['name' => 'test user', 'age' => 20]);
-        $this->assertEquals(count($res_1), 3);
-        $this->assertFalse(empty($res_1['_token']));
-    }
-
-    /**
-     * @tests
-     */
     public function 正常系_アップロード済みファイルを作成() {
         $res_1 = $this->s->createUploadFile(storage_path() . '/tests', 'testfile.csv', 'text/csv');
         $this->assertEquals(get_class($res_1), 'Symfony\Component\HttpFoundation\File\UploadedFile');
@@ -69,18 +60,6 @@ class UnitFileUploadTestableTest extends TestCase
         $this->s->createCsvFile($empty_file, $csv_datas);
         $this->assertTrue(file_exists($path . $empty_file));
         $this->assertThat(filesize($path . $empty_file), $this->greaterThan(0));
-    }
-
-    /**
-     * @tests
-     */
-    public function 正常系_ファイル削除ができる() {
-        $path       = storage_path() . '/tests/';
-        $empty_file = 'delete_file.csv';
-        $this->s->createCsvFile($empty_file);
-        $this->s->unlinkFile($path . $empty_file);
-
-        $this->assertFalse(file_exists($path . $empty_file));
     }
 
 }

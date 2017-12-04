@@ -41,16 +41,17 @@ class CopyCsvFile extends Command
         $json_file_path            = config_path();
         $copy_csv_file_service     = new \App\Services\CopyCsvFileService();
         $import_zenon_data_service = new \App\Services\ImportZenonDataService();
-        $json_file                 = $import_zenon_data_service->getJsonFile($json_file_path , "/import_config.json");
+        $json_file                 = $import_zenon_data_service->getJsonFile($json_file_path, "/import_config.json");
         $accumulation_dir_path     = $json_file["csv_folder_path"];
-       
+
         if (!file_exists($accumulation_dir_path))
         {
             //おかしかったらエラー処理
             throw new \Exception("累積先ディレクトリが存在しないようです。（想定：{$accumulation_dir_path}）");
         }
-        if (!strptime($monthly_id, '%Y%m')|| mb_strlen($monthly_id)!==6||!empty(strptime($monthly_id, '%Y%m')["unparsed"]))
-        {            var_dump(strptime($monthly_id, '%Y%m'));
+        if (!strptime($monthly_id, '%Y%m') || mb_strlen($monthly_id) !== 6 || !empty(strptime($monthly_id, '%Y%m')["unparsed"]))
+        {
+            // var_dump(strptime($monthly_id, '%Y%m'));
             //おかしかったらエラー処理
             throw new \Exception("月別IDに誤りがあるようです。（投入された値：{$monthly_id}）");
         }
@@ -63,8 +64,6 @@ class CopyCsvFile extends Command
                 ->registrationCsvFileToDatabase()
 //                ->tempFileErase()
         ;
-     
-
     }
 
 }

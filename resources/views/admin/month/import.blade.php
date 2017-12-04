@@ -39,82 +39,79 @@
         </div>
     </div>
 
-<table class="table table-hover table-striped table-small va-middle">
-    <thead>
-        <tr class="bg-primary">
-            <th width="4%">No</th>
-            <th width="5%">事前</th>
-            <th width="5%">DB</th>
-            <th width="30%">データ名</th>
-            <th width="6%">処理区分</th>
-            <th width="30%"><p>事前チェック</p><p>DBセット処理</p></th>
-            <th width="10%">データ件数</th>
-            <th width="10%">処理時刻</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php $array = []; ?>
-        @foreach($rows as $i => $r)
-        <tr>
+    <table class="table table-hover table-striped table-small va-middle">
+        <thead>
+            <tr class="bg-primary">
+                <th width="4%">No</th>
+                <th width="5%">チェック</th>
+                <th width="5%">DB</th>
+                <th width="30%">データ名</th>
+                <th width="6%">処理区分</th>
+                <th width="30%"><p>事前チェック</p><p>DBセット処理</p></th>
+                <th width="10%">データ件数</th>
+                <th width="10%">処理時刻</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php $array = []; ?>
+            @foreach($rows as $i => $r)
+            <tr>
 
-            <th class="bg-primary">{{$i + 1}}</th>
-            <td>
-                <span class="text-success animate">
-                    <span class="glyphicon" aria-hidden="true" id="pre_process_{{$r->key_id}}" style="font-size: 24px;"></span>
-                </span>
-            </td>
-            <td>
-                <span class="text-success animate">
-                    <span class="glyphicon" aria-hidden="true" id="post_process_{{$r->key_id}}" style="font-size: 24px;"></span>
-                </span>
-            </td>
-            <td class="text-left">
-                <p>{{$r->zenon_format_id}}：{{$r->zenon_data_name}}</p>
-                <p>{{$r->csv_file_name}}</p>
-                <p>@if(!empty($r->table_name)) {{$r->database_name}}.{{$r->table_name}} @endif</p>
-            </td>
-            <td>
-                <p>
-                    @if($r->is_cumulative)      <label class="label label-info"   >累積</label>
-                    @else                       <label class="label label-default">累積</label> @endif
-                </p>
-                <p>
-                    @if($r->is_split)           <label class="label label-info"   >分割</label>
-                    @else                       <label class="label label-default">分割</label>  @endif
-                </p>
-                <p>
-                    @if($r->is_account_convert) <label class="label label-info"   >変換</label>
-                    @else                       <label class="label label-default">変換</label> @endif
-                </p>
-            </td>
-            <td>
-                <div>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" id="progress_post_{{$r->key_id}}" style="width: 0%;"></div>
+                <th class="bg-primary">{{$i + 1}}</th>
+                <td>
+                    <span class="text-success animate">
+                        <span class="glyphicon" aria-hidden="true" id="pre_process_{{$r->key_id}}" style="font-size: 24px;"></span>
+                    </span>
+                </td>
+                <td>
+                    <span class="text-success animate">
+                        <span class="glyphicon" aria-hidden="true" id="post_process_{{$r->key_id}}" style="font-size: 24px;"></span>
+                    </span>
+                </td>
+                <td class="text-left">
+                    <p>{{$r->zenon_format_id}}：{{$r->zenon_data_name}}</p>
+                    <p>{{$r->csv_file_name}}</p>
+                    <p>@if(!empty($r->table_name)) {{$r->database_name}}.{{$r->table_name}} @endif</p>
+                </td>
+                <td>
+                    <p>
+                        @if($r->is_cumulative)      <label class="label label-info"   >累積</label>
+                        @else                       <label class="label label-default">累積</label> @endif
+                    </p>
+                    <p>
+                        @if($r->is_split)           <label class="label label-info"   >分割</label>
+                        @else                       <label class="label label-default">分割</label>  @endif
+                    </p>
+                    <p>
+                        @if($r->is_account_convert) <label class="label label-info"   >変換</label>
+                        @else                       <label class="label label-default">変換</label> @endif
+                    </p>
+                </td>
+                <td>
+                    <div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" id="progress_post_{{$r->key_id}}" style="width: 0%;"></div>
+                        </div>
+                        <p class="error_message text-left text-warning"></p>
                     </div>
-                    <p class="error_message text-left text-warning"></p>
-                </div>
 
-            </td>
+                </td>
 
-            <td class="text-right">
-                <p><span id="executed_row_count_{{$r->key_id}}">0</span>件</p>
-                <p><span id="row_count_{{$r->key_id}}">0</span>件</p>
-            </td>
-            <td>
-                <p><span id="start_time_{{$r->key_id}}">-</span></p>
-                <p><span id="end_time_{{$r->key_id}}">-</span></p>
-            </td>
-        </tr>
-        <?php $array[] = $r->key_id; ?>
-        @endforeach
-    </tbody>
-</table>
+                <td class="text-right">
+                    <p><span id="executed_row_count_{{$r->key_id}}">0</span>件</p>
+                    <p><span id="row_count_{{$r->key_id}}">0</span>件</p>
+                </td>
+                <td>
+                    <p><span id="start_time_{{$r->key_id}}">-</span></p>
+                    <p><span id="end_time_{{$r->key_id}}">-</span></p>
+                </td>
+            </tr>
+            <?php $array[] = $r->key_id; ?>
+            @endforeach
+        </tbody>
+    </table>
 
-@include('admin.month.partial.error_box')
-<div style="display: none; position: fixed; right: 40px; bottom: 15px;" id="process-list" class="text-right">
-    <a href="{{route('admin::super::month::status', ['id'=>$id])}}">処理結果を確認する</a>
-</div>
+    @include('admin.month.partial.error_box')
 
 </div>
 @endsection
@@ -122,28 +119,28 @@
 @section('footer')
 @parent
 <script type="text/javascript">
-var array = JSON.parse('<?php echo json_encode($array); ?>');
-var timer;
+    var array = JSON.parse('<?php echo json_encode($array); ?>');
+    var timer;
 
-$(function(){
-    timer = setInterval(function(){
-        connectAjax(array);
-    }, 5000);
+    $(function(){
+        timer = setInterval(function(){
+            connectAjax(array);
+        }, 5000);
 
-});
-
-function connectAjax(array){
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
     });
-    $.ajax({
-        type     : 'POST',
-        data     : {'input' : array},
-        url      : "{{route('admin::super::month::importing', ['id'=>$id, 'job_id'=>$job_id])}}",
-        dataType : 'json',
-    }).then(
+
+    function connectAjax(array){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type     : 'POST',
+            data     : {'input' : array},
+            url      : "{{route('admin::super::month::importing', ['id'=>$id, 'job_id'=>$job_id])}}",
+            dataType : 'json',
+        }).then(
         (rows) => {
             console.log(rows);
             editHtml(rows['rows']);
@@ -156,23 +153,22 @@ function connectAjax(array){
             }
             if(s['is_import_end'] == true){
                 clearInterval(timer);
+                alert('処理は正常に終了しました。');
                 $('#process-list').show();
             }
         },
         (error) => {
-//            alert('エラーが発生しました。処理を最初から行ってください。');
-            console.log('エラーが発生しました。処理を最初から行ってください。');
+            // alert('エラーが発生しました。処理を最初から行ってください。');
+            alert('エラーが発生しました。');
             clearInterval(timer);
             location.reload();
-        }
-    );
+        });
 //    console.log('hi');
 }
 
 function editHtml(rows){
-//    console.log('call');
+    // console.log('call');
     Object.keys(rows).forEach(function(id, index, array){
-
         var r = rows[id];
         if(r['is_pre_process_start']){  $('#pre_process_'+id).addClass('glyphicon-repeat rotate'); }
         if(r['is_pre_process_end']){    $('#pre_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-ok'); }
@@ -186,7 +182,7 @@ function editHtml(rows){
             var now = r['executed_row_count'];
             var max = r['row_count'];
             var p = Math.round((now / (max+1)) * 100);
-//            console.log('% = '+p+' - '+now+' / '+max);
+            // console.log('% = '+p+' - '+now+' / '+max);
             if(!r['is_import']){
                 if(p > 20){ $('#progress_post_'+id).css('width', p+'%').html('処理中...'); }
                 else{       $('#progress_post_'+id).css('width', p+'%'); }

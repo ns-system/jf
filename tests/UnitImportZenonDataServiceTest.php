@@ -524,7 +524,7 @@ class UnitImportZenonDataServiceTest extends TestCase
         try {
             $s->invoke($this->s, 'mysql_zenon', 'not_exist_table_name');
             $this->fail('例外発生なし');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertEquals("ベーステーブルが存在しないようです。（テーブル名：not_exist_table_name）", $e->getMessage());
         }
     }

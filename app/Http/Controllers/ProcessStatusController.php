@@ -13,6 +13,9 @@ class ProcessStatusController extends Controller
 
     use JsonUsable;
 
+    const INT_MAX_PREV_MONTH = -3;
+    const INT_MAX_NEXT_MONTH = 30;
+
     protected $service;
 //    protected $json_service;
     protected $path;
@@ -25,13 +28,9 @@ class ProcessStatusController extends Controller
 
     public function index() {
         $rows     = \App\Month::orderBy('monthly_id', 'desc')->paginate(25);
-        $max_date = \App\Month::max('monthly_id');
-        if (empty($max_date))
-        {
-            $max_date = date('Ym');
-        }
-        $months = [];
-        for ($i = -3; $i < 3; $i++) {
+        $max_date = date('Ym');
+        $months   = [];
+        for ($i = self::INT_MAX_PREV_MONTH; $i < self::INT_MAX_NEXT_MONTH; $i++) {
             $tmp    = date('Y-m-d', strtotime($max_date . '01'));
             $serial = strtotime("{$tmp} -{$i} month");
             if (!\App\Month::where('monthly_id', '=', date('Ym', $serial))->exists())
@@ -58,7 +57,7 @@ class ProcessStatusController extends Controller
         }
         $displayed_on = date('Y-m-d', strtotime($in['monthly_id'] . '01'));
         \App\Month::firstOrCreate(['monthly_id' => $in['monthly_id'], 'displayed_on' => $displayed_on]);
-        \Session::flash('flash_message', "月別ID［{$in['monthly_id']}］を生成しました。");
+        \Session::flash('success_message', "月別ID［{$in['monthly_id']}］を生成しました。");
         return redirect(route('admin::super::month::show'));
     }
 
@@ -66,7 +65,7 @@ class ProcessStatusController extends Controller
         $month = \App\Month::find($id);
         if ($month == null)
         {
-            \Session::flash('flash_message', '不正な月別IDが指定されました。');
+            \Session::flash('success_message', '不正な月別IDが指定されました。');
             return back();
         }
 
@@ -81,7 +80,7 @@ class ProcessStatusController extends Controller
 
         $month->is_current = true;
         $month->save();
-        \Session::flash('flash_message', "月別ID［{$month->monthly_id}］のデータを公開しました。");
+        \Session::flash('success_message', "月別ID［{$month->monthly_id}］のデータを公開しました。");
         return redirect(route('admin::super::month::show'));
     }
 
@@ -107,6 +106,23 @@ class ProcessStatusController extends Controller
         $dir         = $this->path . '/temp';
         $csv_service = new CopyCsvFileService();
         $lists       = $csv_service->getCsvFileList($dir);
+
+        // 月次処理ステータスを月別IDで検索して、件数が0以上であればコピー処理をスキップする
+        // 件数が0件かつリストが存在しない場合 -> エラーとして処理を行わない
+        $monthly_process = \App\ZenonMonthlyStatus::where('monthly_id', '=', $id)->count();
+        if (empty($lists) && $monthly_process === 0)
+        {
+            \Session::flash('danger_message', '所定のディレクトリに当月中のCSVファイルが見つかりませんでした。手順に沿って再度処理を行ってください。');
+            return back();
+        }
+        if (empty($lists))
+        {
+            $job = $this->service->createJobStatus();
+            $this->service->setCopyEndToJobStatus($job->id);
+            \Session::flash('info_message', '所定のディレクトリにCSVファイルは見つかりませんでしたが、当月分のファイルはすでに登録されています。引き続きアップロード処理を行ってください。');
+            return redirect()->route('admin::super::month::import_confirm', ['id' => $id, 'job_id' => $job->id]);
+        }
+
         // 月次サイクルを先頭に持ってくるよう配列ソート
         // 2次元配列であるため、array_columnでカラム内の単一の値を取得し、それをキーにソートする
         // array_multisort(
@@ -115,7 +131,7 @@ class ProcessStatusController extends Controller
         //     ...
         //     /* 最後に入れ替えを行いたいリスト変数 */
         // );
-        array_multisort(array_column($lists, 'cycle'), SORT_DESC, array_column($lists, 'identifier'), SORT_ASC, $lists);
+        array_multisort(array_column($lists, 'cycle'), SORT_ASC, array_column($lists, 'identifier'), SORT_ASC, $lists);
         return view('admin.month.copy_confirm', ['id' => $id, 'lists' => $lists]);
     }
 
@@ -205,12 +221,12 @@ class ProcessStatusController extends Controller
         } catch (\Exception $exc) {
             echo $exc->getTraceAsString();
         }
-        return redirect(route('admin::super::month::import', ['id' => $id, 'job_id' => $job_id]));
+        return redirect()->route('admin::super::month::import', ['id' => $id, 'job_id' => $job_id]);
     }
 
     public function dispatchCopyJob($id) {
 //        $job = \App\JobStatus::create(['is_copy_start' => true]);
-        $job = $this->service->createJobStatus()->getJobStatus();
+        $job = $this->service->createJobStatus();
         try {
             $this->dispatch(new \App\Jobs\Suisin\CsvFileCopy($id, $job->id));
         } catch (\Exception $e) {
@@ -218,7 +234,7 @@ class ProcessStatusController extends Controller
             return back();
 //            echo $exc->getTraceAsString();
         }
-        return redirect(route('admin::super::month::copy', ['id' => $id, 'job_id' => $job->id]));
+        return redirect()->route('admin::super::month::copy', ['id' => $id, 'job_id' => $job->id]);
     }
 
     public function copyAjax($id, $job_id) {
@@ -329,6 +345,45 @@ class ProcessStatusController extends Controller
         $headers   = array_keys($lists[0]);
         $file_name = "{$id}_月次データ処理対象外リスト_" . date('Ymd_His') . '.csv';
         return $this->service->exportCsv($lists, $file_name, $headers);
+    }
+
+    public function showConsignors($monthly_id) {
+        $sql        = "consignor_code, COUNT(*) as total_count, MAX(consignor_name) as consignor_name, MAX(scheduled_transfer_payment_on) as reference_last_traded_on, MAX(last_traded_on) as last_traded_on";
+        $consignors = \App\Jifuri::where(['monthly_id' => $monthly_id])->select(\DB::raw($sql))->groupBy('consignor_code')->orderBy('consignor_code', 'asc')->paginate(50);
+        return view('admin.month.consignor.list', ['consignors' => $consignors, 'monthly_id' => $monthly_id]);
+    }
+
+    public function createConsignors($monthly_id) {
+        // 委託者マスタ創生
+        try {
+            \DB::connection('mysql_zenon')->transaction(function() use ($monthly_id) {
+                $sql        = "consignor_code, COUNT(*) as total_count, MAX(consignor_name) as consignor_name, MAX(scheduled_transfer_payment_on) as reference_last_traded_on, MAX(last_traded_on) as last_traded_on";
+                $consignors = \App\Jifuri::where(['monthly_id' => $monthly_id])->select(\DB::raw($sql))->groupBy('consignor_code')->orderBy('consignor_code', 'asc')->get();
+                foreach ($consignors as $cns) {
+                    $keys      = ['consignor_code' => $cns->consignor_code];
+                    $table     = \App\Consignor::firstOrNew($keys);
+                    $last_date = (empty($cns->reference_last_traded_on) || $cns->reference_last_traded_on === '0000-00-00' || $cns->reference_last_traded_on === '00000000') ?
+                            $cns->last_traded_on :
+                            $cns->reference_last_traded_on
+                    ;
+
+                    $table->consignor_code           = $cns->consignor_code;
+                    $table->consignor_name           = $cns->consignor_name;
+                    $table->total_count              = $cns->total_count;
+                    $table->reference_last_traded_on = $last_date;
+                    $table->save();
+                }
+            });
+        } catch (\Exception $e) {
+            // エラー発生時、フラグをリセット
+            echo $e->getMessage();
+            echo '[ ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
+            echo $e->getTraceAsString() . PHP_EOL;
+            exit();
+        }
+
+        \Session::flash('success_message', "データの更新が正常に終了しました。");
+        return back();
     }
 
 }

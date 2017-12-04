@@ -7,19 +7,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 trait FileTestable
 {
 
-    public function addToken(array $input_parameter = null) {
-        \Session::start();
-        if (empty($input_parameter) || !array_key_exists('_token', $input_parameter))
-        {
-            $input_parameter['_token'] = csrf_token();
-        }
-        return $input_parameter;
-    }
-
-//    public function makeResponse(string $method, string $redirect_url, array $input_parameter = null) {
-//        return $this->call($method, $redirect_url, $this->getInputs($input_parameter), [], []);
-//    }
-
     public function createUploadFile(string $file_path, string $file_name, string $mime_type) {
         if (mb_substr($file_path, -1) !== '/')
         {
@@ -56,22 +43,10 @@ trait FileTestable
     }
 
     public function unlinkFile($file_path) {
-//        chmod($file_path, 0777);
-//
-//        $file = fopen($file_path, 'r');
-//        fclose($file);
-//        gc_collect_cycles();
-
-        if (file_exists($file_path))
-        {
-            exec("rm -rf {$file_path}");
-//            try {
-//                unlink($file_path);
-//            } catch (\Exception $exc) {
-//                var_dump($exc->getMessage());
-//                echo $exc->getTraceAsString();
-//            }
-        }
+//        if (file_exists($file_path))
+//        {
+//            exec("rm -rf {$file_path}");
+//        }
     }
 
 }

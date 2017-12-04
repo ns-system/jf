@@ -33,7 +33,7 @@
 @foreach($users as $user)
 		<tr>
 			<td>{{$user->division_name}}</td>
-			<td><a href="{{route('app::roster::work_plan::list', ['month'=>$month, 'id'=>$user->user_id])}}">{{$user->name}}さん</a></td>
+			<td><a href="{{route('app::roster::work_plan::list', ['month'=>$month, 'id'=>$user->user_id])}}">{{$user->last_name}} {{$user->first_name}}<small>さん</small></a></td>
 			<td>
 				@if($cnt[$user->user_id] > 0) <span class="label label-success">データ登録済み</span>
 				@else                         <span class="label label-default">データ未登録</span> @endif
@@ -48,19 +48,19 @@
 
 <div class="text-right">
     <div class="btn-group">
-        <a href="{{route('app::roster::work_plan::index')}}" class="btn btn-primary" style="min-width: 125px;">
+        <a href="{{route('app::roster::work_plan::index')}}" class="btn btn-primary btn-sm" style="min-width: 125px;">
             <span class="glyphicon glyphicon-backward" aria-hidden="true"></span> 戻る
         </a>
         <span></span>
         <a
             href="{{route('app::roster::work_plan::division', ['month'=>$next])}}"
-            class="btn btn-success"
+            class="btn btn-success btn-sm"
             style="min-width: 125px;"
         ><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> 翌月へ</a>
         <span></span>
         <a
             href="{{route('app::roster::work_plan::division', ['month'=>$prev])}}"
-            class="btn btn-warning"
+            class="btn btn-warning btn-sm"
             style="min-width: 125px;"
         ><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> 前月へ</a>
     </div>
