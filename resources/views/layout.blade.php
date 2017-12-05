@@ -88,7 +88,7 @@ input[type=file]{display: none;}
 
 .btn-group .btn{ border: 1px solid #fff; }
 
-.alert-fixed { width: 300px; padding: 10px; padding-right: 30px; font-size: 80%; z-index: 2; left: 20px; position: fixed; bottom: 40px; margin-bottom: 0; };
+.alert-fixed { width: 300px; padding: 10px; padding-right: 30px; font-size: 80%; z-index: 2; left: 20px; position: fixed; bottom: 40px; margin-bottom: 0; max-height: 400px; overflow-y: scroll; };
 .margin-bottom{margin-bottom: 10px;}
 
 </style>
