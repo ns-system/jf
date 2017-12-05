@@ -92,25 +92,30 @@ class RosterController extends Controller
     public function editPlan($ym, $id, Plan $request) {
         if (!$this->isDate($ym))
         {
-           
+
             \Session::flash('warn_message', '日付以外のデータが入力されました。');
             return back();
         }
-        $this->service->editPlan($id, $request);
-        \Session::flash('success_message', '予定データを更新しました。');
-        return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
+        try {
+            $this->service->editPlan($id, $request);
+            \Session::flash('success_message', '予定データを更新しました。');
+            return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
+        } catch (\Exception $e) {
+            \Session::flash('warn_message', '予定データが見つかりませんでした。');
+            return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
+        }
     }
 
     public function delete($id) {
 
         try {
-            
+
             $param = $this->service->delete($id);
             \Session::flash('success_message', "{$param['date']}のデータを削除しました。");
             return redirect(route('app::roster::calendar::show', ['ym' => $param['ym']]));
         } catch (\Exception $e) {
-//            echo $e->getTraceAsString();
-             \Session::flash('warn_message', '予定データが見つかりませんでした。');
+
+            \Session::flash('warn_message', $e->getMessage());
             return back();
         }
     }
@@ -118,7 +123,7 @@ class RosterController extends Controller
     public function editActual($ym, $id, Actual $request) {
         try {
             $this->service->editActual($id, $request);
-//            exit();
+
             \Session::flash('success_message', '実績データを更新しました。');
             return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
         } catch (\Exception $e) {
