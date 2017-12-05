@@ -177,14 +177,14 @@ class RosterAcceptController extends Controller
         \Session::flash('success_message', 'データの一括更新が完了しました。');
         return back();
     }
-
-    public function getNotAccept($monthly_id, $division_id) {
-        \App\Roster::where('month_id', '=', $monthly_id)
-                ->leftJoin('sinren_db.sinren_users as S_USER', 'rosters.user_id', '=', 'S_USER.user_id')
-                ->leftJoin('sinren_db.sinren_divisions as S_DIV', 'S_USER.division_id', '=', 'S_DIV.division_id')
-
-        ;
-    }
+//
+//    public function getNotAccept($monthly_id, $division_id) {
+//        \App\Roster::where('month_id', '=', $monthly_id)
+//                ->leftJoin('sinren_db.sinren_users as S_USER', 'rosters.user_id', '=', 'S_USER.user_id')
+//                ->leftJoin('sinren_db.sinren_divisions as S_DIV', 'S_USER.division_id', '=', 'S_DIV.division_id')
+//
+//        ;
+//    }
 
 //    public function show($ym, $div) {
 //        $plans   = \DB::connection('mysql_sinren')

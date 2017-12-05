@@ -13,13 +13,26 @@
  */
 class FuncRosterControllerTest extends TestCase
 {
-   protected static $init                     = false;
+
+    protected static $init                     = false;
     protected $super_user;
     protected $admin_user;
     protected $normal_user;
     protected $proxy_user;
-    protected $calender_plan_post_dummy_data   = ["plan_start_hour" => 9, "plan_start_time" => 30, "plan_end_hour" => 17, "plan_end_time" => 30, "plan_overtime_reason" => ""];
-    protected $calender_actual_post_dummy_data = ["actual_start_hour" => 9, "actual_start_time" => 30, "actual_end_hour" => 17, "actual_end_time" => 30, "acactual_rest_reason_id" => "0", "actual_work_type_id" => 1, "actual_overtime_reason" => ""];
+    protected $calender_plan_post_dummy_data   = [
+        "plan_start_hour"      => 9,
+        "plan_start_time"      => 30,
+        "plan_end_hour"        => 17,
+        "plan_end_time"        => 30,
+        "plan_overtime_reason" => ""];
+    protected $calender_actual_post_dummy_data = [
+        "actual_start_hour"       => 9,
+        "actual_start_time"       => 30,
+        "actual_end_hour"         => 17,
+        "actual_end_time"         => 30,
+        "actual_rest_reason_id" => "0",
+        "actual_work_type_id"     => 1,
+        "actual_overtime_reason"  => ""];
 
     public function setUp() {
         parent::setUp();
@@ -32,7 +45,9 @@ class FuncRosterControllerTest extends TestCase
                 \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
                 \Artisan::call('migrate');
                 \App\Division::firstOrCreate(["division_id" => '1', 'division_name' => 'test']);
-                \App\WorkType::firstOrCreate(["work_type_id" => '1', "work_type_name" => "テスト用","work_start_time"=>"05:00:00","work_end_time"=>"07:12:32"]);
+                \App\WorkType::firstOrCreate(["work_type_id" => '1', "work_type_name" => "テスト用", "work_start_time" => "05:00:00", "work_end_time" => "07:12:32"]);
+                \App\WorkType::firstOrCreate(["work_type_id" => '2', "work_type_name" => "テスト用2", "work_start_time" => "05:20:00", "work_end_time" => "23:12:32"]);
+                \App\Holiday::firstOrCreate(["holiday" => '2017-12-23', "holiday_name" => "勤労感謝の日"]);
             } catch (\Exception $exc) {
                 echo $exc->getTraceAsString();
             }
@@ -54,9 +69,10 @@ class FuncRosterControllerTest extends TestCase
         \App\SinrenUser::firstOrCreate(['user_id' => $this->normal_user->id, "division_id" => '1']);
         \App\SinrenUser::firstOrCreate(['user_id' => $this->proxy_user->id, "division_id" => '1']);
         \App\ControlDivision::firstOrCreate(['user_id' => $this->admin_user->id, "division_id" => '1']);
-        \App\Rest::firstOrCreate(["rest_reason_id"=>1,"rest_reason_name"=>"テスト用理由"]);
+        \App\Rest::firstOrCreate(["rest_reason_id" => 1, "rest_reason_name" => "テスト用理由"]);
     }
-     /**
+
+    /**
      * @tests
      */
     public function 正常系一般ユーザーが勤務予定データを更新できる() {
@@ -86,7 +102,7 @@ class FuncRosterControllerTest extends TestCase
         \Session::start();
         $roster = [];
         for ($i = 1; $i <= 31; $i++) {
-            $roster[] = \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1,]);
+            $roster[] = \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "actual_work_type_id" => 2, "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1,]);
         }
         $unentry_plan = \App\Roster::where('id', $roster[0]->id)->first();
         $this->actingAs($this->normal_user)
@@ -97,6 +113,28 @@ class FuncRosterControllerTest extends TestCase
         $entry_plan   = \App\Roster::where('id', $roster[0]->id)->first();
         $this->assertEquals(0, $unentry_plan->is_actual_entry);
         $this->assertEquals(1, $entry_plan->is_actual_entry);
+       
+    }
+     /**
+     * @tests
+     */
+    public function 正常系一般ユーザーが勤務実績データを休みに更新できる() {
+        \App\Roster::truncate();
+        \Session::start();
+        $roster = [];
+        for ($i = 1; $i <= 31; $i++) {
+            $roster[] = \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "actual_work_type_id" => 2, "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1,]);
+        }
+        $unentry_plan = \App\Roster::where('id', $roster[0]->id)->first();
+        $this->actingAs($this->normal_user)
+                ->visit('/app/roster/calendar/201712')
+                ->post('/app/roster/calendar/actual/edit/201712/' . $roster[0]->id, array_merge($this->calender_actual_post_dummy_data, ['_token' => csrf_token(),"actual_rest_reason_id"=>1]))
+                ->assertRedirectedTo('/app/roster/calendar/201712')
+        ;
+        $entry_plan   = \App\Roster::where('id', $roster[0]->id)->first();
+        $this->assertEquals(0, $unentry_plan->is_actual_entry);
+        $this->assertEquals(1, $entry_plan->is_actual_entry);
+       
     }
 
     /**
@@ -117,29 +155,26 @@ class FuncRosterControllerTest extends TestCase
         $this->assertEquals(1, $unentry_plan->is_plan_entry);
         $this->assertEquals(0, $entry_plan->is_plan_entry);
     }
-    
-    
-   //異常系
+
+    //異常系
     /**
      * @tests
      */
     public function 異常系日付以外のデータがセットされるとエラー() {
-       \App\Roster::truncate();
+        \App\Roster::truncate();
         \Session::start();
         $roster = [];
         for ($i = 1; $i <= 31; $i++) {
             $roster[] = \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712"]);
         }
 
-        $a=$this->actingAs($this->normal_user)
+        $a = $this->actingAs($this->normal_user)
                 ->visit('/app/roster/calendar/201712')
                 ->post('/app/roster/calendar/plan/edit/201712dg/' . $roster[0]->id, array_merge($this->calender_plan_post_dummy_data, ["plan_rest_reason_id" => "", '_token' => csrf_token()]))
-               ->assertSessionHas("warn_message", "日付以外のデータが入力されました。")
+                ->assertSessionHas("warn_message", "日付以外のデータが入力されました。")
         ;
-        
-        
     }
-    
+
     /**
      * @tests
      */
@@ -150,13 +185,29 @@ class FuncRosterControllerTest extends TestCase
         for ($i = 1; $i <= 31; $i++) {
             $roster[] = \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1]);
         }
-        
+
         $this->actingAs($this->normal_user)
-                ->visit('/app/roster/calendar/delete/' ."999")
+                ->visit('/app/roster/calendar/delete/' . "999")
                 ->see("予定データが見つかりませんでした。")
-               
+
         ;
-      
+    }
+
+     /**
+     * @tests
+     */
+    public function 異常系一般ユーザーが勤務予定データを更新時存在しないIDを選択するとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        $roster = [];
+        for ($i = 1; $i <= 31; $i++) {
+            $roster[] = \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 0,]);
+        }
+        $unentry_plan = \App\Roster::where('id', $roster[0]->id)->first();
+        $this->actingAs($this->normal_user)
+                ->post('/app/roster/calendar/plan/edit/201712/' . "999", array_merge($this->calender_plan_post_dummy_data, ['_token' => csrf_token()]))
+                ->assertSessionHas("warn_message", "予定データが見つかりませんでした。")
+        ;
     }
     /**
      * @tests
@@ -170,11 +221,11 @@ class FuncRosterControllerTest extends TestCase
         }
         $unentry_plan = \App\Roster::where('id', $roster[0]->id)->first();
         $this->actingAs($this->normal_user)
-                ->post('/app/roster/calendar/actual/edit/201712/' ."999", array_merge($this->calender_actual_post_dummy_data, ['_token' => csrf_token()]))
+                ->post('/app/roster/calendar/actual/edit/201712/' . "999", array_merge($this->calender_actual_post_dummy_data, ['_token' => csrf_token()]))
                 ->assertSessionHas("warn_message", "予定データが見つかりませんでした。")
         ;
-       
     }
+
     /**
      * @tests
      */
@@ -185,12 +236,29 @@ class FuncRosterControllerTest extends TestCase
         for ($i = 1; $i <= 31; $i++) {
             $roster[] = \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1]);
         }
-        
+
         $this->actingAs($this->normal_user)
                 ->visit('/app/roster/calendar/2050sugoitakai12')
                 ->see("日付以外のデータがセットされました。")
-               
+
         ;
-      
     }
+    /**
+     * @tests
+     */
+    public function 異常系承認済み勤務予定データを削除しようとするとエラー() {
+        \App\Roster::truncate();
+        \Session::start();
+        $roster = [];
+        for ($i = 1; $i <= 31; $i++) {
+            $roster[] = \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1,"is_plan_accept"=>1,"is_actual_entry"=>1,"is_actual_accept"=>1]);
+        }
+
+        $this->actingAs($this->normal_user)
+                ->visit('/app/roster/calendar/delete/' . "1")
+                ->see("データはすでに承認されているため、削除できません。")
+
+        ;
+    }
+
 }

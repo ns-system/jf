@@ -26,11 +26,14 @@ class FuncRosterWorkPlanControllerTest extends TestCase
         {
             try {
 
-//                \Artisan::call('db:reset', ['--dbenv' => 'testing', '--hide' => 'true']);
-//                \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
-//                \Artisan::call('migrate');
+                \Artisan::call('db:reset', ['--dbenv' => 'testing', '--hide' => 'true']);
+                \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
+                \Artisan::call('migrate');
                 \App\Division::create(["division_id" => '1', 'division_name' => 'test']);
-                \App\WorkType::create(["work_type_id" => '1', "work_type_name" => "テスト用"]);
+                \App\WorkType::create(["work_type_id" => '1', "work_type_name" => "テスト用1"]);
+                \App\WorkType::create(["work_type_id" => '2', "work_type_name" => "テスト用2"]);
+                \App\Rest::create(["rest_reason_id" => 1, "rest_reason_name" => "テスト用理由1"]);
+                \App\Rest::create(["rest_reason_id" => 2, "rest_reason_name" => "テスト用理由2"]);
             } catch (\Exception $exc) {
                 echo $exc->getTraceAsString();
             }
@@ -40,7 +43,6 @@ class FuncRosterWorkPlanControllerTest extends TestCase
         \App\RosterUser::truncate();
         \App\SinrenUser::truncate();
         \App\ControlDivision::truncate();
-        \App\Rest::truncate();
         $this->super_user  = factory(\App\User::class)->create(['is_super_user' => '1']);
         $this->admin_user  = factory(\App\User::class)->create();
         $this->normal_user = factory(\App\User::class)->create();
@@ -52,9 +54,8 @@ class FuncRosterWorkPlanControllerTest extends TestCase
         \App\SinrenUser::create(['user_id' => $this->normal_user->id, "division_id" => '1']);
         \App\SinrenUser::create(['user_id' => $this->proxy_user->id, "division_id" => '1']);
         \App\ControlDivision::create(['user_id' => $this->admin_user->id, "division_id" => '1']);
-        \App\Rest::create(["rest_reason_id"=>1,"rest_reason_name"=>"テスト用理由"]);
+        
     }
-
 
     /**
      * @tests
@@ -76,6 +77,45 @@ class FuncRosterWorkPlanControllerTest extends TestCase
                 ->dontSee("成功：要修正")
         ;
     }
+    
+    
+    /**
+     * @tests
+     */
+    public function 正常系系予定休暇理由を入力できる() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create([
+                'user_id'           => $this->normal_user->id,
+                "plan_work_type_id" => "1",
+                "entered_on"        => "2017-12-" . $i,
+                "month_id"          => "201712",
+                "is_plan_entry"     => 0,
+                "is_plan_accept"    => 0,
+                "is_actual_entry"   => 0,
+                "plan_rest_reason_id"=>1]);
+        }
+        $before_data = \App\Roster::where("user_id", $this->normal_user->id)->where("entered_on", "2017-12-1")->first();
+        $this->actingAs($this->admin_user)
+                ->visit('/app/roster/work_plan')
+                ->see("勤務予定データ作成")
+                ->visit('/app/roster/work_plan/201712')
+                ->see($this->normal_user->first_name)
+                ->see($this->normal_user->last_name)
+                ->see($this->proxy_user->first_name)
+                ->see($this->proxy_user->last_name)
+                ->visit('/app/roster/work_plan/list/201712/' . $this->normal_user->id)
+                ->select('2', 'work_type[2017-12-01]')
+                ->select('2', 'rest[2017-12-01]')
+                ->press('更新する')
+        ;
+        $after_data  = \App\Roster::where("user_id", $this->normal_user->id)->where("entered_on", "2017-12-1")->first();
+        $this->assertNotEquals($after_data->plan_rest_reason_id, $before_data->plan_rest_reason_id);
+        $this->assertEquals($before_data->plan_rest_reason_id,1);
+        $this->assertEquals($after_data->plan_rest_reason_id, 2);
+    }
+    
 
     /**
      * @tests
@@ -91,8 +131,41 @@ class FuncRosterWorkPlanControllerTest extends TestCase
                 ->see($this->proxy_user->first_name)
                 ->see($this->proxy_user->last_name)
                 ->visit('/app/roster/work_plan/list/201712/' . $this->normal_user->id)
-                ->post('/app/roster/work_plan/list/edit/201712/'. $this->normal_user->id, ['_token' => csrf_token(), "entered_on" => ['1' => "2017-12-1a"], "work_type" => ['2017-12-01' => 1], "actual_reject" => ["2017-12-01" => "1"]])
+                ->post('/app/roster/work_plan/list/edit/201712/' . $this->normal_user->id, ['_token' => csrf_token(), "entered_on" => ['1' => "2017-12-1a"], "work_type" => ['2017-12-01' => 1], "actual_reject" => ["2017-12-01" => "1"]])
                 ->assertSessionHas("warn_message", "エラーがあったため処理を中断しました。")
-                ;
+        ;
     }
+
+    /**
+     * @tests
+     */
+    public function 異常系既に入力済みの物を更新しようとしても更新されない() {
+        \App\Roster::truncate();
+        \Session::start();
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create([
+                'user_id'           => $this->normal_user->id,
+                "plan_work_type_id" => "1",
+                "entered_on"        => "2017-12-" . $i,
+                "month_id"          => "201712",
+                "is_plan_entry"     => 1,
+                "is_plan_accept"    => 1,
+                "is_actual_entry"   => 1]);
+        }
+        $before_data = \App\Roster::where("user_id", $this->normal_user->id)->where("entered_on", "2017-12-1")->first();
+        $this->actingAs($this->admin_user)
+                ->visit('/app/roster/work_plan')
+                ->see("勤務予定データ作成")
+                ->visit('/app/roster/work_plan/201712')
+                ->see($this->normal_user->first_name)
+                ->see($this->normal_user->last_name)
+                ->see($this->proxy_user->first_name)
+                ->see($this->proxy_user->last_name)
+                ->visit('/app/roster/work_plan/list/201712/' . $this->normal_user->id)
+                ->post('/app/roster/work_plan/list/edit/201712/' . $this->normal_user->id, ['_token' => csrf_token(), "entered_on" => ['1' => "2017-12-1"], "work_type" => ['2017-12-01' => 2], "actual_reject" => ["2017-12-01" => "1"]])
+        ;
+        $after_data  = \App\Roster::where("user_id", $this->normal_user->id)->where("entered_on", "2017-12-1")->first();
+        $this->assertEquals($after_data->plan_work_type_id, $before_data->plan_work_type_id);
+    }
+
 }

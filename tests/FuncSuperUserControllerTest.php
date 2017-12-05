@@ -392,4 +392,19 @@ class FuncSuperUserControllerTest extends TestCase
         $res->assertRedirectedTo('/');
         $res ->assertSessionHas("warn_message");
     }
+       /**
+     * @tests
+     */
+    public function 正常系検索時入力が文字列nullの時nullを値がある時その値を返す() {
+           $class      = new \App\Services\SuperUserService;
+        $reflection = new \ReflectionClass($class);
+        $method     = $reflection->getMethod("setNull");
+        $method->setAccessible(true);
+        $res1       = $method->invoke($class, "null");
+        $this->assertEquals($res1, null);
+        $val = 4;
+        $res2       = $method->invoke($class,$val);
+        $this->assertEquals($res2, $val);
+        
+    }
 }
