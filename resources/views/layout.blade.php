@@ -86,6 +86,8 @@ input[type=file]{display: none;}
 .btn-info   { border-color: #1b7fc2; }
 .tooltip.top{ background: rgba(255,255,255,0); }
 
+.btn-group .btn{ border: 1px solid #fff; }
+
 .alert-fixed { width: 300px; padding: 10px; padding-right: 30px; font-size: 80%; z-index: 2; left: 20px; position: fixed; bottom: 40px; margin-bottom: 0; };
 .margin-bottom{margin-bottom: 10px;}
 

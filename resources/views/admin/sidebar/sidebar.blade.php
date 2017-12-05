@@ -28,8 +28,8 @@
                 href="{{route('admin::super::month::show')}}"
                 data-toggle="tooltip"
                 data-placement="right"
-                title="（スーパーユーザー用機能）公開する年月およびその処理状況を確認できます。">年月・処理状況確認</a><span></span>
-            
+                title="（スーパーユーザー用機能）公開する年月およびその処理状況を確認できます。"><span class="text-danger">全オンデータセットアップ処理</span></a><span></span>
+
             <a
                 role="presentation"
                 class="list-group-item collapse list-second"
