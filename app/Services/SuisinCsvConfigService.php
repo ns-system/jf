@@ -34,6 +34,7 @@ class SuisinCsvConfigService
                 ['row' => [['keizai_gist_kanji', 'ビジネスネット 漢字摘要', 'class' => 'text-left']]],
                 ['row' => [['keizai_gist_full_kana', 'ビジネスネット カナ摘要', 'class' => 'text-left']]],
                 ['row' => [['keizai_gist_half_kana', 'ビジネスネット ｶﾅ摘要', 'class' => 'text-left']]],
+                ['row' => [['is_keizai', 'ビジネスネット 経済フラグ',]]],
                 ['row' =>
                     [
                         ['created_at', '登録日', 'class' => 'small'],
@@ -52,6 +53,7 @@ class SuisinCsvConfigService
                     'keizai_gist_kanji',
                     'keizai_gist_half_kana',
                     'keizai_gist_full_kana',
+                    'is_keizai',
                 ],
                 'kanji_columns' => [
                     '摘要コード',
@@ -60,6 +62,7 @@ class SuisinCsvConfigService
                     'ビジネスネット 漢字摘要',
                     'ビジネスネット カナ摘要',
                     'ビジネスネット ｶﾅ摘要',
+                    'ビジネスネット 経済フラグ',
                 ],
             ],
             'import'        => [
@@ -71,13 +74,16 @@ class SuisinCsvConfigService
                     [1, 'keizai_gist_kanji', '漢字摘要', 'class' => 'text-left'],
                     [1, 'keizai_gist_full_kana', 'カナ摘要', 'class' => 'text-left'],
                     [1, 'keizai_gist_half_kana', 'ｶﾅ摘要', 'class' => 'text-left'],
+                    [1, 'is_keizai', '経済フラグ',],
                 ],
                 'rules'         => [
                     'gist_code'    => 'required|integer',
                     'display_gist' => 'required|min:1',
+                    'is_keizai'    => 'required|boolean',
                 ],
                 'types'         => [
                     'gist_code' => 'integer',
+                    'is_keizai' => 'boolean',
                 ],
                 'flags'         => [
                     'display_gist'          => 1,
@@ -85,6 +91,7 @@ class SuisinCsvConfigService
                     'keizai_gist_kanji'     => 1,
                     'keizai_gist_half_kana' => 1,
                     'keizai_gist_full_kana' => 1,
+                    'is_keizai'             => 1,
                 ],
                 'keys'          => ['gist_code'],
             ],
@@ -759,9 +766,9 @@ class SuisinCsvConfigService
         $params      = [
             'object'        => '\App\Models\Common\Area',
             'join'          => [
-                ['db' => 'master_db.prefecture_codes', 'left' => 'area_codes.prefecture_code',    'right' => 'prefecture_codes.prefecture_code',],
-                ['db' => 'master_db.stores',           'left' => 'area_codes.store_number',       'right' => 'stores.store_number',],
-                ['db' => 'master_db.small_stores',     'left' => 'area_codes.small_store_number', 'right' => 'small_stores.small_store_number',],
+                ['db' => 'master_db.prefecture_codes', 'left' => 'area_codes.prefecture_code', 'right' => 'prefecture_codes.prefecture_code',],
+                ['db' => 'master_db.stores', 'left' => 'area_codes.store_number', 'right' => 'stores.store_number',],
+                ['db' => 'master_db.small_stores', 'left' => 'area_codes.small_store_number', 'right' => 'small_stores.small_store_number',],
             ],
             'as'            => [
                 'table'   => 'area_codes',

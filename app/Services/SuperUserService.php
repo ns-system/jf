@@ -94,14 +94,14 @@ class SuperUserService
             $user->is_super_user = (int) $input['is_super_user'];
             $user->save();
 
-            if (isset($input['suisin_is_administrator']) && !empty($user->SuisinUser))
-            {
-                $suisin_users = \App\SuisinUser::where('user_id', '=', $id)->get();
-                foreach ($suisin_users as $suisin_user) {
-                    $suisin_user->is_administrator = $input['suisin_is_administrator'];
-                    $suisin_user->save();
-                }
-            }
+//            if (isset($input['suisin_is_administrator']) && !empty($user->SuisinUser))
+//            {
+//                $suisin_users = \App\SuisinUser::where('user_id', '=', $id)->get();
+//                foreach ($suisin_users as $suisin_user) {
+//                    $suisin_user->is_administrator = $input['suisin_is_administrator'];
+//                    $suisin_user->save();
+//                }
+//            }
 
             if (isset($input['roster_is_administrator']) && $user->RosterUser($id))
             {
