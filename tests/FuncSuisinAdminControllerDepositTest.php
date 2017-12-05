@@ -18,7 +18,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
 
     use Traits\CsvUsable;
 
-    protected static $init = false;
+    protected static $init             = false;
     protected $user;
     protected $dummy_subject_code_data = [
         [
@@ -981,14 +981,18 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
-            $this->assertEquals(\App\Models\Deposit\Gist::
-                            where('gist_code', trim($data[0]))->
-                            where('display_gist', trim($data[1]))->
-                            where('zenon_gist', trim($data[2]))->
-                            where('keizai_gist_kanji', trim($data[3]))->
-                            where('keizai_gist_half_kana', trim($data[4]))->
-                            where('keizai_gist_full_kana', trim($data[5]))->
-                            count(), 1);
+
+            $where = [
+                'gist_code'             => trim($data[0]),
+                'display_gist'          => trim($data[1]),
+                'zenon_gist'            => trim($data[2]),
+                'keizai_gist_kanji'     => trim($data[3]),
+                'keizai_gist_half_kana' => trim($data[4]),
+                'keizai_gist_full_kana' => trim($data[5]),
+                'is_keizai'             => trim($data[6]),
+            ];
+
+            $this->assertEquals(\App\Models\Deposit\Gist:: where($where)->count(), 1);
         }
     }
 
