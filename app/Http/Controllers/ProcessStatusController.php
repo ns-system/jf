@@ -115,13 +115,13 @@ class ProcessStatusController extends Controller
             \Session::flash('danger_message', '所定のディレクトリに当月中のCSVファイルが見つかりませんでした。手順に沿って再度処理を行ってください。');
             return back();
         }
-        if (empty($lists))
-        {
-            $job = $this->service->createJobStatus();
-            $this->service->setCopyEndToJobStatus($job->id);
-            \Session::flash('info_message', '所定のディレクトリにCSVファイルは見つかりませんでしたが、当月分のファイルはすでに登録されています。引き続きアップロード処理を行ってください。');
-            return redirect()->route('admin::super::month::import_confirm', ['id' => $id, 'job_id' => $job->id]);
-        }
+//        if (empty($lists))
+//        {
+//            $job = $this->service->createJobStatus();
+//            $this->service->setCopyEndToJobStatus($job->id);
+//            \Session::flash('info_message', '所定のディレクトリにCSVファイルは見つかりませんでしたが、当月分のファイルはすでに登録されています。引き続きアップロード処理を行ってください。');
+//            return redirect()->route('admin::super::month::import_confirm', ['id' => $id, 'job_id' => $job->id]);
+//        }
 
         // 月次サイクルを先頭に持ってくるよう配列ソート
         // 2次元配列であるため、array_columnでカラム内の単一の値を取得し、それをキーにソートする
