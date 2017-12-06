@@ -10,6 +10,8 @@ class SuisinAdminController extends Controller
 
     protected $service;
 
+    const INT_PAGINATE = 50;
+
     public function __construct() {
         $this->service = new TableEditService();
     }
@@ -27,13 +29,15 @@ class SuisinAdminController extends Controller
      *   備考   ： Provider側でパラメータ生成処理を行っている
      */
     public function show($system, $category) {
+        $input                 = \Input::get();
         $service               = $this->service;
-        $model                 = $service->setHtmlPageGenerateConfigs("App\Services\\{$system}CsvConfigService", $category)->getModel();
+        $service->setHtmlPageGenerateConfigs("App\Services\\{$system}CsvConfigService", $category);
         $conf                  = $service->getHtmlPageGenerateParameter();
         $conf['table_columns'] = $service->getTopPageTableSettings();
-        $rows                  = $model->paginate(25);
+        $search_columns        = $service->getSerachColumns();
+        $rows                  = $service->searchModel($input)->getModel()->paginate(self::INT_PAGINATE);
         $view                  = strtolower($system) . '.admin.list';
-        return view($view, ['rows' => $rows, 'configs' => $conf]);
+        return view($view, ['rows' => $rows, 'configs' => $conf, 'serach_columns' => $search_columns, 'search_values' => $input]);
     }
 
     /**
@@ -127,7 +131,6 @@ class SuisinAdminController extends Controller
             \DB::connection('mysql_suisin')->rollback();
             \Session::flash('danger_message', $e->getMessage());
             return redirect($page_settings['index_route']);
-            
         }
         \Session::flash('success_message', ($cnt['insert_count'] + $cnt['update_count']) . "件の処理が終了しました。（新規：{$cnt['insert_count']}件，更新：{$cnt['update_count']}件）");
         return redirect($page_settings['index_route']);

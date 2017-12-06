@@ -85,6 +85,17 @@ class AdminCsvConfigService
                 'is_process'      => 'desc',
                 'zenon_format_id' => 'asc',
             ],
+            'table_search'  => [
+                'zenon_format_id'       => ['column_name' => 'zenon_format_id', 'display' => 'フォーマットID', 'type' => 'integer'],
+                'zenon_data_name'       => ['column_name' => 'zenon_data_name', 'display' => '全オンデータ名', 'type' => 'string'],
+                'identifier'            => ['column_name' => 'identifier', 'display' => '識別子', 'type' => 'string'],
+                'reference_return_date' => ['column_name' => 'reference_return_date', 'display' => '目安還元日', 'type' => 'string'],
+                'cycle'                 => ['column_name' => 'cycle', 'display' => 'サイクル', 'type' => 'string'],
+                'table_name'            => ['column_name' => 'table_name', 'display' => 'テーブル名', 'type' => 'string'],
+                'is_cumulative'         => ['column_name' => 'is_cumulative', 'display' => '累積', 'type' => 'integer'],
+                'is_account_convert'    => ['column_name' => 'is_account_convert', 'display' => '変換', 'type' => 'integer'],
+                'is_process'            => ['column_name' => 'is_process', 'display' => '分割', 'type' => 'integer'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'id',
@@ -262,6 +273,13 @@ class AdminCsvConfigService
             'table_orders'  => [
                 'zenon_table_column_configs.zenon_format_id' => 'asc',
             ],
+            'table_search'  => [
+                'identifier'           => ['column_name' => 'identifier', 'display' => '識別子', 'type' => 'string'],
+                'zenon_data_name'      => ['column_name' => 'zenon_data_name', 'display' => 'データ名', 'type' => 'string'],
+                'column_name'          => ['column_name' => 'column_name', 'display' => 'カラム名', 'type' => 'string'],
+                'japanese_column_name' => ['column_name' => 'japanese_column_name', 'display' => '日本語カラム名', 'type' => 'string'],
+                'column_type'          => ['column_name' => 'column_type', 'display' => 'カラム型', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
 //                    'id',
@@ -330,6 +348,9 @@ class AdminCsvConfigService
             ],
             'table_orders'  => [
                 'id' => 'asc',
+            ],
+            'table_search'  => [
+                'data_type_name' => ['column_name' => 'data_type_name', 'display' => 'カテゴリ名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [

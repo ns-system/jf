@@ -1,5 +1,5 @@
-ユーザーID,部署名,ユーザー名,職員番号
-,busyo1,user1,1
-2,,user2,2
-3,busyo3,,3
-4,busyo4,user4,
+ユーザーID,部署名,姓,名,職員番号
+,busyo1,user1,user1,1
+2,,user2,user2,2
+3,busyo3,,,3
+4,busyo4,user4,user4,

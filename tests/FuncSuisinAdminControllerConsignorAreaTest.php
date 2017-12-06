@@ -8,7 +8,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
     use Traits\CsvUsable;
 
     protected static $init                    = false;
-    protected $user;
+    protected static $user;
     protected $dummy_prefecture_data          = ["prefecture_code" => "9491", "prefecture_name" => "長崎県",];
     protected $dummy_store_data               = ["prefecture_code" => "9491", "store_name" => "本店", "store_number" => "1",];
     protected $dummy_smallstore_data          = [
@@ -46,6 +46,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 \Artisan::call('db:reset', ['--dbenv' => 'testing', '--hide' => 'true']);
                 \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
                 \Artisan::call('migrate');
+                static::$user = factory(\App\User::class)->create(['is_super_user' => '1']);
             } catch (\Exception $exc) {
                 echo $exc->getTraceAsString();
             }
@@ -57,12 +58,11 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_管理者が管理者画面を見ることができる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
 
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/')
                 ->see('推進支援システム マスタ編集')
-                ->dontSee('要修正')
         ;
     }
 
@@ -74,7 +74,6 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/')
                 ->see('許可されていないアクセスを行おうとしました。')
-                ->dontSee('要修正')
         ;
     }
 
@@ -83,13 +82,18 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_委託者リストを表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\Consignor::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Consignor')
                 ->seePageIs('/admin/suisin/config/Suisin/Consignor')
                 ->see('委託者リスト')
-                ->dontSee('要修正')
+                ->type('1', 'consignor_code')
+                ->type('1', 'display_consignor_name')
+                ->type('1', 'consignor_group_id')
+                ->type('1', 'group_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
@@ -98,7 +102,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_委託者リストでCSVファイルのインポートができる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Consignor::truncate();
         \App\ConsignorGroup::truncate();
         \App\Consignor::insert($this->preregistration_consignor_data);
@@ -116,12 +120,17 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->press('更新する')
                 ->seePageIs('/admin/suisin/config/Suisin/Consignor')
                 ->see('件の処理が終了しました。')
-                ->dontSee('要修正')
         ;
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
-            $data = explode(',', $csv_file[$i]);
-            $res  = \App\Consignor::where('consignor_code', trim($data[0]))->where('consignor_name', trim($data[1]))->where('display_consignor_name', trim($data[2]))->where('consignor_group_id', trim($data[3]))->count();
+            $data  = explode(',', $csv_file[$i]);
+            $where = [
+                'consignor_code'         => trim($data[0]),
+                'consignor_name'         => trim($data[1]),
+                'display_consignor_name' => trim($data[2]),
+                'consignor_group_id'     => trim($data[3]),
+            ];
+            $res   = \App\Consignor::where($where)->count();
             $this->assertEquals($res, 1);
         }
     }
@@ -130,7 +139,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_委託者リストで内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Consignor::truncate();
         \App\ConsignorGroup::truncate();
         \App\Consignor::insert($this->preregistration_consignor_data);
@@ -152,7 +161,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_委託者リストで誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Consignor::truncate();
         \App\ConsignorGroup::truncate();
         \App\Consignor::insert($this->preregistration_consignor_data);
@@ -175,7 +184,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_委託者リストファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\Consignor::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Consignor')
@@ -191,11 +200,15 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_委託者グループを表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\Consignor::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/ConsignorGroup')
                 ->seePageIs('/admin/suisin/config/Suisin/ConsignorGroup')
+                ->type('1', 'id')
+                ->type('1', 'group_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
@@ -203,7 +216,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_委託者グループでCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\ConsignorGroup::truncate();
         $file_name = '委託者グループ.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -232,7 +245,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_委託者グループで内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Consignor::truncate();
         $file_name = '委託者グループ.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -251,7 +264,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_委託者グループで誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Consignor::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -271,7 +284,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_委託者グループがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/ConsignorGroup')
@@ -286,12 +299,15 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_県コードを表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\Models\Common\Prefecture::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Prefecture')
                 ->seePageIs('/admin/suisin/config/Suisin/Prefecture')
-
+                ->type('1', 'prefecture_code')
+                ->type('1', 'prefecture_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
@@ -299,7 +315,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_県コードでCSVファイルをインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         $file_name = '県コード.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -319,7 +335,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
-            $res  = \App\Models\Common\Prefecture::where('prefecture_code', trim($data[0]))->where('prefecture_name', trim($data[1]))->count();
+            $res  = \App\Models\Common\Prefecture::where(['prefecture_code' => trim($data[0]), 'prefecture_name' => trim($data[1])])->count();
             $this->assertEquals($res, 1);
         }
     }
@@ -328,7 +344,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_県コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         $file_name = '県コード.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -347,7 +363,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_県コードで誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -367,7 +383,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_県コードがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Prefecture')
@@ -383,12 +399,18 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_店番を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Store')
                 ->seePageIs('/admin/suisin/config/Suisin/Store')
+                ->type('1', 'prefecture_code')
+                ->type('1', 'prefecture_name')
+                ->type('1', 'store_number')
+                ->type('1', 'store_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
@@ -396,7 +418,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_店番でCSVファイルをインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\Prefecture::insert($this->dummy_prefecture_data);
@@ -427,7 +449,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_店番で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\Prefecture::insert($this->dummy_prefecture_data);
@@ -448,7 +470,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_店番で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\Prefecture::insert($this->dummy_prefecture_data);
@@ -470,7 +492,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_店番がエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Store')
@@ -486,13 +508,23 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_小規模店番を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\SmallStore::truncate();
         $this->actingAs($user)
-                ->visit('/admin/suisin/config/Suisin/Store')
-                ->seePageIs('/admin/suisin/config/Suisin/Store')
+                ->visit('/admin/suisin/config/Suisin/SmallStore')
+                ->seePageIs('/admin/suisin/config/Suisin/SmallStore')
+                ->type('1', 'prefecture_code')
+                ->type('1', 'prefecture_name')
+                ->type('1', 'store_number')
+                ->type('1', 'store_name')
+                ->type('1', 'small_store_number')
+                ->type('1', 'small_store_name')
+                ->type('1', 'control_store_code')
+                ->type('1', 'control_store_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
@@ -500,7 +532,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_小規模店番でCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\SmallStore::truncate();
@@ -523,8 +555,15 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
         ;
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
-            $data = explode(',', $csv_file[$i]);
-            $res  = \App\Models\Common\SmallStore::where('prefecture_code', trim($data[0]))->where('store_number', trim($data[1]))->where('control_store_code', trim($data[2]))->where('small_store_number', trim($data[3]))->where('small_store_name', trim($data[7]))->count();
+            $data  = explode(',', $csv_file[$i]);
+            $where = [
+                'prefecture_code'    => trim($data[0]),
+                'store_number'       => trim($data[1]),
+                'control_store_code' => trim($data[2]),
+                'small_store_number' => trim($data[3]),
+                'small_store_name'   => trim($data[7]),
+            ];
+            $res   = \App\Models\Common\SmallStore::where($where)->count();
             $this->assertEquals($res, 1);
         }
     }
@@ -533,7 +572,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_小規模店番で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\SmallStore::truncate();
@@ -556,7 +595,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_小規模店番で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\SmallStore::truncate();
@@ -580,7 +619,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_小規模店番がエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/SmallStore')
@@ -596,7 +635,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_地区コードを表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\SmallStore::truncate();
@@ -604,7 +643,16 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Area')
                 ->seePageIs('/admin/suisin/config/Suisin/Area')
-
+                ->type('1', 'prefecture_code')
+                ->type('1', 'prefecture_name')
+                ->type('1', 'store_number')
+                ->type('1', 'store_name')
+                ->type('1', 'small_store_number')
+                ->type('1', 'small_store_name')
+                ->type('1', 'area_code')
+                ->type('1', 'area_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
@@ -612,7 +660,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_地区コードでCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\SmallStore::truncate();
@@ -646,7 +694,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_地区コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\SmallStore::truncate();
@@ -670,7 +718,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_地区コードで誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\SmallStore::truncate();
@@ -695,7 +743,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_地区コードがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/Area')
@@ -711,7 +759,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_管轄店舗を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\SmallStore::truncate();
@@ -720,7 +768,12 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/ControlStore')
                 ->seePageIs('/admin/suisin/config/Suisin/ControlStore')
-
+                ->type('1', 'prefecture_code')
+                ->type('1', 'prefecture_name')
+                ->type('1', 'control_store_code')
+                ->type('1', 'control_store_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
@@ -728,7 +781,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_管轄店舗でCSVファイルをインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\SmallStore::truncate();
@@ -765,7 +818,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_管轄店舗で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\SmallStore::truncate();
@@ -792,7 +845,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 異常系_管轄店舗で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
         \App\Models\Common\Store::truncate();
         \App\Models\Common\SmallStore::truncate();
@@ -820,7 +873,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
      * @tests
      */
     public function 正常系_管轄店舗がエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/ControlStore')

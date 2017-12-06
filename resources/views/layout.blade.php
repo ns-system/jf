@@ -11,7 +11,9 @@
 
     <link rel="stylesheet" href="https://nkmr6194.github.io/Umi/css/bootstrap.css"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://nkmr6194.github.io/Umi/js/bootstrap.min.js"></script>
+
 
     {{-- マテリアルデザインがクソかっこいい --}}
 {{-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
@@ -86,9 +88,9 @@ input[type=file]{display: none;}
 .btn-info   { border-color: #1b7fc2; }
 .tooltip.top{ background: rgba(255,255,255,0); }
 
-.btn-group .btn{ border: 1px solid #fff; }
+.btn-group .btn{ border: transparent 1px solid; margin: 1px; }
 
-.alert-fixed { width: 300px; padding: 10px; padding-right: 30px; font-size: 80%; z-index: 2; left: 20px; position: fixed; bottom: 40px; margin-bottom: 0; };
+.alert-fixed { width: 300px; padding: 10px; padding-right: 30px; font-size: 80%; z-index: 2; left: 20px; position: fixed; bottom: 40px; margin-bottom: 0; max-height: 400px; overflow-y: scroll; };
 .margin-bottom{margin-bottom: 10px;}
 
 </style>
@@ -116,12 +118,9 @@ input[type=file]{display: none;}
                     <ul class="nav navbar-nav">
                         <li><a href="http://www.jf-nssinren.or.jp/" target="_blank">Official</a></li>
                         <li><a href="http://192.1.10.136/myweb10po" target="_blank">Groupware</a></li>
-                        <li><a href="http://cvs.phpmyadmin" target="_blank">pma</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         @if(Auth::check())
-
-
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
                                 <div class="media" style="height: 40px; width: 40px; border-radius: 20%; background: #eee;">
@@ -155,6 +154,7 @@ input[type=file]{display: none;}
 
         <script type="text/javascript">
             $(function () {
+                $('.modal-content').draggable();
                 $('[data-toggle="tooltip"]').tooltip();
                 $('.min-width').each(function(){
                     var width = $(this).attr('data-size');
@@ -233,13 +233,13 @@ input[type=file]{display: none;}
                     Cookies.set('activeAccordionGroup', cookie_array, { expires: 7 });
                 });
             });
-            function getGroupId(id) {
-                var tmp_id = id.replace(/#/g, '');
-                var arr_id = tmp_id.split('_');
-                if(!(arr_id instanceof Array) || arr_id.length < 2) return false;
-                return arr_id[0];
-            }
-        </script>
-        @show
-    </body>
+function getGroupId(id) {
+    var tmp_id = id.replace(/#/g, '');
+    var arr_id = tmp_id.split('_');
+    if(!(arr_id instanceof Array) || arr_id.length < 2) return false;
+    return arr_id[0];
+}
+</script>
+@show
+</body>
 </html>
