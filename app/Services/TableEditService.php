@@ -25,6 +25,7 @@ class TableEditService
     protected $validate_rules  = [];
     protected $csv_file_name   = '';
     protected $csv_file_object;
+    protected $serach_columns;
 
     /**
      * URL上のパラメータクエリから情報を取得して設定ファイルを作成するメソッド。
@@ -60,6 +61,7 @@ class TableEditService
         $this->csv_en_columns          = $this->convertCsvEnColumnToKey($parameter['csv']['columns']);
         $this->csv_jp_columns          = $parameter['csv']['kanji_columns'];
         $this->import_settings         = $parameter['import'];
+        $this->serach_columns          = (isset($parameter['table_search'])) ? $parameter['table_search'] : [];
 
         return $this;
     }
@@ -76,6 +78,36 @@ class TableEditService
             $keys[]     = $tmp_column[count($tmp_column) - 1];
         }
         return $keys;
+    }
+
+    public function searchModel(array $inputs) {
+        if (empty($inputs))
+        {
+            return $this;
+        }
+        $columns = $this->serach_columns;
+        foreach ($inputs as $id => $value) {
+            if ($value == '')
+            {
+                continue;
+            }
+            try {
+                $type = $columns[$id]['type'];
+                $key  = $columns[$id]['column_name'];
+            } catch (\Exception $exc) {
+                continue;
+            }
+
+            if ($type === 'string')
+            {
+                $this->model->where($key, 'like', "%{$value}%");
+            }
+            else
+            {
+                $this->model->where($key, '=', $value);
+            }
+        }
+        return $this;
     }
 
     /**
@@ -123,6 +155,10 @@ class TableEditService
 
     public function getImportSettings() {
         return $this->import_settings;
+    }
+
+    public function getSerachColumns() {
+        return $this->serach_columns;
     }
 
     public function getExportRows() {
