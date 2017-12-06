@@ -210,7 +210,7 @@ class FuncRosterAcceptControllerTest extends TestCase
         /**
      * @tests
      */
-    public function 正常系勤務データIDがnullでも実行される() {
+    public function 正常系勤務データIDがnullでもアップデート処理が実行される() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
@@ -451,7 +451,7 @@ class FuncRosterAcceptControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系実績が登録されているのに実績を承認しようとするとエラー() {
+    public function 異常系実績が承認されているのに実績を承認しようとするとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
