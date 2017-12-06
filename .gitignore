@@ -22,4 +22,4 @@ Vagrantfile
 report/
 config/database.php
 config/app.php
-congig/import_config.json
+config/import_config.json
