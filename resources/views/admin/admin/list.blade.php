@@ -22,7 +22,7 @@
 <div class="col-md-10">
     <div class="container-fluid">
         @include('partial.alert')
-        <div class="border-bottom"><h2>{{$configs['h2']}} <small>件数：{{number_format((int) $rows->count())}}件</small></h2></div>
+        <div class="border-bottom"><h2>{{$configs['h2']}}</h2></div>
         @include('partial.csv_form.search')
 
         @include('partial.csv_form.form')

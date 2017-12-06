@@ -11,7 +11,9 @@
 
     <link rel="stylesheet" href="https://nkmr6194.github.io/Umi/css/bootstrap.css"></link>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://nkmr6194.github.io/Umi/js/bootstrap.min.js"></script>
+
 
     {{-- マテリアルデザインがクソかっこいい --}}
 {{-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
@@ -152,6 +154,7 @@ input[type=file]{display: none;}
 
         <script type="text/javascript">
             $(function () {
+                $('.modal-content').draggable();
                 $('[data-toggle="tooltip"]').tooltip();
                 $('.min-width').each(function(){
                     var width = $(this).attr('data-size');
