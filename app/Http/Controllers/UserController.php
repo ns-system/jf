@@ -70,7 +70,9 @@ class UserController extends Controller
             \Session::flash('success_message', "アイコンを変更しました。");
             return back();
         } catch (Exception $e) {
-            echo $e->getTraceAsString();
+            
+            \Session::flash('danger_message',  $e->getMessage());
+//            echo $e->getTraceAsString();
         }
     }
 

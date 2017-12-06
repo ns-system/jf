@@ -366,6 +366,9 @@ class FuncUserControllerTest extends TestCase
         ;
     }
 
+    /**
+     * @tests
+     */
     public function 異常系アイコンにイメージファイル以外を選択するとエラーになる() {
         $user            = factory(\App\User::class)->create();
         $image_file_name = "testfile.txt";
@@ -380,13 +383,17 @@ class FuncUserControllerTest extends TestCase
         ;
     }
 
+    
+    /**
+     * @tests
+     */
     public function 異常系自分以外がアイコンを変えようとするとエラーになる() {
         \Session::start();
         $user            = factory(\App\User::class)->create();
         $image_file_name = "cat_image_for_success_change_user_icon_test.jpg";
         $mime_type       = "image/ipg";
         $this->actingAs($user)
-                ->POST(root("app::user::icon", ['id' => $user->id + 1]), ['_token' => csrf_token(), 'user_icon' => $this->createUploadFile(storage_path(), $image_file_name, $mime_type)])
+                ->POST(route("app::user::icon", ['id' => $user->id + 1]), ['_token' => csrf_token(), 'user_icon' => $this->createUploadFile(storage_path(). '/tests/', $image_file_name, $mime_type)])
                 ->assertRedirectedTo('/permission_error')
         ;
     }
