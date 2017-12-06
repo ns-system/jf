@@ -68,7 +68,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->seePageIs('/admin/suisin/config/Suisin/Subject')
                 ->type('1', 'subject_code')
                 ->type('1', 'subject_name')
-                ->press('modal-search')
+                ->press('検索する')
                 ->assertResponseOk()
         ;
     }
@@ -168,7 +168,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->type('1', 'industry_code')
                 ->type('1', 'industry_name')
                 ->type('1', 'industry_content')
-                ->press('modal-search')
+                ->press('検索する')
                 ->assertResponseOk()
         ;
     }
@@ -270,7 +270,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->type('1', 'qualification_code')
                 ->type('1', 'qualification_type')
                 ->type('1', 'qualification_name')
-                ->press('modal-search')
+                ->press('検索する')
                 ->assertResponseOk()
         ;
     }
@@ -371,7 +371,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->seePageIs('/admin/suisin/config/Suisin/Personality')
                 ->type('1', 'personality_code')
                 ->type('1', 'personality_name')
-                ->press('modal-search')
+                ->press('検索する')
                 ->assertResponseOk()
         ;
     }
@@ -472,7 +472,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->seePageIs('/admin/suisin/config/Suisin/DepositTaxation')
                 ->type('1', 'taxation_code')
                 ->type('1', 'taxation_name')
-                ->press('modal-search')
+                ->press('検索する')
                 ->assertResponseOk()
         ;
     }
@@ -573,7 +573,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->seePageIs('/admin/suisin/config/Suisin/DepositTerm')
                 ->type('1', 'term_code')
                 ->type('1', 'term_name')
-                ->press('modal-search')
+                ->press('検索する')
                 ->assertResponseOk()
         ;
     }
@@ -674,7 +674,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->seePageIs('/admin/suisin/config/Suisin/DepositContinuation')
                 ->type('1', 'continuation_code')
                 ->type('1', 'continuation_name')
-                ->press('modal-search')
+                ->press('検索する')
                 ->assertResponseOk()
         ;
     }
@@ -777,7 +777,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->type('1', 'subject_name')
                 ->type('1', 'category_code')
                 ->type('1', 'category_name')
-                ->press('modal-search')
+                ->press('検索する')
                 ->assertResponseOk()
         ;
     }
@@ -885,7 +885,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->seePageIs('/admin/suisin/config/Suisin/DepositBankbookType')
                 ->type('1', 'bankbook_deed_type')
                 ->type('1', 'bankbook_deed_name')
-                ->press('modal-search')
+                ->press('検索する')
                 ->assertResponseOk()
         ;
     }
@@ -989,7 +989,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 ->type('1', 'keizai_gist_kanji')
                 ->type('1', 'keizai_gist_full_kana')
                 ->type('1', 'is_keizai')
-                ->press('modal-search')
+                ->press('検索する')
                 ->assertResponseOk()
         ;
     }

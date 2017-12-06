@@ -701,6 +701,8 @@ class SuisinCsvConfigService
                 'small_stores.small_store_number' => 'asc',
             ],
             'table_search'  => [
+                'prefecture_code'    => ['column_name' => 'small_stores.prefecture_code', 'display' => '県コード', 'type' => 'integer'],
+                'prefecture_name'    => ['column_name' => 'prefecture_codes.prefecture_name', 'display' => '県名', 'type' => 'string'],
                 'store_number'       => ['column_name' => 'small_stores.store_number', 'display' => '店舗コード', 'type' => 'integer'],
                 'store_name'         => ['column_name' => 'stores.store_name', 'display' => '店舗名', 'type' => 'string'],
                 'small_store_number' => ['column_name' => 'small_store_number', 'display' => '小規模店番', 'type' => 'integer'],
@@ -828,6 +830,8 @@ class SuisinCsvConfigService
                 'area_codes.area_code'          => 'asc',
             ],
             'table_search'  => [
+                'prefecture_code'    => ['column_name' => 'area_codes.prefecture_code', 'display' => '県コード', 'type' => 'integer'],
+                'prefecture_name'    => ['column_name' => 'prefecture_codes.prefecture_name', 'display' => '県名', 'type' => 'string'],
                 'store_number'       => ['column_name' => 'area_codes.store_number', 'display' => '店舗コード', 'type' => 'integer'],
                 'store_name'         => ['column_name' => 'stores.store_name', 'display' => '店舗名', 'type' => 'string'],
                 'small_store_number' => ['column_name' => 'area_codes.small_store_number', 'display' => '小規模店番', 'type' => 'integer'],
