@@ -21,9 +21,11 @@
     <div class="container-fluid">
         @include('partial.alert')
         <div class="border-bottom"><h2>{{$configs['h2']}}</h2></div>
-@include('partial.csv_form.form')
+        @include('partial.csv_form.search')
 
-@if(!$rows->isEmpty())
+        @include('partial.csv_form.form')
+
+        @if(!$rows->isEmpty())
         <table class="table table-hover table-small va-middle table-striped">
             <thead>
                 <tr>
@@ -57,25 +59,25 @@
                         <?php $key = $column[0]; ?>
                         @if(isset($row->$key))
                         <p
-                            @if(array_key_exists('class', $column)) class="{{$column['class']}}" @endif
+                        @if(array_key_exists('class', $column)) class="{{$column['class']}}" @endif
                         >
-                            @if(array_key_exists('format', $column)) {{sprintf($column['format'], (int) $row->$key)}} @else {{$row->$key}} @endif
-                        </p>
-                        @endif
-                        @endforeach
-                    </td>
+                        @if(array_key_exists('format', $column)) {{sprintf($column['format'], (int) $row->$key)}} @else {{$row->$key}} @endif
+                    </p>
+                    @endif
                     @endforeach
-                    @endforeach
-                </tr>
+                </td>
                 @endforeach
+                @endforeach
+            </tr>
+            @endforeach
 
-            </tbody>
-        </table>
-@else
-<div class="alert alert-warning" role="alert">データが見つかりませんでした。</div>
-@endif
+        </tbody>
+    </table>
+    @else
+    <div class="alert alert-warning" role="alert">データが見つかりませんでした。</div>
+    @endif
 
-    </div><!-- .container-fluid -->
+</div><!-- .container-fluid -->
 </div>
 @endsection
 

@@ -4,11 +4,11 @@
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 <div class="text-right">
-<div data-spy="affix" style="top: 100px; right: 30px;" data-offset-top="110">
+<div data-spy="affix" style="top: 100px; right: 30px;" data-offset-top="150">
 
     @if(!$rows->isEmpty())
     <div class="text-right" style="margin-bottom: 10px">
-        {!! $rows->render() !!}
+        {!! $rows->appends($search_values)->render() !!}
     </div>
     @endif
 
