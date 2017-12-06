@@ -14,7 +14,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
     use Traits\CsvUsable;
 
     protected static $init = false;
-    protected $user;
+    protected static $user;
 
     public function setUp() {
         parent::setUp();
@@ -26,6 +26,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 \Artisan::call('db:reset', ['--dbenv' => 'testing', '--hide' => 'true']);
                 \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
                 \Artisan::call('migrate');
+                static::$user = factory(\App\User::class)->create(['is_super_user' => '1']);
             } catch (\Exception $exc) {
                 echo $exc->getTraceAsString();
             }
@@ -41,11 +42,22 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 正常系_全オン還元CSVファイル設定を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\ZenonTable::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Admin/ZenonCsv')
                 ->seePageIs('/admin/super_user/config/Admin/ZenonCsv')
+                ->type('1', 'zenon_format_id')
+                ->type('1', 'zenon_data_name')
+                ->type('1', 'identifier')
+                ->type('1', 'reference_return_date')
+                ->type('1', 'cycle')
+                ->type('1', 'table_name')
+                ->type('1', 'is_cumulative')
+                ->type('1', 'is_account_convert')
+                ->type('1', 'is_process')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
@@ -53,7 +65,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 正常系_全オン還元CSVファイル設定でCSVファイルをインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\ZenonCsv::truncate();
         $file_name = '全オン還元CSVファイル設定.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -72,8 +84,31 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
         ;
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
-            $data = explode(',', $csv_file[$i]);
-            $res  = \App\ZenonCsv::where('identifier', trim($data[1]))->where('zenon_data_type_id', trim($data[2]))->where('zenon_data_name', trim($data[3]))->where('first_column_position', trim($data[4]))->where('last_column_position', trim($data[5]))->where('column_length', trim($data[6]))->where('reference_return_date', trim($data[7]))->where('cycle', trim($data[8]))->where('database_name', trim($data[9]))->where('table_name', trim($data[10]))->where('is_cumulative', trim($data[11]))->where('is_account_convert', trim($data[12]))->where('is_process', trim($data[13]))->where('is_split', trim($data[14]))->where('zenon_format_id', trim($data[15]))->where('account_column_name', trim($data[16]))->where('subject_column_name', trim($data[17]))->where('split_foreign_key_1', trim($data[18]))->where('split_foreign_key_2', trim($data[19]))->where('split_foreign_key_3', trim($data[20]))->where('split_foreign_key_4', trim($data[21]))->count();
+            $data  = explode(',', $csv_file[$i]);
+            $where = [
+                'identifier'            => trim($data[1]),
+                'zenon_data_type_id'    => trim($data[2]),
+                'zenon_data_name'       => trim($data[3]),
+                'first_column_position' => trim($data[4]),
+                'last_column_position'  => trim($data[5]),
+                'column_length'         => trim($data[6]),
+                'reference_return_date' => trim($data[7]),
+                'cycle'                 => trim($data[8]),
+                'database_name'         => trim($data[9]),
+                'table_name'            => trim($data[10]),
+                'is_cumulative'         => trim($data[11]),
+                'is_account_convert'    => trim($data[12]),
+                'is_process'            => trim($data[13]),
+                'is_split'              => trim($data[14]),
+                'zenon_format_id'       => trim($data[15]),
+                'account_column_name'   => trim($data[16]),
+                'subject_column_name'   => trim($data[17]),
+                'split_foreign_key_1'   => trim($data[18]),
+                'split_foreign_key_2'   => trim($data[19]),
+                'split_foreign_key_3'   => trim($data[20]),
+                'split_foreign_key_4'   => trim($data[21]),
+            ];
+            $res   = \App\ZenonCsv::where($where)->count();
             $this->assertEquals($res, 1);
         }
     }
@@ -82,7 +117,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 異常系_全オン還元CSVファイル設定で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\ZenonCsv::truncate();
         $file_name = '全オン還元CSVファイル設定.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -101,7 +136,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 異常系_全オン還元CSVファイル設定で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\ZenonCsv::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -121,7 +156,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 正常系_全オン還元CSVファイル設定ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Admin/ZenonCsv')
@@ -138,12 +173,18 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 正常系_テーブルカラム設定を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\ZenonTable::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Admin/ZenonTable')
                 ->seePageIs('/admin/super_user/config/Admin/ZenonTable')
-
+                ->type('1', 'identifier')
+                ->type('1', 'zenon_data_name')
+                ->type('1', 'column_name')
+                ->type('1', 'japanese_column_name')
+                ->type('1', 'column_type')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
@@ -151,7 +192,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 正常系_テーブルカラム設定でCSVファイルをインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\ZenonTable::truncate();
         \App\ZenonCsv::truncate();
         \App\ZenonCsv::insert($this->dummy_zenon_csv_data);
@@ -182,7 +223,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 異常系_テーブルカラム設定で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\ZenonTable::truncate();
         \App\ZenonCsv::truncate();
         \App\ZenonCsv::insert($this->dummy_zenon_csv_data);
@@ -203,7 +244,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 異常系_テーブルカラム設定で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\ZenonTable::truncate();
         \App\ZenonCsv::truncate();
         \App\ZenonCsv::insert($this->dummy_zenon_csv_data);
@@ -225,7 +266,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 正常系_テーブルカラム設定ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Admin/ZenonTable')
@@ -242,12 +283,14 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 正常系_全オンカテゴリ名を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Admin/ZenonType')
                 ->seePageIs('/admin/super_user/config/Admin/ZenonType')
-
+                ->type('1', 'data_type_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
@@ -255,7 +298,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 正常系_全オンカテゴリ名でCSVファイルをインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\ZenonType::truncate();
         $file_name = '全オン還元データ種類.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -284,7 +327,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 異常系_全オンカテゴリ名で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\ZenonType::truncate();
         $file_name = '全オン還元データ種類.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -303,7 +346,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 異常系_全オンカテゴリ名で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user      = static::$user;
         \App\ZenonType::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -323,7 +366,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
      * @tests
      */
     public function 正常系_全オンカテゴリ名ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $user = static::$user;
         \App\ZenonType::truncate();
 
         $this->actingAs($user)
