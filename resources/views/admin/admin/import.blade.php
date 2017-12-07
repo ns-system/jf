@@ -50,7 +50,7 @@
                             {{$cnt + 1}}
                         </th>
                         @foreach($configs['table_columns'] as $column_config)
-                        <td @if(array_key_exists('class', $column_config)) class="$column_config['class']"> @endif>
+                        <td @if(array_key_exists('class', $column_config)) class="$column_config['class']" @endif>
                             @if(array_key_exists('format', $column_config))
                             <?php $display = sprintf($column_config['format'], $row[$column_config[1]]); ?>
                             @else
