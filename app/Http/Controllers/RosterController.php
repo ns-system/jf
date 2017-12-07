@@ -101,7 +101,7 @@ class RosterController extends Controller
             \Session::flash('success_message', '予定データを更新しました。');
             return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
         } catch (\Exception $e) {
-            \Session::flash('warn_message', '予定データが見つかりませんでした。');
+            \Session::flash('warn_message', $e->getMessage());
             return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
         }
     }
@@ -127,7 +127,7 @@ class RosterController extends Controller
             \Session::flash('success_message', '実績データを更新しました。');
             return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
         } catch (\Exception $e) {
-            \Session::flash('warn_message', '予定データが見つかりませんでした。');
+            \Session::flash('warn_message', $e->getMessage());
             return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
 //            return back();
         }
