@@ -16,38 +16,20 @@
         </div>
     </div>
 
-{{--     <div class="well">
-                <div class="form-group">
-                    <div class="col-md-10 col-md-offset-1">
-                        <label for="InputSelect">推進支援システム ユーザー</label>
-                        @if($user->SuisinUser)
-                        <select class="form-control" name="suisin_is_administrator">
-                            <option value="0">一般ユーザー</option>
-                            <option value="1" @if($user->SuisinUser->is_administrator == true) selected="selected" @endif>管理ユーザー</option>
-                        </select>
-                        <span class="help-block bolder"><small class="text-warning">推進支援システムの管理ユーザーになります。昇格後はユーザーシステムの利用ができなくなります。</small></span>
-                        @else
-                        <div class="alert alert-warning" role="alert">推進支援システム側のユーザー登録がされていません。</div>
-                        @endif
-                    </div>
-                </div>
-        </div> --}}
-
-        <div class="well">
-            <div class="form-group">
-                <div class="col-md-10 col-md-offset-1">
-                    <label for="InputSelect">勤怠管理システム ユーザー</label>
+    <div class="well">
+        <div class="form-group">
+            <div class="col-md-10 col-md-offset-1">
+                <label for="InputSelect">勤怠管理システム ユーザー</label>
+                <a class="btn btn-block btn-primary" href="{{route('admin::roster::user::index')}}" style="margin-bottom: 10px;">登録情報を変更する</a>
+                <span class="help-block bolder"><small  class="text-warning">
                     @if($user->RosterUser($user->id))
-                    <select class="form-control" name="roster_is_administrator">
-                        <option value="0">一般ユーザー</option>
-                        <option value="1" @if($user->RosterUser($user->id)->is_administrator == true) selected="selected" @endif>管理ユーザー</option>
-                    </select>
-                    <span class="help-block bolder"><small  class="text-warning">勤怠管理システムの管理者になります。昇格後はユーザーシステムの利用ができなくなります。</small></span>
+                    勤怠管理システムの管理者になります。昇格後はユーザーシステムの利用ができなくなります。
                     @else
-                    <div class="alert alert-warning" role="alert">勤怠管理システム側のユーザー登録がされていません。</div>
+                    勤怠管理システム側のユーザー登録がされていません。
                     @endif
-                </div>
+                </small></span>
             </div>
         </div>
-        <p class="text-right"><button type="submit" class="btn btn-warning">更新する</button></p>
+    </div>
+    <p class="text-right"><button type="submit" class="btn btn-warning">更新する</button></p>
 </form>
