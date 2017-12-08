@@ -82,7 +82,7 @@ class FuncRosterWorkPlanControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系系予定休暇理由を入力できる() {
+    public function 正常系予定休暇理由を入力できる() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
