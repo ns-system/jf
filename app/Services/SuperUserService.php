@@ -12,8 +12,8 @@ class SuperUserService
 
     private function getUsers() {
         $users = \App\User::select(\DB::raw('*, users.id as id, sinren_users.user_id as sinren_user_id'))
-                ->addSelect('roster_users.user_id as roster_user_id, roster_users.is_administrator as is_roster_admin')
-                ->addSelect('sinren_users.division_id as division_id')
+                ->addSelect(\DB::raw('roster_users.user_id as roster_user_id, roster_users.is_administrator as is_roster_admin'))
+                ->addSelect(\DB::raw('sinren_users.division_id as division_id'))
                 ->leftJoin('sinren_db.sinren_users', 'users.id', '=', 'sinren_users.user_id')
                 ->leftJoin('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
 //                ->leftJoin('suisin_db.suisin_users', 'users.id', '=', 'suisin_users.user_id')

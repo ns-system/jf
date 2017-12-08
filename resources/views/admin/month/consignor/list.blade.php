@@ -62,6 +62,7 @@
             </tbody>
         </table>
         @else
+        <div class="alert alert-warning" role="alert">データが見つかりませんでした。先に月次処理を行ってください。</div>
         @endif
     </div>
 </div><!-- .container-fluid -->

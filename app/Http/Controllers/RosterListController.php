@@ -47,7 +47,7 @@ class RosterListController extends Controller
                 ->table('sinren_users')
                 ->select(\DB::Raw('month_id, COUNT(*) AS cnt'))
                 ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
-                ->where('is_plan_entry', '=', true)
+//                ->where('is_plan_entry', '=', true)
                 ->where('rosters.month_id', '<>', 0)
                 ->groupBy('rosters.month_id')
                 ->groupBy('sinren_users.division_id')
@@ -67,8 +67,6 @@ class RosterListController extends Controller
     }
 
     public function show($div, $ym) {
-//        echo $div;
-//        echo $ym;
         if (!$this->is_valid_division($div))
         {
             \Session::flash('warn_message', "許可されていない部署を閲覧しようとしました。");
@@ -77,14 +75,19 @@ class RosterListController extends Controller
         $div_name = \App\Division::where('division_id', '=', $div)->first()->division_name;
         $date     = date('Y年n月', strtotime($ym . '01'));
 
-        $tmp_types = \App\WorkType::orderBy('work_type_id')->get();
+//        $tmp_types = \App\WorkType::orderBy('work_type_id')->get();
+//        $types     = [];
+//        foreach ($tmp_types as $t) {
+//            $types[$t->work_type_id] = [null,];
+//            if ($t->work_start_time !== $t->work_end_time)
+//            {
+//                $types[$t->work_type_id] = date('G:i', strtotime($t->work_start_time)) . ' ～ ' . date('G:i', strtotime($t->work_end_time));
+//            }
+//        }
         $types     = [];
+        $tmp_types = \App\WorkType::workTypeList()->get();
         foreach ($tmp_types as $t) {
-            $types[$t->work_type_id] = [null,];
-            if ($t->work_start_time !== $t->work_end_time)
-            {
-                $types[$t->work_type_id] = date('G:i', strtotime($t->work_start_time)) . ' ～ ' . date('G:i', strtotime($t->work_end_time));
-            }
+            $types[$t->work_type_id] = $t;
         }
         $rs    = \App\Rest::get();
         $rests = [];

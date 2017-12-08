@@ -254,6 +254,10 @@ class ProcessStatusController extends Controller
 
     public function exportProcessList($id) {
         $rows  = $this->service->setRows($id)->getRows()->get();
+        if($rows->isEmpty()){
+            \Session::flash('warn_message', "ファイルリストが存在しないようです。");
+            return back();
+        }
         $lists = [];
         foreach ($rows as $r) {
             $l       = [
@@ -291,7 +295,7 @@ class ProcessStatusController extends Controller
         try {
             $ignore = $this->getJsonFile(storage_path() . '/jsonlogs/', "{$id}_ignore_file_list.json");
         } catch (\Exception $exc) {
-            \Session::flash('danger_message', $exc->getMessage());
+            \Session::flash('warn_message', "ファイルリストが存在しないようです。");
             return back();
 //            dd($exc->getMessage());
 //            $ignore = [];
@@ -300,7 +304,7 @@ class ProcessStatusController extends Controller
 //            $not_exist = $this->getJsonFile($this->path . '/log/', "{$id}_not_exist_file_list.json");
             $not_exist = $this->getJsonFile(storage_path() . '/jsonlogs/', "{$id}_not_exist_file_list.json");
         } catch (\Exception $exc) {
-            \Session::flash('danger_message', $exc->getMessage());
+            \Session::flash('warn_message', "ファイルリストが存在しないようです。");
             return back();
 //            $not_exist = [];
         }
