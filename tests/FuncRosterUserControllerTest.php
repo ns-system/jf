@@ -113,7 +113,7 @@ class FuncRosterUserControllerTest extends TestCase
      * @tests
      * 一部radio要素がブラウザから操作できないため、実際の動作はPOSTを偽装してテストしている
      */
-    public function 正常系_勤怠管理のユーザー変更画面まで行ける() {
+    public function 正常系_勤怠管理のユーザー情報変更が行える() {
         $actor = $this->super;
         $user  = $this->chief;
         $this->actingAs($actor)
