@@ -65,7 +65,7 @@ class FuncUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系自分以外が部署を変更しようとするとエラーになる() {
+    public function 異常系本人以外が部署を変更しようとするとエラーになる() {
         \Session::start();
         $user = factory(\App\User::class)->create();
         $this->actingAs($user)
@@ -162,7 +162,7 @@ class FuncUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系自分以外が名前を変更しようとするとエラーになる() {
+    public function 異常系本人以外が名前を変更しようとするとエラーになる() {
         \Session::start();
         $user = factory(\App\User::class)->create();
         $this->actingAs($user)
@@ -323,7 +323,7 @@ class FuncUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系自分以外がパスワードを変更しようとするとエラーになる() {
+    public function 異常系本人以外がパスワードを変更しようとするとエラーになる() {
         \Session::start();
         $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
         $this->actingAs($user)
@@ -352,7 +352,7 @@ class FuncUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系アイコンの画像のサイズが500kb以上だとエラーになる() {
+    public function 異常系アイコンの画像のサイズが500kb以上だとエラーになる() {
         $user            = factory(\App\User::class)->create();
         $image_file_name = "over_500kb_image.png";
         $path            = storage_path() . '/tests/' . $image_file_name;
@@ -387,7 +387,7 @@ class FuncUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系自分以外がアイコンを変えようとするとエラーになる() {
+    public function 異常系本人以外がアイコンを変えようとするとエラーになる() {
         \Session::start();
         $user            = factory(\App\User::class)->create();
         $image_file_name = "cat_image_for_success_change_user_icon_test.jpg";
@@ -401,7 +401,7 @@ class FuncUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系自分以外のユーザーのユーザー情報を見ようとするとエラー() {
+    public function 異常系本人以外のユーザーのユーザー情報を見ようとするとエラー() {
         $user = factory(\App\User::class)->create();
         $this->actingAs($user)
                 ->visit(route('app::user::show', ['id' => $user->id + 1]))
