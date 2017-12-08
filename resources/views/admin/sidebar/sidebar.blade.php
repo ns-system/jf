@@ -68,7 +68,7 @@
                 href="{{route('admin::super::config::index', ['system'=>'Admin','category'=>'ZenonTable'])}}"
                 data-toggle="tooltip"
                 title="全オン還元情報のMySQL側のカラム設定を行います。"
-                data-placement="right">MySQL全オンテーブル設定</a>
+                data-placement="right">MySQL全オンテーブルカラム設定</a>
     <span></span>
 
         </div>
