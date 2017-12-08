@@ -395,7 +395,7 @@ class FuncSuperUserControllerTest extends TestCase
        /**
      * @tests
      */
-    public function 正常系検索時入力が文字列nullの時nullを値がある時その値を返す() {
+    public function 正常系検索時入力が文字列nullの時null返しを値がある時その値を返す() {
            $class      = new \App\Services\SuperUserService;
         $reflection = new \ReflectionClass($class);
         $method     = $reflection->getMethod("setNull");
