@@ -103,6 +103,15 @@ class ProcessStatusController extends Controller
     }
 
     public function copyConfirm($id) {
+
+        $mst_cnt = \App\ZenonCsv::count();
+        $tbl_cnt = \App\ZenonTable::count();
+        if ($mst_cnt <= 0 || $tbl_cnt <= 0)
+        {
+            \Session::flash('danger_message', '全オン還元CSVファイル設定もしくはMySQL全オンテーブルカラム設定が登録されていないようです。先に登録を行ってください。');
+            return back();
+        }
+
         $csv_service = new CopyCsvFileService();
 
         $tmp_dir     = $this->path . '/temp';
@@ -253,8 +262,9 @@ class ProcessStatusController extends Controller
     }
 
     public function exportProcessList($id) {
-        $rows  = $this->service->setRows($id)->getRows()->get();
-        if($rows->isEmpty()){
+        $rows = $this->service->setRows($id)->getRows()->get();
+        if ($rows->isEmpty())
+        {
             \Session::flash('warn_message', "ファイルリストが存在しないようです。");
             return back();
         }
