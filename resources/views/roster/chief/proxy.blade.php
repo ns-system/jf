@@ -31,7 +31,7 @@
         <tr><th class="bg-primary text-left" colspan="2">{{$div['division_name']}}</th></tr>
         @foreach($div['users'] as $user)
         <tr>
-            <td>{{$user->User->name}}さん</td>
+            <td>{{$user->User->last_name}}さん</td>
             <td>
                 <div class="input-group">
                     <select class="form-control" name="is_proxy[{{$user->user_id}}]">
