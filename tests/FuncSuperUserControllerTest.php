@@ -70,10 +70,11 @@ class FuncSuperUserControllerTest extends TestCase
         $target_user  = factory(\App\User::class)->create(['is_super_user' => false]);
         $this->actingAs($super_user)
                 ->visit('/admin/super_user/user/' . $target_user->id)
-                ->see($target_user->first_name . " " . $target_user->last_name)
+                ->see($target_user->last_name . " " . $target_user->first_name)
                 ->select('1', 'is_super_user')
                 ->press('更新する')
                 ->seePageIs('/admin/super_user/user')
+                ->see($target_user->last_name . "さんの情報を変更しました。")
         ;
         $changed_user = \App\User::find($target_user->id);
         $this->assertEquals(0, $target_user->is_super_user);
@@ -89,7 +90,7 @@ class FuncSuperUserControllerTest extends TestCase
         $target_user  = factory(\App\User::class)->create(['is_super_user' => true]);
         $this->actingAs($super_user)
                 ->visit('/admin/super_user/user/' . $target_user->id)
-                ->see($target_user->first_name . " " . $target_user->last_name)
+                ->see($target_user->last_name . " " . $target_user->first_name)
                 ->select('0', 'is_super_user')
                 ->press('更新する')
                 ->seePageIs('/admin/super_user/user')
@@ -101,51 +102,7 @@ class FuncSuperUserControllerTest extends TestCase
 
 
 
-    /**
-     * @tests
-     */
-    public function 正常系勤怠一般ユーザーを勤怠管理ユーザに変更できる() {
-
-        $div                   = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
-        $super_user            = factory(\App\User::class)->create(['is_super_user' => true]);
-        $target_user           = factory(\App\User::class)->create(['is_super_user' => false]);
-        \App\SinrenUser::create(['user_id' => $target_user->id, 'division_id' => $div->division_id]);
-        \App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => false]);
-        $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
-        $this->actingAs($super_user)
-                ->visit('/admin/super_user/user/' . $target_user->id)
-                ->see($target_user->first_name . " " . $target_user->last_name)
-                ->select('1', 'roster_is_administrator')
-                ->press('更新する')
-                ->seePageIs('/admin/super_user/user')
-        ;
-        $roster_changed_user   = \App\RosterUser::where('user_id', $target_user->id)->first();
-        $this->assertEquals(0, $roster_unchanged_user->is_administrator);
-        $this->assertEquals(1, $roster_changed_user->is_administrator);
-    }
-
-    /**
-     * @tests
-     */
-    public function 正常系勤怠管理ユーザを勤怠一般ユーザに変更できる() {
-
-        $div                   = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
-        $super_user            = factory(\App\User::class)->create(['is_super_user' => true]);
-        $target_user           = factory(\App\User::class)->create(['is_super_user' => false]);
-        \App\SinrenUser::create(['user_id' => $target_user->id, 'division_id' => $div->division_id]);
-        \App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => true]);
-        $roster_unchanged_user = \App\RosterUser::where('user_id', $target_user->id)->first();
-        $this->actingAs($super_user)
-                ->visit('/admin/super_user/user/' . $target_user->id)
-                ->see($target_user->first_name . " " . $target_user->last_name)
-                ->select('0', 'roster_is_administrator')
-                ->press('更新する')
-                ->seePageIs('/admin/super_user/user')
-        ;
-        $roster_changed_user   = \App\RosterUser::where('user_id', $target_user->id)->first();
-        $this->assertEquals(1, $roster_unchanged_user->is_administrator);
-        $this->assertEquals(0, $roster_changed_user->is_administrator);
-    }
+   
 
     /**
      * @tests
@@ -161,37 +118,7 @@ class FuncSuperUserControllerTest extends TestCase
         ;
     }
 
-    /**
-     * @tests
-     */
-    public function 異常系スーパーユーザー以外がユーザーを推進管理ユーザーにしようとするとエラー() {
-        \Session::start();
-
-        $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
-        $target_user = factory(\App\User::class)->create(['is_super_user' => false]);
-        \App\SuisinUser::create(['user_id' => $target_user->id, "is_administrator" => false]);
-        $this->actingAs($target_user)
-                ->POST('/admin/super_user/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'suisin_is_administrator' => "1"])
-                ->assertRedirectedTo('/permission_error')
-        ;
-    }
-
-    /**
-     * @tests
-     */
-    public function 異常系スーパーユーザー以外がユーザーを勤怠管理ユーザーにしようとするとエラー() {
-        \Session::start();
-
-        $div         = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
-        $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
-        $target_user = factory(\App\User::class)->create(['is_super_user' => false]);
-        \App\SinrenUser::create(['user_id' => $target_user->id, 'division_id' => $div->division_id]);
-        \App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => false]);
-        $this->actingAs($target_user)
-                ->POST('/admin/super_user/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'roster_is_administrator' => "1"])
-                ->assertRedirectedTo('/permission_error')
-        ;
-    }
+   
 
     /**
      * @tests
@@ -210,38 +137,8 @@ class FuncSuperUserControllerTest extends TestCase
         ;
     }
 
-    /**
-     * @tests
-     */
-    public function 異常系suisin_is_administratorに誤った入力がされるとエラー() {
-        \Session::start();
+   
 
-        $div         = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
-        $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
-        $target_user = factory(\App\User::class)->create(['is_super_user' => false]);
-        \App\SinrenUser::create(['user_id' => $target_user->id, 'division_id' => $div->division_id]);
-        \App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => false]);
-        $this->actingAs($super_user)
-                ->POST('/admin/super_user/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'suisin_is_administrator' => "jat@e"])
-                ->assertSessionHasErrors()
-        ;
-    }
-
-    /**
-     * @tests
-     */
-    public function 異常系roster_is_administratorに誤った入力がされるとエラー() {
-        \Session::start();
-        $div         = \App\SinrenDivision::create(['division_id' => 1, 'division_name' => 'division_1']);
-        $super_user  = factory(\App\User::class)->create(['is_super_user' => true]);
-        $target_user = factory(\App\User::class)->create(['is_super_user' => false]);
-        \App\SinrenUser::create(['user_id' => $target_user->id, 'division_id' => $div->division_id]);
-        \App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => false]);
-        $this->actingAs($super_user)
-                ->POST('/admin/super_user/user/edit/' . $target_user->id, ['_token' => csrf_token(), 'roster_is_administrator' => "jat@e"])
-                ->assertSessionHasErrors()
-        ;
-    }
 
     /**
      * @tests
