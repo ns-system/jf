@@ -228,17 +228,7 @@ class FuncRosterAcceptControllerTest extends TestCase
 
     //異常系
 
-    /**
-     * @tests
-     */
-    public function 異常系権限のないユーザーが勤務予定データを作成しようとするとエラー() {
-        \App\Roster::truncate();
-        \Session::start();
-        $this->actingAs($this->normal_user)
-                ->post('/app/roster/work_plan/list/edit/201712/' . $this->normal_user->id, ['_token' => csrf_token(), "work_type" => ['2017-12-01' => 1, '2017-12-02' => 1], "id" => ['1' => 1], "rest" => ['2017-12-01' => 0, '2017-12-02' => 0], "entered_on" => ['2017-12-01', '2017-12-02']])
-                ->assertRedirectedTo('/permission_error')
-        ;
-    }
+   
 
     /**
      * @tests
