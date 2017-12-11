@@ -210,7 +210,7 @@ class FuncRosterAcceptControllerTest extends TestCase
         /**
      * @tests
      */
-    public function 正常系勤務データIDがnullでもアップデート処理が実行される() {
+    public function 正常系勤務データIDの配列にnullが入っていた場合その部分はスキップして実行される() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
