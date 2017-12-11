@@ -857,7 +857,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
      /**
      * @tests
      */
-    public function 異常系検索_予定に三文字より多く入力されるとエラー() {
+    public function 異常系検索_予定に0から3以外の文字が入力されるとエラー() {
         \App\Roster::truncate();
         \Session::start();
         $this->createRosterSample();
@@ -874,8 +874,8 @@ class FuncRosterCsvExportControllerTest extends TestCase
                 ->see($this->nomaluser3->last_name)
                 ->see($this->nomaluser4->first_name)
                 ->see($this->nomaluser4->last_name)
-                ->visit("/admin/roster/csv/search/201712?plan=1234&actual=0&name=&division=&min_date=&max_date=")
-                ->see("予定は3文字以下にしてください。")
+                ->visit("/admin/roster/csv/search/201712?plan=5&actual=0&name=&division=&min_date=&max_date=")
+                ->see("予定の書式が正しくありません。")
                 
 
         ;
@@ -883,7 +883,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
      /**
      * @tests
      */
-    public function 異常系検索_実績に三文字より多く入力されるとエラー() {
+    public function 異常系検索_実績に0から3以外の文字が入力されるとエラー() {
         \App\Roster::truncate();
         \Session::start();
         $this->createRosterSample();
@@ -900,8 +900,8 @@ class FuncRosterCsvExportControllerTest extends TestCase
                 ->see($this->nomaluser3->last_name)
                 ->see($this->nomaluser4->first_name)
                 ->see($this->nomaluser4->last_name)
-                ->visit("/admin/roster/csv/search/201712?plan=&actual=1234&name=&division=2&min_date=&max_date=")
-                ->see("実績は3文字以下にしてください。")
+                ->visit("/admin/roster/csv/search/201712?&actual=4&name=&division=2&min_date=&max_date=")
+                ->see("実績の書式が正しくありません。")
                 
 
         ;
