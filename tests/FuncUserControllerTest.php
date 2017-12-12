@@ -5,6 +5,7 @@ use App\Services\Traits\Testing\FileTestable;
 class FuncUserControllerTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
     use FileTestable;
 
 //    use WithoutMiddleware;
@@ -27,6 +28,11 @@ class FuncUserControllerTest extends TestCase
                 echo $exc->getTraceAsString();
             }
         }
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     /**
@@ -383,7 +389,6 @@ class FuncUserControllerTest extends TestCase
         ;
     }
 
-    
     /**
      * @tests
      */
@@ -393,7 +398,7 @@ class FuncUserControllerTest extends TestCase
         $image_file_name = "cat_image_for_success_change_user_icon_test.jpg";
         $mime_type       = "image/ipg";
         $this->actingAs($user)
-                ->POST(route("app::user::icon", ['id' => $user->id + 1]), ['_token' => csrf_token(), 'user_icon' => $this->createUploadFile(storage_path(). '/tests/', $image_file_name, $mime_type)])
+                ->POST(route("app::user::icon", ['id' => $user->id + 1]), ['_token' => csrf_token(), 'user_icon' => $this->createUploadFile(storage_path() . '/tests/', $image_file_name, $mime_type)])
                 ->assertRedirectedTo('/permission_error')
         ;
     }

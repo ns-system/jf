@@ -9,6 +9,8 @@
 class FuncRosterUserChangeAuthorityTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
+
     protected static $init = false;
     protected $user;
 
@@ -31,6 +33,11 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
                 echo $exc->getTraceAsString();
             }
         }
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     /**

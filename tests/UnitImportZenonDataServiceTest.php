@@ -9,6 +9,7 @@ class UnitImportZenonDataServiceTest extends TestCase
 {
 
     use FileTestable;
+    use \App\Services\Traits\Testing\DbDisconnectable;
 
     protected $s;
     protected $param;
@@ -81,6 +82,11 @@ class UnitImportZenonDataServiceTest extends TestCase
                 echo $exc->getMessage();
             }
         }
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     public function __construct() {

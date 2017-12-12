@@ -8,6 +8,8 @@ use App\Http\Controllers;
 class UnitIndexControllerTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
+
     const MAX_MONTH_CNT = 5;
     const FIRST_YEAR_ID = 2000;
 
@@ -67,6 +69,11 @@ class UnitIndexControllerTest extends TestCase
                 $this->createRosters($month_id, $d);
             }
         }
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     private function createRosters($month_id, $day) {

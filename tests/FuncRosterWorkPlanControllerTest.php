@@ -11,6 +11,8 @@ use App\Services\Traits;
 class FuncRosterWorkPlanControllerTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
+
     protected static $init                     = false;
     protected $super_user;
     protected $admin_user;
@@ -54,7 +56,11 @@ class FuncRosterWorkPlanControllerTest extends TestCase
         \App\SinrenUser::create(['user_id' => $this->normal_user->id, "division_id" => '1']);
         \App\SinrenUser::create(['user_id' => $this->proxy_user->id, "division_id" => '1']);
         \App\ControlDivision::create(['user_id' => $this->admin_user->id, "division_id" => '1']);
-        
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     /**
@@ -77,8 +83,7 @@ class FuncRosterWorkPlanControllerTest extends TestCase
                 ->dontSee("成功：要修正")
         ;
     }
-    
-    
+
     /**
      * @tests
      */
@@ -87,14 +92,14 @@ class FuncRosterWorkPlanControllerTest extends TestCase
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
             \App\Roster::create([
-                'user_id'           => $this->normal_user->id,
-                "plan_work_type_id" => "1",
-                "entered_on"        => "2017-12-" . $i,
-                "month_id"          => "201712",
-                "is_plan_entry"     => 0,
-                "is_plan_accept"    => 0,
-                "is_actual_entry"   => 0,
-                "plan_rest_reason_id"=>1]);
+                'user_id'             => $this->normal_user->id,
+                "plan_work_type_id"   => "1",
+                "entered_on"          => "2017-12-" . $i,
+                "month_id"            => "201712",
+                "is_plan_entry"       => 0,
+                "is_plan_accept"      => 0,
+                "is_actual_entry"     => 0,
+                "plan_rest_reason_id" => 1]);
         }
         $before_data = \App\Roster::where("user_id", $this->normal_user->id)->where("entered_on", "2017-12-1")->first();
         $this->actingAs($this->admin_user)
@@ -112,12 +117,11 @@ class FuncRosterWorkPlanControllerTest extends TestCase
         ;
         $after_data  = \App\Roster::where("user_id", $this->normal_user->id)->where("entered_on", "2017-12-1")->first();
         $this->assertNotEquals($after_data->plan_rest_reason_id, $before_data->plan_rest_reason_id);
-        $this->assertEquals($before_data->plan_rest_reason_id,1);
+        $this->assertEquals($before_data->plan_rest_reason_id, 1);
         $this->assertEquals($after_data->plan_rest_reason_id, 2);
     }
-    
 
-     /**
+    /**
      * @tests
      */
     public function 異常系権限のないユーザーが勤務予定データを作成しようとするとエラー() {
@@ -128,7 +132,7 @@ class FuncRosterWorkPlanControllerTest extends TestCase
                 ->assertRedirectedTo('/permission_error')
         ;
     }
-    
+
     /**
      * @tests
      */

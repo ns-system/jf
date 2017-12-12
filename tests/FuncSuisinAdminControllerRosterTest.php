@@ -17,6 +17,7 @@ class FuncSuisinAdminControllerRosterTest extends TestCase
 {
 
     use Traits\CsvUsable;
+    use Traits\Testing\DbDisconnectable;
 
     protected static $init = false;
     protected static $user;
@@ -65,6 +66,11 @@ class FuncSuisinAdminControllerRosterTest extends TestCase
         \App\Rest::firstOrCreate(["rest_reason_id" => 1, "rest_reason_name" => "テスト用理由"]);
         \App\Division::firstOrCreate(["division_id" => '1', 'division_name' => 'test']);
         \App\WorkType::firstOrCreate(["work_type_id" => '1', "work_type_name" => "テスト用"]);
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     /**

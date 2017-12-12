@@ -14,6 +14,8 @@
 class FuncSuperUserControllerTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
+
     protected static $init = false;
     protected $user;
 
@@ -35,6 +37,11 @@ class FuncSuperUserControllerTest extends TestCase
         \App\SinrenUser::truncate();
         \App\SinrenDivision::truncate();
         \App\RosterUser::truncate();
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     /**
@@ -100,10 +107,6 @@ class FuncSuperUserControllerTest extends TestCase
         $this->assertEquals(0, $changed_user->is_super_user);
     }
 
-
-
-   
-
     /**
      * @tests
      */
@@ -117,8 +120,6 @@ class FuncSuperUserControllerTest extends TestCase
                 ->assertRedirectedTo('/permission_error')
         ;
     }
-
-   
 
     /**
      * @tests
@@ -136,9 +137,6 @@ class FuncSuperUserControllerTest extends TestCase
                 ->assertSessionHasErrors()
         ;
     }
-
-   
-
 
     /**
      * @tests
@@ -204,8 +202,6 @@ class FuncSuperUserControllerTest extends TestCase
                 ->dontSee($super_user->email)
         ;
     }
-
-
 
     /**
      * @tests
@@ -283,25 +279,26 @@ class FuncSuperUserControllerTest extends TestCase
         $target_user = factory(\App\User::class)->create(['is_super_user' => false]);
         \App\SinrenUser::create(['user_id' => $target_user->id, 'division_id' => $div->division_id]);
         \App\RosterUser::create(['user_id' => $target_user->id, "is_administrator" => false]);
-        $res=$this->actingAs($super_user)
-                ->POST('/admin/super_user/user/edit/' . 99999, ['_token' => csrf_token(), 'is_super_user' => "1"])             
+        $res         = $this->actingAs($super_user)
+                ->POST('/admin/super_user/user/edit/' . 99999, ['_token' => csrf_token(), 'is_super_user' => "1"])
         ;
         $res->assertRedirectedTo('/');
-        $res ->assertSessionHas("warn_message");
+        $res->assertSessionHas("warn_message");
     }
-       /**
+
+    /**
      * @tests
      */
     public function 正常系検索時入力が文字列nullの時null返しを値がある時その値を返す() {
-           $class      = new \App\Services\SuperUserService;
+        $class      = new \App\Services\SuperUserService;
         $reflection = new \ReflectionClass($class);
         $method     = $reflection->getMethod("setNull");
         $method->setAccessible(true);
         $res1       = $method->invoke($class, "null");
         $this->assertEquals($res1, null);
-        $val = 4;
-        $res2       = $method->invoke($class,$val);
+        $val        = 4;
+        $res2       = $method->invoke($class, $val);
         $this->assertEquals($res2, $val);
-        
     }
+
 }

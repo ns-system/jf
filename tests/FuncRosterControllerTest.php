@@ -14,6 +14,8 @@
 class FuncRosterControllerTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
+
     protected static $init                     = false;
     protected static $super_user;
     protected static $admin_user;
@@ -72,6 +74,11 @@ class FuncRosterControllerTest extends TestCase
 //        \App\SinrenUser::truncate();
 //        \App\ControlDivision::truncate();
 //        \App\Rest::truncate();
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     /**

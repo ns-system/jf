@@ -17,7 +17,7 @@
 
 @section('sidebar')
 <div class="col-md-2">
-@include('roster.app.partial.sidebar_app')
+    @include('partial.check_sidebar')
 </div>
 <div class="col-md-10">
 </div>

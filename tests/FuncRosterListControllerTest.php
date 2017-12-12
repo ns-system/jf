@@ -6,6 +6,7 @@ class FuncRosterListControllerTest extends TestCase
 {
 
     use Traits\CsvUsable;
+    use Traits\Testing\DbDisconnectable;
 
     protected static $init = false;
     protected $chief;
@@ -83,6 +84,11 @@ class FuncRosterListControllerTest extends TestCase
         \App\Division::firstOrCreate(["division_id" => '2', 'division_name' => 'test2']);
         \App\WorkType::firstOrCreate(["work_type_id" => '1', "work_type_name" => "テスト用"]);
         \App\WorkType::firstOrCreate(["work_type_id" => '2', "work_type_name" => "テスト用その二"]);
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     private function createRosterSample() {
@@ -166,7 +172,8 @@ class FuncRosterListControllerTest extends TestCase
                 ->dontsee("年")
         ;
     }
-/**
+
+    /**
      * @tests
      */
     public function 正常系信連ユーザーが登録されていないユーザーが部署の勤務データを見ようとするとユーザー情報登録に遷移する() {
@@ -174,9 +181,10 @@ class FuncRosterListControllerTest extends TestCase
         $this->actingAs($this->chief)
                 ->visit('/app/roster/division/check')
                 ->seePageIs(route('app::roster::user::show', ['id' => $this->chief->id]))
-                
+
         ;
     }
+
     /**
      * @tests
      */
@@ -191,5 +199,5 @@ class FuncRosterListControllerTest extends TestCase
                 ->see("許可されていない部署を閲覧しようとしました。")
         ;
     }
-    
+
 }

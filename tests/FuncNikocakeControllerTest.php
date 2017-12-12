@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class FuncNikocakeControllerTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
+
 //    use DatabaseMigrations;
 
     protected $connection  = ['mysql_laravel', 'mysql_suisin', 'mysql_sinren', 'mysql_nikocale'];
@@ -26,6 +28,11 @@ class FuncNikocakeControllerTest extends TestCase
             \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
             \Artisan::call('migrate');
         }
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     /**

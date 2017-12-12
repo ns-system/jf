@@ -6,6 +6,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
 {
 
     use Traits\CsvUsable;
+    use Traits\Testing\DbDisconnectable;
 
     protected static $init                    = false;
     protected static $user;
@@ -53,6 +54,10 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
         }
     }
 
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
+    }
     //共通
     /**
      * @tests

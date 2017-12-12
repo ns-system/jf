@@ -12,7 +12,7 @@
 
 @section('sidebar')
 <div class="col-md-2">
-    @include('admin.sidebar.sidebar')
+    @include('partial.check_sidebar')
 </div>
 @endsection
 

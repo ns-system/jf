@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class FuncRosterUserControllerTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
+
     protected static $init = false;
     protected $user;
     protected $chief;
@@ -30,6 +32,11 @@ class FuncRosterUserControllerTest extends TestCase
 
         $this->super->is_super_user = true;
         $this->super->save();
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     /**

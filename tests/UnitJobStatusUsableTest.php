@@ -10,13 +10,14 @@ class UnitJobStatusUsableTest extends TestCase
 {
 
     use JobStatusUsable;
+    use \App\Services\Traits\Testing\DbDisconnectable;
 
     protected $s;
     protected $monthly_status_id;
 
     public function setUp() {
         parent::setUp();
-        \DB::connection('mysql_suisin')->beginTransaction();
+//        \DB::connection('mysql_suisin')->beginTransaction();
         $monthly_status          = [
             'csv_file_name'          => 'K_D_902_M0332_20101001.csv',
             'file_kb_size'           => 338,
@@ -39,7 +40,8 @@ class UnitJobStatusUsableTest extends TestCase
     }
 
     public function tearDown() {
-        \DB::connection('mysql_suisin')->rollback();
+        $this->disconnect();
+        parent::tearDown();
     }
 
     public function __construct() {
@@ -145,7 +147,7 @@ class UnitJobStatusUsableTest extends TestCase
      * @tests
      */
     public function 正常系_ジョブステータスを作成できる() {
-        $s = $this->createJobStatus()/*->getJobStatus()*/;
+        $s = $this->createJobStatus()/* ->getJobStatus() */;
         $this->assertEquals(true, $s->is_copy_start);
     }
 
@@ -165,7 +167,7 @@ class UnitJobStatusUsableTest extends TestCase
      * @tests
      */
     public function 正常系_is_copy_endにフラグセットできる() {
-        $t = $this->createJobStatus()/*->getJobStatus()*/;
+        $t = $this->createJobStatus()/* ->getJobStatus() */;
         $this->setCopyEndToJobStatus($t->id);
         // 一度再インスタンス化しないとフラグが変わらない（変わる前のインスタンスを見に行ってエラーになる）
         $s = $this->setJobStatus($t->id)->getJobStatus();
@@ -176,7 +178,7 @@ class UnitJobStatusUsableTest extends TestCase
      * @tests
      */
     public function 正常系_is_import_startにフラグセットできる() {
-        $t = $this->createJobStatus()/*->getJobStatus()*/;
+        $t = $this->createJobStatus()/* ->getJobStatus() */;
         $this->setImportStartToJobStatus($t->id);
         $s = $this->setJobStatus($t->id)->getJobStatus();
         $this->assertEquals(true, $s->is_import_start);
@@ -186,7 +188,7 @@ class UnitJobStatusUsableTest extends TestCase
      * @tests
      */
     public function 正常系_is_import_endにフラグセットできる() {
-        $t = $this->createJobStatus()/*->getJobStatus()*/;
+        $t = $this->createJobStatus()/* ->getJobStatus() */;
         $this->setImportEndToJobStatus($t->id);
         $s = $this->setJobStatus($t->id)->getJobStatus();
         $this->assertEquals(true, $s->is_import_end);
@@ -196,7 +198,7 @@ class UnitJobStatusUsableTest extends TestCase
      * @tests
      */
     public function 正常系_copy_errorにフラグ_エラーメッセージがセットできる() {
-        $t = $this->createJobStatus()/*->getJobStatus()*/;
+        $t = $this->createJobStatus()/* ->getJobStatus() */;
         $this->setCopyErrorToJobStatus($t->id, "処理続行不可");
         // 一度再インスタンス化しないとフラグが変わらない（変わる前のインスタンスを見に行ってエラーになる）
         $s = $this->setJobStatus($t->id)->getJobStatus();
@@ -208,7 +210,7 @@ class UnitJobStatusUsableTest extends TestCase
      * @tests
      */
     public function 正常系_import_errorにフラグ_エラーメッセージがセットできる() {
-        $t = $this->createJobStatus()/*->getJobStatus()*/;
+        $t = $this->createJobStatus()/* ->getJobStatus() */;
         $this->setImportErrorToJobStatus($t->id, "処理続行不可");
         // 一度再インスタンス化しないとフラグが変わらない（変わる前のインスタンスを見に行ってエラーになる）
         $s = $this->setJobStatus($t->id)->getJobStatus();
@@ -220,7 +222,7 @@ class UnitJobStatusUsableTest extends TestCase
      * @tests
      */
     public function 正常系_エラーが発生しているかどうか() {
-        $t     = $this->createJobStatus()/*->getJobStatus()*/;
+        $t     = $this->createJobStatus()/* ->getJobStatus() */;
         $false = $this->isErrorOccurred($t->id);
         // 一度再インスタンス化しないとフラグが変わらない（変わる前のインスタンスを見に行ってエラーになる）
         $this->setImportErrorToJobStatus($t->id, "処理続行不可");
