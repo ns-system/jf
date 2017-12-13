@@ -33,7 +33,7 @@ class CreateZaikeiAccountLedgers extends Migration
             $table->char("spare_1", 246);
             $table->integer("monthly_id")->index();
             $table->integer("subject_code")->index();
-            $table->integer("key_account_number")->index();
+            $table->double("key_account_number")->index();
             $table->timestamps("");
         });
     }
