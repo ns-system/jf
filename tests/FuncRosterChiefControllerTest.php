@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -8,6 +8,8 @@
 
 class FuncRosterChiefControllerTest extends TestCase
 {
+
+    use \App\Services\Traits\Testing\DbDisconnectable;
 
     protected static $init                     = false;
     protected $super_user;
@@ -50,6 +52,12 @@ class FuncRosterChiefControllerTest extends TestCase
         \App\SinrenUser::create(['user_id' => $this->proxy_user->id, "division_id" => '1']);
         \App\ControlDivision::create(['user_id' => $this->admin_user->id, "division_id" => '1']);
     }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
+    }
+
     /**
      * @tests
      */
@@ -103,7 +111,8 @@ class FuncRosterChiefControllerTest extends TestCase
         $this->assertEquals(0, $roster_changed_user->is_proxy);
         $this->assertEquals(0, $roster_changed_user->is_proxy_active);
     }
-/**
+
+    /**
      * @tests
      */
     public function 異常系権限のないユーザーがユーザーを責任者代理_代理人機能無効状態にしようとするとエラー() {

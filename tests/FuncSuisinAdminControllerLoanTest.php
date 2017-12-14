@@ -17,9 +17,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
 {
 
     use Traits\CsvUsable;
+    use Traits\Testing\DbDisconnectable;
 
     protected static $init = false;
-    protected $user;
+    protected static $user;
 
     public function setUp() {
         parent::setUp();
@@ -31,32 +32,40 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 \Artisan::call('db:reset', ['--dbenv' => 'testing', '--hide' => 'true']);
                 \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
                 \Artisan::call('migrate');
+                static::$user = factory(\App\User::class)->create(['is_super_user' => '1']);
             } catch (\Exception $exc) {
                 echo $exc->getTraceAsString();
             }
         }
     }
 
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
+    }
     //貸付
     //摘要コード 
     /**
      * @tests
      */
-    public function 正常系貸付種類を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_貸付種類を表示できる() {
+        $user = static::$user;
         \App\Models\Loan\Category::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanCategory')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanCategory')
-
+                ->type('1', 'loan_category_code')
+                ->type('1', 'loan_category_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
     /**
      * @tests
      */
-    public function 正常系貸付種類でCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_貸付種類でCSVファイルインポートできる() {
+        $user      = static::$user;
         \App\Models\Loan\Category::truncate();
         $file_name = '貸付種類.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -85,8 +94,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系貸付種類で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_貸付種類で内容に不備のあるCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\Category::truncate();
         $file_name = '貸付種類.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -103,8 +112,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系貸付種類で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_貸付種類で誤ったCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\Category::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -118,11 +127,12 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
-    public function 正常系貸付種類設定ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_貸付種類設定ファイルがエクスポートできる() {
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Suisin/LoanCategory')
@@ -138,21 +148,24 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系漁業形態を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_漁業形態を表示できる() {
+        $user = static::$user;
         \App\Models\Loan\Category::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanFishery')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFishery')
-
+                ->type('1', 'fishery_form_code')
+                ->type('1', 'fishery_form_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
     /**
      * @tests
      */
-    public function 正常系漁業形態でCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_漁業形態でCSVファイルインポートできる() {
+        $user      = static::$user;
         \App\Models\Loan\Fishery::truncate();
         $file_name = '漁業形態.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -181,8 +194,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系漁業形態で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_漁業形態で内容に不備のあるCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\Fishery::truncate();
         $file_name = '漁業形態.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -199,8 +212,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系漁業形態で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_漁業形態で誤ったCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\Fishery::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -214,11 +227,12 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
-    public function 正常系漁業形態設定ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_漁業形態設定ファイルがエクスポートできる() {
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Suisin/LoanFishery')
@@ -234,21 +248,24 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系資金区分を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_資金区分を表示できる() {
+        $user = static::$user;
         \App\Models\Loan\Fund::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanFund')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFund')
-
+                ->type('1', 'fund_code')
+                ->type('1', 'fund_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
     /**
      * @tests
      */
-    public function 正常系資金区分でCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_資金区分でCSVファイルインポートできる() {
+        $user      = static::$user;
         \App\Models\Loan\Fund::truncate();
         $file_name = '資金区分.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -277,8 +294,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系資金区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_資金区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\Fund::truncate();
         $file_name = '資金区分.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -295,8 +312,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系資金区分で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_資金区分で誤ったCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\Fund::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -310,11 +327,12 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
-    public function 正常系資金区分設定ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_資金区分設定ファイルがエクスポートできる() {
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Suisin/LoanFund')
@@ -330,21 +348,24 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系資金使途区分を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_資金使途区分を表示できる() {
+        $user = static::$user;
         \App\Models\Loan\Fund::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanFundUsageCode')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsageCode')
-
+                ->type('1', 'fund_usage_code')
+                ->type('1', 'fund_usage_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
     /**
      * @tests
      */
-    public function 正常系資金使途区分でCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_資金使途区分でCSVファイルインポートできる() {
+        $user      = static::$user;
         \App\Models\Loan\FundUsageCode::truncate();
         $file_name = '資金使途区分.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -373,8 +394,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系資金使途区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_資金使途区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\FundUsageCode::truncate();
         $file_name = '資金使途区分.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -391,8 +412,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系資金使途区分で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_資金使途区分で誤ったCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\FundUsageCode::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -406,11 +427,12 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
-    public function 正常系資金使途区分ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_資金使途区分ファイルがエクスポートできる() {
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Suisin/LoanFundUsageCode')
@@ -426,21 +448,25 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系資金補助区分を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_資金補助区分を表示できる() {
+        $user = static::$user;
         \App\Models\Loan\FundAuxiliary::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanFundAuxiliary')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundAuxiliary')
-
+                ->type('1', 'fund_auxiliary_code')
+                ->type('1', 'fund_auxiliary_category')
+                ->type('1', 'fund_auxiliary_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
     /**
      * @tests
      */
-    public function 正常系資金補助区分でCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_資金補助区分でCSVファイルインポートできる() {
+        $user      = static::$user;
         \App\Models\Loan\FundAuxiliary::truncate();
         $file_name = '資金補助区分.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -470,8 +496,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系資金補助区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_資金補助区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\FundAuxiliary::truncate();
         $file_name = '資金補助区分.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -488,8 +514,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系資金補助区分で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_資金補助区分で誤ったCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\FundAuxiliary::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -503,11 +529,12 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
-    public function 正常系資金補助区分ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_資金補助区分ファイルがエクスポートできる() {
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Suisin/LoanFundAuxiliary')
@@ -523,21 +550,24 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系資金用途を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_資金用途を表示できる() {
+        $user = static::$user;
         \App\Models\Loan\FundUsage::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanFundUsage')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsage')
-
+                ->type('1', 'fund_usage')
+                ->type('1', 'fund_usage_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
     /**
      * @tests
      */
-    public function 正常系資金用途でCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_資金用途でCSVファイルインポートできる() {
+        $user      = static::$user;
         \App\Models\Loan\FundUsage::truncate();
         $file_name = '資金用途.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -566,8 +596,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系資金用途で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_資金用途で内容に不備のあるCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\FundUsage::truncate();
         $file_name = '資金用途.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -584,8 +614,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系資金用途区分で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_資金用途区分で誤ったCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\FundUsage::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -599,11 +629,12 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
-    public function 正常系資金用途区分ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_資金用途区分ファイルがエクスポートできる() {
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Suisin/LoanFundUsage')
@@ -619,21 +650,24 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系自振区分を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_自振区分を表示できる() {
+        $user = static::$user;
         \App\Models\Loan\JifuriCode::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanJifuriCode')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanJifuriCode')
-
+                ->type('1', 'jifuri_code')
+                ->type('1', 'jifuri_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
     /**
      * @tests
      */
-    public function 正常系自振区分でCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_自振区分でCSVファイルインポートできる() {
+        $user      = static::$user;
         \App\Models\Loan\JifuriCode::truncate();
         $file_name = '自振区分.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -662,8 +696,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系自振区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_自振区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\JifuriCode::truncate();
         $file_name = '自振区分.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -680,8 +714,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系自振区分で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_自振区分で誤ったCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\JifuriCode::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -695,11 +729,12 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
-    public function 正常系自振区分ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_自振区分ファイルがエクスポートできる() {
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Suisin/LoanJifuriCode')
@@ -715,21 +750,24 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系段階金利制区分を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_段階金利制区分を表示できる() {
+        $user = static::$user;
         \App\Models\Loan\PhasedMoneyRate::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanPhasedMoneyRate')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanPhasedMoneyRate')
-
+                ->type('1', 'phased_money_rate_code')
+                ->type('1', 'phased_money_rate_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
     /**
      * @tests
      */
-    public function 正常系段階金利制区分でCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_段階金利制区分でCSVファイルインポートできる() {
+        $user      = static::$user;
         \App\Models\Loan\PhasedMoneyRate::truncate();
         $file_name = '段階金利制区分.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -758,8 +796,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系段階金利制区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_段階金利制区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\PhasedMoneyRate::truncate();
         $file_name = '段階金利制区分.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -776,8 +814,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系段階金利制区分で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_段階金利制区分で誤ったCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\PhasedMoneyRate::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -791,11 +829,12 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
-    public function 正常系段階金利制区分ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_段階金利制区分ファイルがエクスポートできる() {
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Suisin/LoanPhasedMoneyRate')
@@ -811,21 +850,24 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系担保コードを表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_担保コードを表示できる() {
+        $user = static::$user;
         \App\Models\Loan\Collateral::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanCollateral')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanCollateral')
-
+                ->type('1', 'collateral_code')
+                ->type('1', 'collateral_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
     /**
      * @tests
      */
-    public function 正常系担保コードでCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_担保コードでCSVファイルインポートできる() {
+        $user      = static::$user;
         \App\Models\Loan\Collateral::truncate();
         $file_name = '担保コード.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -854,8 +896,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系担保コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_担保コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\Collateral::truncate();
         $file_name = '担保コード.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -872,8 +914,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系担保コードで誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_担保コードで誤ったCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\Collateral::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -887,11 +929,12 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
-    public function 正常系担保コードファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_担保コードファイルがエクスポートできる() {
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Suisin/LoanCollateral')
@@ -907,21 +950,24 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系保証機関コードを表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_保証機関コードを表示できる() {
+        $user = static::$user;
         \App\Models\Loan\SecurityInstitution::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanSecurityInstitution')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSecurityInstitution')
-
+                ->type('1', 'security_institution_code')
+                ->type('1', 'security_institution_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
     /**
      * @tests
      */
-    public function 正常系保証機関コードでCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_保証機関コードでCSVファイルインポートできる() {
+        $user      = static::$user;
         \App\Models\Loan\SecurityInstitution::truncate();
         $file_name = '保証機関コード.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -950,8 +996,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系保証機関コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_保証機関コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\SecurityInstitution::truncate();
         $file_name = '保証機関コード.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -968,8 +1014,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系保証機関コードで誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_保証機関コードで誤ったCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\SecurityInstitution::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -983,11 +1029,12 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
-    public function 正常系保証機関コードファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_保証機関コードファイルがエクスポートできる() {
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Suisin/LoanSecurityInstitution')
@@ -1003,21 +1050,24 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系利子補給助成機関区分を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_利子補給助成機関区分を表示できる() {
+        $user = static::$user;
         \App\Models\Loan\SubsidyInstitution::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanSubsidyInstitution')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyInstitution')
-
+                ->type('1', 'subsidy_institution_code')
+                ->type('1', 'subsidy_institution_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
     /**
      * @tests
      */
-    public function 正常系利子補給助成機関区分でCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_利子補給助成機関区分でCSVファイルインポートできる() {
+        $user      = static::$user;
         \App\Models\Loan\SubsidyInstitution::truncate();
         $file_name = '利子補給・助成機関区分.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -1046,8 +1096,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系利子補給助成機関区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_利子補給助成機関区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\SubsidyInstitution::truncate();
         $file_name = '利子補給・助成機関区分.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -1064,8 +1114,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系利子補給助成機関区分で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_利子補給助成機関区分で誤ったCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\SecurityInstitution::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -1079,11 +1129,12 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-     /**
+
+    /**
      * @tests
      */
-    public function 正常系利子補給助成機関区分ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_利子補給助成機関区分ファイルがエクスポートできる() {
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Suisin/LoanSubsidyInstitution')
@@ -1099,21 +1150,24 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系利子補給助成区分を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_利子補給助成区分を表示できる() {
+        $user = static::$user;
         \App\Models\Loan\Subsidy::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanSubsidy')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidy')
-
+                ->type('1', 'subsidy_code')
+                ->type('1', 'subsidy_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
     /**
      * @tests
      */
-    public function 正常系利子補給助成区分でCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_利子補給助成区分でCSVファイルインポートできる() {
+        $user      = static::$user;
         \App\Models\Loan\Subsidy::truncate();
         $file_name = '利子補給・助成区分.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -1142,8 +1196,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系利子補給助成区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_利子補給助成区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\Subsidy::truncate();
         $file_name = '利子補給・助成区分.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -1160,8 +1214,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系利子補給助成区分で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_利子補給助成区分で誤ったCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\Subsidy::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -1175,11 +1229,12 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
+
     /**
      * @tests
      */
-    public function 正常系利子補給助成区分ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_利子補給助成区分ファイルがエクスポートできる() {
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Suisin/LoanSubsidy')
@@ -1195,21 +1250,24 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系利子補給助成計算区分を表示できる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_利子補給助成計算区分を表示できる() {
+        $user = static::$user;
         \App\Models\Loan\SubsidyCalculation::truncate();
         $this->actingAs($user)
                 ->visit('/admin/suisin/config/Suisin/LoanSubsidyCalculation')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyCalculation')
-
+                ->type('1', 'subsidy_calculation_code')
+                ->type('1', 'subsidy_calculation_name')
+                ->press('検索する')
+                ->assertResponseOk()
         ;
     }
 
     /**
      * @tests
      */
-    public function 正常系利子補給助成計算区分でCSVファイルインポートできる() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_利子補給助成計算区分でCSVファイルインポートできる() {
+        $user      = static::$user;
         \App\Models\Loan\SubsidyCalculation::truncate();
         $file_name = '利子補給・助成計算区分.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
@@ -1238,8 +1296,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系利子補給助成計算区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_利子補給助成計算区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\SubsidyCalculation::truncate();
         $file_name = '利子補給・助成計算区分.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -1256,8 +1314,8 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系利子補給助成計算区分で誤ったCSVファイルがインポートされたときエラー() {
-        $user      = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 異常系_利子補給助成計算区分で誤ったCSVファイルがインポートされたときエラー() {
+        $user      = static::$user;
         \App\Models\Loan\SubsidyCalculation::truncate();
         $file_name = 'どれとも異なる設定ファイル.csv';
         $path      = storage_path() . '/tests/csvUploadFailedTestFile/' . $file_name;
@@ -1271,11 +1329,12 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->see('CSVファイル列数が一致しませんでした')
         ;
     }
-/**
+
+    /**
      * @tests
      */
-    public function 正常系利子補給助成計算区分ファイルがエクスポートできる() {
-        $user = factory(\App\User::class)->create(['is_super_user' => '1']);
+    public function 正常系_利子補給助成計算区分ファイルがエクスポートできる() {
+        $user = static::$user;
         \App\ZenonType::truncate();
         $this->actingAs($user)
                 ->visit('/admin/super_user/config/Suisin/LoanSubsidyCalculation')
@@ -1285,4 +1344,5 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
 }

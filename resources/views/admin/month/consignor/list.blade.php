@@ -12,7 +12,7 @@
 
 @section('sidebar')
 <div class="col-md-2">
-    @include('admin.sidebar.sidebar')
+    @include('partial.check_sidebar')
 </div>
 @endsection
 
@@ -30,7 +30,7 @@
                 {!! $consignors->render() !!}
             </div>
             <div class="btn-group" style="margin-bottom: 10px;">
-                <a class="btn btn-success btn-sm" href="{{route('admin::super::month::consignor::create')}}" onclick="return confirm('この内容でデータを更新してよろしいですか？');">委託者マスタ更新</a>
+                <a class="btn btn-success btn-sm" href="{{route('admin::super::month::consignor::create', ['monthly_id'=>$monthly_id])}}" onclick="return confirm('この内容でデータを更新してよろしいですか？');">委託者マスタ更新</a>
             </div>
         </div>
 
@@ -62,6 +62,7 @@
             </tbody>
         </table>
         @else
+        <div class="alert alert-warning" role="alert">データが見つかりませんでした。先に月次処理を行ってください。</div>
         @endif
     </div>
 </div><!-- .container-fluid -->

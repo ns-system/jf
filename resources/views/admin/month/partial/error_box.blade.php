@@ -6,9 +6,6 @@
         <strong class="text-warning" id="warning-list-title" style="display: none;">注意：</strong>
         <ul class="text-warning-light" id="warning-list" style="margin-bottom: 0;"></ul>
     </small>
-    <div id="process-list" class="text-left">
-        <a href="{{route('admin::super::month::status', ['id'=>$id])}}"><small><b>処理結果を確認する</b></small></a>
-    </div>
 </div>
 <button class="btn btn-primary btn-xs" id="error-box-list-visiblity" data-visible="true">表示／非表示</button>
 

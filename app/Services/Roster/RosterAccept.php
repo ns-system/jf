@@ -14,6 +14,7 @@ class RosterAccept
 //
     public function __construct($chief_user_id) {
         \App\User::findOrFail($chief_user_id);
+
         $ctl_divs = \App\ControlDivision::joinUsers($chief_user_id)->groupBy('control_divisions.division_id')->select('control_divisions.division_id')->get();
         if ($ctl_divs->isEmpty())
         {
@@ -28,11 +29,16 @@ class RosterAccept
     }
 
     public function updateRoster($input) {
-        if (!isset($input['id']))
+        if (empty($input['id']))
         {
             throw new \Exception('勤務データIDがセットされていないようです。');
         }
         foreach ($input['id'] as $id) {
+            if (empty($id))
+            {
+
+                continue;
+            }
             $roster = \App\Roster::leftJoin('sinren_db.sinren_users', 'rosters.user_id', '=', 'sinren_users.user_id')
                     ->select(\DB::raw('*, rosters.id as id, rosters.user_id as user_id'))
                     ->findOrFail($id)
@@ -57,6 +63,8 @@ class RosterAccept
                 $is_actual_accept = ($input['actual'][$id]) ? true : false;
                 $this->updateActual($roster, $input, $id, $is_actual_accept);
             }
+            $roster->save();
+
             unset($roster);
         }
     }
@@ -78,8 +86,7 @@ class RosterAccept
             $roster->plan_accepted_at    = date('Y-m-d H:i:s');
             $roster->plan_accept_user_id = $this->chief_user_id;
             $roster->reject_reason       = $reject_reason;
-        }
-        else
+        } else
         {
             $roster->is_plan_accept      = false;
             $roster->is_plan_reject      = true;
@@ -87,7 +94,6 @@ class RosterAccept
             $roster->plan_reject_user_id = $this->chief_user_id;
             $roster->reject_reason       = $reject_reason;
         }
-        $roster->save();
     }
 
     private function updateActual($roster, $input, $id, $is_actual_accept) {
@@ -115,8 +121,7 @@ class RosterAccept
             $roster->actual_accepted_at    = date('Y-m-d H:i:s');
             $roster->actual_accept_user_id = $this->chief_user_id;
             $roster->reject_reason         = $reject_reason;
-        }
-        else
+        } else
         {
             $roster->is_actual_accept      = false;
             $roster->is_actual_reject      = true;
@@ -124,7 +129,6 @@ class RosterAccept
             $roster->actual_reject_user_id = $this->chief_user_id;
             $roster->reject_reason         = $reject_reason;
         }
-        $roster->save();
     }
 
 }

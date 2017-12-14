@@ -29,15 +29,7 @@
                 data-toggle="tooltip"
                 data-placement="right"
                 title="（スーパーユーザー用機能）公開する年月およびその処理状況を確認できます。"><span class="text-danger">全オンデータセットアップ処理</span></a><span></span>
-            
-            <a
-                role="presentation"
-                class="list-group-item collapse list-second"
-                href="{{route('admin::super::month::consignor::show')}}"
-                data-toggle="tooltip"
-                data-placement="right"
-                title="（スーパーユーザー用機能）委託者マスタを更新できます。"><span class="text-danger">委託者マスタセットアップ処理</span></a><span></span>
-            
+
             <a
                 role="presentation"
                 class="list-group-item collapse list-second"
@@ -76,7 +68,7 @@
                 href="{{route('admin::super::config::index', ['system'=>'Admin','category'=>'ZenonTable'])}}"
                 data-toggle="tooltip"
                 title="全オン還元情報のMySQL側のカラム設定を行います。"
-                data-placement="right">MySQL全オンテーブル設定</a>
+                data-placement="right">MySQL全オンテーブルカラム設定</a>
     <span></span>
 
         </div>

@@ -20,7 +20,7 @@ class AddFutsuAccountLedgersToKeyColumns extends Migration
             }
             if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'key_account_number'))
             {
-                $table->integer('key_account_number')
+                $table->double('key_account_number')
                         ->after('monthly_id')
                         ->index()
                 ;

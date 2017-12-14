@@ -12,8 +12,14 @@ class UnitCsvUsableTest extends TestCase
 {
 
     use FileTestable;
+    use \App\Services\Traits\Testing\DbDisconnectable;
 
     protected $s;
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
+    }
 
     public function __construct() {
         $this->s = $this->getMockForTrait(\App\Services\Traits\CsvUsable::class);

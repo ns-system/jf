@@ -6,7 +6,7 @@
 
 @section('sidebar')
 <div class="col-md-2">
-    @include('admin.sidebar.sidebar')
+    @include('partial.check_sidebar')
 </div>
 @endsection
 
@@ -19,12 +19,12 @@
         <form class="form-horizontal" role="form" method="POST" action="{!! $configs['form_route'] !!}">
             {{-- CSRF対策--}}
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
-<div class="text-right" data-spy="affix" style="right: 30px; top: 100px;" data-offset-top="150">
-    <div class="btn-group">
-        <button type="button" class="btn btn-primary btn-sm margin-bottom" id="more">もっと見る</button>
-        <button type="sumbit" class="btn btn-success btn-sm margin-bottom" onclick="return confirm('取り込んだデータをデータベースに反映させてよろしいですか？');">更新する</button>
-    </div>
-</div>
+            <div class="text-right" data-spy="affix" style="right: 30px; top: 100px;" data-offset-top="150">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm margin-bottom" id="more">もっと見る</button>
+                    <button type="sumbit" class="btn btn-success btn-sm margin-bottom" onclick="return confirm('取り込んだデータをデータベースに反映させてよろしいですか？');">更新する</button>
+                </div>
+            </div>
             <table class="table table-hover va-middle table-small">
                 <thead>
                     <tr>
@@ -35,7 +35,7 @@
                         @else
                         <th class="bg-primary">{{$column_config['2']}}</th>
                         @endif
-<!--                        <th class="bg-primary @if(array_key_exists('class', $column_config)) {{$column_config['class']}} @endif">{{$column_config['2']}}</th>-->
+                        <!--                        <th class="bg-primary @if(array_key_exists('class', $column_config)) {{$column_config['class']}} @endif">{{$column_config['2']}}</th>-->
                         @endforeach
                     </tr>
                 </thead>
@@ -48,12 +48,7 @@
                             {{$cnt + 1}}
                         </th>
                         @foreach($configs['table_columns'] as $column_config)
-                        @if(array_key_exists('class', $column_config))
-                        <td class="$column_config['class']">
-                            @else
-                        <td>
-                            @endif
-    <!--                        <td class="@if(array_key_exists('class', $column_config)) {{$column_config['class']}} @endif">-->
+                        <td @if(array_key_exists('class', $column_config)) class="$column_config['class']" @endif>
 
                             @if(array_key_exists('format', $column_config))
                             <?php $display = sprintf($column_config['format'], $row[$column_config[1]]); ?>
@@ -81,7 +76,7 @@
                             ?>
                             <input type="hidden" name="<?php echo $column_config[1] . '[' . $key . ']'; ?>" value="{{$row[$column_config[1]]}}">
                             @else
-                            {{$display}}
+                            <span class="text-muted" data-toggle="tooltip" title="このカラムはデータベースに登録されません。">{{$display}}</span>
                             @endif
                         </td>
                         @endforeach
@@ -98,19 +93,19 @@
 @section('footer')
 @parent
 <script type="text/javascript">
-$(function(){
-    $('#more').click(function(){
-        var i = 0;
-        $('.rows[data-hidden="true"]').each(function(){
-            i++;
-            $(this).show().removeAttr('data-hidden');
-            console.log(i);
-            if(i >= 25){ return false; }
+    $(function(){
+        $('#more').click(function(){
+            var i = 0;
+            $('.rows[data-hidden="true"]').each(function(){
+                i++;
+                $(this).show().removeAttr('data-hidden');
+                console.log(i);
+                if(i >= 25){ return false; }
+            });
+            if($('.rows[data-hidden="true"]').length == 0){
+                $('#more').attr('disabled', 'disabled');
+            }
         });
-        if($('.rows[data-hidden="true"]').length == 0){
-            $('#more').attr('disabled', 'disabled');
-        }
     });
-});
 </script>
 @endsection

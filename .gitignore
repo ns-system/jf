@@ -21,3 +21,5 @@ Vagrantfile
 *.box
 report/
 config/database.php
+config/app.php
+config/import_config.json

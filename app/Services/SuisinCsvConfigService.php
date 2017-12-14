@@ -34,6 +34,7 @@ class SuisinCsvConfigService
                 ['row' => [['keizai_gist_kanji', 'ビジネスネット 漢字摘要', 'class' => 'text-left']]],
                 ['row' => [['keizai_gist_full_kana', 'ビジネスネット カナ摘要', 'class' => 'text-left']]],
                 ['row' => [['keizai_gist_half_kana', 'ビジネスネット ｶﾅ摘要', 'class' => 'text-left']]],
+                ['row' => [['is_keizai', 'ビジネスネット 経済フラグ',]]],
                 ['row' =>
                     [
                         ['created_at', '登録日', 'class' => 'small'],
@@ -44,6 +45,19 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'gist_code' => 'asc',
             ],
+            'table_search'  => [
+                /**
+                 * key         = インプットフォーム名
+                 * column_name = クエリ検索時のカラム名
+                 * display     = ラベル名
+                 * type        = 型（string型のみlike検索）
+                 */
+                'gist_code'             => ['column_name' => 'gist_code', 'display' => '摘要コード', 'type' => 'integer'],
+                'display_gist'          => ['column_name' => 'display_gist', 'display' => '表示摘要', 'type' => 'string'],
+                'keizai_gist_kanji'     => ['column_name' => 'keizai_gist_kanji', 'display' => 'ビジネスネット 漢字摘要', 'type' => 'string'],
+                'keizai_gist_full_kana' => ['column_name' => 'keizai_gist_full_kana', 'display' => 'ビジネスネット カナ摘要', 'type' => 'string'],
+                'is_keizai'             => ['column_name' => 'is_keizai', 'display' => 'ビジネスネット 経済フラグ', 'type' => 'boolean'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'gist_code',
@@ -52,6 +66,7 @@ class SuisinCsvConfigService
                     'keizai_gist_kanji',
                     'keizai_gist_half_kana',
                     'keizai_gist_full_kana',
+                    'is_keizai',
                 ],
                 'kanji_columns' => [
                     '摘要コード',
@@ -60,6 +75,7 @@ class SuisinCsvConfigService
                     'ビジネスネット 漢字摘要',
                     'ビジネスネット カナ摘要',
                     'ビジネスネット ｶﾅ摘要',
+                    'ビジネスネット 経済フラグ',
                 ],
             ],
             'import'        => [
@@ -71,13 +87,16 @@ class SuisinCsvConfigService
                     [1, 'keizai_gist_kanji', '漢字摘要', 'class' => 'text-left'],
                     [1, 'keizai_gist_full_kana', 'カナ摘要', 'class' => 'text-left'],
                     [1, 'keizai_gist_half_kana', 'ｶﾅ摘要', 'class' => 'text-left'],
+                    [1, 'is_keizai', '経済フラグ',],
                 ],
                 'rules'         => [
                     'gist_code'    => 'required|integer',
                     'display_gist' => 'required|min:1',
+                    'is_keizai'    => 'required|boolean',
                 ],
                 'types'         => [
                     'gist_code' => 'integer',
+                    'is_keizai' => 'boolean',
                 ],
                 'flags'         => [
                     'display_gist'          => 1,
@@ -85,6 +104,7 @@ class SuisinCsvConfigService
                     'keizai_gist_kanji'     => 1,
                     'keizai_gist_half_kana' => 1,
                     'keizai_gist_full_kana' => 1,
+                    'is_keizai'             => 1,
                 ],
                 'keys'          => ['gist_code'],
             ],
@@ -124,6 +144,12 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'deposit_category_codes.subject_code'  => 'asc',
                 'deposit_category_codes.category_code' => 'asc',
+            ],
+            'table_search'  => [
+                'subject_code'  => ['column_name' => 'deposit_category_codes.subject_code', 'display' => '科目コード', 'type' => 'integer'],
+                'subject_name'  => ['column_name' => 'subject_codes.subject_name', 'display' => '科目名', 'type' => 'string'],
+                'category_code' => ['column_name' => 'deposit_category_codes.category_code', 'display' => '種類コード', 'type' => 'integer'],
+                'category_name' => ['column_name' => 'deposit_category_codes.category_name', 'display' => '種類名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -189,6 +215,10 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'bankbook_deed_type' => 'asc',
             ],
+            'table_search'  => [
+                'bankbook_deed_type' => ['column_name' => 'bankbook_deed_type', 'display' => '通証タイプ', 'type' => 'integer'],
+                'bankbook_deed_name' => ['column_name' => 'bankbook_deed_name', 'display' => '通証名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'bankbook_deed_type',
@@ -222,59 +252,6 @@ class SuisinCsvConfigService
         $this->param = $params;
     }
 
-//    public function getDepositBankbookCode() {
-//        $params      = [
-//            'object'        => '\App\Models\DepositBankbookCode',
-//            'display'       => [
-//                'title' => '通証区分',
-//                'route' => $this->route.'/DepositBankbookCode',
-//                'h2'    => '通証区分',
-//            ],
-//            'table_columns' => [
-//                ['row' => [['subject_code', '科目コード', 'format' => '%02d']]],
-//                ['row' => [['bankbook_deed_code', '通証区分', 'format' => '%02d']]],
-//                ['row' => [['bankbook_deed_name', '通証区分名', 'class' => 'text-left']]],
-//                ['row' =>
-//                    [
-//                        ['created_at', '登録日', 'class' => 'small'],
-//                        ['updated_at', '更新日', 'class' => 'small'],
-//                    ]
-//                ],
-//            ],
-//            'csv'           => [
-//                'columns'       => [
-//                    'subject_code',
-//                    'bankbook_deed_code',
-//                    'bankbook_deed_name',
-//                ],
-//                'kanji_columns' => [
-//                    '科目コード',
-//                    '通証区分',
-//                    '通証区分名',
-//                ],
-//            ],
-//            'import'        => [
-//                'table_columns' => [
-//                    /* if 1 is entered, it acts as an input form, input form name, kanji_name, [format], [class] */
-//                    [1, 'subject_code', '科目コード', 'format' => '%02d'],
-//                    [1, 'bankbook_deed_code', '通証区分', 'format' => '%02d'],
-//                    [1, 'bankbook_deed_name', '通証区分名', 'class' => 'text-left'],
-//                ],
-//                'types'         => [
-//                    'subject_code'       => 'integer',
-//                    'bankbook_deed_code' => 'integer',
-//                ],
-//                'flags'         => [
-//                    'bankbook_deed_code' => 1,
-//                    'subject_code'       => 1,
-//                    'bankbook_deed_name' => 1,
-//                ],
-//                'keys'          => ['subject_code', 'bankbook_deed_code'],
-//            ],
-//        ];
-//        $this->param = $params;
-//    }
-
     public function getSubject() {
         $params      = [
             'object'        => '\App\Models\Common\Subject',
@@ -296,6 +273,10 @@ class SuisinCsvConfigService
             ],
             'table_orders'  => [
                 'subject_code' => 'asc',
+            ],
+            'table_search'  => [
+                'subject_code' => ['column_name' => 'subject_code', 'display' => '科目コード', 'type' => 'integer'],
+                'subject_name' => ['column_name' => 'subject_name', 'display' => '科目名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -352,6 +333,11 @@ class SuisinCsvConfigService
             ],
             'table_orders'  => [
                 'industry_code' => 'asc',
+            ],
+            'table_search'  => [
+                'industry_code'    => ['column_name' => 'industry_code', 'display' => '業種コード', 'type' => 'integer'],
+                'industry_name'    => ['column_name' => 'industry_name', 'display' => '業種名', 'type' => 'string'],
+                'industry_content' => ['column_name' => 'industry_content', 'display' => '業種内容', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -413,6 +399,11 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'qualification_code' => 'asc',
             ],
+            'table_search'  => [
+                'qualification_code' => ['column_name' => 'qualification_code', 'display' => '資格区分', 'type' => 'integer'],
+                'qualification_type' => ['column_name' => 'qualification_type', 'display' => '資格種類', 'type' => 'string'],
+                'qualification_name' => ['column_name' => 'qualification_name', 'display' => '資格名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'qualification_code',
@@ -473,6 +464,10 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'personality_code' => 'asc',
             ],
+            'table_search'  => [
+                'personality_code' => ['column_name' => 'personality_code', 'display' => '人格コード', 'type' => 'integer'],
+                'personality_name' => ['column_name' => 'personality_name', 'display' => '人格名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'personality_code',
@@ -527,6 +522,10 @@ class SuisinCsvConfigService
             ],
             'table_orders'  => [
                 'prefecture_code' => 'asc',
+            ],
+            'table_search'  => [
+                'prefecture_code' => ['column_name' => 'prefecture_code', 'display' => '県コード', 'type' => 'integer'],
+                'prefecture_name' => ['column_name' => 'prefecture_name', 'display' => '県名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -593,6 +592,12 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'prefecture_codes.prefecture_code' => 'asc',
                 'stores.store_number'              => 'asc',
+            ],
+            'table_search'  => [
+                'prefecture_code' => ['column_name' => 'stores.prefecture_code', 'display' => '県コード', 'type' => 'integer'],
+                'prefecture_name' => ['column_name' => 'prefecture_codes.prefecture_name', 'display' => '県名', 'type' => 'string'],
+                'store_number'    => ['column_name' => 'store_number', 'display' => '店舗コード', 'type' => 'integer'],
+                'store_name'      => ['column_name' => 'store_name', 'display' => '店舗名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -695,6 +700,16 @@ class SuisinCsvConfigService
                 'small_stores.control_store_code' => 'asc',
                 'small_stores.small_store_number' => 'asc',
             ],
+            'table_search'  => [
+                'prefecture_code'    => ['column_name' => 'small_stores.prefecture_code', 'display' => '県コード', 'type' => 'integer'],
+                'prefecture_name'    => ['column_name' => 'prefecture_codes.prefecture_name', 'display' => '県名', 'type' => 'string'],
+                'store_number'       => ['column_name' => 'small_stores.store_number', 'display' => '店舗コード', 'type' => 'integer'],
+                'store_name'         => ['column_name' => 'stores.store_name', 'display' => '店舗名', 'type' => 'string'],
+                'small_store_number' => ['column_name' => 'small_store_number', 'display' => '小規模店番', 'type' => 'integer'],
+                'small_store_name'   => ['column_name' => 'small_store_name', 'display' => '小規模店名', 'type' => 'string'],
+                'control_store_code' => ['column_name' => 'small_stores.control_store_code', 'display' => '管轄店舗コード', 'type' => 'integer'],
+                'control_store_name' => ['column_name' => 'control_stores.control_store_name', 'display' => '管轄店舗名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'small_stores.prefecture_code',
@@ -759,9 +774,9 @@ class SuisinCsvConfigService
         $params      = [
             'object'        => '\App\Models\Common\Area',
             'join'          => [
-                ['db' => 'master_db.prefecture_codes', 'left' => 'area_codes.prefecture_code',    'right' => 'prefecture_codes.prefecture_code',],
-                ['db' => 'master_db.stores',           'left' => 'area_codes.store_number',       'right' => 'stores.store_number',],
-                ['db' => 'master_db.small_stores',     'left' => 'area_codes.small_store_number', 'right' => 'small_stores.small_store_number',],
+                ['db' => 'master_db.prefecture_codes', 'left' => 'area_codes.prefecture_code', 'right' => 'prefecture_codes.prefecture_code',],
+                ['db' => 'master_db.stores', 'left' => 'area_codes.store_number', 'right' => 'stores.store_number',],
+                ['db' => 'master_db.small_stores', 'left' => 'area_codes.small_store_number', 'right' => 'small_stores.small_store_number',],
             ],
             'as'            => [
                 'table'   => 'area_codes',
@@ -813,6 +828,16 @@ class SuisinCsvConfigService
                 'area_codes.store_number'       => 'asc',
                 'area_codes.small_store_number' => 'asc',
                 'area_codes.area_code'          => 'asc',
+            ],
+            'table_search'  => [
+                'prefecture_code'    => ['column_name' => 'area_codes.prefecture_code', 'display' => '県コード', 'type' => 'integer'],
+                'prefecture_name'    => ['column_name' => 'prefecture_codes.prefecture_name', 'display' => '県名', 'type' => 'string'],
+                'store_number'       => ['column_name' => 'area_codes.store_number', 'display' => '店舗コード', 'type' => 'integer'],
+                'store_name'         => ['column_name' => 'stores.store_name', 'display' => '店舗名', 'type' => 'string'],
+                'small_store_number' => ['column_name' => 'area_codes.small_store_number', 'display' => '小規模店番', 'type' => 'integer'],
+                'small_store_name'   => ['column_name' => 'small_store_name', 'display' => '小規模店名', 'type' => 'string'],
+                'area_code'          => ['column_name' => 'area_code', 'display' => '地区コード', 'type' => 'integer'],
+                'area_name'          => ['column_name' => 'area_name', 'display' => '地区名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -915,6 +940,12 @@ class SuisinCsvConfigService
                 'control_stores.prefecture_code'    => 'asc',
                 'control_stores.control_store_code' => 'asc',
             ],
+            'table_search'  => [
+                'prefecture_code'    => ['column_name' => 'control_stores.prefecture_code', 'display' => '県コード', 'type' => 'integer'],
+                'prefecture_name'    => ['column_name' => 'prefecture_codes.prefecture_name', 'display' => '県名', 'type' => 'string'],
+                'control_store_code' => ['column_name' => 'control_stores.control_store_code', 'display' => '管轄店舗コード', 'type' => 'integer'],
+                'control_store_name' => ['column_name' => 'control_stores.control_store_name', 'display' => '管轄店舗名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'control_stores.prefecture_code',
@@ -984,16 +1015,6 @@ class SuisinCsvConfigService
                         ['group_name', 'グループ名'],
                     ]
                 ],
-//                ['eloquent' =>
-//                    [
-//                        'model' => '\App\Models\ConsignorGroup',
-//                        'key'   => [
-//                            'local_key'   => 'id',
-//                            'foreign_key' => 'consignor_group_id',
-//                        ],
-//                        'row'   => [['group_name', 'グループ名', 'class' => 'text-left']],
-//                    ]
-//                ],
                 ['row' =>
                     [
                         ['created_at', '登録日', 'class' => 'small'],
@@ -1004,6 +1025,12 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'consignors.consignor_code'     => 'asc',
                 'consignors.consignor_group_id' => 'asc',
+            ],
+            'table_search'  => [
+                'consignor_code'         => ['column_name' => 'consignors.consignor_code', 'display' => '委託者コード', 'type' => 'integer'],
+                'display_consignor_name' => ['column_name' => 'consignors.display_consignor_name', 'display' => '表示委託者名', 'type' => 'string'],
+                'consignor_group_id'     => ['column_name' => 'consignors.consignor_group_id', 'display' => '委託者グループコード', 'type' => 'integer'],
+                'group_name'             => ['column_name' => 'consignor_groups.group_name', 'display' => '委託者グループ名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -1061,32 +1088,16 @@ class SuisinCsvConfigService
             'table_columns' => [
                 ['row' => [['id', 'グループコード',]]],
                 ['row' => [['group_name', 'グループ名', 'class' => 'text-left']]],
-//                ['eloquent' =>
-//                    [
-//                        'model' => '\App\Models\User',
-//                        'key'   => [
-//                            'local_key'   => 'id',
-//                            'foreign_key' => 'create_user_id',
-//                        ],
-//                        'row'   => [['name', '登録者']],
-//                    ]
-//                ],
-//                ['eloquent' =>
-//                    [
-//                        'model' => '\App\Models\User',
-//                        'key'   => [
-//                            'local_key'   => 'id',
-//                            'foreign_key' => 'modify_user_id',
-//                        ],
-//                        'row'   => [['name', '更新者']],
-//                    ]
-//                ],
                 ['row' =>
                     [
                         ['created_at', '登録日', 'class' => 'small'],
                         ['updated_at', '更新日', 'class' => 'small'],
                     ]
                 ],
+            ],
+            'table_search'  => [
+                'id'         => ['column_name' => 'id', 'display' => '委託者グループコード', 'type' => 'integer'],
+                'group_name' => ['column_name' => 'group_name', 'display' => '委託者グループ名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -1146,6 +1157,10 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'deposit_taxation_codes.taxation_code' => 'asc',
             ],
+            'table_search'  => [
+                'taxation_code' => ['column_name' => 'taxation_code', 'display' => '課税コード', 'type' => 'integer'],
+                'taxation_name' => ['column_name' => 'taxation_name', 'display' => '表示名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'deposit_taxation_codes.taxation_code',
@@ -1200,6 +1215,10 @@ class SuisinCsvConfigService
             ],
             'table_orders'  => [
                 'deposit_term_codes.term_code' => 'asc',
+            ],
+            'table_search'  => [
+                'term_code' => ['column_name' => 'term_code', 'display' => '期間コード', 'type' => 'integer'],
+                'term_name' => ['column_name' => 'term_name', 'display' => '表示名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -1256,6 +1275,10 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'deposit_continuation_codes.continuation_code' => 'asc',
             ],
+            'table_search'  => [
+                'continuation_code' => ['column_name' => 'continuation_code', 'display' => '継続区分', 'type' => 'integer'],
+                'continuation_name' => ['column_name' => 'continuation_name', 'display' => '表示名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'deposit_continuation_codes.continuation_code',
@@ -1310,6 +1333,10 @@ class SuisinCsvConfigService
             ],
             'table_orders'  => [
                 'loan_category_codes.loan_category_code' => 'asc',
+            ],
+            'table_search'  => [
+                'loan_category_code' => ['column_name' => 'loan_category_code', 'display' => '貸付種類', 'type' => 'integer'],
+                'loan_category_name' => ['column_name' => 'loan_category_name', 'display' => '表示名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -1366,6 +1393,10 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'loan_collateral_codes.collateral_code' => 'asc',
             ],
+            'table_search'  => [
+                'collateral_code' => ['column_name' => 'collateral_code', 'display' => '担保コード', 'type' => 'integer'],
+                'collateral_name' => ['column_name' => 'collateral_name', 'display' => '表示名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'loan_collateral_codes.collateral_code',
@@ -1420,6 +1451,10 @@ class SuisinCsvConfigService
             ],
             'table_orders'  => [
                 'loan_fishery_form_codes.fishery_form_code' => 'asc',
+            ],
+            'table_search'  => [
+                'fishery_form_code' => ['column_name' => 'fishery_form_code', 'display' => '漁業形態', 'type' => 'integer'],
+                'fishery_form_name' => ['column_name' => 'fishery_form_name', 'display' => '表示名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -1476,6 +1511,10 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'loan_fund_codes.fund_code' => 'asc',
             ],
+            'table_search'  => [
+                'fund_code' => ['column_name' => 'fund_code', 'display' => '資金区分', 'type' => 'integer'],
+                'fund_name' => ['column_name' => 'fund_name', 'display' => '表示名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'loan_fund_codes.fund_code',
@@ -1531,6 +1570,11 @@ class SuisinCsvConfigService
             ],
             'table_orders'  => [
                 'loan_fund_auxiliary_codes.fund_auxiliary_code' => 'asc',
+            ],
+            'table_search'  => [
+                'fund_auxiliary_code'     => ['column_name' => 'fund_auxiliary_code', 'display' => '資金補助区分', 'type' => 'integer'],
+                'fund_auxiliary_category' => ['column_name' => 'fund_auxiliary_category', 'display' => '資金補助分類', 'type' => 'string'],
+                'fund_auxiliary_name'     => ['column_name' => 'fund_auxiliary_name', 'display' => '表示名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -1592,6 +1636,10 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'loan_fund_usage_codes.fund_usage_code' => 'asc',
             ],
+            'table_search'  => [
+                'fund_usage_code' => ['column_name' => 'fund_usage_code', 'display' => '資金使途区分', 'type' => 'integer'],
+                'fund_usage_name' => ['column_name' => 'fund_usage_name', 'display' => '表示名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'loan_fund_usage_codes.fund_usage_code',
@@ -1646,6 +1694,10 @@ class SuisinCsvConfigService
             ],
             'table_orders'  => [
                 'loan_jifuri_codes.jifuri_code' => 'asc',
+            ],
+            'table_search'  => [
+                'jifuri_code' => ['column_name' => 'jifuri_code', 'display' => '自振区分', 'type' => 'integer'],
+                'jifuri_name' => ['column_name' => 'jifuri_name', 'display' => '表示名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -1702,6 +1754,10 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'loan_phased_money_rate_codes.phased_money_rate_code' => 'asc',
             ],
+            'table_search'  => [
+                'phased_money_rate_code' => ['column_name' => 'phased_money_rate_code', 'display' => '段階金利制区分', 'type' => 'integer'],
+                'phased_money_rate_name' => ['column_name' => 'phased_money_rate_name', 'display' => '表示名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'loan_phased_money_rate_codes.phased_money_rate_code',
@@ -1756,6 +1812,10 @@ class SuisinCsvConfigService
             ],
             'table_orders'  => [
                 'loan_security_institution_codes.security_institution_code' => 'asc',
+            ],
+            'table_search'  => [
+                'security_institution_code' => ['column_name' => 'security_institution_code', 'display' => '保証機関コード', 'type' => 'integer'],
+                'security_institution_name' => ['column_name' => 'security_institution_name', 'display' => '表示名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -1812,6 +1872,10 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'loan_subsidy_codes.subsidy_code' => 'asc',
             ],
+            'table_search'  => [
+                'subsidy_code' => ['column_name' => 'subsidy_code', 'display' => '利子補給・助成区分', 'type' => 'integer'],
+                'subsidy_name' => ['column_name' => 'subsidy_name', 'display' => '表示名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'loan_subsidy_codes.subsidy_code',
@@ -1866,6 +1930,10 @@ class SuisinCsvConfigService
             ],
             'table_orders'  => [
                 'loan_subsidy_calculation_codes.subsidy_calculation_code' => 'asc',
+            ],
+            'table_search'  => [
+                'subsidy_calculation_code' => ['column_name' => 'subsidy_calculation_code', 'display' => '利子補給・助成計算区分', 'type' => 'integer'],
+                'subsidy_calculation_name' => ['column_name' => 'subsidy_calculation_name', 'display' => '表示名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [
@@ -1922,6 +1990,10 @@ class SuisinCsvConfigService
             'table_orders'  => [
                 'loan_subsidy_institution_codes.subsidy_institution_code' => 'asc',
             ],
+            'table_search'  => [
+                'subsidy_institution_code' => ['column_name' => 'subsidy_institution_code', 'display' => '利子補給・助成機関区分', 'type' => 'integer'],
+                'subsidy_institution_name' => ['column_name' => 'subsidy_institution_name', 'display' => '表示名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'loan_subsidy_institution_codes.subsidy_institution_code',
@@ -1976,6 +2048,10 @@ class SuisinCsvConfigService
             ],
             'table_orders'  => [
                 'loan_fund_usages.fund_usage' => 'asc',
+            ],
+            'table_search'  => [
+                'fund_usage'      => ['column_name' => 'fund_usage', 'display' => '資金用途', 'type' => 'integer'],
+                'fund_usage_name' => ['column_name' => 'fund_usage_name', 'display' => '表示名', 'type' => 'string'],
             ],
             'csv'           => [
                 'columns'       => [

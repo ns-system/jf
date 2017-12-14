@@ -22,7 +22,7 @@
 
 {{-- @section('sidebar')
 <div class="col-md-2">
-    @include('admin.sidebar.sidebar')
+    @include('partial.check_sidebar')
 </div>
 @endsection --}}
 
@@ -153,8 +153,10 @@
             }
             if(s['is_import_end'] == true){
                 clearInterval(timer);
-                alert('処理は正常に終了しました。');
-                $('#process-list').show();
+                var is_move = confirm('処理は正常に終了しました。処理確認画面に移動しますか？');
+                if(is_move) location = "{{route('admin::super::month::status', ['id'=>$id])}}";
+
+                // $('#process-list').show();
             }
         },
         (error) => {
