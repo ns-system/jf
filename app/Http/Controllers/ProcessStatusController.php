@@ -118,8 +118,15 @@ class ProcessStatusController extends Controller
         $monthly_dir = $this->path . "/monthly/{$id}";
 
         try {
+            $tmp_lists=[];
+            $monthly_lists=[];
+            if(file_exists($tmp_dir)){
             $tmp_lists     = $csv_service->getCsvFileList($tmp_dir);
+            }
+            if(file_exists($monthly_dir)){
             $monthly_lists = $csv_service->getCsvFileList($monthly_dir);
+            }
+            
         } catch (\Exception $exc) {
             \Session::flash('danger_message', '一時ディレクトリもしくは月次ディレクトリが見つかりませんでした。管理者に問い合わせてください。');
             return back();

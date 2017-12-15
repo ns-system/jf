@@ -154,6 +154,7 @@
 
                     </td>
                     <td>
+                        
                         <input
                         type="checkbox"
                         style="width: 18px;height: 18px;vertical-align: middle; margin:0; margin-bottom: 5px;"
@@ -163,8 +164,13 @@
                         data-placement="right"
                         title="すでに当月データが累積されていた場合、データが二重で累積される恐れがあります。"
                         value="{{$f->key_id}}"
-                        @if(!$f->is_import || $record_counts[$f->key_id] <= 0) checked @endif
-                        @else disabled @endif
+                        @if(!$f->is_exist) disabled 
+                        @elseif(!$f->is_process) disabled
+                        @endif
+
+                        @if(!$f->is_import && $f->is_exist && $f->is_process && $record_counts[$f->key_id] <= 0) checked @endif
+                        @else disabled
+                        @endif
                         >
                         {{--                 <input type="hidden" name="id[{{$f->key_id}}]" value="{{$f->key_id}}"> --}}
                     </td>
