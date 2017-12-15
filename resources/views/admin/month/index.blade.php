@@ -12,7 +12,7 @@
 
 @section('sidebar')
 <div class="col-md-2">
-    @include('admin.sidebar.sidebar')
+    @include('partial.check_sidebar')
 </div>
 @endsection
 
@@ -90,9 +90,10 @@
                                     @else                      <span class="label label-warning">未了</span> @endif
                                 </td>
                                 <td>
-                                    @if($job->is_import_error)   <span class="label label-danger" >異常</span>
-                                    @elseif($job->is_import_end) <span class="label label-success">終了</span>
-                                    @else                        <span class="label label-warning">未了</span> @endif
+                                    @if($job->is_import_error)      <span class="label label-danger" >異常</span>
+                                    @elseif(!$job->is_import_start) <span class="label label-default">未割当</span>
+                                    @elseif($job->is_import_end)    <span class="label label-success">終了</span>
+                                    @else                           <span class="label label-warning">未了</span> @endif
                                 </td>
                                 <td>{{$job->error_message}}</td>
                                 <td>

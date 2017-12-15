@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class UnitCopyCsvFileServiceTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
+
     protected $directorys         = [
         'temp'    => 'temp',
         'monthly' => 'monthly',
@@ -113,6 +115,8 @@ class UnitCopyCsvFileServiceTest extends TestCase
         {
             system("rm -rf {$base_path}");
         }
+        $this->disconnect();
+        parent::tearDown();
     }
 
     /**

@@ -12,6 +12,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
 {
 
     use Traits\CsvUsable;
+    use Traits\Testing\DbDisconnectable;
 
     protected static $init = false;
     protected static $user;
@@ -32,6 +33,12 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
             }
         }
     }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
+    }
+
 
     protected $dummy_zenon_csv_data = [
         ['identifier' => "identifier1", 'zenon_data_type_id' => "2", 'zenon_data_name' => "zenondataname1", 'first_column_position' => "0", 'last_column_position' => "198", 'column_length' => "190", 'reference_return_date' => "referencereturndate1", 'cycle' => "M", 'database_name' => "zenon_data_db", 'table_name' => "customer_information_files", 'is_cumulative' => "1", 'is_account_convert' => "0", 'is_process' => "1", 'is_split' => "1", 'zenon_format_id' => "2", 'account_column_name' => "", 'subject_column_name' => "", 'split_foreign_key_1' => "", 'split_foreign_key_2' => "", 'split_foreign_key_3' => "", 'split_foreign_key_4' => "",],];

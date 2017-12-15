@@ -90,6 +90,7 @@
                 <thead>
                     <tr class="bg-primary">
                         <th>No</th>
+                        <th></th>
                         <th>
                             <p data-toggle="tooltip" title="処理を行う場合チェックを入れてください。データが取り込まれていない場合、処理は行えません。">
                                 処理
@@ -101,8 +102,13 @@
                             </p>
                         </th>
                         <th>
-                            <p data-toggle="tooltip" title="実際にデータが還元された日です。月次データは前月末時点のデータとなります。">
-                                還元日
+                            <p data-toggle="tooltip" title="還元日＝実際にデータが還元された日です。月次データは前月末時点のデータとなります。目安還元日＝還元が想定される目安日です。">
+                                還元日／目安還元日
+                            </p>
+                        </th>
+                        <th>
+                            <p data-toggle="tooltip" title="当月のデータベースに登録されている件数を表示しています。口座共通部は全てのレコードの合計件数となっています。">
+                                当月登録件数
                             </p>
                         </th>
                         <th>
@@ -113,11 +119,6 @@
                         <th>
                             <p data-toggle="tooltip" title="設定カラム数＝登録されているカラムの数（MySQL全オンテーブル設定参照），データカラム件数＝想定されるカラム数（全オン還元CSVファイル設定参照）">
                                 設定カラム数／データカラム件数
-                            </p>
-                        </th>
-                        <th>
-                            <p data-toggle="tooltip" title="還元が想定される目安日です。">
-                                目安還元日
                             </p>
                         </th>
                         <th>
@@ -139,17 +140,37 @@
                     >
                     <th class="bg-primary">{{$i + 1}}</th>
                     <td>
+                        @if($f->is_process && ($column_counts[$f->key_id] === $f->column_length) && $column_counts[$f->key_id] > 0)
+                        @else <p class="text-danger" data-toggle="tooltip" data-title="処理は行われません。">
+                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true" style="font-size: 24px;"></span>
+                        </p>
+                        @endif
+
+                        @if(!$f->is_import || $record_counts[$f->key_id] <= 0)
+                        @else <p class="text-info" data-toggle="tooltip" data-title="処理は行えますが、すでにデータベースに登録されているようです。">
+                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" style="font-size: 24px;"></span>
+                        </p>
+                        @endif
+
+                    </td>
+                    <td>
+                        
                         <input
                         type="checkbox"
                         style="width: 18px;height: 18px;vertical-align: middle; margin:0; margin-bottom: 5px;"
                         name="process[{{$f->key_id}}]"
-                        @if($f->is_process)
+                        @if($f->is_process && ($column_counts[$f->key_id] === $f->column_length) && $column_counts[$f->key_id] > 0)
                         data-toggle="tooltip"
                         data-placement="right"
                         title="すでに当月データが累積されていた場合、データが二重で累積される恐れがあります。"
                         value="{{$f->key_id}}"
-                        @if(!$f->is_import || $record_counts[$f->key_id] <= 0) checked @endif
-                        @else disabled @endif
+                        @if(!$f->is_exist) disabled 
+                        @elseif(!$f->is_process) disabled
+                        @endif
+
+                        @if(!$f->is_import && $f->is_exist && $f->is_process && $record_counts[$f->key_id] <= 0) checked @endif
+                        @else disabled
+                        @endif
                         >
                         {{--                 <input type="hidden" name="id[{{$f->key_id}}]" value="{{$f->key_id}}"> --}}
                     </td>
@@ -159,7 +180,9 @@
                     </td>
                     <td class="va-middle">
                         <p>@if(!empty($f->csv_file_set_on) && $f->csv_file_set_on != '0000-00-00'){{$f->csv_file_set_on}} @endif</p>
+                        <p>{{$f->reference_return_date}}</p>
                     </td>
+                    <td class="text-right">{{number_format((int) $record_counts[$f->key_id])}}件</td>
                     <td class="va-middle">
                         <p>
                             @if($f->is_process) <label class="label label-success" style="min-width: 75px;">対象</label>
@@ -176,10 +199,11 @@
                     </td>
 
                     <td class="va-middle text-right">
-                        <p>{{number_format((int) $column_counts[$f->key_id])}}件</p>
-                        <p>{{number_format((int) $f->column_length)}}件</p>
+                        <p @if($column_counts[$f->key_id] <= 0) class="text-warning" data-toggle="tooltip" data-title="テーブルカラムが取り込まれていないようです。" data-placement="right" @endif>
+                            {{number_format((int) $column_counts[$f->key_id])}}件
+                        </p>
+                        <p @if($f->column_length !== $column_counts[$f->key_id]) class="text-warning" data-toggle="tooltip" data-title="全オン還元CSVファイル設定情報とテーブルカラム数が一致していないようです。" data-placement="right" @endif>{{number_format((int) $f->column_length)}}件</p>
                     </td>
-                    <td class="va-middle">{{$f->reference_return_date}}</td>
 
                     <td>
                         <p>

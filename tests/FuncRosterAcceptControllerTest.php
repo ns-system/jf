@@ -14,6 +14,8 @@
 class FuncRosterAcceptControllerTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
+
     protected static $init                     = false;
     protected $super_user;
     protected $admin_user;
@@ -59,11 +61,16 @@ class FuncRosterAcceptControllerTest extends TestCase
         \App\Rest::create(["rest_reason_id" => 1, "rest_reason_name" => "テスト用理由"]);
     }
 
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
+    }
+
     /**
      * @tests
      */
     public function 正常系責任者が勤務予定データを承認できる() {
-     
+
         \App\Roster::truncate();
         for ($i = 1; $i <= 31; $i++) {
             \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1]);
@@ -167,7 +174,8 @@ class FuncRosterAcceptControllerTest extends TestCase
                     "is_plan_accept"    => 1,
                     "is_actual_entry"   => 0,
                     "is_actual_accept"  => 0]);
-            } else
+            }
+            else
             {
                 \App\Roster::create([
                     'user_id'           => $this->normal_user->id,
@@ -207,38 +215,27 @@ class FuncRosterAcceptControllerTest extends TestCase
         $res        = $method->invoke($class, null);
         $this->assertEmpty($res);
     }
-        /**
+
+    /**
      * @tests
      */
-    public function 正常系勤務データIDがnullでも実行される() {
+    public function 正常系勤務データIDの配列にnullが入っていた場合その部分はスキップして実行される() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
             \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
         }
-        $input   = ['_token' => csrf_token(), "actual" => ['1' => 1,"2"=>1], "id" => ['1' => null,"2"=>2]];
+        $input   = ['_token' => csrf_token(), "actual" => ['1' => 1, "2" => 1], "id" => ['1' => null, "2" => 2]];
         $service = new App\Services\Roster\RosterAccept($this->admin_user->id);
         try {
             $service->updateRoster($input);
             $this->assertTrue(TRUE);
         } catch (Exception $ex) {
-           $this->fail("想定していない例外発生");
+            $this->fail("想定していない例外発生");
         }
     }
 
     //異常系
-
-    /**
-     * @tests
-     */
-    public function 異常系権限のないユーザーが勤務予定データを作成しようとするとエラー() {
-        \App\Roster::truncate();
-        \Session::start();
-        $this->actingAs($this->normal_user)
-                ->post('/app/roster/work_plan/list/edit/201712/' . $this->normal_user->id, ['_token' => csrf_token(), "work_type" => ['2017-12-01' => 1, '2017-12-02' => 1], "id" => ['1' => 1], "rest" => ['2017-12-01' => 0, '2017-12-02' => 0], "entered_on" => ['2017-12-01', '2017-12-02']])
-                ->assertRedirectedTo('/permission_error')
-        ;
-    }
 
     /**
      * @tests
@@ -451,7 +448,7 @@ class FuncRosterAcceptControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系実績が登録されているのに実績を承認しようとするとエラー() {
+    public function 異常系実績が承認されているのに実績を承認しようとするとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
@@ -488,8 +485,7 @@ class FuncRosterAcceptControllerTest extends TestCase
         }
     }
 
-
-     /**
+    /**
      * @tests
      */
     public function 異常系責任者の管轄部署が存在しないとエラー() {
@@ -499,8 +495,8 @@ class FuncRosterAcceptControllerTest extends TestCase
             \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
         }
         \App\ControlDivision::truncate();
-        $input   = ['_token' => csrf_token(), "actual" => ['1' => 0], "actual_reject" => [1 => "却下"]];
-        
+        $input = ['_token' => csrf_token(), "actual" => ['1' => 0], "actual_reject" => [1 => "却下"]];
+
         try {
             $service = new App\Services\Roster\RosterAccept($this->admin_user->id);
             $service->updateRoster($input);
@@ -509,4 +505,5 @@ class FuncRosterAcceptControllerTest extends TestCase
             $this->assertEquals($ex->getMessage(), "責任者の管轄部署が存在しません。");
         }
     }
+
 }

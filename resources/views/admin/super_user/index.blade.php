@@ -9,7 +9,7 @@
 
 @section('sidebar')
 <div class="col-md-2">
-    @include('admin.sidebar.sidebar')
+    @include('partial.check_sidebar')
 </div>
 @endsection
 
@@ -31,7 +31,7 @@
                     <th class="bg-primary">部署</th>
                     <th class="bg-primary">メールアドレス</th>
                     <th class="bg-primary">管理ユーザー</th>
-{{--                     <th class="bg-primary">推進支援</th> --}}
+                    {{--                     <th class="bg-primary">推進支援</th> --}}
                     <th class="bg-primary">勤怠管理</th>
                 </tr>
             </thead>
@@ -39,7 +39,11 @@
                 @foreach($users as $user)
                 <?php /*$user = \App\User::find($tmp_user->key_id); */ ?>
                 <tr>
-                    <td><a href="{{route('admin::super::user::detail', ['id'=>$user->id])}}">{{$user->last_name}} {{$user->first_name}} <small>さん</small></a></td>
+                    <td>
+                        @if($user->id == \Auth::user()->id){{$user->last_name}} {{$user->first_name}} <small>さん</small>
+                        @else<a href="{{route('admin::super::user::detail', ['id'=>$user->id])}}">{{$user->last_name}} {{$user->first_name}} <small>さん</small></a>
+                        @endif
+                    </td>
                     <td>@if(!empty($user->division_name)) {{$user->division_name}} @else 登録なし @endif</td>
                     <td>{{$user->email}}</td>
                     <td>

@@ -9,6 +9,8 @@
 class FuncRosterUserChangeAuthorityTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
+
     protected static $init = false;
     protected $user;
 
@@ -31,6 +33,11 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
                 echo $exc->getTraceAsString();
             }
         }
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     /**
@@ -127,7 +134,7 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系非勤怠責任者代理ユーザーを非勤怠責任者代理ユーザーに変更できる() {
+    public function 正常系非勤怠責任者代理ユーザーを勤怠責任者代理ユーザーに変更できる() {
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
         $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
@@ -148,7 +155,7 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系権限のないユーザーが非勤怠責任者代理ユーザーを非勤怠責任者代理ユーザーに変更するとエラー() {
+    public function 異常系権限のないユーザーが非勤怠責任者代理ユーザーを勤怠責任者代理ユーザーに変更するとエラー() {
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
         $super_user            = factory(\App\User::class)->create(['is_super_user' => '1']);
         $target_user           = factory(\App\User::class)->create(['is_super_user' => '0']);
@@ -330,7 +337,7 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系管理者が管轄部署を登録できる() {
+    public function 正常系管理者の管轄部署を登録できる() {
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
         factory(\App\SinrenDivision::class)->create(['division_id' => '2']);
         $super_user                = factory(\App\User::class)->create(['is_super_user' => '1']);
@@ -352,7 +359,7 @@ class FuncRosterUserChangeAuthorityTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系管理者代理が管轄部署を登録できる() {
+    public function 正常系管理者代理の管轄部署を登録できる() {
         factory(\App\SinrenDivision::class)->create(['division_id' => '1']);
         factory(\App\SinrenDivision::class)->create(['division_id' => '2']);
         $super_user                = factory(\App\User::class)->create(['is_super_user' => '1']);

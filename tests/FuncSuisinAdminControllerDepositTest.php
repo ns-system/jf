@@ -17,6 +17,7 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
 {
 
     use Traits\CsvUsable;
+    use Traits\Testing\DbDisconnectable;
 
     protected static $init             = false;
     protected static $user;
@@ -54,6 +55,11 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
                 echo $exc->getTraceAsString();
             }
         }
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     //科目コード

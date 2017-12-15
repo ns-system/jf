@@ -1,7 +1,7 @@
 <div class="col-md-4">
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <p><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> {{date('n月j日', strtotime($a->entered_on))}} - {{$a->name}}さん</p>
+            <p><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> {{date('n月j日', strtotime($a->entered_on))}} - {{$a->last_name}}さん</p>
         </div>
         <div class="panel-body">
             <div class="col-md-10 col-md-offset-1">

@@ -17,6 +17,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
 {
 
     use Traits\CsvUsable;
+    use Traits\Testing\DbDisconnectable;
 
     protected static $init = false;
     protected static $user;
@@ -38,6 +39,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         }
     }
 
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
+    }
     //貸付
     //摘要コード 
     /**

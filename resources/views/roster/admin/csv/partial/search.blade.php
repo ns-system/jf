@@ -48,9 +48,9 @@
                             </div>
                         </div>
 
-                        <label><small>ユーザー名（一部）</small></label>
+                        <label><small>ユーザー名（姓）</small></label>
                         <div class="form-group">
-                            <input type="text" class="form-control input-sm" name="name" @if(!empty($search['name'])) value="{{$search['name']}}" @endif>
+                            <input type="text" class="form-control input-sm" name="name" @if(!empty($search['name'])) value="{{$search['name']}}" @endif placeholder="入力されて文字を含むユーザーを検索します。">
                         </div>
 
                         <label><small>部署</small></label>

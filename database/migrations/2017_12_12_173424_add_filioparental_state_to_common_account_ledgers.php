@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddCommonAccountLedgersToKeyAccountNumberTmp extends Migration
+class AddFilioparentalStateToCommonAccountLedgers extends Migration
 {
 
     public $tableName = 'common_account_ledgers';
@@ -11,21 +11,22 @@ class AddCommonAccountLedgersToKeyAccountNumberTmp extends Migration
 
     public function up() {
         Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
-
-            if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'key_account_number'))
+            if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'filioparental_state'))
             {
-                $table->double('key_account_number')
-                        ->after('monthly_id')
+                $table->integer('filioparental_state')
+                        ->default(0)
+                        ->index()
+                        ->after('key_account_number')
                 ;
             }
         });
     }
 
     public function down() {
-        if (Schema::connection($this->connect)->hasColumn($this->tableName, 'key_account_number'))
+        if (Schema::connection($this->connect)->hasColumn($this->tableName, 'filioparental_state'))
         {
             Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
-                $table->dropColumn('key_account_number');
+                $table->dropColumn('filioparental_state');
             });
         }
     }

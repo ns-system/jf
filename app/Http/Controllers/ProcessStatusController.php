@@ -103,26 +103,42 @@ class ProcessStatusController extends Controller
     }
 
     public function copyConfirm($id) {
-        $dir         = $this->path . '/temp';
+
+        $mst_cnt = \App\ZenonCsv::count();
+        $tbl_cnt = \App\ZenonTable::count();
+        if ($mst_cnt <= 0 || $tbl_cnt <= 0)
+        {
+            \Session::flash('danger_message', '全オン還元CSVファイル設定もしくはMySQL全オンテーブルカラム設定が登録されていないようです。先に登録を行ってください。');
+            return back();
+        }
+
         $csv_service = new CopyCsvFileService();
-        $lists       = $csv_service->getCsvFileList($dir);
+
+        $tmp_dir     = $this->path . '/temp';
+        $monthly_dir = $this->path . "/monthly/{$id}";
+
+        try {
+            $tmp_lists=[];
+            $monthly_lists=[];
+            if(file_exists($tmp_dir)){
+            $tmp_lists     = $csv_service->getCsvFileList($tmp_dir);
+            }
+            if(file_exists($monthly_dir)){
+            $monthly_lists = $csv_service->getCsvFileList($monthly_dir);
+            }
+            
+        } catch (\Exception $exc) {
+            \Session::flash('danger_message', '一時ディレクトリもしくは月次ディレクトリが見つかりませんでした。管理者に問い合わせてください。');
+            return back();
+        }
 
         // 月次処理ステータスを月別IDで検索して、件数が0以上であればコピー処理をスキップする
         // 件数が0件かつリストが存在しない場合 -> エラーとして処理を行わない
-        $monthly_process = \App\ZenonMonthlyStatus::where('monthly_id', '=', $id)->count();
-        if (empty($lists) && $monthly_process === 0)
+        if (empty($tmp_lists) && empty($monthly_lists))
         {
             \Session::flash('danger_message', '所定のディレクトリに当月中のCSVファイルが見つかりませんでした。手順に沿って再度処理を行ってください。');
             return back();
         }
-//        if (empty($lists))
-//        {
-//            $job = $this->service->createJobStatus();
-//            $this->service->setCopyEndToJobStatus($job->id);
-//            \Session::flash('info_message', '所定のディレクトリにCSVファイルは見つかりませんでしたが、当月分のファイルはすでに登録されています。引き続きアップロード処理を行ってください。');
-//            return redirect()->route('admin::super::month::import_confirm', ['id' => $id, 'job_id' => $job->id]);
-//        }
-
         // 月次サイクルを先頭に持ってくるよう配列ソート
         // 2次元配列であるため、array_columnでカラム内の単一の値を取得し、それをキーにソートする
         // array_multisort(
@@ -131,8 +147,9 @@ class ProcessStatusController extends Controller
         //     ...
         //     /* 最後に入れ替えを行いたいリスト変数 */
         // );
-        array_multisort(array_column($lists, 'cycle'), SORT_ASC, array_column($lists, 'identifier'), SORT_ASC, $lists);
-        return view('admin.month.copy_confirm', ['id' => $id, 'lists' => $lists]);
+        array_multisort(array_column($tmp_lists, 'cycle'), SORT_ASC, array_column($tmp_lists, 'identifier'), SORT_ASC, $tmp_lists);
+        array_multisort(array_column($monthly_lists, 'cycle'), SORT_ASC, array_column($monthly_lists, 'identifier'), SORT_ASC, $monthly_lists);
+        return view('admin.month.copy_confirm', ['id' => $id, 'tmp_lists' => $tmp_lists, 'monthly_lists' => $monthly_lists]);
     }
 
     public function copy($id, $job_id) {
@@ -252,7 +269,12 @@ class ProcessStatusController extends Controller
     }
 
     public function exportProcessList($id) {
-        $rows  = $this->service->setRows($id)->getRows()->get();
+        $rows = $this->service->setRows($id)->getRows()->get();
+        if ($rows->isEmpty())
+        {
+            \Session::flash('warn_message', "ファイルリストが存在しないようです。");
+            return back();
+        }
         $lists = [];
         foreach ($rows as $r) {
             $l       = [
@@ -290,7 +312,7 @@ class ProcessStatusController extends Controller
         try {
             $ignore = $this->getJsonFile(storage_path() . '/jsonlogs/', "{$id}_ignore_file_list.json");
         } catch (\Exception $exc) {
-            \Session::flash('danger_message', $exc->getMessage());
+            \Session::flash('warn_message', "ファイルリストが存在しないようです。");
             return back();
 //            dd($exc->getMessage());
 //            $ignore = [];
@@ -299,7 +321,7 @@ class ProcessStatusController extends Controller
 //            $not_exist = $this->getJsonFile($this->path . '/log/', "{$id}_not_exist_file_list.json");
             $not_exist = $this->getJsonFile(storage_path() . '/jsonlogs/', "{$id}_not_exist_file_list.json");
         } catch (\Exception $exc) {
-            \Session::flash('danger_message', $exc->getMessage());
+            \Session::flash('warn_message', "ファイルリストが存在しないようです。");
             return back();
 //            $not_exist = [];
         }

@@ -7,10 +7,17 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class UnitDataUsableTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
+
     protected $s;
 
     public function __construct() {
         $this->s = $this->getMockForTrait(\App\Services\Traits\DateUsable::class);
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     private function setReflection($function_name) {

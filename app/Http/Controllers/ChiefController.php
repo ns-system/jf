@@ -57,7 +57,7 @@ class ChiefController extends Controller
         });
 //        var_dump($input);
 //        exit();
-        \Session::flash('success_message', \App\User::find($id)->name.'さんを変更しました。');
+        \Session::flash('success_message', \App\User::find($id)->last_name.'さんを変更しました。');
         return \Redirect('/roster/chief/proxy');
     }
 

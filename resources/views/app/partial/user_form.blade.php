@@ -167,7 +167,7 @@
 
                     <label for="InputEmail">ユーザー名</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" name="name" value="{{$user->name}}">
+                        <input type="text" class="form-control" name="name" value="{{$user->last_name}}">
                         <span class="input-group-addon" style="border-left: none;">さん</span>
                         <span class="input-group-btn">
                             <button type="submit" class="btn btn-primary" formaction="{{route('app::user::name', ['id'=>$user->id])}}">名前変更</button>

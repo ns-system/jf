@@ -8,9 +8,11 @@
 @endsection
 
 @section('sidebar')
-    <div class="col-md-2">
-        @include('app.sidebar.sidebar')
-    </div>
+
+<div class="col-md-2">
+
+    @include('partial.check_sidebar')
+</div>
 @endsection
 
 
@@ -55,13 +57,13 @@
         });
 });
 
-function checkFile(){
-    var trg = $('#file')[0].files[0];
-    if(trg != null){
-        return true;
+    function checkFile(){
+        var trg = $('#file')[0].files[0];
+        if(trg != null){
+            return true;
+        }
+        alert('ファイルがセットされていません。');
+        return false;
     }
-    alert('ファイルがセットされていません。');
-    return false;
-}
 </script>
 @endsection

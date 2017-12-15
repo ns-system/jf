@@ -26,11 +26,11 @@ class CsvSearch extends Request
         $rules = [];
         if (isset($in['plan']))
         {
-            $rules['plan'] = 'required|min:0|max:3';
+            $rules['plan'] = 'required|regex:/^[0-3]{1}$/';
         }
         if (isset($in['actual']))
         {
-            $rules['actual'] = 'required|min:0|max:3';
+            $rules['actual'] = 'required|regex:/^[0-3]{1}$/';
         }
 
         if (!empty($in['division']))

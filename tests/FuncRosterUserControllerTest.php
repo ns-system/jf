@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class FuncRosterUserControllerTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
+
     protected static $init = false;
     protected $user;
     protected $chief;
@@ -30,6 +32,11 @@ class FuncRosterUserControllerTest extends TestCase
 
         $this->super->is_super_user = true;
         $this->super->save();
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     /**
@@ -113,7 +120,7 @@ class FuncRosterUserControllerTest extends TestCase
      * @tests
      * 一部radio要素がブラウザから操作できないため、実際の動作はPOSTを偽装してテストしている
      */
-    public function 正常系_勤怠管理のユーザー変更画面まで行ける() {
+    public function 正常系_勤怠管理のユーザー情報変更が行える() {
         $actor = $this->super;
         $user  = $this->chief;
         $this->actingAs($actor)

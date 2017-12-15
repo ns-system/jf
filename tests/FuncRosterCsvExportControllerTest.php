@@ -6,6 +6,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
 {
 
     use Traits\CsvUsable;
+    use Traits\Testing\DbDisconnectable;
 
     protected static $init = false;
     protected $superuser;
@@ -34,11 +35,11 @@ class FuncRosterCsvExportControllerTest extends TestCase
         \App\WorkType::truncate();
         \App\Roster::truncate();
         \App\Rest::truncate();
-        $this->superuser       = factory(\App\User::class)->create(['is_super_user' => '1']);
-        $this->nomaluser1 = factory(\App\User::class)->create(['first_name' => 'akatuki',"last_name"=>"kongou","name"=>"kongou akatuki"]);
-        $this->nomaluser2 = factory(\App\User::class)->create(['first_name' => 'hibiki',"last_name"=>"hiei","name"=>"hiei hibiki"]);
-        $this->nomaluser3 = factory(\App\User::class)->create(['first_name' => 'ikazuti',"last_name"=>"kirisima","name"=>"kirisima ikazuti"]);
-        $this->nomaluser4 = factory(\App\User::class)->create(['first_name' => 'inazuma',"last_name"=>"haruna","name"=>"haruna inazuma"]);
+        $this->superuser  = factory(\App\User::class)->create(['is_super_user' => '1']);
+        $this->nomaluser1 = factory(\App\User::class)->create(['first_name' => 'akatuki', "last_name" => "kongou", "name" => "kongou akatuki"]);
+        $this->nomaluser2 = factory(\App\User::class)->create(['first_name' => 'hibiki', "last_name" => "hiei", "name" => "hiei hibiki"]);
+        $this->nomaluser3 = factory(\App\User::class)->create(['first_name' => 'ikazuti', "last_name" => "kirisima", "name" => "kirisima ikazuti"]);
+        $this->nomaluser4 = factory(\App\User::class)->create(['first_name' => 'inazuma', "last_name" => "haruna", "name" => "haruna inazuma"]);
         \App\RosterUser::firstOrCreate([
             'user_id'          => $this->nomaluser1->id,
             "is_administrator" => '0',
@@ -83,7 +84,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
         \App\SinrenUser::firstOrCreate(['user_id' => $this->nomaluser1->id, "division_id" => '1']);
         \App\SinrenUser::firstOrCreate(['user_id' => $this->nomaluser2->id, "division_id" => '1']);
         \App\SinrenUser::firstOrCreate(['user_id' => $this->nomaluser3->id, "division_id" => '1']);
-        \App\SinrenUser::firstOrCreate(['user_id' => $this->nomaluser4->id, "division_id" => '2']);        
+        \App\SinrenUser::firstOrCreate(['user_id' => $this->nomaluser4->id, "division_id" => '2']);
         \App\ControlDivision::firstOrCreate(['user_id' => $this->nomaluser1->id, "division_id" => '1']);
         \App\Rest::firstOrCreate(["rest_reason_id" => 1, "rest_reason_name" => "テスト用理由"]);
         \App\Rest::firstOrCreate(["rest_reason_id" => 2, "rest_reason_name" => "テスト用理由2"]);
@@ -92,54 +93,59 @@ class FuncRosterCsvExportControllerTest extends TestCase
         \App\WorkType::firstOrCreate(["work_type_id" => '1', "work_type_name" => "テスト用"]);
         \App\WorkType::firstOrCreate(["work_type_id" => '2', "work_type_name" => "テスト用その二"]);
     }
- private function createRosterSample(){
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
+    }
+
+    private function createRosterSample() {
         \App\Roster::create([
-                    'user_id'           => $this->nomaluser1->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-1",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 1,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 1,
-                    "is_actual_reject"  => 0]);
+            'user_id'           => $this->nomaluser1->id,
+            "plan_work_type_id" => "1",
+            "entered_on"        => "2017-12-1",
+            "month_id"          => "201712",
+            "is_plan_entry"     => 1,
+            "is_plan_accept"    => 1,
+            "is_plan_reject"    => 0,
+            "is_actual_entry"   => 1,
+            "is_actual_accept"  => 1,
+            "is_actual_reject"  => 0]);
 
         \App\Roster::create([
-                    'user_id'           => $this->nomaluser2->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-10",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 0,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 0]);
+            'user_id'           => $this->nomaluser2->id,
+            "plan_work_type_id" => "1",
+            "entered_on"        => "2017-12-10",
+            "month_id"          => "201712",
+            "is_plan_entry"     => 1,
+            "is_plan_accept"    => 0,
+            "is_plan_reject"    => 0,
+            "is_actual_entry"   => 1,
+            "is_actual_accept"  => 0,
+            "is_actual_reject"  => 0]);
 
         \App\Roster::create([
-                    'user_id'           => $this->nomaluser3->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-15",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
+            'user_id'           => $this->nomaluser3->id,
+            "plan_work_type_id" => "1",
+            "entered_on"        => "2017-12-15",
+            "month_id"          => "201712",
+            "is_plan_entry"     => 1,
+            "is_plan_accept"    => 0,
+            "is_plan_reject"    => 1,
+            "is_actual_entry"   => 1,
+            "is_actual_accept"  => 0,
+            "is_actual_reject"  => 1]);
         \App\Roster::create([
-                    'user_id'           => $this->nomaluser4->id,
-                    "plan_work_type_id" => "1",
-                    "entered_on"        => "2017-12-31",
-                    "month_id"          => "201712",
-                    "is_plan_entry"     => 1,
-                    "is_plan_accept"    => 0,
-                    "is_plan_reject"    => 1,
-                    "is_actual_entry"   => 1,
-                    "is_actual_accept"  => 0,
-                    "is_actual_reject"  => 1]);
-
+            'user_id'           => $this->nomaluser4->id,
+            "plan_work_type_id" => "1",
+            "entered_on"        => "2017-12-31",
+            "month_id"          => "201712",
+            "is_plan_entry"     => 1,
+            "is_plan_accept"    => 0,
+            "is_plan_reject"    => 1,
+            "is_actual_entry"   => 1,
+            "is_actual_accept"  => 0,
+            "is_actual_reject"  => 1]);
     }
 
     /**
@@ -175,6 +181,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
                 ->assertResponseStatus(200)
         ;
     }
+
     /**
      * @tests
      */
@@ -383,8 +390,6 @@ class FuncRosterCsvExportControllerTest extends TestCase
         $this->assertEquals($changed_roster->is_plan_accept, $roster->is_plan_accept);
         $this->assertEquals($changed_roster->is_actual_accept, $roster->is_actual_accept);
     }
-   
-        
 
     /**
      * @tests
@@ -455,15 +460,13 @@ class FuncRosterCsvExportControllerTest extends TestCase
         $this->assertEquals($changed_roster->is_actual_reject, "0");
     }
 
-    
-    
     /**
      * @tests
      */
     public function 正常系検索_予定未承認ができる() {
         \App\Roster::truncate();
         \Session::start();
-          $this->createRosterSample();
+        $this->createRosterSample();
 
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
@@ -486,13 +489,14 @@ class FuncRosterCsvExportControllerTest extends TestCase
 
         ;
     }
+
     /**
      * @tests
      */
     public function 正常系検索_予定承認ができる() {
         \App\Roster::truncate();
         \Session::start();
-         $this->createRosterSample();
+        $this->createRosterSample();
 
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
@@ -515,13 +519,14 @@ class FuncRosterCsvExportControllerTest extends TestCase
 
         ;
     }
+
     /**
      * @tests
      */
     public function 正常系検索_予定却下ができる() {
         \App\Roster::truncate();
         \Session::start();
-         $this->createRosterSample();
+        $this->createRosterSample();
 
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
@@ -544,18 +549,14 @@ class FuncRosterCsvExportControllerTest extends TestCase
 
         ;
     }
-    
-    
-    
-    
-    
+
     /**
      * @tests
      */
     public function 正常系検索_実績未承認ができる() {
         \App\Roster::truncate();
         \Session::start();
-          $this->createRosterSample();
+        $this->createRosterSample();
 
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
@@ -578,13 +579,14 @@ class FuncRosterCsvExportControllerTest extends TestCase
 
         ;
     }
+
     /**
      * @tests
      */
     public function 正常系検索_実績承認ができる() {
         \App\Roster::truncate();
         \Session::start();
-         $this->createRosterSample();
+        $this->createRosterSample();
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
                 ->see("勤怠管理システム")
@@ -606,13 +608,14 @@ class FuncRosterCsvExportControllerTest extends TestCase
 
         ;
     }
+
     /**
      * @tests
      */
     public function 正常系検索_実績却下ができる() {
         \App\Roster::truncate();
         \Session::start();
-         $this->createRosterSample();
+        $this->createRosterSample();
 
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
@@ -635,15 +638,14 @@ class FuncRosterCsvExportControllerTest extends TestCase
 
         ;
     }
-    
-    
+
     /**
      * @tests
      */
     public function 正常系検索_ユーザー名_苗字ができる() {
         \App\Roster::truncate();
         \Session::start();
-         $this->createRosterSample();
+        $this->createRosterSample();
 
         $this->actingAs($this->superuser)
                 ->visit("/admin/roster/csv/search/201712")
@@ -655,7 +657,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
                 ->see($this->nomaluser2->last_name)
                 ->see($this->nomaluser3->first_name)
                 ->see($this->nomaluser3->last_name)
-                ->visit("/admin/roster/csv/search/201712?plan=0&actual=0&name=".$this->nomaluser1->last_name."&division=&min_date=&max_date=")
+                ->visit("/admin/roster/csv/search/201712?plan=0&actual=0&name=" . $this->nomaluser1->last_name . "&division=&min_date=&max_date=")
                 ->see("検索が終了しました。")
                 ->see($this->nomaluser1->first_name)
                 ->see($this->nomaluser1->last_name)
@@ -666,13 +668,14 @@ class FuncRosterCsvExportControllerTest extends TestCase
 
         ;
     }
-     /**
+
+    /**
      * @tests
      */
     public function 正常系検索_部署指定ができる() {
         \App\Roster::truncate();
         \Session::start();
-         $this->createRosterSample();
+        $this->createRosterSample();
 
 
         $this->actingAs($this->superuser)
@@ -701,15 +704,13 @@ class FuncRosterCsvExportControllerTest extends TestCase
         ;
     }
 
-    
-    
     /**
      * @tests
      */
     public function 正常系検索_年月指定ができる() {
         \App\Roster::truncate();
         \Session::start();
-         $this->createRosterSample();
+        $this->createRosterSample();
 
 
         $this->actingAs($this->superuser)
@@ -734,17 +735,18 @@ class FuncRosterCsvExportControllerTest extends TestCase
                 ->See($this->nomaluser3->first_name)
                 ->dontSee($this->nomaluser4->last_name)
                 ->dontSee($this->nomaluser4->first_name)
-                
+
 
         ;
     }
+
     /**
      * @tests
      */
     public function 正常系検索で該当者がいない場合誰も表示されない() {
         \App\Roster::truncate();
         \Session::start();
-         $this->createRosterSample();
+        $this->createRosterSample();
 
 
         $this->actingAs($this->superuser)
@@ -772,11 +774,9 @@ class FuncRosterCsvExportControllerTest extends TestCase
 
         ;
     }
-    
-    
-    
+
     //異常系
-     /**
+    /**
      * @tests
      */
     public function 異常系権限のないユーザーが勤怠管理システムCSV出力で予定出力するとエラー() {
@@ -797,11 +797,12 @@ class FuncRosterCsvExportControllerTest extends TestCase
         for ($i = 1; $i <= 31; $i++) {
             \App\Roster::create(['user_id' => $this->nomaluser1->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
         }
-        $this->actingAs($this->nomaluser1) 
+        $this->actingAs($this->nomaluser1)
                 ->visit('/admin/roster/csv/export/201712/actual')
                 ->seePageIs("/permission_error")
         ;
     }
+
     /**
      * @tests
      */
@@ -814,14 +815,14 @@ class FuncRosterCsvExportControllerTest extends TestCase
                 ->seePageIs("/permission_error")
         ;
     }
-    
- /**
+
+    /**
      * @tests
      */
     public function 異常系権限のないユーザーが勤務データ修正を行うとエラー() {
         \App\Roster::truncate();
         \Session::start();
-        $roster         = \App\Roster::create([
+        $roster = \App\Roster::create([
                     'user_id'           => $this->nomaluser1->id,
                     "plan_work_type_id" => "1",
                     "entered_on"        => "2017-12-1",
@@ -832,7 +833,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
                     "is_actual_entry"   => 1,
                     "is_actual_accept"  => 1,
                     "is_actual_reject"  => 1]);
-      $this->actingAs($this->nomaluser1)
+        $this->actingAs($this->nomaluser1)
                 ->post('/admin/roster/csv/update/201712', [
                     '_token'                     => csrf_token(),
                     "id"                         => $roster->id,
@@ -852,12 +853,11 @@ class FuncRosterCsvExportControllerTest extends TestCase
                 ->assertRedirectedTo('/permission_error')
         ;
     }
-    
-    
-     /**
+
+    /**
      * @tests
      */
-    public function 異常系検索_予定に三文字より多く入力されるとエラー() {
+    public function 異常系検索_予定に0から3以外の文字が入力されるとエラー() {
         \App\Roster::truncate();
         \Session::start();
         $this->createRosterSample();
@@ -874,16 +874,17 @@ class FuncRosterCsvExportControllerTest extends TestCase
                 ->see($this->nomaluser3->last_name)
                 ->see($this->nomaluser4->first_name)
                 ->see($this->nomaluser4->last_name)
-                ->visit("/admin/roster/csv/search/201712?plan=1234&actual=0&name=&division=&min_date=&max_date=")
-                ->see("予定は3文字以下にしてください。")
-                
+                ->visit("/admin/roster/csv/search/201712?plan=5&actual=0&name=&division=&min_date=&max_date=")
+                ->see("予定の書式が正しくありません。")
+
 
         ;
     }
-     /**
+
+    /**
      * @tests
      */
-    public function 異常系検索_実績に三文字より多く入力されるとエラー() {
+    public function 異常系検索_実績に0から3以外の文字が入力されるとエラー() {
         \App\Roster::truncate();
         \Session::start();
         $this->createRosterSample();
@@ -900,12 +901,13 @@ class FuncRosterCsvExportControllerTest extends TestCase
                 ->see($this->nomaluser3->last_name)
                 ->see($this->nomaluser4->first_name)
                 ->see($this->nomaluser4->last_name)
-                ->visit("/admin/roster/csv/search/201712?plan=&actual=1234&name=&division=2&min_date=&max_date=")
-                ->see("実績は3文字以下にしてください。")
-                
+                ->visit("/admin/roster/csv/search/201712?&actual=4&name=&division=2&min_date=&max_date=")
+                ->see("実績の書式が正しくありません。")
+
 
         ;
     }
+
     /**
      * @tests
      */
@@ -928,10 +930,11 @@ class FuncRosterCsvExportControllerTest extends TestCase
                 ->see($this->nomaluser4->last_name)
                 ->visit("/admin/roster/csv/search/201712?plan=&actual=&name=&division=999&min_date=&max_date=")
                 ->see("選択された部署は正しくありません。")
-                
+
 
         ;
     }
+
     /**
      * @tests
      */
@@ -954,10 +957,11 @@ class FuncRosterCsvExportControllerTest extends TestCase
                 ->see($this->nomaluser4->last_name)
                 ->visit("/admin/roster/csv/search/201712?plan=&actual=&name=&division=99fgasd9&min_date=&max_date=")
                 ->see("選択された部署は正しくありません。")
-                
+
 
         ;
     }
+
     /**
      * @tests
      */
@@ -972,19 +976,19 @@ class FuncRosterCsvExportControllerTest extends TestCase
                 ->see("2017年12月")
                 ->visit('/admin/roster/csv/list/201712')
                 ->visit("/admin/roster/csv/export/201712/unassumption")
-               ->see('/admin/roster/csv/list/201712')
+                ->see('/admin/roster/csv/list/201712')
                 ->see("予期しないデータが入力されたため、処理が中断されました。")
         ;
     }
-    
- // エラーの内容が取得できないからとりあえず後回し  
+
+    // エラーの内容が取得できないからとりあえず後回し  
     /**
      * @tests
      */
     public function 異常系異常な値がPOSTされた時エラー() {
         \App\Roster::truncate();
         \Session::start();
-        $roster         = \App\Roster::create([
+        $roster = \App\Roster::create([
                     'user_id'           => $this->nomaluser1->id,
                     "plan_work_type_id" => "1",
                     "entered_on"        => "2017-12-1",
@@ -995,25 +999,26 @@ class FuncRosterCsvExportControllerTest extends TestCase
                     "is_actual_entry"   => 1,
                     "is_actual_accept"  => 1,
                     "is_actual_reject"  => 1]);
-      $a=$this->actingAs($this->superuser)
-              ->visit('/admin/roster/csv/edit/201712/1')
+        $a      = $this->actingAs($this->superuser)
+                ->visit('/admin/roster/csv/edit/201712/1')
                 ->post('/admin/roster/csv/update/201712', [
-                    '_token'                     => csrf_token(),
-                    "id"                         => $roster->id,
-                    "plan_work_type_id"          => "9",
-                    "plan_rest_reason_id"        => "6",
-                    "plan_overtime_start_time"   => "28:40",
-                    "plan_overtime_end_time"     => "30:30",
-                    "plan_overtime_reason"       => "予定残業理由",
-                    "plan_accept"                => "5",
-                    "actual_work_type_id"        => "5",
-                    "actual_rest_reason_id"      => "6",
-                    "actual_overtime_start_time" => "2:70",
-                    "actual_overtime_end_time"   => "21:185",
-                    "actual_overtime_reason"     => "実残業理由",
-                    "actual_accept"              => "9"
-                ]);
-              $a->assertSessionHasErrors();
-         $a->assertRedirectedTo('/admin/roster/csv/edit/201712/1') ;
+            '_token'                     => csrf_token(),
+            "id"                         => $roster->id,
+            "plan_work_type_id"          => "9",
+            "plan_rest_reason_id"        => "6",
+            "plan_overtime_start_time"   => "28:40",
+            "plan_overtime_end_time"     => "30:30",
+            "plan_overtime_reason"       => "予定残業理由",
+            "plan_accept"                => "5",
+            "actual_work_type_id"        => "5",
+            "actual_rest_reason_id"      => "6",
+            "actual_overtime_start_time" => "2:70",
+            "actual_overtime_end_time"   => "21:185",
+            "actual_overtime_reason"     => "実残業理由",
+            "actual_accept"              => "9"
+        ]);
+        $a->assertSessionHasErrors();
+        $a->assertRedirectedTo('/admin/roster/csv/edit/201712/1');
     }
+
 }
