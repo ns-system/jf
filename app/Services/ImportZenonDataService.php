@@ -17,11 +17,21 @@ class ImportZenonDataService
         JobStatusUsable,
         MemoryCheckable;
 
-    protected $row;
+    protected $row          = [];
+    protected $common_row   = [];
+    protected $separate_row = [];
     protected $status;
 
     public function getRow() {
         return $this->row;
+    }
+
+    public function getCommonRow() {
+        return $this->common_row;
+    }
+
+    public function getSeparateRow() {
+        return $this->separate_row;
     }
 
     public function setRow($row) {
@@ -34,15 +44,22 @@ class ImportZenonDataService
 //        {
 //            $timestamp = date('Y-m-d H:i:s');
 //        }
-        $timestamp               = (!empty($option_timestamp)) ? $option_timestamp : date('Y-m-d H:i:s');
-        $this->row['created_at'] = $timestamp;
-        $this->row['updated_at'] = $timestamp;
+        $timestamp                        = (!empty($option_timestamp)) ? $option_timestamp : date('Y-m-d H:i:s');
+        $this->row['created_at']          = $timestamp;
+        $this->row['updated_at']          = $timestamp;
+        $this->common_row['created_at']   = $timestamp;
+        $this->common_row['updated_at']   = $timestamp;
+        $this->separate_row['created_at'] = $timestamp;
+        $this->separate_row['updated_at'] = $timestamp;
         return $this;
     }
 
     private function convertRow($types, $is_ceil = true) {
-        $row       = $this->convertTypes($types, $this->row, $is_ceil);
-        $this->row = $row;
+//        $row       = $this->convertTypes($types, $this->row, $is_ceil);
+//        $this->row = $row;
+        $this->row          = $this->convertTypes($types, $this->row, $is_ceil);
+        $this->common_row   = $this->convertTypes($types, $this->common_row, $is_ceil);
+        $this->separate_row = $this->convertTypes($types, $this->separate_row, $is_ceil);
         return $this;
     }
 
@@ -70,8 +87,10 @@ class ImportZenonDataService
         {
             throw new \Exception("月別IDの指定が不正です。（指定：{$monthly_id}）");
         }
-        $date_obj                = $this->setDate($monthly_id)->getDate();
-        $this->row['monthly_id'] = $date_obj->format('Ym');
+        $date_obj                         = $this->setDate($monthly_id)->getDate();
+        $this->row['monthly_id']          = $date_obj->format('Ym');
+        $this->common_row['monthly_id']   = $date_obj->format('Ym');
+        $this->separate_row['monthly_id'] = $date_obj->format('Ym');
         return $this;
     }
 
@@ -121,7 +140,7 @@ class ImportZenonDataService
         return $this;
     }
 
-    private function splitRow($is_split, $pos_first = 0, $pos_last = 0, $split_key_configs = null) {
+    private function splitRow($is_split, $pos_first = 0, $pos_last = 0, $pos_max = 0) {
         if (!$is_split)
         {
             return $this;
@@ -139,17 +158,23 @@ class ImportZenonDataService
         {
             throw new \Exception("配列切り落としの指定は開始位置 < 終了位置となるように指定してください。");
         }
-        $slice_row = array_slice($this->row, $pos_first, $pos_last, true);
-        for ($i = 1; $i <= 4; $i++) {
-            $k = 'split_foreign_key_' . $i;
-            if (!empty($split_key_configs[$k]))
-            {
-                $fk             = $split_key_configs[$k];
-                $slice_row[$fk] = $this->row[$fk];
-            }
-        }
-        $this->row = $slice_row;
+        $slice_row_1 = array_slice($this->row, $pos_first, $pos_last, true);
+        $slice_row_2 = array_slice($this->row, $pos_last, $pos_max, true);
+
+        $this->checkSplitRow(count($slice_row_1), $pos_last, "共通部の");
+        $this->checkSplitRow(count($slice_row_2), ($pos_max - $pos_last), "個別部の");
+        $this->checkSplitRow((count($slice_row_1) + count($slice_row_2)), $pos_max, "");
+
+        $this->common_row   = $slice_row_1;
+        $this->separate_row = $slice_row_2;
         return $this;
+    }
+
+    private function checkSplitRow($expect_value, $actual_value, $msg = '') {
+        if ($expect_value !== $actual_value)
+        {
+            throw new \Exception("分割時に{$msg}配列長が一致しませんでした。（想定：{$expect_value} 実際：{$actual_value}）");
+        }
     }
 
     public function monthlyStatus($ym, $process_ids) {
@@ -194,21 +219,17 @@ class ImportZenonDataService
             return $this->makeErrorLog($monthly_state, 'テーブル設定が取り込まれていないようです。MySQL側 全オンテーブル設定から取込処理を行ってください。');
         }
 
-        $split_key_configs = [
-            'split_foreign_key_1' => $monthly_state->split_foreign_key_1,
-            'split_foreign_key_2' => $monthly_state->split_foreign_key_2,
-            'split_foreign_key_3' => $monthly_state->split_foreign_key_3,
-            'split_foreign_key_4' => $monthly_state->split_foreign_key_4,
-        ];
-
         $account_convert_param = [
             'account_column_name' => $monthly_state->account_column_name,
             'subject_column_name' => $monthly_state->subject_column_name,
         ];
 //        $this->debugMemory('uploadToDatabase - beforeGetTableObject');
+        // インサートするモデルを取得する
         try {
-            $table = $this->getTableObject('mysql_zenon', $monthly_state->table_name);
+            $table        = $this->getTableObject('mysql_zenon', $monthly_state->table_name);
+            $common_table = ($monthly_state->is_split) ? $this->getTableObject('mysql_zenon', $monthly_state->common_table_column) : null;
         } catch (\Exception $e) {
+//            echo $e->getMessage();
             $this->setPreErrorToMonthlyStatus($monthly_state->id, $e->getMessage());
             return $this->makeErrorLog($monthly_state, $e->getMessage());
         }
@@ -224,15 +245,29 @@ class ImportZenonDataService
                 continue;
             }
             $line_number++;
-            $tmp_bulk = $this->setRow($line)
+            $this->setRow($line)
                     ->setKeyToRow($keys)
                     ->convertRow($types, true)
-                    ->splitRow($monthly_state->is_split, $monthly_state->first_column_position, $monthly_state->last_column_position, $split_key_configs)
+                    ->splitRow($monthly_state->is_split, $monthly_state->first_column_position, $monthly_state->last_column_position, $monthly_state->column_length)
                     ->setMonthlyIdToRow(true, $monthly_id)
                     ->setConvertedAccountToRow($monthly_state->is_account_convert, $account_convert_param)
                     ->setTimeStamp(date('Y-m-d H:i:s'))
-                    ->getRow()
             ;
+            if ($monthly_state->is_split)
+            {
+                $common_row                = $this->common_row;
+                $separate_row              = $this->separate_row;
+                $r                         = $common_table->insertGetId($common_row);
+                $separate_row['common_id'] = $r->id;
+                $tmp_bulk                  = $separate_row;
+                unset($r);
+            }
+            else
+            {
+//                $row  = $this->getRow();
+                $tmp_bulk = $this->getRow();
+            }
+//            dd($tmp_bulk);
             unset($line);
             // MySQLのバージョンによってはプリペアドステートメントが65536までに制限されているため、動的にしきい値を設ける
             if ($line_number > 0 && (count($bulk) * count($tmp_bulk) + count($tmp_bulk)) > 65000)

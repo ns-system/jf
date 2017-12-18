@@ -19,6 +19,7 @@ nbproject
 Homestead.yaml
 Vagrantfile
 *.box
+*.org
 report/
 config/database.php
 config/app.php
