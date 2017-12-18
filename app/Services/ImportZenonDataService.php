@@ -136,10 +136,21 @@ class ImportZenonDataService
                 break;
         }
 
-        $this->row['key_account_number'] = (double) $key_account;
+        $this->row['key_account_number']          = (double) $key_account;
+        $this->common_row['key_account_number']   = (double) $key_account;
+        $this->separate_row['key_account_number'] = (double) $key_account;
         return $this;
     }
 
+    /**
+     * 
+     * @param type $is_split
+     * @param type $pos_first
+     * @param type $pos_last
+     * @param type $pos_max
+     * @return $this
+     * @throws \Exception
+     */
     private function splitRow($is_split, $pos_first = 0, $pos_last = 0, $pos_max = 0) {
         if (!$is_split)
         {
@@ -158,11 +169,19 @@ class ImportZenonDataService
         {
             throw new \Exception("配列切り落としの指定は開始位置 < 終了位置となるように指定してください。");
         }
-        $slice_row_1 = array_slice($this->row, $pos_first, $pos_last, true);
-        $slice_row_2 = array_slice($this->row, $pos_last, $pos_max, true);
+        /**
+         * 実例：
+         * $array = [0=>1, 1=>2, 2=>3, 3=>4, 4=>5, 5=>6,];
+         * var_dump(array_slice($array, 0, 2, true)); // [0=>1, 1=>2,]
+         * var_dump(array_slice($array, 2, 5, true)); // [2=>3, 3=>4, 4=>5, 5=>6,]
+         */
+        $slice_row_1 = array_slice($this->row, $pos_first, ($pos_last + 1), true);
+        $slice_row_2 = array_slice($this->row, ($pos_last + 1), $pos_max, true);
 
-        $this->checkSplitRow(count($slice_row_1), $pos_last, "共通部の");
-        $this->checkSplitRow(count($slice_row_2), ($pos_max - $pos_last), "個別部の");
+       var_dump($slice_row_1);
+       var_dump($slice_row_2);
+        $this->checkSplitRow(count($slice_row_1), ($pos_last + 1), "共通部の");
+        $this->checkSplitRow(count($slice_row_2), ($pos_max - $pos_last - 1), "個別部の");
         $this->checkSplitRow((count($slice_row_1) + count($slice_row_2)), $pos_max, "");
 
         $this->common_row   = $slice_row_1;
@@ -227,9 +246,9 @@ class ImportZenonDataService
         // インサートするモデルを取得する
         try {
             $table        = $this->getTableObject('mysql_zenon', $monthly_state->table_name);
-            $common_table = ($monthly_state->is_split) ? $this->getTableObject('mysql_zenon', $monthly_state->common_table_column) : null;
+            $common_table = ($monthly_state->is_split) ? $this->getTableObject('mysql_zenon', $monthly_state->common_table_name) : null;
         } catch (\Exception $e) {
-//            echo $e->getMessage();
+            echo $e->getMessage();
             $this->setPreErrorToMonthlyStatus($monthly_state->id, $e->getMessage());
             return $this->makeErrorLog($monthly_state, $e->getMessage());
         }
@@ -257,17 +276,15 @@ class ImportZenonDataService
             {
                 $common_row                = $this->common_row;
                 $separate_row              = $this->separate_row;
-                $r                         = $common_table->insertGetId($common_row);
-                $separate_row['common_id'] = $r->id;
+                $common_id                 = $common_table->insertGetId($common_row);
+                $separate_row['common_id'] = $common_id;
                 $tmp_bulk                  = $separate_row;
-                unset($r);
+                unset($common_id);
             }
             else
             {
-//                $row  = $this->getRow();
                 $tmp_bulk = $this->getRow();
             }
-//            dd($tmp_bulk);
             unset($line);
             // MySQLのバージョンによってはプリペアドステートメントが65536までに制限されているため、動的にしきい値を設ける
             if ($line_number > 0 && (count($bulk) * count($tmp_bulk) + count($tmp_bulk)) > 65000)

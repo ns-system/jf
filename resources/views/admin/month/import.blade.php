@@ -150,6 +150,7 @@
                 clearInterval(timer);
                 stopAllAnimation();
                 changeProgressBarToError();
+                return;
             }
             if(s['is_import_end'] == true){
                 clearInterval(timer);

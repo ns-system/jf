@@ -283,7 +283,7 @@ class UnitImportZenonDataServiceTest extends TestCase
         foreach ($rows as $r) {
             $this->s->setRow($r);
             $s = $this->setReflection('splitRow');
-            $s->invoke($this->s, true, 0, 3, 7);
+            $s->invoke($this->s, true, 0, 2, 7);
             try {
                 $result_1[] = $this->s->getCommonRow();
                 $result_2[] = $this->s->getSeparateRow();
