@@ -39,9 +39,32 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
         parent::tearDown();
     }
 
-
     protected $dummy_zenon_csv_data = [
-        ['identifier' => "identifier1", 'zenon_data_type_id' => "2", 'zenon_data_name' => "zenondataname1", 'first_column_position' => "0", 'last_column_position' => "198", 'column_length' => "190", 'reference_return_date' => "referencereturndate1", 'cycle' => "M", 'database_name' => "zenon_data_db", 'table_name' => "customer_information_files", 'is_cumulative' => "1", 'is_account_convert' => "0", 'is_process' => "1", 'is_split' => "1", 'zenon_format_id' => "2", 'account_column_name' => "", 'subject_column_name' => "", 'split_foreign_key_1' => "", 'split_foreign_key_2' => "", 'split_foreign_key_3' => "", 'split_foreign_key_4' => "",],];
+        [
+            'identifier'            => "identifier1",
+            'zenon_data_type_id'    => "2",
+            'zenon_data_name'       => "zenondataname1",
+            'first_column_position' => "0",
+            'last_column_position'  => "198",
+            'column_length'         => "190",
+            'reference_return_date' => "referencereturndate1",
+            'cycle'                 => "M",
+            'database_name'         => "zenon_data_db",
+            'table_name'            => "customer_information_files",
+            'common_table_name'     => "",
+            'is_cumulative'         => "1",
+            'is_account_convert'    => "0",
+            'is_process'            => "1",
+            'is_split'              => "1",
+            'zenon_format_id'       => "2",
+            'account_column_name'   => "",
+            'subject_column_name'   => "",
+//            'split_foreign_key_1'   => "",
+//            'split_foreign_key_2'   => "",
+//            'split_foreign_key_3'   => "",
+//            'split_foreign_key_4'   => "",
+        ],
+    ];
 
     //システム設定
     //全オン還元CSVファイル設定 
@@ -103,17 +126,18 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 'cycle'                 => trim($data[8]),
                 'database_name'         => trim($data[9]),
                 'table_name'            => trim($data[10]),
-                'is_cumulative'         => trim($data[11]),
-                'is_account_convert'    => trim($data[12]),
-                'is_process'            => trim($data[13]),
-                'is_split'              => trim($data[14]),
-                'zenon_format_id'       => trim($data[15]),
-                'account_column_name'   => trim($data[16]),
-                'subject_column_name'   => trim($data[17]),
-                'split_foreign_key_1'   => trim($data[18]),
-                'split_foreign_key_2'   => trim($data[19]),
-                'split_foreign_key_3'   => trim($data[20]),
-                'split_foreign_key_4'   => trim($data[21]),
+                'common_table_name'     => trim($data[11]),
+                'is_cumulative'         => trim($data[12]),
+                'is_account_convert'    => trim($data[13]),
+                'is_process'            => trim($data[14]),
+                'is_split'              => trim($data[15]),
+                'zenon_format_id'       => trim($data[16]),
+                'account_column_name'   => trim($data[17]),
+                'subject_column_name'   => trim($data[18]),
+//                'split_foreign_key_1'   => trim($data[19]),
+//                'split_foreign_key_2'   => trim($data[20]),
+//                'split_foreign_key_3'   => trim($data[21]),
+//                'split_foreign_key_4'   => trim($data[22]),
             ];
             $res   = \App\ZenonCsv::where($where)->count();
             $this->assertEquals($res, 1);

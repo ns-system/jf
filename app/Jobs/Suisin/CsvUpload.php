@@ -90,8 +90,8 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
                 $error_array = \DB::connection('mysql_zenon')->transaction(function() use ($import_zenon_data_service, $r, $csv_file_object, $ym) {
                     return $import_zenon_data_service->uploadToDatabase($r, $csv_file_object, $ym);
                 });
-            } catch (\Exception $exc) {
-                echo '[ ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
+            } catch (\Exception $e) {
+                echo '[ ERROR : ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
                 echo $e->getMessage() . PHP_EOL;
                 echo $e->getTraceAsString() . PHP_EOL;
                 $import_zenon_data_service->setImportErrorToJobStatus($this->job_id, $e->getMessage());
