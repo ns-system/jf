@@ -175,17 +175,18 @@ class ImportZenonDataService
         /**
          * 実例：
          * $array = [0=>1, 1=>2, 2=>3, 3=>4, 4=>5, 5=>6, 6=7,];
-         * 
+         *
          * splitRow(true, 0, 2, 7)
          * var_dump(array_slice($array, 0, 3, true)); // [0=>1, 1=>2, 2=>3,]
          * var_dump(array_slice($array, 3, 7, true)); // [3=>4, 4=>5, 5=>6, 6=>7]
-         * 
-         * pos_first | pos_last | pos_max | f1 | e1 | f2 | e2 | t1 | t2
-         * ----------+----------+---------+---------+---------+----+----
-         *         0 |        2 |       7 |      0~3|      3~7|   3|   4
-         * f1 =           pos_first
-         * e1 = f2 = t1 = pos_last + 1
-         * e2 =t2 =       pos_max
+         *
+         * pos_first | pos_last | pos_max | f1~e1 | f2~e2 | t1 | t2
+         * ----------+----------+---------+-------+-------+----+----
+         *         0 |        2 |       7 |   0~3 |   3~7 |  3 |  4
+         * f1 =      pos_first
+         * e1 = f2 = pos_last + 1
+         * t1 =      pos_max - pos_last - 1
+         * e2 = t2 = pos_max
          */
         $slice_row_1 = array_slice($this->row, $pos_first, ($pos_last + 1), true);
         $slice_row_2 = array_slice($this->row, ($pos_last + 1), $pos_max, true);
