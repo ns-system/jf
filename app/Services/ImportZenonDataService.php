@@ -139,6 +139,9 @@ class ImportZenonDataService
         $this->row['key_account_number']          = (double) $key_account;
         $this->common_row['key_account_number']   = (double) $key_account;
         $this->separate_row['key_account_number'] = (double) $key_account;
+        $this->separate_row['subject_code']       = $this->common_row['subject_code'];
+        $this->separate_row['account_number']     = $this->common_row['account_number'];
+        $this->separate_row['contract_number']    = $this->common_row['contract_number'];
         return $this;
     }
 
@@ -178,8 +181,8 @@ class ImportZenonDataService
         $slice_row_1 = array_slice($this->row, $pos_first, ($pos_last + 1), true);
         $slice_row_2 = array_slice($this->row, ($pos_last + 1), $pos_max, true);
 
-       var_dump($slice_row_1);
-       var_dump($slice_row_2);
+        var_dump($slice_row_1);
+        var_dump($slice_row_2);
         $this->checkSplitRow(count($slice_row_1), ($pos_last + 1), "共通部の");
         $this->checkSplitRow(count($slice_row_2), ($pos_max - $pos_last - 1), "個別部の");
         $this->checkSplitRow((count($slice_row_1) + count($slice_row_2)), $pos_max, "");
