@@ -139,9 +139,6 @@ class ImportZenonDataService
         $this->row['key_account_number']          = (double) $key_account;
         $this->common_row['key_account_number']   = (double) $key_account;
         $this->separate_row['key_account_number'] = (double) $key_account;
-        $this->separate_row['subject_code']       = $this->common_row['subject_code'];
-        $this->separate_row['account_number']     = $this->common_row['account_number'];
-        $this->separate_row['contract_number']    = $this->common_row['contract_number'];
         return $this;
     }
 
@@ -188,19 +185,22 @@ class ImportZenonDataService
          * t1 =      pos_max - pos_last - 1
          * e2 = t2 = pos_max
          */
-        $slice_row_1 = array_slice($this->row, $pos_first, ($pos_last + 1), true);
-        $slice_row_2 = array_slice($this->row, ($pos_last + 1), $pos_max, true);
+        $common_row   = array_slice($this->row, $pos_first, ($pos_last + 1), true);
+        $separate_row = array_slice($this->row, ($pos_last + 1), $pos_max, true);
 
+        $this->checkSplitRow(($pos_last + 1), count($common_row), "共通部の");
+        $this->checkSplitRow(($pos_max - $pos_last - 1), count($separate_row), "個別部の");
+        $this->checkSplitRow($pos_max, (count($common_row) + count($separate_row)), "");
 
-//        var_dump($slice_row_1);
-//        var_dump($slice_row_2);
-        $this->checkSplitRow(($pos_last + 1), count($slice_row_1), "共通部の");
-        $this->checkSplitRow(($pos_max - $pos_last - 1), count($slice_row_2), "個別部の");
-        $this->checkSplitRow($pos_max, (count($slice_row_1) + count($slice_row_2)), "");
-
-        $this->common_row   = $slice_row_1;
-        $this->separate_row = $slice_row_2;
+        $this->common_row   = $common_row;
+        $this->separate_row = $separate_row;
         return $this;
+    }
+
+    private function setCommonAccountLedgerKeys() {
+        $this->separate_row['subject_code']    = $this->common_row['subject_code'];
+        $this->separate_row['account_number']  = $this->common_row['account_number'];
+        $this->separate_row['contract_number'] = $this->common_row['contract_number'];
     }
 
     private function checkSplitRow($expect_value, $actual_value, $msg = '') {
@@ -286,6 +286,11 @@ class ImportZenonDataService
                     ->setConvertedAccountToRow($monthly_state->is_account_convert, $account_convert_param)
                     ->setTimeStamp(date('Y-m-d H:i:s'))
             ;
+            // 貯金口座だった場合、キーの分割を行う -> 判定がまずい
+            if (strpos($monthly_state->table_name, 'account_ledgers') !== false)
+            {
+                $this->setCommonAccountLedgerKeys();
+            }
             if ($monthly_state->is_split)
             {
                 $common_row                = $this->common_row;
