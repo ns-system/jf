@@ -1,10 +1,12 @@
 <?php
+
 // 各環境ごとにコピーしてこの設定ファイルを編集して使う
 $host      = '127.0.0.1';
 $user_name = 'homestead';
 $password  = 'secret';
-
-$port = 3306;
+$charset   = 'utf8mb4';
+$collation = 'utf8mb4_bin';
+$port      = 3306;
 
 // $ip   = gethostbyname(gethostname());
 // $sapi = php_sapi_name();
@@ -68,8 +70,8 @@ return [
             'database'  => env('DB_DATABASE', 'forge'),
             'username'  => env('DB_USERNAME', 'forge'),
             'password'  => env('DB_PASSWORD', ''),
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
+            'charset'   => $charset,
+            'collation' => $collation,
             'prefix'    => '',
             'strict'    => false,
             'port'      => 3306/* $port */,
@@ -80,8 +82,8 @@ return [
             'database'  => 'zenon_db',
             'username'  => $user_name,
             'password'  => $password,
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
+            'charset'   => $charset,
+            'collation' => $collation,
             'prefix'    => '',
             'strict'    => false,
             'port'      => $port,
@@ -92,8 +94,8 @@ return [
             'database'  => 'master_db',
             'username'  => $user_name,
             'password'  => $password,
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
+            'charset'   => $charset,
+            'collation' => $collation,
             'prefix'    => '',
             'strict'    => false,
             'port'      => $port,
@@ -104,8 +106,8 @@ return [
             'database'  => 'laravel_db',
             'username'  => $user_name,
             'password'  => $password,
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
+            'charset'   => $charset,
+            'collation' => $collation,
             'prefix'    => '',
             'strict'    => false,
             'port'      => $port,
@@ -116,8 +118,8 @@ return [
             'database'  => 'suisin_db',
             'username'  => $user_name,
             'password'  => $password,
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
+            'charset'   => $charset,
+            'collation' => $collation,
             'prefix'    => '',
             'strict'    => false,
             'port'      => $port,
@@ -128,8 +130,8 @@ return [
             'database'  => 'sinren_db',
             'username'  => $user_name,
             'password'  => $password,
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
+            'charset'   => $charset,
+            'collation' => $collation,
             'prefix'    => '',
             'strict'    => false,
             'port'      => $port,
@@ -140,8 +142,8 @@ return [
             'database'  => 'roster_db',
             'username'  => $user_name,
             'password'  => $password,
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
+            'charset'   => $charset,
+            'collation' => $collation,
             'prefix'    => '',
             'strict'    => false,
             'port'      => $port,
@@ -152,8 +154,8 @@ return [
             'database'  => 'nikocale_db',
             'username'  => $user_name,
             'password'  => $password,
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
+            'charset'   => $charset,
+            'collation' => $collation,
             'prefix'    => '',
             'strict'    => false,
             'port'      => $port,
@@ -183,8 +185,8 @@ return [
             'database'  => 'laravel_db',
             'username'  => 'homestead',
             'password'  => 'secret',
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
+            'charset'   => $charset,
+            'collation' => $collation,
             'prefix'    => '',
             'strict'    => false,
             'port'      => $port,
