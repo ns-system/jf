@@ -83,6 +83,12 @@
     function setFileName(file_path) {
         var tmp = file_path.split('\\');
         var file_name = tmp[tmp.length - 1];
-        $('#file_name').html(file_name);
+         
+            $('#file_name').html(file_name);
+        
+        if(file_name.length==0){
+             $('#file_name').html("ファイルを選択してください");
+        }
+     
     }
 </script>

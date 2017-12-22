@@ -259,6 +259,9 @@ class UnitImportZenonDataServiceTest extends TestCase
     public function 正常系_列セット_分割あり() {
         $rows     = [
             [
+                'subject_code'       => 1,
+                'account_number'     => 1234567,
+                'contract_number'    => 1,
                 'split_key'          => 'key_1',
                 'user_name'          => 'test user_1',
                 'created_on'         => '2017-07-01',
@@ -267,23 +270,37 @@ class UnitImportZenonDataServiceTest extends TestCase
                 'monthly_id'         => 201707,
                 'key_account_number' => 1234567,
             ],
-            ['split_key' => 'key_2', 'user_name' => 'test user_2', 'created_on' => '2017-08-21', 'is_administrator' => false, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 2345678901,],
-        ];
-        $expect_2 = [
-            ['is_administrator' => true, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 1234567, /* 'split_key' => 'key_1', */],
-            ['is_administrator' => false, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 2345678901, /* 'split_key' => 'key_2', */],
+            [
+                'subject_code'       => 4,
+                'account_number'     => 2345678901,
+                'contract_number'    => 5,
+                'split_key'          => 'key_2',
+                'user_name'          => 'test user_2',
+                'created_on'         => '2017-08-21',
+                'is_administrator'   => false,
+                'id'                 => null,
+                'monthly_id'         => 201707,
+                'key_account_number' => 2345678901,
+            ],
         ];
         $expect_1 = [
-            ['split_key' => 'key_1', 'user_name' => 'test user_1', 'created_on' => '2017-07-01',],
-            ['split_key' => 'key_2', 'user_name' => 'test user_2', 'created_on' => '2017-08-21',],
+            ['subject_code' => 1, 'account_number' => 1234567, 'contract_number' => 1, 'split_key' => 'key_1', 'user_name' => 'test user_1', 'created_on' => '2017-07-01',],
+            ['subject_code' => 4, 'account_number' => 2345678901, 'contract_number' => 5, 'split_key' => 'key_2', 'user_name' => 'test user_2', 'created_on' => '2017-08-21',],
         ];
+        $expect_2 = [
+            ['is_administrator' => true, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 1234567, 'subject_code' => 1, 'account_number' => 1234567, 'contract_number' => 1,],
+            ['is_administrator' => false, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 2345678901, 'subject_code' => 4, 'account_number' => 2345678901, 'contract_number' => 5,],
+        ];
+
 //        $split_key_configs = ['split_foreign_key_1' => 'split_key', 'split_foreign_key_2' => 'key_account_number'];
         $result_1 = [];
         $result_2 = [];
         foreach ($rows as $r) {
             $this->s->setRow($r);
-            $s = $this->setReflection('splitRow');
-            $s->invoke($this->s, true, 0, 2, 7);
+            $s1 = $this->setReflection('splitRow');
+            $s1->invoke($this->s, true, 0, 5, 10);
+            $s2 = $this->setReflection('setCommonAccountLedgerKeys');
+            $s2->invoke($this->s);
             try {
                 $result_1[] = $this->s->getCommonRow();
                 $result_2[] = $this->s->getSeparateRow();
