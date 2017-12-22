@@ -95,7 +95,6 @@ class FuncSuisinAdminControllerRosterTest extends TestCase
      * @tests
      */
     public function 正常系_勤務時間マスタCSVファイルインポートできる() {
-
         \App\WorkType::truncate();
         $file_name = '勤務時間マスタ.csv';
         $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;

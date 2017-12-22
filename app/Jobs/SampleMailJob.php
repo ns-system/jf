@@ -41,6 +41,7 @@ class SampleMailJob extends Job implements SelfHandling, ShouldQueue
                     ->subject('テストメール')
             ;
         });
+        echo "[ " . date("Y-m-d H:i:s") . " ] succeeded sending to {$addr['addr']}." . PHP_EOL;
     }
 
 }
