@@ -44,7 +44,7 @@ class CreateTegashiLoanLedgers extends Migration
             $table->integer("contract_month_interest_rate_length");
             $table->integer("contract_date_interest_rate_length");
             $table->integer("delay_date_interest_rate_length");
-            $table->integer("allotment _interest_rate_length");
+            $table->integer("allotment_interest_rate_length");
             $table->integer("cycle_rate_length");
             $table->integer("first_interest_length");
             $table->double("increase_loan_amount");
