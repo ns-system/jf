@@ -203,6 +203,10 @@ class ImportZenonDataService
         $this->separate_row['contract_number'] = $this->common_row['contract_number'];
     }
 
+    private function setCommonLoanLedgerKeys() {
+        $this->separate_row['loan_account_number'] = $this->common_row['loan_account_number'];
+    }
+
     private function checkSplitRow($expect_value, $actual_value, $msg = '') {
         if ($expect_value !== $actual_value)
         {
@@ -290,6 +294,11 @@ class ImportZenonDataService
             if (strpos($monthly_state->table_name, 'account_ledgers') !== false)
             {
                 $this->setCommonAccountLedgerKeys();
+            }
+            // 融資口座だった場合、キーの分割を行う -> 判定がまずい
+            if (strpos($monthly_state->table_name, 'loan_ledgers') !== false)
+            {
+                $this->setCommonLoanLedgerKeys();
             }
             if ($monthly_state->is_split)
             {
