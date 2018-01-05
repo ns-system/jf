@@ -41,11 +41,19 @@ trait TypeConvertable
                 {
                     return null;
                 }
-                if (!$this->isDate($column))
+                if ($this->isDate($column))
+                {
+                    $obj = $this->setDate($column)->getDate();
+                    return (empty($obj)) ? null : $obj->format('Y-m-d');
+                }
+
+                $y = substr($column, 0, 4);
+                if ($y < '1900' || $y > '2500')
                 {
                     throw new \Exception("値が日付型ではありません。（引数：'{$column}'）");
                 }
-                $obj = $this->setDate($column)->getDate();
+                $tmp_col = (!$this->isDate($column)) ? $y . '0101' : $column;
+                $obj     = $this->setDate($tmp_col)->getDate();
                 return (empty($obj)) ? null : $obj->format('Y-m-d');
             case 'time':
                 if (empty($column))
