@@ -182,8 +182,8 @@ class FuncSuperUserControllerTest extends TestCase
                 ->visit('/admin/super_user/user')
                 ->select('1', 'super')
                 ->press('検索する')
-                ->see($super_user->last_name)
-                ->dontSee($normal_user->last_name)
+                ->see($super_user->email)
+                ->dontSee($normal_user->email)
         ;
     }
 
@@ -219,8 +219,8 @@ class FuncSuperUserControllerTest extends TestCase
                 ->visit('/admin/super_user/user')
                 ->select('0', 'roster')
                 ->press('検索する')
-                ->see($roster_normal_user->last_name)
-                ->dontSee($roster_admin_user->last_name)
+                ->see($roster_normal_user->email)
+                ->dontSee($roster_admin_user->email)
         ;
     }
 
