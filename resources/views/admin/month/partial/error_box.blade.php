@@ -1,16 +1,18 @@
-<div  id="error-list-box">
-    <small>
+
+<div class="alert alert-danger alert-dismissible fade in alert-fixed" rore="alert" style="right: 20px; left: auto; display: none;">
+    <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+    </button>
         <strong class="text-danger"  id="danger-list-title"  style="display: none;">警告：</strong>
         <ul class="text-danger-light" id="danger-list"></ul>
-
         <strong class="text-warning" id="warning-list-title" style="display: none;">注意：</strong>
         <ul class="text-warning-light" id="warning-list" style="margin-bottom: 0;"></ul>
-    </small>
+
 </div>
-<button class="btn btn-primary btn-xs" id="error-box-list-visiblity" data-visible="true">表示／非表示</button>
+{{-- <button class="btn btn-primary btn-xs" id="error-box-list-visiblity" data-visible="true">表示／非表示</button> --}}
 
 <style type="text/css">
-#error-list-box{
+/*#error-list-box{
     width: 400px;
     position: fixed;
     background: rgba(0, 0, 0, 0.8);
@@ -32,7 +34,7 @@
 }
 #error-list-box::-webkit-scrollbar{
     width: 0;
-}
+}*/
 </style>
 
 <script type="text/javascript">
@@ -77,9 +79,10 @@
         }
     });
 
-    if($('#error-box-list-visiblity').attr('data-visible') == 'true' && error_counter > 0){
+    // if($('#error-box-list-visiblity').attr('data-visible') == 'true' && error_counter > 0){
+    if(error_counter > 0){
         $('#error-list-box').show();
-        $('#error-box-list-visiblity').show();
+    //     $('#error-box-list-visiblity').show();
     }
 }
 

@@ -147,7 +147,7 @@
                         @endif
 
                         @if(!$f->is_import || $record_counts[$f->key_id] <= 0)
-                        @else <p class="text-info" data-toggle="tooltip" data-title="処理は行えますが、すでにデータベースに登録されているようです。">
+                        @else <p class="text-info" data-toggle="tooltip" data-title="すでにデータベースに登録されているようです。">
                             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" style="font-size: 24px;"></span>
                         </p>
                         @endif
@@ -199,10 +199,10 @@
                     </td>
 
                     <td class="va-middle text-right">
-                        <p @if($column_counts[$f->key_id] <= 0) class="text-warning" data-toggle="tooltip" data-title="テーブルカラムが取り込まれていないようです。" data-placement="right" @endif>
+                        <p><span @if($column_counts[$f->key_id] <= 0) class="text-warning" data-toggle="tooltip" data-title="テーブルカラムが取り込まれていないようです。" data-placement="top" @endif>
                             {{number_format((int) $column_counts[$f->key_id])}}件
-                        </p>
-                        <p @if($f->column_length !== $column_counts[$f->key_id]) class="text-warning" data-toggle="tooltip" data-title="全オン還元CSVファイル設定情報とテーブルカラム数が一致していないようです。" data-placement="right" @endif>{{number_format((int) $f->column_length)}}件</p>
+                        </span></p>
+                        <p><span @if($f->column_length !== $column_counts[$f->key_id]) class="text-warning" data-toggle="tooltip" data-title="全オン還元CSVファイル設定情報とテーブルカラム数が一致していないようです。" data-placement="top" @endif>{{number_format((int) $f->column_length)}}件</span></p>
                     </td>
 
                     <td>
