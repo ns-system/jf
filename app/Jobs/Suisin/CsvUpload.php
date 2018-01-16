@@ -70,6 +70,7 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             }
         } catch (\Exception $e) {
             echo '[ ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
+            echo $e->getMessage();
             echo $e->getTraceAsString() . PHP_EOL;
             $import_zenon_data_service->setImportErrorToJobStatus($this->job_id, mb_substr($e->getMessage(), 0, 250));
             exit();

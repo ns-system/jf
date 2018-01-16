@@ -26,17 +26,6 @@
     <div class="container-fluid">
         @include('partial.alert')
 
-        <div class="border-bottom"><h2>月別マスタ選択</h2></div>
-        <div class="text-right" data-spy="affix" data-offset-top="120" style="top: 115px; right: 30px; z-index: 1;">
-            <div style="margin-bottom: 10px;">
-                {!! $rows->render() !!}
-            </div>
-            <div class="btn-group" style="margin-bottom: 10px;">
-                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#job-status">処理状況確認</button>
-                <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#add-month">新規ID生成</button>
-            </div>
-        </div>
-
         <div class="row" style="margin-bottom: 20px;">
             <div class="container-fluid">
                 <div class="alert fade in container-fluid" role="alert" style="margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc;">
@@ -68,7 +57,16 @@
                 </div>
             </div>
         </div>
-
+        <div class="border-bottom"><h2>月別マスタ選択</h2></div>
+        <div class="text-right" data-spy="affix" data-offset-top="120" style="top: 115px; right: 30px; z-index: 1;">
+            <div style="margin-bottom: 10px;">
+                {!! $rows->render() !!}
+            </div>
+            <div class="btn-group" style="margin-bottom: 10px;">
+                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#job-status">処理状況確認</button>
+                <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#add-month">新規ID生成</button>
+            </div>
+        </div>
 
         <div class="modal fade" id="add-month" tabindex="-1">
             <form method="POST" action="{{route('admin::super::month::create')}}">

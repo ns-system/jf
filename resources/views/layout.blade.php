@@ -92,6 +92,7 @@ input[type=file]{display: none;}
 
 .alert-fixed { width: 300px; padding: 10px; padding-right: 30px; font-size: 80%; z-index: 2; left: 20px; position: fixed; bottom: 40px; margin-bottom: 0; max-height: 400px; overflow-y: scroll; };
 .margin-bottom{margin-bottom: 10px;}
+input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
 
 </style>
 </head>

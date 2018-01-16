@@ -1,12 +1,9 @@
 @extends('layout')
+@section('title', 'テーブルカラム削除')
 
 @section('header')
 @parent
-@endsection
-
-
-@section('brand')
-@endsection
+@section('brand', '管理ユ')
 
 @section('sidebar')
 <div class="col-md-2">
@@ -48,9 +45,8 @@
                             <select class="form-control" name="zenon_format_id">
                                 @foreach($tables as $table)
                                 <option value="{{$table->zenon_format_id}}">
-                                    @if(!empty($table->total) && $table->total > 1)★@else　@endif
                                     {{$table->zenon_data_name}}
-                                    @if(!empty($table->total) && $table->total > 1) ［ {{number_format($table->total)}}件 ］ @endif
+                                    @if(!empty($table->total) && $table->total > 1) ［{{number_format($table->total)}}カラム］ @endif
                                 </option>
                                 @endforeach
                             </select>
@@ -61,7 +57,7 @@
                                 </label>
                             </div>
                             <p class="text-right">
-                                <button type="submit" class="btn btn-danger">削除する</button>
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('削除後はテーブルカラム情報を復元することはできません。削除してよろしいですか？');">削除する</button>
                             </p>
                         </form>
                     </div>
