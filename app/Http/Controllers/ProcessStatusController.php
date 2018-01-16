@@ -46,7 +46,9 @@ class ProcessStatusController extends Controller
             $cnts[$row->id] = ['all' => $all_cnt, 'exist' => $exist_cnt, 'import' => $import_cnt,];
         }
         $job_status = \App\JobStatus::orderBy('id', 'desc')->take(5)->get();
-        return view('admin.month.index', ['rows' => $rows, 'counts' => $cnts, 'months' => $months, 'job_status' => $job_status]);
+        $db         = new \App\Services\DatabaseUsageShowService();
+        $db_usage   = $db->getMySqlConfig()->getNowDirectoryUsage();
+        return view('admin.month.index', ['rows' => $rows, 'counts' => $cnts, 'months' => $months, 'job_status' => $job_status, 'usage' => $db_usage]);
     }
 
     public function create() {

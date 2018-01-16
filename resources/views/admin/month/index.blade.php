@@ -1,3 +1,6 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+<!DOCTYPE html>
+
 @extends('layout')
 @section('title', '月別マスタ')
 
@@ -18,14 +21,13 @@
 
 <div style="margin-top: 100px;"></div>
 
-
 @section('content')
 <div class="col-md-10">
     <div class="container-fluid">
         @include('partial.alert')
-        <div class="border-bottom"><h2>月別マスタ選択</h2></div>
 
-        <div class="text-right" data-spy="affix" data-offset-top="100" style="top: 115px; right: 30px; z-index: 1;">
+        <div class="border-bottom"><h2>月別マスタ選択</h2></div>
+        <div class="text-right" data-spy="affix" data-offset-top="120" style="top: 115px; right: 30px; z-index: 1;">
             <div style="margin-bottom: 10px;">
                 {!! $rows->render() !!}
             </div>
@@ -34,6 +36,38 @@
                 <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#add-month">新規ID生成</button>
             </div>
         </div>
+
+        <div class="row alert fade in" style="margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc;" role="alert">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <div class="container-fluid">
+                <h3 class="border-bottom">データベース専有領域</h3>
+                <div class="col-md-5">
+                    <canvas id="usage"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-small">
+                        <tr>
+                            <th width="20%" class="bg-primary">DB</th>
+                            <td width="80%" class="text-right">{{$usage['db_dir']}}</td>
+                        </tr>
+                        <tr>
+                            <th width="20%" class="bg-primary">使用済み</th>
+                            <td width="80%" class="text-right">{{number_format($usage['db_usage'])}}{{$usage['size_unit']}}B / {{$usage['db_usage_percent']}}%</td>
+                        </tr>
+                        <tr>
+                            <th width="20%" class="bg-primary">利用可能</th>
+                            <td width="80%" class="text-right">{{number_format($usage['db_available'])}}{{$usage['size_unit']}}B / {{$usage['db_avail_percent']}}%</td>
+                        </tr>
+                        <tr>
+                            <th width="20%" class="bg-primary">合計</th>
+                            <td width="80%" class="text-right">{{number_format($usage['db_full_size'])}}{{$usage['size_unit']}}B</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
         <div class="modal fade" id="add-month" tabindex="-1">
             <form method="POST" action="{{route('admin::super::month::create')}}">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -116,4 +150,29 @@
 
 @section('footer')
 @parent
+<script>
+    var mycolor = '#00a383';
+    if({{$usage['db_usage_percent']}} > 75) mycolor = '#f39c12';
+    if({{$usage['db_usage_percent']}} > 90) mycolor = '#e74c3c';
+    var doughnutData = [
+    {
+        value: {{$usage['db_usage']}},
+        color: mycolor,
+        label: "使用済み({{$usage['size_unit']}}B)",
+    },
+    {
+        value : {{$usage['db_available']}},
+        color : "#cfcfcf",
+        label: "未使用({{$usage['size_unit']}}B)",
+    },
+    ];
+    window.onload = function(){
+        var ctx = document.getElementById("usage").getContext("2d");
+        window.myDoughnut = new Chart(ctx).Doughnut(doughnutData, {
+            responsive : true
+        });
+    }
+    // var myDoughnut = new Chart(document.getElementById("sample").getContext("2d")).Doughnut(doughnutData);
+</script>
+
 @endsection
