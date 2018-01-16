@@ -256,7 +256,7 @@ class UnitImportZenonDataServiceTest extends TestCase
     /**
      * @test
      */
-    public function 正常系_列セット_分割あり() {
+    public function 正常系_列セット_貯金口座の分割あり() {
         $rows     = [
             [
                 'subject_code'       => 1,
@@ -299,8 +299,67 @@ class UnitImportZenonDataServiceTest extends TestCase
             $this->s->setRow($r);
             $s1 = $this->setReflection('splitRow');
             $s1->invoke($this->s, true, 0, 5, 10);
-            $s2 = $this->setReflection('setCommonAccountLedgerKeys');
-            $s2->invoke($this->s);
+            $s2 = $this->setReflection('setCommonLedgerKeys');
+            $s2->invoke($this->s, true, false);
+            try {
+                $result_1[] = $this->s->getCommonRow();
+                $result_2[] = $this->s->getSeparateRow();
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+        }
+        $this->assertEquals($expect_1, $result_1);
+        $this->assertEquals($expect_2, $result_2);
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_列セット_融資口座の分割あり() {
+        $rows     = [
+            [
+                'subject_code'        => 1,
+                'loan_account_number' => 1234567,
+                'contract_number'     => 1,
+                'split_key'           => 'key_1',
+                'user_name'           => 'test user_1',
+                'created_on'          => '2017-07-01',
+                'is_administrator'    => true,
+                'id'                  => null,
+                'monthly_id'          => 201707,
+                'key_account_number'  => 1234567,
+            ],
+            [
+                'subject_code'        => 4,
+                'loan_account_number' => 2345678901,
+                'contract_number'     => 5,
+                'split_key'           => 'key_2',
+                'user_name'           => 'test user_2',
+                'created_on'          => '2017-08-21',
+                'is_administrator'    => false,
+                'id'                  => null,
+                'monthly_id'          => 201707,
+                'key_account_number'  => 2345678901,
+            ],
+        ];
+        $expect_1 = [
+            ['subject_code' => 1, 'loan_account_number' => 1234567, 'contract_number' => 1, 'split_key' => 'key_1', 'user_name' => 'test user_1', 'created_on' => '2017-07-01',],
+            ['subject_code' => 4, 'loan_account_number' => 2345678901, 'contract_number' => 5, 'split_key' => 'key_2', 'user_name' => 'test user_2', 'created_on' => '2017-08-21',],
+        ];
+        $expect_2 = [
+            ['is_administrator' => true, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 1234567, 'loan_account_number' => 1234567,],
+            ['is_administrator' => false, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 2345678901, 'loan_account_number' => 2345678901,],
+        ];
+
+//        $split_key_configs = ['split_foreign_key_1' => 'split_key', 'split_foreign_key_2' => 'key_account_number'];
+        $result_1 = [];
+        $result_2 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s1 = $this->setReflection('splitRow');
+            $s1->invoke($this->s, true, 0, 5, 10);
+            $s2 = $this->setReflection('setCommonLedgerKeys');
+            $s2->invoke($this->s, false, true);
             try {
                 $result_1[] = $this->s->getCommonRow();
                 $result_2[] = $this->s->getSeparateRow();

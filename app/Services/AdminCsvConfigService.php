@@ -72,15 +72,25 @@ class AdminCsvConfigService
                         ['account_column_name', '変換口座名', 'class' => 'small text-left'],
                     ]
                 ],
-//                [
-//                    'row' => [
-//                        ['is_split', '分割', 'class' => 'small text-left'],
+                [
+                    'row' => [
+                        ['is_split', '分割', 'class' => 'small text-left'],
 //                        ['split_foreign_key_1', '分割時キー1', 'class' => 'small text-left'],
 //                        ['split_foreign_key_2', '分割時キー2', 'class' => 'small text-left'],
 //                        ['split_foreign_key_3', '分割時キー3', 'class' => 'small text-left'],
 //                        ['split_foreign_key_4', '分割時キー4', 'class' => 'small text-left'],
-//                    ]
-//                ],
+                    ]
+                ],
+                [
+                    'row' => [
+                        ['is_deposit_split', '貯金', 'class' => 'small text-left'],
+                        ['is_loan_split', '融資', 'class' => 'small text-left'],
+//                        ['split_foreign_key_1', '分割時キー1', 'class' => 'small text-left'],
+//                        ['split_foreign_key_2', '分割時キー2', 'class' => 'small text-left'],
+//                        ['split_foreign_key_3', '分割時キー3', 'class' => 'small text-left'],
+//                        ['split_foreign_key_4', '分割時キー4', 'class' => 'small text-left'],
+                    ]
+                ],
             ],
             'table_orders'  => [
                 'is_process'      => 'desc',
@@ -95,6 +105,7 @@ class AdminCsvConfigService
                 'table_name'            => ['column_name' => 'table_name', 'display' => 'テーブル名', 'type' => 'string'],
                 'common_table_name'     => ['column_name' => 'common_table_name', 'display' => '共通テーブル名', 'type' => 'string'],
                 'is_cumulative'         => ['column_name' => 'is_cumulative', 'display' => '累積', 'type' => 'integer'],
+                'is_split'              => ['column_name' => 'is_split', 'display' => '分割', 'type' => 'integer'],
                 'is_account_convert'    => ['column_name' => 'is_account_convert', 'display' => '変換', 'type' => 'integer'],
                 'is_process'            => ['column_name' => 'is_process', 'display' => '分割', 'type' => 'integer'],
             ],
@@ -116,6 +127,8 @@ class AdminCsvConfigService
                     'is_account_convert',
                     'is_process',
                     'is_split',
+                    'is_deposit_split',
+                    'is_loan_split',
                     'zenon_format_id',
                     'account_column_name',
                     'subject_column_name',
@@ -141,6 +154,8 @@ class AdminCsvConfigService
                     '口座変換フラグ',
                     '処理フラグ',
                     'テーブル分割フラグ',
+                    '貯金口座分割フラグ',
+                    '貸付口座分割フラグ',
                     '全オンフォーマットID',
                     '変換口座カラム名',
                     '変換科目カラム名',
@@ -169,6 +184,8 @@ class AdminCsvConfigService
                     [1, 'is_account_convert', '口座変換フラグ',],
                     [1, 'is_process', '処理フラグ',],
                     [1, 'is_split', 'テーブル分割フラグ',],
+                    [1, 'is_deposit_split', '貯金口座分割フラグ',],
+                    [1, 'is_loan_split', '貸付口座分割フラグ',],
                     [1, 'zenon_format_id', '全オンフォーマットID',],
                     [1, 'account_column_name', '変換口座カラム名',],
                     [1, 'subject_column_name', '変換科目カラム名',],
@@ -191,6 +208,8 @@ class AdminCsvConfigService
                     'is_account_convert'    => 'required|boolean',
                     'is_process'            => 'required|boolean',
                     'is_split'              => 'required|boolean',
+                    'is_deposit_split'      => 'required|boolean',
+                    'is_loan_split'         => 'required|boolean',
                     'zenon_format_id'       => 'required|integer',
                 ],
                 'types'         => [
@@ -203,6 +222,8 @@ class AdminCsvConfigService
                     'is_account_convert'    => 'integer',
                     'is_process'            => 'integer',
                     'is_split'              => 'integer',
+                    'is_deposit_split'      => 'integer',
+                    'is_loan_split'         => 'integer',
                     'zenon_format_id'       => 'integer',
                 ],
                 'flags'         => [
@@ -222,6 +243,8 @@ class AdminCsvConfigService
                     'is_account_convert'    => 1,
                     'is_process'            => 1,
                     'is_split'              => 1,
+                    'is_deposit_split'      => 1,
+                    'is_loan_split'         => 1,
                     'zenon_format_id'       => 1,
                     'account_column_name'   => 1,
                     'subject_column_name'   => 1,
