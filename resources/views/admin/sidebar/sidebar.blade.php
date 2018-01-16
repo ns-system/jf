@@ -49,7 +49,7 @@
                 href="{{route('admin::super::config::index', ['system'=>'Admin','category'=>'ZenonCsv'])}}"
                 data-toggle="tooltip"
                 title="全オンセンターから還元されるCSVデータの登録を行います。"
-                data-placement="right">全オン還元CSVファイル設定</a>
+                data-placement="right">全オン CSVファイル設定</a>
     <span></span>
 
             <a
@@ -58,7 +58,7 @@
                 href="{{route('admin::super::config::index', ['system'=>'Admin','category'=>'ZenonType'])}}"
                 data-toggle="tooltip"
                 title="全オン還元データのフォーマットの変更を行います。"
-                data-placement="right">全オンカテゴリ名</a>
+                data-placement="right">全オン カテゴリ名</a>
     <span></span>
 
             <a
@@ -67,7 +67,16 @@
                 href="{{route('admin::super::config::index', ['system'=>'Admin','category'=>'ZenonTable'])}}"
                 data-toggle="tooltip"
                 title="全オン還元情報のMySQL側のカラム設定を行います。"
-                data-placement="right">MySQL全オンテーブルカラム設定</a>
+                data-placement="right">全オン テーブルカラム設定</a>
+    <span></span>
+
+            <a
+                role="presentation"
+                class="list-group-item collapse list-second"
+                href="{{route('admin::super::zenon_table::index')}}"
+                data-toggle="tooltip"
+                title="MySQL側テーブルカラムの削除を行います。"
+                data-placement="right"><p class="text-danger">全オン テーブルカラム削除</p></a>
     <span></span>
 
         </div>

@@ -92,6 +92,15 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
             Route::post('/{system}/{category}/import', ['as' => 'import', 'uses' => 'SuisinAdminController@import']);
             Route::post('/{system}/{category}/upload', ['as' => 'upload', 'uses' => 'SuisinAdminController@upload']);
         });
+        /**
+         * Prefix     : /zenon_table
+         * As         : zenon_table::
+         */
+        Route::group(['prefix' => '/zenon_table', 'as' => 'zenon_table::'], function() {
+//            Route::get('/{system}/',                   ['as' => 'home',    'uses'=>'SuisinAdminController@index']);
+            Route::get('/',        ['as' => 'index',  'uses' => 'DeleteColumnController@index']);
+            Route::post('/delete', ['as' => 'delete', 'uses' => 'DeleteColumnController@delete']);
+        });
     });
     /**
      * Middleware : suisin_admin
