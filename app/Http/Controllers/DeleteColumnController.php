@@ -21,8 +21,8 @@ class DeleteColumnController extends Controller
     }
 
     public function delete(Requests\SuperUser\ColumnDelete $request) {
-        $cnt   = \App\ZenonTable::where('zenon_format_id', '=', $request->zenon_format_id)->count();
-        $table = \App\ZenonTable::where('zenon_format_id', '=', $request->zenon_format_id)->delete();
+        $cnt = \App\ZenonTable::where('zenon_format_id', '=', $request->zenon_format_id)->count();
+        \App\ZenonTable::where('zenon_format_id', '=', $request->zenon_format_id)->delete();
         \Session::flash('success_message', number_format($cnt) . "件を削除しました。");
         return back();
     }
