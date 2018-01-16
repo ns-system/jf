@@ -37,32 +37,34 @@
             </div>
         </div>
 
-        <div class="row alert fade in" style="margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc;" role="alert">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <div class="row" style="margin-bottom: 20px;">
             <div class="container-fluid">
-                <h3 class="border-bottom">データベース専有領域</h3>
-                <div class="col-md-5">
-                    <canvas id="usage"></canvas>
-                </div>
-                <div class="col-md-6">
-                    <table class="table table-small">
-                        <tr>
-                            <th width="20%" class="bg-primary">DB</th>
-                            <td width="80%" class="text-right">{{$usage['db_dir']}}</td>
-                        </tr>
-                        <tr>
-                            <th width="20%" class="bg-primary">使用済み</th>
-                            <td width="80%" class="text-right">{{number_format($usage['db_usage'])}}{{$usage['size_unit']}}B / {{$usage['db_usage_percent']}}%</td>
-                        </tr>
-                        <tr>
-                            <th width="20%" class="bg-primary">利用可能</th>
-                            <td width="80%" class="text-right">{{number_format($usage['db_available'])}}{{$usage['size_unit']}}B / {{$usage['db_avail_percent']}}%</td>
-                        </tr>
-                        <tr>
-                            <th width="20%" class="bg-primary">合計</th>
-                            <td width="80%" class="text-right">{{number_format($usage['db_full_size'])}}{{$usage['size_unit']}}B</td>
-                        </tr>
-                    </table>
+                <div class="alert fade in container-fluid" role="alert" style="margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc;">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <div class="col-md-5">
+                        <canvas id="usage"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="border-bottom">データベース専有領域</h3>
+                        <table class="table table-small">
+                            <tr>
+                                <th width="20%" class="bg-primary">DB</th>
+                                <td width="80%" class="text-right">{{$usage['db_dir']}}</td>
+                            </tr>
+                            <tr>
+                                <th width="20%" class="bg-primary">使用済み</th>
+                                <td width="80%" class="text-right">{{number_format($usage['db_usage'])}}{{$usage['size_unit']}}B / {{$usage['db_usage_percent']}}%</td>
+                            </tr>
+                            <tr>
+                                <th width="20%" class="bg-primary">利用可能</th>
+                                <td width="80%" class="text-right">{{number_format($usage['db_available'])}}{{$usage['size_unit']}}B / {{$usage['db_avail_percent']}}%</td>
+                            </tr>
+                            <tr>
+                                <th width="20%" class="bg-primary">合計</th>
+                                <td width="80%" class="text-right">{{number_format($usage['db_full_size'])}}{{$usage['size_unit']}}B</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
