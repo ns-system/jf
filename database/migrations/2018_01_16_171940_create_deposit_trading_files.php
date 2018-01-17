@@ -121,6 +121,7 @@ class CreateDepositTradingFiles extends Migration
             $table->char("movable_terminal_serial_number", 2)->index();
             $table->integer("qualification_code")->index();
             $table->integer("personality_code")->index();
+            $table->integer("voucher_state")->index();
             $table->string("spare");
             $table->double("key_account_number")->index();
             $table->integer("monthly_id")->index();
