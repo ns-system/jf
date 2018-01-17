@@ -284,6 +284,7 @@ class AdminCsvConfigService
                         ['identifier', '識別子',],
                     ]
                 ],
+                ['row' => [['serial_number', 'データ位置',],]],
                 ['row' =>
                     [
                         ['column_name', 'カラム名', 'class' => 'text-left',],
@@ -301,6 +302,7 @@ class AdminCsvConfigService
             ],
             'table_orders'  => [
                 'zenon_table_column_configs.zenon_format_id' => 'asc',
+                'zenon_table_column_configs.serial_number'   => 'asc',
             ],
             'table_search'  => [
                 'identifier'           => ['column_name' => 'identifier', 'display' => '識別子', 'type' => 'string'],
@@ -313,6 +315,7 @@ class AdminCsvConfigService
                 'columns'       => [
 //                    'id',
                     'zenon_format_id',
+                    'serial_number',
                     'column_name',
                     'japanese_column_name',
                     'column_type',
@@ -320,6 +323,7 @@ class AdminCsvConfigService
                 'kanji_columns' => [
 //                    'No',
                     'フォーマットID',
+                    '連番',
                     'カラム名',
                     '日本語カラム名',
                     'データ型',
@@ -330,22 +334,26 @@ class AdminCsvConfigService
                     /* POST_flag, kanji_name, [format], [class] */
 //                    [1, 'id', 'No',],
                     [1, 'zenon_format_id', 'フォーマットID',],
+                    [1, 'serial_number', '連番',],
                     [1, 'column_name', 'カラム名', 'class' => 'text-left',],
                     [1, 'japanese_column_name', '日本語カラム名', 'class' => 'text-left',],
                     [1, 'column_type', 'データ型', 'class' => 'text-left',],
                 ],
                 'rules'         => [
 //                    'id'              => 'required|integer',
+                    'serial_number'   => 'required|integer',
                     'zenon_format_id' => 'required|exists:mysql_suisin.zenon_data_csv_files,zenon_format_id',
                     'column_name'     => 'required|min:1',
                     'column_type'     => 'required|min:1',
                 ],
                 'types'         => [
 //                    'id'              => 'integer',
+                    'serial_number'   => 'integer',
                     'zenon_format_id' => 'integer',
                 ],
                 'flags'         => [
                     'id'                   => 1,
+                    'serial_number'        => 1,
                     'zenon_format_id'      => 1,
                     'column_name'          => 1,
                     'japanese_column_name' => 1,
