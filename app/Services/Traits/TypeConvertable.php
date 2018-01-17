@@ -87,14 +87,21 @@ trait TypeConvertable
 //        var_dump($types);
 //        var_dump($rows);
 
+        $i = 1;
         foreach ($rows as $key => $column) {
             if (!array_key_exists($key, $types))
             {
                 $tmp_rows[$key] = $column;
                 continue;
             }
-//            var_dump($key);
-            $tmp_rows[$key] = $this->convertType($types[$key], $column, $is_ceil);
+            try {
+                $tmp_rows[$key] = $this->convertType($types[$key], $column, $is_ceil);
+            } catch (\Exception $exc) {
+                echo $exc->getMessage() . PHP_EOL;
+                echo "カラム名：'{$key}', 型：'{$types[$key]}', カラム位置：'{$i}'" . PHP_EOL;
+                throw $exc;
+            }
+            $i++;
         }
 //        var_dump($tmp_rows);
         return $tmp_rows;

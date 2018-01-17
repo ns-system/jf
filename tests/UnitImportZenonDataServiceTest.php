@@ -421,6 +421,131 @@ class UnitImportZenonDataServiceTest extends TestCase
     /**
      * @test
      */
+    public function 正常系_為替取引ファイルのATM番号を抽出してカラムに入れる() {
+        $rows     = [
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => 'ATMﾌﾘｺﾐ',
+                'exchange_telegram_8_8' => 'ATM Number',
+            ],
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => '',
+                'exchange_telegram_8_8' => '',
+            ],
+        ];
+        $expect_1 = [
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => 'ATMﾌﾘｺﾐ',
+                'exchange_telegram_8_8' => 'ATM Number',
+                'atm_number'            => 'ATM Number',
+            ],
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => '',
+                'exchange_telegram_8_8' => '',
+                'atm_number'            => '',
+            ]
+        ];
+        $result_1 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2 = $this->setReflection('separateAtmNumber');
+            $s2->invoke($this->s, 'M0014');
+            try {
+                $result_1[] = $this->s->getRow();
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+        }
+        $this->assertEquals($expect_1, $result_1);
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_為替取引ファイル以外のATM番号を抽出しない() {
+        $rows     = [
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => 'ATMﾌﾘｺﾐ',
+                'exchange_telegram_8_8' => 'ATM Number',
+            ],
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => '',
+                'exchange_telegram_8_8' => '',
+            ],
+        ];
+        $expect_1 = [
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => 'ATMﾌﾘｺﾐ',
+                'exchange_telegram_8_8' => 'ATM Number',
+            ],
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => '',
+                'exchange_telegram_8_8' => '',
+            ]
+        ];
+        $result_1 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2 = $this->setReflection('separateAtmNumber');
+            $s2->invoke($this->s, 'M0015');
+            try {
+                $result_1[] = $this->s->getRow();
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+        }
+        $this->assertEquals($expect_1, $result_1);
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_為替取引ファイルのATM番号を抽出時にエラーとなる() {
+        $rows = [
+            [
+                'subject_code'        => 1,
+                'loan_account_number' => 1234567,
+                'contract_number'     => 1,
+            ],
+        ];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2 = $this->setReflection('separateAtmNumber');
+            try {
+                $s2->invoke($this->s, 'M0014');
+                $this->fail('予期しないエラーです。');
+            } catch (\Exception $e) {
+                $this->assertEquals("カラム名 'exchange_telegram_7' もしくは 'exchange_telegram_8_8' が見つかりませんでした。", $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * @test
+     */
     public function 異常系_テーブル名未指定() {
         $s = $this->setReflection('getTableObject');
         try {

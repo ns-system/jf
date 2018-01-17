@@ -210,12 +210,25 @@ class ImportZenonDataService
             $this->separate_row['loan_account_number'] = $this->common_row['loan_account_number'];
         }
     }
-    
+
     private function checkSplitRow($expect_value, $actual_value, $msg = '') {
         if ($expect_value !== $actual_value)
         {
             throw new \Exception("分割時に{$msg}配列長が一致しませんでした。（想定：{$expect_value} 実際：{$actual_value}）");
         }
+    }
+
+    private function separateAtmNumber($table_id) {
+        if ($table_id !== "M0014")
+        {
+            return $this;
+        }
+        if (!isset($this->row['exchange_telegram_7']) || !isset($this->row['exchange_telegram_8_8']))
+        {
+            throw new \Exception("カラム名 'exchange_telegram_7' もしくは 'exchange_telegram_8_8' が見つかりませんでした。");
+        }
+        $this->row['atm_number'] = ($this->row['exchange_telegram_7'] === 'ATMﾌﾘｺﾐ') ? $this->row['exchange_telegram_8_8'] : '';
+        return $this;
     }
 
     public function monthlyStatus($ym, $process_ids) {
@@ -247,12 +260,18 @@ class ImportZenonDataService
         $bulk    = [];
         $types   = [];
         $keys    = [];
-        $configs = \App\ZenonTable::format($monthly_state->zenon_format_id)->select(['column_name', 'column_type',])->get();
+        $configs = \App\ZenonTable::format($monthly_state->zenon_format_id)
+                ->select(['column_name', 'column_type',])
+                ->orderBy('zenon_format_id', 'asc')
+                ->orderBy('serial_number', 'asc')
+                ->get()
+        ;
 //        $this->debugMemory('uploadToDatabase - init');
         foreach ($configs as $c) {
             $types[$c->column_name] = $c->column_type;
             $keys[]                 = $c->column_name;
         }
+//        dd($types);
         unset($configs);
         if ($this->isArrayEmpty($keys))
         {
@@ -279,65 +298,62 @@ class ImportZenonDataService
         $this->setPreStartToMonthlyStatus($monthly_state->id);
 
         $line_number = 0;
-        foreach ($csv_file_object as /* $line_number => */ $raw_line) {
-            $line = $this->lineEncode($raw_line);
-            if ($this->isArrayEmpty($line))
-            {
-                continue;
-            }
-            $line_number++;
-            $this->setRow($line)
-                    ->setKeyToRow($keys)
-                    ->convertRow($types, true)
-                    ->splitRow($monthly_state->is_split, $monthly_state->first_column_position, $monthly_state->last_column_position, $monthly_state->column_length)
-                    ->setMonthlyIdToRow(true, $monthly_id)
-                    ->setConvertedAccountToRow($monthly_state->is_account_convert, $account_convert_param)
-                    ->setTimeStamp(date('Y-m-d H:i:s'))
-            ;
-            // 貯金口座だった場合、キーの分割を行う
-            $this->setCommonLedgerKeys($monthly_state->is_deposit_split, $monthly_state->is_loan_split);
-//            if ($monthly_state->is_split && $monthly_state->is_deposit_split)
-//            {
-//                $this->setCommonAccountLedgerKeys();
-//            }
-//            // 融資口座だった場合、キーの分割を行う
-//            if ($monthly_state->is_split && $monthly_state->is_loan_split)
-//            {
-//                $this->setCommonLoanLedgerKeys();
-//            }
-            if ($monthly_state->is_split)
-            {
-                $common_row                = $this->common_row;
-                $separate_row              = $this->separate_row;
-                $common_id                 = $common_table->insertGetId($common_row);
-                $separate_row['common_id'] = $common_id;
-                $tmp_bulk                  = $separate_row;
-                unset($common_id);
-            }
-            else
-            {
-                $tmp_bulk = $this->getRow();
-            }
-            unset($line);
-            // MySQLのバージョンによってはプリペアドステートメントが65536までに制限されているため、動的にしきい値を設ける
-            if ($line_number > 0 && (count($bulk) * count($tmp_bulk) + count($tmp_bulk)) > 65000)
-            {
+        try {
+            foreach ($csv_file_object as /* $line_number => */ $raw_line) {
+                $line = $this->lineEncode($raw_line);
+                if ($this->isArrayEmpty($line))
+                {
+                    continue;
+                }
+                $line_number++;
+                $this->setRow($line)
+                        ->setKeyToRow($keys)
+                        ->convertRow($types, true)
+                        ->separateAtmNumber($monthly_state->identifier)
+                        ->splitRow($monthly_state->is_split, $monthly_state->first_column_position, $monthly_state->last_column_position, $monthly_state->column_length)
+                        ->setMonthlyIdToRow(true, $monthly_id)
+                        ->setConvertedAccountToRow($monthly_state->is_account_convert, $account_convert_param)
+                        ->setTimeStamp(date('Y-m-d H:i:s'))
+                ;
+                // 貯金or融資口座だった場合、キーの分割を行う
+                $this->setCommonLedgerKeys($monthly_state->is_deposit_split, $monthly_state->is_loan_split);
+                if ($monthly_state->is_split)
+                {
+                    $common_row                = $this->common_row;
+                    $separate_row              = $this->separate_row;
+                    $common_id                 = $common_table->insertGetId($common_row);
+                    $separate_row['common_id'] = $common_id;
+                    $tmp_bulk                  = $separate_row;
+                    unset($common_id);
+                }
+                else
+                {
+                    $tmp_bulk = $this->getRow();
+                }
+                unset($line);
+                // MySQLのバージョンによってはプリペアドステートメントが65536までに制限されているため、動的にしきい値を設ける
+                if ($line_number > 0 && (count($bulk) * count($tmp_bulk) + count($tmp_bulk)) > 65000)
+                {
 //                $this->debugMemory('uploadToDatabase - beforeBulkInsert');
+                    $table->insert($bulk);
+                    $this->setExecutedRowCountToMonthlyStatus($monthly_state->id, $line_number);
+                    unset($bulk);
+                }
+                $bulk[] = $tmp_bulk;
+                unset($tmp_bulk);
+            }
+            // 端数分をここでINSERT
+            if (count($bulk) !== 0)
+            {
                 $table->insert($bulk);
                 $this->setExecutedRowCountToMonthlyStatus($monthly_state->id, $line_number);
-                unset($bulk);
             }
-            $bulk[] = $tmp_bulk;
-            unset($tmp_bulk);
+            unset($table);
+            $this->setPostEndToMonthlyStatus($monthly_state->id);
+        } catch (\Exception $exc) {
+            echo "{$monthly_state->zenon_data_name}でエラーが発生しました。（行数：{$line_number}）" . PHP_EOL;
+            throw $exc;
         }
-        // 端数分をここでINSERT
-        if (count($bulk) !== 0)
-        {
-            $table->insert($bulk);
-            $this->setExecutedRowCountToMonthlyStatus($monthly_state->id, $line_number);
-        }
-        unset($table);
-        $this->setPostEndToMonthlyStatus($monthly_state->id);
         return [];
     }
 
