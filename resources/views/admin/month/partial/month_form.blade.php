@@ -44,11 +44,20 @@
                         @if($row->is_current == true)
                         <button type="submit" class="btn btn-warning btn-sm" disabled="" style="min-width: 250px;">公開中</button>
                         @else
-                        <div class="btn-group">
-                            <a href="{{route('admin::super::month::copy_confirm', ['id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm">処理する</a>
-                            <a href="{{route('admin::super::month::consignor::show', ['id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm">委託者マスタ生成</a>
-                            <button type="submit" class="btn btn-success btn-sm">公開する</button>
-                        </div>
+                        <p>
+                            <div class="btn-group">
+                                <a      style="width: 100px;" href="{{route('admin::super::month::copy_confirm', ['id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm">アップロード</a>
+                                <a      style="width: 120px;" href="{{route('admin::super::month::consignor::show', ['id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm">委託者マスタ生成</a>
+                                <button style="width: 80px;" type="submit" class="btn btn-success btn-sm">公開する</button>
+                            </div>
+                        </p>
+                        <p>
+                            <div class="btn-group">
+                                <a href="{{route('admin::super::term::files_show', ['term_status'=>'daily',   'id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm" style="width: 100px;">日次</a>
+                                <a href="{{route('admin::super::term::files_show', ['term_status'=>'weekly',  'id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm" style="width: 100px;">週次</a>
+                                <a href="{{route('admin::super::term::files_show', ['term_status'=>'monthly', 'id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm" style="width: 100px;">月次</a>
+                            </div>
+                        </p>
                         @endif
                     </div>
                 </form>

@@ -116,28 +116,28 @@ class ProcessStatusController extends Controller
 
         $csv_service = new CopyCsvFileService();
 
-        $tmp_dir     = $this->path . '/temp';
-        $monthly_dir = $this->path . "/monthly/{$id}";
+        $tmp_dir = $this->path . '/temp';
+//        $monthly_dir = $this->path . "/monthly/{$id}";
         try {
-            $tmp_lists     = [];
-            $monthly_lists = [];
+            $tmp_lists = [];
+//            $monthly_lists = [];
             if (file_exists($tmp_dir))
             {
                 $tmp_lists = $csv_service->getCsvFileList($tmp_dir);
             }
-            if (file_exists($monthly_dir))
-            {
-                $monthly_lists = $csv_service->getCsvFileList($monthly_dir);
-            }
+//            if (file_exists($monthly_dir))
+//            {
+//                $monthly_lists = $csv_service->getCsvFileList($monthly_dir);
+//            }
         } catch (\Exception $exc) {
             \Session::flash('danger_message', '一時ディレクトリもしくは月次ディレクトリが見つかりませんでした。管理者に問い合わせてください。');
             return back();
         }
         // 月次処理ステータスを月別IDで検索して、件数が0以上であればコピー処理をスキップする
         // 件数が0件かつリストが存在しない場合 -> エラーとして処理を行わない
-        if (empty($tmp_lists) && empty($monthly_lists))
+        if (empty($tmp_lists)/* && empty($monthly_lists) */)
         {
-            \Session::flash('danger_message', '所定のディレクトリに当月中のCSVファイルが見つかりませんでした。手順に沿って再度処理を行ってください。');
+            \Session::flash('warn_message', '所定のディレクトリに当月中のCSVファイルが見つかりませんでした。');
             return back();
         }
         // 月次サイクルを先頭に持ってくるよう配列ソート
@@ -149,8 +149,109 @@ class ProcessStatusController extends Controller
         //     /* 最後に入れ替えを行いたいリスト変数 */
         // );
         array_multisort(array_column($tmp_lists, 'cycle'), SORT_ASC, array_column($tmp_lists, 'identifier'), SORT_ASC, $tmp_lists);
-        array_multisort(array_column($monthly_lists, 'cycle'), SORT_ASC, array_column($monthly_lists, 'identifier'), SORT_ASC, $monthly_lists);
-        return view('admin.month.copy_confirm', ['id' => $id, 'tmp_lists' => $tmp_lists, 'monthly_lists' => $monthly_lists]);
+//        array_multisort(array_column($monthly_lists, 'cycle'), SORT_ASC, array_column($monthly_lists, 'identifier'), SORT_ASC, $monthly_lists);
+        return view('admin.month.copy_confirm', ['id' => $id, 'tmp_lists' => $tmp_lists/* , 'monthly_lists' => $monthly_lists */]);
+    }
+
+    public function filesShow($term_status, $id) {
+        $job = \App\JobStatus::where('is_copy_end', '=', true)
+                ->where('is_import_start', '=', false)
+                ->orderBy('id', 'desc')
+                ->first()
+        ;
+        if (empty($job) || $job->id === 0)
+        {
+            $job = \App\JobStatus::create(['is_copy_start' => true, 'is_copy_end' => true, 'created_at' => date('Y-m-d h:i:s'), 'updated_at' => date('Y-m-d H:i:s'),]);
+        }
+        $job_id  = $job->id;
+        $mst_cnt = \App\ZenonCsv::count();
+        $tbl_cnt = \App\ZenonTable::count();
+        if ($mst_cnt <= 0 || $tbl_cnt <= 0)
+        {
+            \Session::flash('danger_message', '全オン還元CSVファイル設定もしくはMySQL全オンテーブルカラム設定が登録されていないようです。先に登録を行ってください。');
+            return back();
+        }
+        switch ($term_status) {
+            case 'daily':
+                return $this->dailyFiles($term_status, $id, $job_id);
+            case 'weekly':
+                break;
+            case 'monthly':
+                return $this->monthlyFiles($term_status, $id, $job_id);
+            default:
+                break;
+        }
+    }
+
+    public function monthlyFiles($term_status, $id, $job_id) {
+        $csv_service = new CopyCsvFileService();
+        $monthly_dir = $this->path . "/{$term_status}/{$id}";
+        try {
+            $monthly_lists = [];
+            if (file_exists($monthly_dir))
+            {
+                $monthly_lists = $csv_service->getCsvFileList($monthly_dir);
+            }
+        } catch (\Exception $exc) {
+            \Session::flash('danger_message', '月次ディレクトリが見つかりませんでした。管理者に問い合わせてください。');
+            return back();
+        }
+        // 月次処理ステータスを月別IDで検索して、件数が0以上であればコピー処理をスキップする
+        // 件数が0件かつリストが存在しない場合 -> エラーとして処理を行わない
+        if (empty($monthly_lists))
+        {
+            \Session::flash('warn_message', '所定のディレクトリに当月中のCSVファイルが見つかりませんでした。');
+            return back();
+        }
+        return redirect()->route('admin::super::month::import_confirm', ['id' => $id, 'job_id' => $job_id]);
+    }
+
+    public function dailyFiles($term_status, $id, $job_id) {
+        $service   = new \App\Services\DailyAndWeeklyFileService();
+        $daily_dir = $this->path . "/{$term_status}/{$id}";
+        $tmp       = $service->getDailyList($daily_dir);
+        $date_list = $tmp['date_list'];
+        $file_list = $tmp['file_list'];
+
+        // 月次処理ステータスを月別IDで検索して、件数が0以上であればコピー処理をスキップする
+        // 件数が0件かつリストが存在しない場合 -> エラーとして処理を行わない
+        if (empty($date_list) || empty($file_list))
+        {
+            \Session::flash('warn_message', '所定のディレクトリに当月中のCSVファイルが見つかりませんでした。');
+            return back();
+        }
+        return view('admin.month.daily_select', ['id' => $id, 'job_id' => $job_id, 'term_status' => $term_status, 'date_list' => $date_list, 'file_list' => $file_list]);
+    }
+
+    public function dailySelect($term_status, $id, $job_id) {
+        $service = new \App\Services\CopyCsvFileService();
+        $date    = \Input::get()['date'];
+        $path    = "{$this->path}/{$term_status}/{$id}/{$date}";
+        $lists   = $service->getCsvFileList($path);
+        foreach ($lists as $file) {
+            $obj = \App\ZenonMonthlyStatus::join('suisin_db.zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                    ->where('identifier', '=', $file['identifier'])
+                    ->firstOrFail()
+            ;
+
+            $obj->job_status_id         = $job_id;
+            $obj->file_path             = $path;
+            $obj->csv_file_name         = $file['csv_file_name'];
+            $obj->file_kb_size          = $file['kb_size'];
+            $obj->csv_file_set_on       = $file['csv_file_set_on'];
+            $obj->is_execute            = false;
+            $obj->is_pre_process_start  = false;
+            $obj->is_pre_process_end    = false;
+            $obj->is_pre_process_error  = false;
+            $obj->is_post_process_start = false;
+            $obj->is_post_process_end   = false;
+            $obj->is_post_process_error = false;
+            $obj->is_process_end        = false;
+            $obj->is_exist              = false;
+            $obj->is_import             = false;
+            $obj->save();
+        }
+        return redirect()->route('admin::super::term::import_confirm', ['term_status' => 'daily', 'id' => $id, 'job_id' => $job_id]);
     }
 
     public function copy($id, $job_id) {
@@ -214,17 +315,14 @@ class ProcessStatusController extends Controller
 
     public function dispatchImportJob($id, $job_id, MonthlyImportForm $request) {
         $in          = $request->only(['process']);
-//        dd($in);
         $job_status  = $this->service->setJobStatus($job_id)->getJobStatus();
         $process_ids = array_keys($in['process']);
         $rows        = $this->service->setJobStatusIdToMonthlyStatus($process_ids, $job_id)->getProcessRows($job_id)->get();
-//        dd($rows);
         if (!isset($rows))
         {
             throw new \Exception('処理対象が選択されていません。');
         }
         // すでにDispatchされていたらリダイレクトさせる
-//        $job = \App\JobStatus::find($job_id);
         if ($job_status->is_import_start)
         {
             \Session::flash('warn_message', 'すでに処理は開始されています。');

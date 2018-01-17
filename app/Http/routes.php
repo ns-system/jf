@@ -53,6 +53,17 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
             Route::post('/edit/{id}', ['as' => 'edit',   'uses' => 'SuperUserController@edit']);
         });
         /**
+         * As         : term
+         */
+        Route::group(['prefix' => '/term', 'as' => 'term::'], function() {
+            Route::get('/{term_status}/{id}' ,                         ['as' => 'files_show',      'uses' => 'ProcessStatusController@filesShow']);
+            Route::post('/{term_status}/select/{id}/{job_id}' ,        ['as' => 'daily_select',    'uses' => 'ProcessStatusController@dailySelect']);
+            Route::get('/{term_status}/import_confirm/{id}/{job_id}',  ['as' => 'import_confirm',  'uses' => 'ProcessStatusController@importConfirm']);
+            Route::post('/{term_status}import_dispatch/{id}/{job_id}', ['as' => 'import_dispatch', 'uses' => 'ProcessStatusController@dispatchImportJob']);
+            Route::get('/{term_status}/import/{id}/{job_id}',          ['as' => 'import',          'uses' => 'ProcessStatusController@import']);
+
+        });
+        /**
          * Prefix     : /month
          * As         : month::
          */
@@ -68,9 +79,12 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
             Route::any('/copy_dispatch/{id}', ['as' => 'copy_dispatch', 'uses' => 'ProcessStatusController@dispatchCopyJob']);
             Route::get('/copy/{id}/{job_id}', ['as' => 'copy',          'uses' => 'ProcessStatusController@copy']);
 
-            Route::get('/import_confirm/{id}/{job_id}',   ['as' => 'import_confirm', 'uses' => 'ProcessStatusController@importConfirm']);
+//            Route::get('/{term_status}/{id}' ,            ['as' => 'files_show',   'uses' => 'ProcessStatusController@filesShow']);
+//            Route::get('/daily/select/{id}/{job_id}' ,    ['as' => 'daily_select', 'uses' => 'ProcessStatusController@dailySelect']);
+
+            Route::get('/import_confirm/{id}/{job_id}',   ['as' => 'import_confirm',  'uses' => 'ProcessStatusController@importConfirm']);
             Route::post('/import_dispatch/{id}/{job_id}', ['as' => 'import_dispatch', 'uses' => 'ProcessStatusController@dispatchImportJob']);
-            Route::get('/import/{id}/{job_id}',           ['as' => 'import', 'uses' => 'ProcessStatusController@import']);
+            Route::get('/import/{id}/{job_id}',           ['as' => 'import',          'uses' => 'ProcessStatusController@import']);
 
             Route::any('/importing/{id}/{job_id}', ['as' => 'importing', 'uses' => 'ProcessStatusController@importAjax']);
             Route::any('/copying/{id}/{job_id}',   ['as' => 'copying',   'uses' => 'ProcessStatusController@copyAjax']);
