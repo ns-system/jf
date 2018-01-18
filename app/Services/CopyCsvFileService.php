@@ -38,6 +38,8 @@ class CopyCsvFileService
         'monthly' => 'monthly',
         'daily'   => 'daily',
         'ignore'  => 'ignore',
+        'weekly'  => 'weekly',
+        'times'   => 'times' /** 随時ファイルを指す* */
     ];
 
     /**
@@ -181,7 +183,13 @@ class CopyCsvFileService
                 $before_month = date('Ym', strtotime($date_text . "-1 month"));
                 $path         = "{$base_path}/{$this->directorys['monthly']}/{$before_month}";
             }
-            else
+            elseif (mb_substr($t, 8, 1) == 'W')
+            {
+                $path = "{$base_path}/{$this->directorys['weekly']}/{$monthly}";
+            } elseif (mb_substr($t, 8, 1) == 'T')
+            {
+                $path = "{$base_path}/{$this->directorys['times']}/{$monthly}";
+            } else
             {
                 $path = "{$base_path}/{$this->directorys['ignore']}/{$monthly}";
             }

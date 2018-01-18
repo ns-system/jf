@@ -11,14 +11,19 @@ class UnitCopyCsvFileServiceTest extends TestCase
 
     protected $directorys         = [
         'temp'    => 'temp',
+        'log'     => '',
         'monthly' => 'monthly',
         'daily'   => 'daily',
         'ignore'  => 'ignore',
+        'weekly'  => 'weekly',
+        'times'   => 'times' /** 随時ファイルを指す* */
     ];
     protected $dummy_file_name    = [
         'S_D_302_D0255_20170801.csv',
         'K_D_902_M0332_20170801.csv',
         'S_D_301_D0263_20170802',
+        'S_D_398_W0106_20170801.csv',
+        'S_D_016_T6843_20170801.csv',
     ];
     protected $dummy_csv_template = [
         [
@@ -138,6 +143,8 @@ class UnitCopyCsvFileServiceTest extends TestCase
             "S_D_302_D0255_20170801.csv",
             "K_D_902_M0332_20170801.csv",
             "S_D_302_T0255_20170801.csv",
+            'S_D_016_T6843_20170801.csv',
+            'S_D_398_W0106_20170801.csv',
         ];
 
         $this->assertEquals($result_1, $expect_1);
@@ -210,6 +217,12 @@ class UnitCopyCsvFileServiceTest extends TestCase
         $expect_2 = [
             'S_D_302_D0255_20170801.csv',
         ];
+        $expect_3 = [
+            'S_D_398_W0106_20170801.csv',
+        ];
+        $expect_4 = [
+            'S_D_016_T6843_20170801.csv',
+        ];
         $service->setMonthlyId($monthly_id)
                 ->setDirectoryPath($base_path)
                 ->copyCsvFile()
@@ -221,6 +234,14 @@ class UnitCopyCsvFileServiceTest extends TestCase
         $tmp_2    = $service->getCsvFileList($base_path . '/' . $this->directorys['daily'] . '/' . '201708/01');
         $result_2 = $this->getSimpleFileList($tmp_2);
         $this->assertEquals($result_2, $expect_2);
+
+        $tmp_3    = $service->getCsvFileList($base_path . '/' . $this->directorys['weekly'] . '/201708' );
+        $result_3 = $this->getSimpleFileList($tmp_3);
+        $this->assertEquals($result_3, $expect_3);
+        
+        $tmp_4    = $service->getCsvFileList($base_path . '/' . $this->directorys['times'] . '/201708');
+        $result_4 = $this->getSimpleFileList($tmp_4);
+        $this->assertEquals($result_4, $expect_4);
     }
 
     /**
@@ -267,8 +288,10 @@ class UnitCopyCsvFileServiceTest extends TestCase
         $expect_1  = [
             "S_D_302_D0255_20170801.csv",
             "K_D_902_M0332_20170801.csv",
+            'S_D_016_T6843_20170801.csv',
+            'S_D_398_W0106_20170801.csv',
+            
         ];
-
         $service->setDirectoryPath($base_path)->tempFileErase();
         $result_2 = $service->getCsvFileList($temp_path);
         $this->assertEquals($result_1, $expect_1);
