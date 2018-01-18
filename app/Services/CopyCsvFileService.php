@@ -38,6 +38,8 @@ class CopyCsvFileService
         'monthly' => 'monthly',
         'daily'   => 'daily',
         'ignore'  => 'ignore',
+        'weekly'  => 'weekly',
+        'times'   => 'times' /** 随時ファイルを指す* */
     ];
 
     /**
@@ -92,20 +94,21 @@ class CopyCsvFileService
         }
         return false;
     }
+
 //データベース登録時に吐いてたイグノアログをコピー時吐くように
     public function copyCsvFile() {
 //        $monthly_id            = $this->monthly_id;
         $temp_file_path        = $this->directory_path . "/" . $this->directorys['temp'];
         $accumulation_dir_path = $this->directory_path;
         $is_csv_file_exist;
-        $not_monhtly_file=[];
+        $not_monhtly_file      = [];
         try {
             $file_lists        = $this->getCsvFileList($temp_file_path, null, true);
             $is_csv_file_exist = TRUE;
         } catch (Exception $ex) {
             $is_csv_file_exist = FALSE;
         }
-        
+
         if ($is_csv_file_exist === TRUE)
         {
             foreach ($file_lists as $f) {
@@ -114,14 +117,15 @@ class CopyCsvFileService
                 $this->createDirectory($daily_dir);
                 $this->createDirectory($f["destination"]);
                 $dest      = $f["destination"] . "/" . $f["csv_file_name"];
-                if($f["cycle"]!='M'){
-                   $not_monhtly_file[]=$f;
+                if ($f["cycle"] != 'M')
+                {
+                    $not_monhtly_file[] = $f;
                 }
                 exec("cp -f -p {$src} {$dest}");
 //            exec("sudo cp -f -p {$src} {$dest}");
             }
         }
-        $this->ignore_file=$not_monhtly_file;
+        $this->ignore_file = $not_monhtly_file;
         return $this;
     }
 
@@ -182,6 +186,12 @@ class CopyCsvFileService
                 // 月初に還元されたデータは前月末扱いとなるので、月から-1する
                 $before_month = date('Ym', strtotime($date_text . "-1 month"));
                 $path         = "{$base_path}/{$this->directorys['monthly']}/{$before_month}";
+            } elseif (mb_substr($t, 8, 1) == 'W')
+            {
+                $path = "{$base_path}/{$this->directorys['weekly']}/{$monthly}";
+            } elseif (mb_substr($t, 8, 1) == 'T')
+            {
+                $path = "{$base_path}/{$this->directorys['times']}/{$monthly}";
             } else
             {
                 $path = "{$base_path}/{$this->directorys['ignore']}/{$monthly}";
@@ -262,7 +272,7 @@ class CopyCsvFileService
             return $not_exist_file_list;
         });
         return [
-            'ignore' => $this->ignore_file,
+            'ignore'    => $this->ignore_file,
             'not_exist' => $not_exist_file_list,
         ];
     }
