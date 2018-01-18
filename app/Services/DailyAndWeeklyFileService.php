@@ -17,21 +17,6 @@ class DailyAndWeeklyFileService
         $this->zenon_path = $json['csv_folder_path'];
     }
 
-    public function getFileList($daily_or_weekly, $monthly_id) {
-        if ($daily_or_weekly === 'daily')
-        {
-            $this->getDailyList($this->zenon_path . '/' . $daily_or_weekly . '/' . $monthly_id);
-        }
-        elseif ($daily_or_weekly === 'weekly')
-        {
-            
-        }
-        else
-        {
-            throw new \Exception("存在しないファイル区分が指定されたようです。（区分：{$daily_or_weekly}）");
-        }
-    }
-
     public function getDailyList($daily_path) {
         $date_list = $this->getFiles($daily_path);
         $file_list = [];

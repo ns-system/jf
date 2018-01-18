@@ -15,15 +15,22 @@
 <div style="margin-top: 100px;"></div>
 
 
+@section('sidebar')
+<div class="col-md-2">
+    @include('partial.check_sidebar')
+</div>
+@endsection
+
+
 @section('content')
-<div class="col-md-10 col-md-offset-1">
+<div class="col-md-10">
     <div class="container-fluid">
         @include('partial.alert')
         <h2 class="border-bottom">日次処理 - 日付選択 <small> - {{$id}}</small></h2>
         @if(!empty($date_list))
         <div class="row">
             <div class="col-md-4">
-                <form method="POST" action="{{route('admin::super::term::daily_select', ['term_status'=>$term_status, 'id'=>$id, 'job_id'=>$job_id])}}">
+                <form method="POST" action="{{route('admin::super::term::daily_select', ['id'=>$id, 'job_id'=>$job_id])}}">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <h3 class="border-bottom">日付選択</h3>
                     <select size="18" class="form-control" id="date" name="date">

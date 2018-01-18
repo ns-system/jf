@@ -50,9 +50,8 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             $import_zenon_data_service->setImportStartToJobStatus($this->job_id);
 
             // Configファイル読み取り
-            $json      = $import_zenon_data_service->setFilePath(config_path(), 'import_config.json')->getJsonFile();
-            $file_path = $json['csv_folder_path'] . "/monthly/{$ym}";
-
+//            $json      = $import_zenon_data_service->setFilePath(config_path(), 'import_config.json')->getJsonFile();
+//            $file_path = $json['csv_folder_path'] . "/monthly/{$ym}";
             // 事前チェック実施
             $rows = $import_zenon_data_service
                     ->monthlyStatus($ym, $process_ids)
@@ -65,7 +64,8 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             foreach ($rows as $r) {
                 echo "     --> {$r->csv_file_name}" . PHP_EOL;
                 $import_zenon_data_service->setPreStartToMonthlyStatus($r->id);
-                $csv_file = $import_zenon_data_service->setCsvFileObject($file_path . '/' . $r->csv_file_name)->checkCsvFileLength($r->column_length);
+                $file_path = $r->file_path;
+                $csv_file  = $import_zenon_data_service->setCsvFileObject($file_path . '/' . $r->csv_file_name)->checkCsvFileLength($r->column_length);
                 $import_zenon_data_service->setPreEndAndRowCountToMonthlyStatus($r->id, $csv_file->getCsvLines());
             }
         } catch (\Exception $e) {

@@ -46,16 +46,28 @@
                         @else
                         <p>
                             <div class="btn-group">
-                                <a      style="width: 100px;" href="{{route('admin::super::month::copy_confirm', ['id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm">アップロード</a>
-                                <a      style="width: 120px;" href="{{route('admin::super::month::consignor::show', ['id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm">委託者マスタ生成</a>
-                                <button style="width: 80px;" type="submit" class="btn btn-success btn-sm">公開する</button>
+                                <a href="{{route('admin::super::month::copy_confirm', ['id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm">アップロード</a>
+                                <span></span>
+                                <a href="{{route('admin::super::month::consignor::show', ['id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm">委託者マスタ生成</a>
+                                <span></span>
+                                <button type="submit" class="btn btn-primary btn-sm">公開する</button>
+                                <span></span>
                             </div>
                         </p>
                         <p>
                             <div class="btn-group">
-                                <a href="{{route('admin::super::term::files_show', ['term_status'=>'daily',   'id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm" style="width: 100px;">日次</a>
-                                <a href="{{route('admin::super::term::files_show', ['term_status'=>'weekly',  'id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm" style="width: 100px;">週次</a>
-                                <a href="{{route('admin::super::term::files_show', ['term_status'=>'monthly', 'id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm" style="width: 100px;">月次</a>
+                                <a href="{{route('admin::super::term::files_show', ['term_status'=>'daily',   'id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm">日次</a>
+                                <span></span>
+                                <a href="{{route('admin::super::term::files_show', ['term_status'=>'weekly',  'id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm">週次</a>
+                                <span></span>
+                                <a 
+                                href="{{route('admin::super::term::files_show', ['term_status'=>'monthly', 'id'=>$row->monthly_id])}}"
+                                class="btn btn-success btn-sm"
+                                data-toggle="tooltip"
+                                title="月次のみ月末時点でのデータになるため、最新のファイルをセットアップしたい場合、前月のIDをから選択する必要があります。"
+                                >月次</a>
+                                <span></span>
+                                <a href="{{route('admin::super::term::delete_list', ['id'=>$row->monthly_id])}}" class="btn btn-danger btn-sm">削除</a>
                             </div>
                         </p>
                         @endif
