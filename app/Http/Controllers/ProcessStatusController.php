@@ -266,7 +266,7 @@ class ProcessStatusController extends Controller
         $obj->file_kb_size          = $file['kb_size'];
         $obj->csv_file_set_on       = $file['csv_file_set_on'];
         $obj->is_exist              = true;
-        $obj->is_execute            = false;
+//        $obj->is_execute            = false;
         $obj->is_pre_process_start  = false;
         $obj->is_pre_process_end    = false;
         $obj->is_pre_process_error  = false;
@@ -274,7 +274,7 @@ class ProcessStatusController extends Controller
         $obj->is_post_process_end   = false;
         $obj->is_post_process_error = false;
         $obj->is_process_end        = false;
-        $obj->is_import             = false;
+        $obj->is_import             = true;
         $obj->save();
     }
 
@@ -330,11 +330,15 @@ class ProcessStatusController extends Controller
             $cnt = 0;
             if (!empty($f->table_name))
             {
-                $cnt = \DB::connection('mysql_zenon')
-                        ->table($f->table_name)
-                        ->where("{$f->table_name}.monthly_id", '=', $f->monthly_id)
-                        ->count()
-                ;
+                try {
+                    $cnt = \DB::connection('mysql_zenon')
+                            ->table($f->table_name)
+                            ->where("{$f->table_name}.monthly_id", '=', $f->monthly_id)
+                            ->count()
+                    ;
+                } catch (\Exception $exc) {
+                    $cnt = 0;
+                }
             }
             $column_counts[$f->key_id] = \App\ZenonTable::where('zenon_format_id', '=', $f->zenon_format_id)->count();
             $record_counts[$f->key_id] = $cnt;
@@ -342,7 +346,7 @@ class ProcessStatusController extends Controller
         return view('admin.month.import_confirm', ['files' => $files, 'id' => $monthly_id, 'job_id' => $job_id, 'record_counts' => $record_counts, 'column_counts' => $column_counts, 'term_status' => $term_status]);
     }
 
-    public function import($id, $job_id) {
+    public function import($term_status, $id, $job_id) {
         $rows = $this->service->getProcessRows($job_id)
                 ->select(\DB::raw('*, zenon_data_monthly_process_status.id as key_id'))
                 ->where('is_execute', '=', true)
@@ -376,7 +380,7 @@ class ProcessStatusController extends Controller
         if ($job_status->is_import_start)
         {
             \Session::flash('warn_message', 'すでに処理は開始されています。');
-            return redirect(route('admin::super::month::import', ['id' => $id, 'job_id' => $job_id]));
+            return redirect(route('admin::super::term::import', ['term_status' => $term_status, 'id' => $id, 'job_id' => $job_id]));
         }
         $this->service->resetProcessStatus($process_ids);
         $this->service->setImportStartToJobStatus($job_status->id);
@@ -385,7 +389,7 @@ class ProcessStatusController extends Controller
         } catch (\Exception $exc) {
             echo $exc->getTraceAsString();
         }
-        return redirect()->route('admin::super::month::import', ['id' => $id, 'job_id' => $job_id]);
+        return redirect()->route('admin::super::term::import', ['term_status' => $term_status, 'id' => $id, 'job_id' => $job_id]);
     }
 
     public function dispatchCopyJob($id) {

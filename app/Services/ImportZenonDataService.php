@@ -40,10 +40,6 @@ class ImportZenonDataService
     }
 
     private function setTimeStamp($option_timestamp = null) {
-//        if (empty($timestamp))
-//        {
-//            $timestamp = date('Y-m-d H:i:s');
-//        }
         $timestamp                        = (!empty($option_timestamp)) ? $option_timestamp : date('Y-m-d H:i:s');
         $this->row['created_at']          = $timestamp;
         $this->row['updated_at']          = $timestamp;
@@ -54,15 +50,24 @@ class ImportZenonDataService
         return $this;
     }
 
+    /**
+     * カラムの型を変換するメソッド。
+     * @param type $types   カラムごとの型を指定する。DBから取得。
+     * @param type $is_ceil 切り上げを行うかどうか
+     * @return $this
+     */
     private function convertRow($types, $is_ceil = true) {
-//        $row       = $this->convertTypes($types, $this->row, $is_ceil);
-//        $this->row = $row;
         $this->row          = $this->convertTypes($types, $this->row, $is_ceil);
         $this->common_row   = $this->convertTypes($types, $this->common_row, $is_ceil);
         $this->separate_row = $this->convertTypes($types, $this->separate_row, $is_ceil);
         return $this;
     }
 
+    /**
+     * CSV配列にキー値を流し込み、連想配列にするメソッド
+     * @param type $keys キー配列
+     * @return $this
+     */
     private function setKeyToRow($keys) {
         if (count($keys) !== count($this->row))
         {
@@ -94,6 +99,39 @@ class ImportZenonDataService
         return $this;
     }
 
+    /**
+     * 災害口座の口座預入番号を口座番号と預入番号に分割するメソッド
+     * @identifier = テーブル識別子
+     * identifierがD0268のときのみ処理を行い、それ以外はエスケープする
+     */
+    private function splitAccountAndDepositNumber($identifier) {
+        if ($identifier !== 'D0268')
+        {
+            return $this;
+        }
+        if (isset($this->row['account_number']) || isset($this->row['deposit_number']))
+        {
+            throw new \Exception("既に口座番号もしくは預入番号がセットされているようです。");
+        }
+        if (!isset($this->row['account_and_deposit_number']))
+        {
+            throw new \Exception("口座預入番号がセットされていないようです。");
+        }
+        $target_number  = $this->row['account_and_deposit_number'];
+        $account_number = mb_substr($target_number, 0, -3);
+        $deposit_number = mb_substr($target_number, -3, 3);
+
+        $this->row['account_number'] = $account_number;
+        $this->row['deposit_number'] = $deposit_number;
+        return $this;
+    }
+
+    /**
+     * 口座番号を変換するメソッド
+     * @param type $is_account_convert    口座番号を変換するかどうか
+     * @param type $account_convert_param 分割する科目と口座番号のキー値
+     * @return $this
+     */
     private function setConvertedAccountToRow($is_account_convert, $account_convert_param = null) {
         if (!$is_account_convert)
         {
@@ -143,11 +181,11 @@ class ImportZenonDataService
     }
 
     /**
-     * 
-     * @param type $is_split
-     * @param type $pos_first
-     * @param type $pos_last
-     * @param type $pos_max
+     * 元帳を共通部と個別部に分割するメソッド
+     * @param type $is_split  分割するかどうか
+     * @param type $pos_first 共通部開始位置
+     * @param type $pos_last  共通部終了位置
+     * @param type $pos_max   配列全体の長さ
      * @return $this
      * @throws \Exception
      */
@@ -197,6 +235,13 @@ class ImportZenonDataService
         return $this;
     }
 
+    /**
+     * 共通部と個別部でそれぞれ一位の値を求めるための複数キーをセットするメソッド
+     * 貯金 -> 科目コード・口座番号・契約番号（定期貯金のみ親子区分も必要）
+     * 貸付 -> 口座番号
+     * @param type $is_deposit_split 貯金元帳かどうか
+     * @param type $is_loan_split    貸付元帳かどうか
+     */
     private function setCommonLedgerKeys($is_deposit_split, $is_loan_split) {
         //setCommonAccountLedgerKeys
         if ($is_deposit_split)
@@ -218,8 +263,14 @@ class ImportZenonDataService
         }
     }
 
-    private function separateAtmNumber($table_id) {
-        if ($table_id !== "M0014")
+    /**
+     * 為替取引データのATM番号を抽出するメソッド
+     * @param type $identifier テーブル識別子
+     * @return $this
+     * $identifierがM0014のときのみ処理する
+     */
+    private function separateAtmNumber($identifier) {
+        if ($identifier !== "M0014")
         {
             return $this;
         }
@@ -310,6 +361,7 @@ class ImportZenonDataService
                         ->setKeyToRow($keys)
                         ->convertRow($types, true)
                         ->separateAtmNumber($monthly_state->identifier)
+                        ->splitAccountAndDepositNumber($monthly_state->identifier)
                         ->splitRow($monthly_state->is_split, $monthly_state->first_column_position, $monthly_state->last_column_position, $monthly_state->column_length)
                         ->setMonthlyIdToRow(true, $monthly_id)
                         ->setConvertedAccountToRow($monthly_state->is_account_convert, $account_convert_param)
