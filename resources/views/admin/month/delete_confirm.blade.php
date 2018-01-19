@@ -45,7 +45,7 @@
                         @endforeach
                     </select>
                     <p>
-                        <button type="submit" class="btn btn-block btn-danger" onclick="">削除する</button>
+                        <button type="submit" class="btn btn-block btn-danger" onclick="return confirm('選択したテーブルの中身を削除してもよろしいですか？');">削除する</button>
                     </p>
                 </form>
             </div>
