@@ -48,6 +48,23 @@ class UnitTypeConvertableTest extends TestCase
     /**
      * @test
      */
+    public function 正常系_日付型変換成功_頭4桁が西暦で月日にゼロが入っていた場合() {
+        $buf_1 = '19250000';
+        $buf_2 = '00001205';
+
+        $res_1 = $this->s->convertType('date', $buf_1);
+        $this->assertEquals('1925-01-01', $res_1);
+        try {
+            $this->s->convertType('date', $buf_2);
+            $this->fail('エラーです。');
+        } catch (Exception $e) {
+            $this->assertEquals("値が日付型ではありません。（引数：'{$buf_2}'）", $e->getMessage());
+        }
+    }
+
+    /**
+     * @test
+     */
     public function 正常系_日付型変換成功() {
         $buf_1 = '2017-07-25 12:24:35';
         $buf_2 = '2017-07-25';

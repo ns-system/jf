@@ -89,9 +89,26 @@ input[type=file]{display: none;}
 .tooltip.top{ background: rgba(255,255,255,0); }
 
 .btn-group .btn{ margin-left: 2px; }
+.brand-logo, .official-logo, .gw-logo { 
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: 0.4s;
+}
+.brand-logo{    background-image: url({{asset('/logos/logo_02.png')}}); width: 210px; height: 42px; }
+.official-logo{ background-image: url({{asset('/logos/official.png')}}); width: 90px; height: 30px; }
+.gw-logo{       background-image: url({{asset('/logos/groupware.png')}}); width: 120px; height: 30px; }
+.brand-logo:hover{    background-image: url({{asset('/logos/logo_02_hover.png')}}); }
+.official-logo:hover{ background-image: url({{asset('/logos/official_hover.png')}}); }
+.gw-logo:hover{       background-image: url({{asset('/logos/groupware_hover.png')}}); }
 
 .alert-fixed { width: 300px; padding: 10px; padding-right: 30px; font-size: 80%; z-index: 2; left: 20px; position: fixed; bottom: 40px; margin-bottom: 0; max-height: 400px; overflow-y: scroll; };
 .margin-bottom{margin-bottom: 10px;}
+.tooltip-inner{ text-align: left; }
+.list-group-item:last-child{ margin: 0; }
+.navbar-nav > li > .dropdown-menu{ margin-top: -10px; }
+.dropdown-menu{ min-width: 200px; }
+input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
 
 </style>
 </head>
@@ -107,22 +124,22 @@ input[type=file]{display: none;}
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/">
-                        @if(env('APP_ENV') !== 'product') <small class="label label-warning">{{env('APP_ENV')}}</small>@endif
-                        @yield('brand')
-                        {{$configs['brand'] or ''}}
+                    <a class="navbar-brand" href="/" style="padding: 20px 10px;">
+                        <label class="brand-logo">
+                            @if(env('APP_ENV') !== 'product') <small class="label label-warning" style="position: absolute; top: 2px;">{{env('APP_ENV')}}</small>@endif
+                        </label>
                     </a>
                 </div>
 
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li><a href="http://www.jf-nssinren.or.jp/" target="_blank">Official</a></li>
-                        <li><a href="http://192.1.10.136/myweb10po" target="_blank">Groupware</a></li>
+                        <li><a href="http://www.jf-nssinren.or.jp/" target="_blank" style="margin-top: 25px; margin-bottom: 0px;"><label class="official-logo"></label></a></li>
+                        <li><a href="http://192.1.10.136/myweb10po" target="_blank" style="margin-top: 25px; margin-bottom: 0px;"><label class="gw-logo"></label></a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         @if(Auth::check())
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" style="margin-top: 13px; margin-bottom: 13px;">
                                 <div class="media" style="height: 40px; width: 40px; border-radius: 20%; background: #eee;">
                                     <img style="width: 100%; height: 100%;" @if(\Auth::user()->user_icon != '') src="{{asset('/user_icon/' . \Auth::user()->user_icon)}}" @else src="{{asset('/user_icon/unset.png')}}" @endif>
                                 </div>
@@ -167,7 +184,7 @@ input[type=file]{display: none;}
                         xhr.abort();
                     })
                 });
-                
+
                 // +==========================================================
                 // | class='btn-group' && data-toggle='buttons'に対して
                 // | チェックされたボタンをハイライト表示する関数

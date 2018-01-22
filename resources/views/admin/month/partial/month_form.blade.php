@@ -44,11 +44,48 @@
                         @if($row->is_current == true)
                         <button type="submit" class="btn btn-warning btn-sm" disabled="" style="min-width: 250px;">公開中</button>
                         @else
-                        <div class="btn-group">
-                            <a href="{{route('admin::super::month::copy_confirm', ['id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm">処理する</a>
-                            <a href="{{route('admin::super::month::consignor::show', ['id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm">委託者マスタ生成</a>
-                            <button type="submit" class="btn btn-success btn-sm">公開する</button>
-                        </div>
+                        <p>
+                            <div class="btn-group">
+                                <a 
+                                href="{{route('admin::super::month::copy_confirm', ['id'=>$row->monthly_id])}}"
+                                class="btn btn-primary btn-sm"
+                                data-toggle="tooltip"
+                                title="CSVファイルをサーバーにアップロードします。この時点ではDBに登録されません。"
+                                style="width: 120px;">アップロード</a>
+                                <span></span>
+                                <a
+                                href="{{route('admin::super::month::consignor::show', ['id'=>$row->monthly_id])}}"
+                                class="btn btn-primary btn-sm"
+                                data-toggle="tooltip"
+                                title="月次処理後に委託者マスタを更新します。先に月次処理を行ってください。"
+                                style="width: 120px;"
+                                >委託者マスタ生成</a>
+                                <span></span>
+                                <button type="submit"
+                                class="btn btn-primary btn-sm"
+                                data-toggle="tooltip"
+                                title="指定した月基準で推進支援システムのデータを作成します。"
+                                style="width: 120px;"
+                                >公開する</button>
+                                <span></span>
+                            </div>
+                        </p>
+                        <p>
+                            <div class="btn-group">
+                                <a href="{{route('admin::super::term::files_show', ['term_status'=>'daily',   'id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm" style="width: 90px;">日次</a>
+                                <span></span>
+                                <a href="{{route('admin::super::term::files_show', ['term_status'=>'weekly',  'id'=>$row->monthly_id])}}" class="btn btn-primary btn-sm" style="width: 90px;">週次</a>
+                                <span></span>
+                                <a 
+                                href="{{route('admin::super::term::files_show', ['term_status'=>'monthly', 'id'=>$row->monthly_id])}}"
+                                class="btn btn-success btn-sm"
+                                data-toggle="tooltip"
+                                title="月次のみ月末時点でのデータになるため、最新のファイルをセットアップしたい場合、前月のIDをから選択する必要があります。"
+                                style="width: 90px;">月次</a>
+                                <span></span>
+                                <a href="{{route('admin::super::term::delete_list', ['id'=>$row->monthly_id])}}" class="btn btn-danger btn-sm" style="width: 90px;">削除</a>
+                            </div>
+                        </p>
                         @endif
                     </div>
                 </form>

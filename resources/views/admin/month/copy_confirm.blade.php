@@ -1,9 +1,9 @@
 @extends('layout')
-@section('title', '処理確認')
+@section('title', 'CSVアップロード処理')
 
 @section('header')
 @parent
-@section('brand', '月次処理')
+@section('brand', '')
 @endsection
 
 {{-- @section('sidebar')
@@ -28,87 +28,37 @@
             </div>
         </div>
 
-
-
-        <!-- タブ・メニュー -->
-        <ul class="nav nav-tabs" style="margin-bottom: 10px;">
-            <li class="active"><a href="#tmp_lists" data-toggle="tab">新規発生分</a></li>
-            <li><a href="#monthly_lists" data-toggle="tab">累積分</a></li>
-        </ul>
-
-        <!-- タブ内容 -->
-        <div class="tab-content">
-            <div class="tab-pane active" id="tmp_lists">
-                @if(!empty($tmp_lists))
-                <table class="table table-hover table-striped table-small va-middle">
-                    <thead>
-                        <tr class="bg-primary">
-                            <th>No</th>
-                            <th>サイクル</th>
-                            <th>CSVファイル名</th>
-                            <th>ファイルサイズ</th>
-                            <th>ダウンロード日時</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($tmp_lists as $i => $l)
-                        <tr>
-                            <th class="bg-primary">{{$i + 1}}</th>
-                            <td>
-                                <span @if($l['cycle'] == 'M') class="label label-success" @else class="label label-default" @endif>{{$l['cycle']}}</span>
-                            </td>
-                            <td>{{$l['csv_file_name']}}</td>
-                            <td class="text-right">{{number_format($l['kb_size'])}} kB</td>
-                            <td>
-                                <p>{{date('Y-m-d', $l['file_create_time'])}}</p>
-                                <p>{{date('G:i:s', $l['file_create_time'])}}</p>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                @else
-                <div class="alert alert-warning" role="alert">対象ファイルはありませんでした。</div>
-                @endif
-            </div>
-
-
-            <div class="tab-pane" id="monthly_lists">
-                @if(!empty($monthly_lists))
-                <table class="table table-hover table-striped table-small va-middle">
-                    <thead>
-                        <tr class="bg-primary">
-                            <th>No</th>
-                            <th>サイクル</th>
-                            <th>CSVファイル名</th>
-                            <th>ファイルサイズ</th>
-                            <th>ダウンロード日時</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($monthly_lists as $i => $l)
-                        <tr>
-                            <th class="bg-primary">{{$i + 1}}</th>
-                            <td>
-                                <span @if($l['cycle'] == 'M') class="label label-success" @else class="label label-default" @endif>{{$l['cycle']}}</span>
-                            </td>
-                            <td>{{$l['csv_file_name']}}</td>
-                            <td class="text-right">{{number_format($l['kb_size'])}} kB</td>
-                            <td>
-                                <p>{{date('Y-m-d', $l['file_create_time'])}}</p>
-                                <p>{{date('G:i:s', $l['file_create_time'])}}</p>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                @else
-                <div class="alert alert-warning" role="alert">対象ファイルはありませんでした。</div>
-                @endif
-            </div>
-
-        </div>
-
+        @if(!empty($tmp_lists))
+        <table class="table table-hover table-striped table-small va-middle">
+            <thead>
+                <tr class="bg-primary">
+                    <th>No</th>
+                    <th>サイクル</th>
+                    <th>CSVファイル名</th>
+                    <th>ファイルサイズ</th>
+                    <th>ダウンロード日時</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($tmp_lists as $i => $l)
+                <tr>
+                    <th class="bg-primary">{{$i + 1}}</th>
+                    <td>
+                        <span @if($l['cycle'] == 'M') class="label label-success" @else class="label label-default" @endif>{{$l['cycle']}}</span>
+                    </td>
+                    <td>{{$l['csv_file_name']}}</td>
+                    <td class="text-right">{{number_format($l['kb_size'])}} kB</td>
+                    <td>
+                        <p>{{date('Y-m-d', $l['file_create_time'])}}</p>
+                        <p>{{date('G:i:s', $l['file_create_time'])}}</p>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @else
+        <div class="alert alert-warning" role="alert">対象ファイルはありませんでした。</div>
+        @endif
     </div>
 </div>
 @endsection

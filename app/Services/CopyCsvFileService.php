@@ -38,6 +38,8 @@ class CopyCsvFileService
         'monthly' => 'monthly',
         'daily'   => 'daily',
         'ignore'  => 'ignore',
+        'weekly'  => 'weekly',
+        'times'   => 'times' /** 随時ファイルを指す* */
     ];
 
     /**
@@ -66,7 +68,6 @@ class CopyCsvFileService
         {
             throw new \Exception("存在しないファイルパスが指定されました。（マウント先：{$base_path}）");
         }
-//        $this->not_exist_json_output_path = $this->directory_path . "/log/notexist.json";
         foreach ($this->directorys as $d) {
             $tmp_dir = $base_path . '/' . $d;
 
@@ -75,10 +76,6 @@ class CopyCsvFileService
                 throw new \Exception("格納先ファイルパスが存在しません。（格納先ファイル：{$tmp_dir}）");
             }
         }
-//        if (!file_exists($this->not_exist_json_output_path))
-//        {
-//            throw new \Exception("LogFile出力時に存在しないファイルパスが指定されました。（ログファイル出力先：{$this->not_exist_json_output_path}）");
-//        }
         $this->directory_path = $base_path;
         return $this;
     }
@@ -92,20 +89,21 @@ class CopyCsvFileService
         }
         return false;
     }
+
 //データベース登録時に吐いてたイグノアログをコピー時吐くように
     public function copyCsvFile() {
 //        $monthly_id            = $this->monthly_id;
         $temp_file_path        = $this->directory_path . "/" . $this->directorys['temp'];
         $accumulation_dir_path = $this->directory_path;
-        $is_csv_file_exist;
-        $not_monhtly_file=[];
+//        $is_csv_file_exist     = false;
+        $not_monhtly_file      = [];
         try {
             $file_lists        = $this->getCsvFileList($temp_file_path, null, true);
             $is_csv_file_exist = TRUE;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $is_csv_file_exist = FALSE;
         }
-        
+
         if ($is_csv_file_exist === TRUE)
         {
             foreach ($file_lists as $f) {
@@ -114,14 +112,15 @@ class CopyCsvFileService
                 $this->createDirectory($daily_dir);
                 $this->createDirectory($f["destination"]);
                 $dest      = $f["destination"] . "/" . $f["csv_file_name"];
-                if($f["cycle"]!='M'){
-                   $not_monhtly_file[]=$f;
+                if ($f["cycle"] != 'M')
+                {
+                    $not_monhtly_file[] = $f;
                 }
                 exec("cp -f -p {$src} {$dest}");
 //            exec("sudo cp -f -p {$src} {$dest}");
             }
         }
-        $this->ignore_file=$not_monhtly_file;
+        $this->ignore_file = $not_monhtly_file;
         return $this;
     }
 
@@ -177,11 +176,19 @@ class CopyCsvFileService
             if (mb_substr($t, 8, 1) == 'D')
             {
                 $path = "{$base_path}/{$this->directorys['daily']}/{$monthly}/{$daily}";
-            } elseif (mb_substr($t, 8, 1) == 'M')
+            }
+            elseif (mb_substr($t, 8, 1) == 'M')
             {
                 // 月初に還元されたデータは前月末扱いとなるので、月から-1する
                 $before_month = date('Ym', strtotime($date_text . "-1 month"));
                 $path         = "{$base_path}/{$this->directorys['monthly']}/{$before_month}";
+            }
+            elseif (mb_substr($t, 8, 1) == 'W')
+            {
+                $path = "{$base_path}/{$this->directorys['weekly']}/{$monthly}";
+            } elseif (mb_substr($t, 8, 1) == 'T')
+            {
+                $path = "{$base_path}/{$this->directorys['times']}/{$monthly}";
             } else
             {
                 $path = "{$base_path}/{$this->directorys['ignore']}/{$monthly}";
@@ -205,8 +212,8 @@ class CopyCsvFileService
         return $lists;
     }
 
-    public function tableTemplateCreation($option_csv_template_object = null) {
-        $monthly_id          = $this->monthly_id;
+    public function tableTemplateCreation($option_csv_template_object = null, $opt_monthly_id = '') {
+        $monthly_id          = (empty($opt_monthly_id)) ? $this->monthly_id : $opt_monthly_id;
         $csv_template_object = (empty($option_csv_template_object)) ? \App\ZenonCsv::all() : $option_csv_template_object;
         \DB::connection('mysql_suisin')->transaction(function() use($csv_template_object, $monthly_id) {
             foreach ($csv_template_object as $zenon_data_csv_file) {
@@ -219,12 +226,13 @@ class CopyCsvFileService
 
     public function registrationCsvFileToDatabase() {
 
-        $file_lists                = [];
-        $monthly_id                = $this->monthly_id;
-        $tmp_file_lists            = $this->getCsvFileList($this->directory_path . "/" . $this->directorys['temp'] . "/");
-        $target_monyhly_file_lists = $this->getCsvFileList($this->directory_path . "/" . $this->directorys['monthly'] . "/" . $monthly_id . "/");
+        $file_lists = [];
+        $monthly_id = $this->monthly_id;
+//        $tmp_file_lists            = $this->getCsvFileList($this->directory_path . "/" . $this->directorys['temp'] . "/");
+//        $target_monyhly_file_lists = $this->getCsvFileList($this->directory_path . "/" . $this->directorys['monthly'] . "/" . $monthly_id . "/");
+        $path       = $this->directory_path . "/" . $this->directorys['monthly'] . "/" . $monthly_id . "/";
 
-
+        $target_monyhly_file_lists = $this->getCsvFileList($path);
         foreach ($target_monyhly_file_lists as $l) {
             $file_lists[$l['identifier']] = $l;
         }
@@ -253,6 +261,7 @@ class CopyCsvFileService
                 unset($not_exist_file_list[$mst->identifier]);
                 $monthly_status->is_exist        = true;
                 $monthly_status->csv_file_name   = $file['csv_file_name'];
+                $monthly_status->file_path       = $file['destination'];
                 $monthly_status->csv_file_set_on = $file['csv_file_set_on'];
                 $monthly_status->is_exist        = (int) true;
                 $monthly_status->file_kb_size    = $file['kb_size'];
@@ -262,7 +271,7 @@ class CopyCsvFileService
             return $not_exist_file_list;
         });
         return [
-            'ignore' => $this->ignore_file,
+            'ignore'    => $this->ignore_file,
             'not_exist' => $not_exist_file_list,
         ];
     }
