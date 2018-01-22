@@ -18,15 +18,17 @@ class DatabaseUsageShowService
     public function getNowDirectoryUsage() {
         $command    = "df -BM {$this->database_dir}";
         $raw_res    = exec($command);
-        $arr_res    = explode(" ", $raw_res);
+        $tmp_1      = explode(" ", $raw_res);
         $unit       = 'M';
-        $use_per    = (int) str_replace('%', '', $arr_res[11]);
-        $full_size  = (int) str_replace($unit, '', $arr_res[4]);
-        $usage_size = (int) str_replace($unit, '', $arr_res[5]);
-        $avail_size = (int) str_replace($unit, '', $arr_res[9]);
+        $tmp_2      = array_diff($tmp_1, ['', ' ']);
+        $arr_res    = array_values($tmp_2);
+        $use_per    = (int) str_replace('%', '', $arr_res[4]);
+        $full_size  = (int) str_replace($unit, '', $arr_res[1]);
+        $usage_size = (int) str_replace($unit, '', $arr_res[2]);
+        $avail_size = (int) str_replace($unit, '', $arr_res[3]);
 
         $usage = [
-            'db_dir'           => $arr_res[0],
+            'db_dir'           => /* $arr_res[0] */$this->database_dir,
             'db_full_size'     => $full_size,
             'db_usage'         => $usage_size,
             'db_available'     => $avail_size,
