@@ -104,8 +104,8 @@ class ImportZenonDataService
      * @identifier = テーブル識別子
      * identifierがD0268のときのみ処理を行い、それ以外はエスケープする
      */
-    private function splitAccountAndDepositNumber($identifier) {
-        if ($identifier !== 'D0268')
+    private function splitAccountAndDepositNumber($is_exist_account_and_deposit) {
+        if ($is_exist_account_and_deposit != true)
         {
             return $this;
         }
@@ -361,7 +361,7 @@ class ImportZenonDataService
                         ->setKeyToRow($keys)
                         ->convertRow($types, true)
                         ->separateAtmNumber($monthly_state->identifier)
-                        ->splitAccountAndDepositNumber($monthly_state->identifier)
+                        ->splitAccountAndDepositNumber($monthly_state->is_exist_account_and_deposit)
                         ->splitRow($monthly_state->is_split, $monthly_state->first_column_position, $monthly_state->last_column_position, $monthly_state->column_length)
                         ->setMonthlyIdToRow(true, $monthly_id)
                         ->setConvertedAccountToRow($monthly_state->is_account_convert, $account_convert_param)

@@ -266,7 +266,7 @@ class ProcessStatusController extends Controller
         $obj->file_kb_size          = $file['kb_size'];
         $obj->csv_file_set_on       = $file['csv_file_set_on'];
         $obj->is_exist              = true;
-//        $obj->is_execute            = false;
+        $obj->is_execute            = false;
         $obj->is_pre_process_start  = false;
         $obj->is_pre_process_end    = false;
         $obj->is_pre_process_error  = false;

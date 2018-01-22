@@ -825,7 +825,7 @@ class UnitImportZenonDataServiceTest extends TestCase
         foreach ($rows as $r) {
             $this->s->setRow($r);
             $s2         = $this->setReflection('splitAccountAndDepositNumber');
-            $s2->invoke($this->s, 'D0268');
+            $s2->invoke($this->s, 1);
             $result_1[] = $this->s->getRow();
         }
         $this->assertEquals($expect_1, $result_1);
@@ -859,7 +859,7 @@ class UnitImportZenonDataServiceTest extends TestCase
         foreach ($rows as $r) {
             $this->s->setRow($r);
             $s2         = $this->setReflection('splitAccountAndDepositNumber');
-            $s2->invoke($this->s, 'D0000');
+            $s2->invoke($this->s, 0);
             $result_1[] = $this->s->getRow();
         }
         $this->assertEquals($expect_1, $result_1);
@@ -885,7 +885,7 @@ class UnitImportZenonDataServiceTest extends TestCase
             $s2 = $this->setReflection('splitAccountAndDepositNumber');
 
             try {
-                $s2->invoke($this->s, 'D0268');
+                $s2->invoke($this->s, 1);
                 $result_1[] = $this->s->getRow();
                 $this->fail("予期しないエラー");
             } catch (\Exception $e) {
@@ -916,7 +916,7 @@ class UnitImportZenonDataServiceTest extends TestCase
             $s2 = $this->setReflection('splitAccountAndDepositNumber');
 
             try {
-                $s2->invoke($this->s, 'D0268');
+                $s2->invoke($this->s, 1);
                 $result_1[] = $this->s->getRow();
                 $this->fail("予期しないエラー");
             } catch (\Exception $e) {
