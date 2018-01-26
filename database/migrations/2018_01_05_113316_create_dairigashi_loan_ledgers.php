@@ -141,7 +141,7 @@ class CreateDairigashiLoanLedgers extends Migration
             $table->integer("juko_credit_state")->index();
             $table->integer("zaikei_interest_supply_state")->index();
             $table->double("juko_customer_number")->index();
-            $table->date("loan_contracted_on")->nullable();
+            $table->date("kinsho_contracted_on")->nullable();
             $table->integer("filioparental_relay_state")->index();
             $table->integer("limit_revolving_collateral_state")->index();
             $table->integer("conservation_number")->index();

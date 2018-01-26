@@ -193,7 +193,7 @@ class CreateCommonLoanLedgers extends Migration
             $table->integer("fund_usage_1")->index();
             $table->integer("fund_usage_2")->index();
             $table->integer("capital_fund_state")->index();
-            $table->integer("dansin_state")->index();
+            $table->integer("danshin_state")->index();
             $table->integer("ringi_number")->index();
             $table->date("execution_traded_on")->nullable();
             $table->date("executed_on")->nullable();

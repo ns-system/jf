@@ -793,4 +793,136 @@ class UnitImportZenonDataServiceTest extends TestCase
         $this->assertEquals("ベーステーブルが存在しないようです。（テーブル名：not_exist_table_name）", $result_1['reason']);
     }
 
+    /**
+     * @test
+     */
+    public function 正常系_口座預入番号を分割できる() {
+        $rows     = [
+            [
+                'subject_code'               => 1,
+                'account_and_deposit_number' => '1234567890123',
+            ],
+            [
+                'subject_code'               => 4,
+                'account_and_deposit_number' => '1234567890123',
+            ],
+        ];
+        $expect_1 = [
+            [
+                'subject_code'               => 1,
+                'account_and_deposit_number' => '1234567890123',
+                'account_number'             => 1234567890,
+                'deposit_number'             => 123,
+            ],
+            [
+                'subject_code'               => 4,
+                'account_and_deposit_number' => '1234567890123',
+                'account_number'             => 1234567890,
+                'deposit_number'             => 123,
+            ]
+        ];
+        $result_1 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2         = $this->setReflection('splitAccountAndDepositNumber');
+            $s2->invoke($this->s, 1);
+            $result_1[] = $this->s->getRow();
+        }
+        $this->assertEquals($expect_1, $result_1);
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_口座預入番号分割_対象外ファイル() {
+        $rows     = [
+            [
+                'subject_code'               => 1,
+                'account_and_deposit_number' => '1234567890123',
+            ],
+            [
+                'subject_code'               => 4,
+                'account_and_deposit_number' => '1234567890123',
+            ],
+        ];
+        $expect_1 = [
+            [
+                'subject_code'               => 1,
+                'account_and_deposit_number' => '1234567890123',
+            ],
+            [
+                'subject_code'               => 4,
+                'account_and_deposit_number' => '1234567890123',
+            ]
+        ];
+        $result_1 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2         = $this->setReflection('splitAccountAndDepositNumber');
+            $s2->invoke($this->s, 0);
+            $result_1[] = $this->s->getRow();
+        }
+        $this->assertEquals($expect_1, $result_1);
+    }
+
+    /**
+     * @test
+     */
+    public function 異常系_口座預入番号分割_対象なのに口座預入番号がセットされていない() {
+        $rows     = [
+            [
+                'subject_code' => 1,
+                'number'       => '1234567890123',
+            ],
+            [
+                'subject_code' => 4,
+                'number'       => '1234567890123',
+            ],
+        ];
+        $result_1 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2 = $this->setReflection('splitAccountAndDepositNumber');
+
+            try {
+                $s2->invoke($this->s, 1);
+                $result_1[] = $this->s->getRow();
+                $this->fail("予期しないエラー");
+            } catch (\Exception $e) {
+                $this->assertEquals('口座預入番号がセットされていないようです。', $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function 異常系_口座預入番号分割_対象に既に口座番号か預入番号がセットされている() {
+        $rows     = [
+            [
+                'subject_code'   => 1,
+                'account_number' => 1234567890,
+                'number'         => '1234567890123',
+            ],
+            [
+                'subject_code'   => 4,
+                'deposit_number' => 123,
+                'number'         => '1234567890123',
+            ],
+        ];
+        $result_1 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2 = $this->setReflection('splitAccountAndDepositNumber');
+
+            try {
+                $s2->invoke($this->s, 1);
+                $result_1[] = $this->s->getRow();
+                $this->fail("予期しないエラー");
+            } catch (\Exception $e) {
+                $this->assertEquals('既に口座番号もしくは預入番号がセットされているようです。', $e->getMessage());
+            }
+        }
+    }
+
 }
