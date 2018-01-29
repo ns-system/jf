@@ -88,14 +88,14 @@ input[type=file]{display: none;}
 .btn-info   { border-color: #1b7fc2; }
 .tooltip.top{ background: rgba(255,255,255,0); }
 
-.btn-group .btn{ margin-left: 2px; }
+/*.btn-group .btn{ margin-left: 2px; }*/
 .brand-logo, .official-logo, .gw-logo { 
     background-size: 100% 100%;
     background-repeat: no-repeat;
     cursor: pointer;
     transition: 0.4s;
 }
-.brand-logo{    background-image: url({{asset('/logos/logo_02.png')}}); width: 210px; height: 42px; }
+.brand-logo{    background-image: url({{asset('/logos/logo_02.png')}}); width: 200px; height: 33px; margin-bottom: 0px; }
 .official-logo{ background-image: url({{asset('/logos/official.png')}}); width: 90px; height: 30px; }
 .gw-logo{       background-image: url({{asset('/logos/groupware.png')}}); width: 120px; height: 30px; }
 .brand-logo:hover{    background-image: url({{asset('/logos/logo_02_hover.png')}}); }
@@ -124,7 +124,7 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/" style="padding: 20px 10px;">
+                    <a class="navbar-brand" href="/" style="padding: 25px 10px;">
                         <label class="brand-logo">
                             @if(env('APP_ENV') !== 'product') <small class="label label-warning" style="position: absolute; top: 2px;">{{env('APP_ENV')}}</small>@endif
                         </label>
