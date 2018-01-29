@@ -28,11 +28,11 @@
         @include('partial.alert')
         <h2 class="border-bottom">削除処理 - テーブル選択 <small> - {{$monthly_id}}
             @if($term_status === 'daily')
-                <label class="label label-success">日次</label>
+            <label class="label label-success">日次</label>
             @elseif($term_status === 'weekly')
-                <label class="label label-success">週次</label>
+            <label class="label label-success">週次</label>
             @elseif($term_status === 'monthly')
-                <label class="label label-success">月次</label>
+            <label class="label label-success">月次</label>
             @endif
         </small></h2>
         <div class="row">
@@ -44,6 +44,12 @@
                         <option value="{{$table->key_id}}">{{$table->zenon_data_name}} / {{$table->table_name}}</option>
                         @endforeach
                     </select>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="agree">
+                            <b>私は削除に伴う責任を理解した上で削除を行います。</b>
+                        </label>
+                    </div>
                     <p>
                         <button type="submit" class="btn btn-block btn-danger" onclick="return confirm('選択したテーブルの中身を削除してもよろしいですか？');">削除する</button>
                     </p>

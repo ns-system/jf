@@ -22,11 +22,14 @@ class TableDelete extends Request
      * @return array
      */
     public function rules() {
-        $rules = [];
+        $rules = [
+            'tables' => 'required',
+            'agree'  => 'accepted',
+        ];
         $input = \Input::get();
         if (!isset($input['tables']))
         {
-            return ['tables' => 'required'];
+            return $rules;
         }
         foreach ($input['tables'] as $i => $table) {
             $rules["tables.{$i}"] = "required|exists:mysql_suisin.zenon_data_monthly_process_status,id";
@@ -35,7 +38,10 @@ class TableDelete extends Request
     }
 
     public function attributes() {
-        return ['tables' => '対象テーブル'];
+        return [
+            'tables' => '対象テーブル',
+            'agree'  => '認証',
+        ];
     }
 
 }
