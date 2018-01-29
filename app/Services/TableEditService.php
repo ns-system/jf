@@ -363,20 +363,17 @@ class TableEditService
      */
     public function uploadToDatabase(array $raw_input_rows/* , string $connection */): array {
 //        $tmp_rows      = $this->swapPostColumnAndRow($raw_input_rows);
-//        dd($raw_input_rows);
         $convert_rules = $this->makeCsvValueConvertType($this->import_settings['types'], $this->csv_en_columns);
         $input_rows    = $this->convertTypes($convert_rules, $raw_input_rows);
         $raw_keys      = $this->import_settings['keys'];
         $primary_key   = (is_array($raw_keys)) ? $raw_keys : [$raw_keys];
 
-//        $insert_and_update_count = \DB::connection($connection)->transaction(function() use($input_rows, $primary_key, $convert_rules) {
         // HACK: tosite DBの場所によって貼るトランザクション変えるの面倒くさいからコントローラーでやって(´・ω・`)
         $insert_count = 0;
         $update_count = 0;
         foreach ($input_rows as $i => $raw_row) {
             $row            = $this->convertTypes($convert_rules, $raw_row);
             $primary_values = $this->getPrimaryKeyValue($primary_key, $row);
-            var_dump($primary_values);
             // 警告：ここで毎回インスタンス化しておかないと、firstOrNewが一度だけFirst扱いとなり、残りは全てNew扱いとなる。
             //       おそらく、Firstしたモデルに対してキーを探しにいく→見つからないという動きをしているものと思われる。
             $model          = new $this->model_name;

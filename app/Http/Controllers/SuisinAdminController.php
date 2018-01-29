@@ -115,39 +115,39 @@ class SuisinAdminController extends Controller
         return view($view, ['configs' => $page_settings, 'rows' => $rows]);
     }
 
-    /**
-     *   関数名     ： upload
-     *   内容       ： 取り込んだCSVファイルをデータベースに反映させる関数
-     *   アクション ： POST
-     *   インプット ： フォーム
-     *   役割       ： 推進支援システム管理者
-     *   備考       ： 成功時・失敗時共にshow画面へ
-     */
-    public function upload($system, $category) {
-        $input = \Input::except(['_token']);
-        dd($input);
-        $email = \Auth::user()->email;
-        $this->dispatch(new \App\Jobs\Suisin\MasterUpload($input[], $this->service, $system, $category, $input, $email, true));
-
-        dd();
-        $service       = $this->service;
-        $service->setHtmlPageGenerateConfigs("App\Services\\{$system}CsvConfigService", $category);
-        $page_settings = $service->getHtmlPageGenerateParameter();
-
-
-        try {
-            \DB::connection('mysql_master')->beginTransaction();
-            \DB::connection('mysql_suisin')->beginTransaction();
-            $cnt = $service->uploadToDatabase($input, 'mysql_zenon');
-            \DB::connection('mysql_master')->commit();
-            \DB::connection('mysql_suisin')->commit();
-        } catch (\Exception $e) {
-            \DB::connection('mysql_master')->rollback();
-            \DB::connection('mysql_suisin')->rollback();
-            \Session::flash('danger_message', $e->getMessage());
-            return redirect($page_settings['index_route']);
-        }
-        \Session::flash('success_message', ($cnt['insert_count'] + $cnt['update_count']) . "件の処理が終了しました。（新規：{$cnt['insert_count']}件，更新：{$cnt['update_count']}件）");
-        return redirect($page_settings['index_route']);
-    }
+//    /**
+//     *   関数名     ： upload
+//     *   内容       ： 取り込んだCSVファイルをデータベースに反映させる関数
+//     *   アクション ： POST
+//     *   インプット ： フォーム
+//     *   役割       ： 推進支援システム管理者
+//     *   備考       ： 成功時・失敗時共にshow画面へ
+//     */
+//    public function upload($system, $category) {
+//        $input = \Input::except(['_token']);
+//        dd($input);
+//        $email = \Auth::user()->email;
+//        $this->dispatch(new \App\Jobs\Suisin\MasterUpload($input[], $this->service, $system, $category, $input, $email, true));
+//
+//        dd();
+//        $service       = $this->service;
+//        $service->setHtmlPageGenerateConfigs("App\Services\\{$system}CsvConfigService", $category);
+//        $page_settings = $service->getHtmlPageGenerateParameter();
+//
+//
+//        try {
+//            \DB::connection('mysql_master')->beginTransaction();
+//            \DB::connection('mysql_suisin')->beginTransaction();
+//            $cnt = $service->uploadToDatabase($input, 'mysql_zenon');
+//            \DB::connection('mysql_master')->commit();
+//            \DB::connection('mysql_suisin')->commit();
+//        } catch (\Exception $e) {
+//            \DB::connection('mysql_master')->rollback();
+//            \DB::connection('mysql_suisin')->rollback();
+//            \Session::flash('danger_message', $e->getMessage());
+//            return redirect($page_settings['index_route']);
+//        }
+//        \Session::flash('success_message', ($cnt['insert_count'] + $cnt['update_count']) . "件の処理が終了しました。（新規：{$cnt['insert_count']}件，更新：{$cnt['update_count']}件）");
+//        return redirect($page_settings['index_route']);
+//    }
 }
