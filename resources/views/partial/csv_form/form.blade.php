@@ -18,6 +18,7 @@
                 <button
                 type="button"
                 class="btn btn-primary btn-xs"
+                style="min-width: 75px;"
                 data-toggle="modal"
                 data-target="#searchForm"
                 >検索</button><span></span>
@@ -25,7 +26,7 @@
                 <a
                 class="btn btn-success btn-xs"
                 href="{{$configs['export_route']}}"
-                style="min-width: 100px;"
+                style="min-width: 100px; margin: 0;"
                 data-toggle="tooltip"
                 data-placement="bottom"
                 title="表示されているデータをCSVファイルに出力します。"
@@ -36,7 +37,7 @@
                 <label
                 for="csv_file"
                 class="btn btn-primary btn-xs"
-                style="min-width: 250px;"
+                style="min-width: 250px; margin: 0;"
                 data-toggle="tooltip"
                 data-placement="bottom"
                 title="取り込みを行うCSVファイルを選択してください。データ件数が多すぎると取り込めないため、最大1,000件を目安に処理を行ってください。"
@@ -52,7 +53,7 @@
 
             <button type="submit"
             class="btn btn-warning btn-xs"
-            style="min-width: 100px;"
+            style="min-width: 100px; margin: 0;"
             data-toggle="tooltip"
             data-placement="bottom"
             name ="ImportCSV"
