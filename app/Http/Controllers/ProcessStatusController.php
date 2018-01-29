@@ -385,7 +385,7 @@ class ProcessStatusController extends Controller
         $this->service->resetProcessStatus($process_ids);
         $this->service->setImportStartToJobStatus($job_status->id);
         try {
-            $this->dispatch(new \App\Jobs\Suisin\CsvUpload($id, $process_ids, $job_id));
+            $this->dispatch(new \App\Jobs\Suisin\CsvUpload($id, $process_ids, $job_id, \Auth::user()->email));
         } catch (\Exception $exc) {
             echo $exc->getTraceAsString();
         }

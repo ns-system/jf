@@ -67,7 +67,7 @@ class MasterUpload extends Job implements SelfHandling, ShouldQueue
 
     public function handle() {
         $email = $this->email;
-        $email = 'n.teshima@jf-nssinren.or.jp';
+//        $email = 'n.teshima@jf-nssinren.or.jp';
         echo "==== MasterUpload ====" . PHP_EOL;
         echo "[start : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
 

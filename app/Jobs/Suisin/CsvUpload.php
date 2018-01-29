@@ -9,23 +9,27 @@ use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Services\ImportZenonDataService;
 use \App\Services\Traits\MemoryCheckable;
+use App\Services\Traits\ErrorMailSendable;
 
 class CsvUpload extends Job implements SelfHandling, ShouldQueue
 {
 
     use InteractsWithQueue,
         SerializesModels,
-        MemoryCheckable
+        MemoryCheckable,
+        ErrorMailSendable
     ;
 
     protected $process_ids;
     protected $ym;
     protected $job_id;
+    protected $email;
 
-    public function __construct($ym, $process_ids, $job_id) {
+    public function __construct($ym, $process_ids, $job_id, $email) {
         $this->process_ids = $process_ids;
         $this->ym          = $ym;
         $this->job_id      = $job_id;
+        $this->email       = $email;
     }
 
     public function failed() {
@@ -71,7 +75,8 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
         } catch (\Exception $e) {
             echo '[ ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
             echo $e->getMessage();
-            echo $e->getTraceAsString() . PHP_EOL;
+            $this->sendErrorMessage($e, $this->email);
+//            echo $e->getTraceAsString() . PHP_EOL;
             $import_zenon_data_service->setImportErrorToJobStatus($this->job_id, mb_substr($e->getMessage(), 0, 250));
             exit();
         }
@@ -94,7 +99,8 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             } catch (\Exception $e) {
                 echo '[ ERROR : ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
                 echo $e->getMessage() . PHP_EOL;
-                echo $e->getTraceAsString() . PHP_EOL;
+                $this->sendErrorMessage($e, $this->email);
+//                echo $e->getTraceAsString() . PHP_EOL;
                 $import_zenon_data_service->setImportErrorToJobStatus($this->job_id, $e->getMessage());
                 $r->is_post_process_error = true;
                 $r->save();
@@ -111,10 +117,11 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
                 {
                     $import_zenon_data_service->setPostEndToMonthlyStatus($r->id);
                 }
-            } catch (\Exception $exc) {
+            } catch (\Exception $e) {
                 echo '[ ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
                 echo $e->getMessage() . PHP_EOL;
-                echo $e->getTraceAsString() . PHP_EOL;
+                $this->sendErrorMessage($e, $this->email);
+//                echo $e->getTraceAsString() . PHP_EOL;
                 $import_zenon_data_service->setImportErrorToJobStatus($this->job_id, $e->getMessage());
             }
         }

@@ -9,7 +9,7 @@ trait ErrorMailSendable
         try {
             \Mail::send('emails.error', ['error' => $error], function($message) use($email) {
                 $message->to($email)
-                        ->subject("処理中にエラーが発生しました")
+                        ->subject("[" . date('Y-m-d H:i:s') . "] 処理中にエラーが発生しました")
                 ;
             });
         } catch (\Exception $exc) {
