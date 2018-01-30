@@ -19,10 +19,10 @@
             data-toggle="tooltip"
             title="ユーザー区分から絞り込んで検索します。">
                 <option value="">全て</option>
-                <option value="1" @if($params['user_state'] == '1') selected @endif>一般ユーザー</option>
-                <option value="2" @if($params['user_state'] == '2') selected @endif>責任者</option>
-                <option value="3" @if($params['user_state'] == '3') selected @endif>責任者代理</option>
-                <option value="4" @if($params['user_state'] == '4') selected @endif>未登録</option>
+                <option value="1" @if(isset($params['user_state']) && $params['user_state'] == '1') selected @endif>一般ユーザー</option>
+                <option value="2" @if(isset($params['user_state']) && $params['user_state'] == '2') selected @endif>責任者</option>
+                <option value="3" @if(isset($params['user_state']) && $params['user_state'] == '3') selected @endif>責任者代理</option>
+                <option value="4" @if(isset($params['user_state']) && $params['user_state'] == '4') selected @endif>未登録</option>
             </select>
         </div>
 
@@ -34,7 +34,7 @@
             title="所属部署から絞り込んで検索します。">
                 <option value="" selected>全て</option>
                 @foreach($divs as $div)
-                <option value="{{$div->division_id}}" @if($params['division_id'] == $div->division_id) selected @endif>{{$div->division_name}}</option>
+                <option value="{{$div->division_id}}" @if(isset($params['division_id']) && $params['division_id'] == $div->division_id) selected @endif>{{$div->division_name}}</option>
                 @endforeach
             </select>
         </div>

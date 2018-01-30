@@ -91,24 +91,27 @@ class RosterUserController extends Controller
     }
 
     private function selectRosterUsers($params, $users) {
-        if ($params['user_state'] == '1')
+        if (isset($params['user_state']))
         {
-            $users->where('roster_users.is_administrator', '<>', true)
-                    ->where('roster_users.is_chief', '<>', true)
-                    ->where('roster_users.is_proxy', '<>', true)
-            ;
-        }
-        elseif ($params['user_state'] == '2')
-        {
-            $users->where('roster_users.is_chief', '=', true);
-        }
-        elseif ($params['user_state'] == '3')
-        {
-            $users->where('roster_users.is_proxy', '=', true);
-        }
-        elseif ($params['user_state'] == '4')
-        {
-            $users->whereNull('roster_users.is_administrator');
+            if ($params['user_state'] == '1')
+            {
+                $users->where('roster_users.is_administrator', '<>', true)
+                        ->where('roster_users.is_chief', '<>', true)
+                        ->where('roster_users.is_proxy', '<>', true)
+                ;
+            }
+            elseif ($params['user_state'] == '2')
+            {
+                $users->where('roster_users.is_chief', '=', true);
+            }
+            elseif ($params['user_state'] == '3')
+            {
+                $users->where('roster_users.is_proxy', '=', true);
+            }
+            elseif ($params['user_state'] == '4')
+            {
+                $users->whereNull('roster_users.is_administrator');
+            }
         }
         if (!empty($params['last_name']))
         {

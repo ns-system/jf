@@ -1,7 +1,7 @@
 @if(!empty($roster_chief_cnt) && !$roster_chief_cnt->isEmpty())
 <div class="col-md-6">
     <div class="panel panel-primary">
-        <div class="panel-heading"><h4>勤怠管理情報</h4></div>
+        <div class="panel-heading"><h4>勤怠管理情報 <small> - 責任者</small></h4></div>
         <div class="panel-body">
 
             @foreach($roster_chief_cnt as $cnt)
