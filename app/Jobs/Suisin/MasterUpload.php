@@ -89,16 +89,16 @@ class MasterUpload extends Job implements SelfHandling, ShouldQueue
         } catch (\Exception $e) {
             \DB::connection('mysql_master')->rollback();
             \DB::connection('mysql_suisin')->rollback();
+            echo $e->getMessage();
             $this->sendErrorMessage($e, $email);
             exit();
         }
         $results = [
             'table'     => $service->getHtmlPageGenerateParameter()['title'],
-            'file_name' => (!isEmpty($this->file_name)) ? $this->file_name : '',
-            'counts'    => (!isEmpty($cnt)) ? $cnt : ['insert_count' => 0, 'update_count' => 0],
+            'file_name' => (!empty($this->file_name)) ? $this->file_name : '',
+            'counts'    => (!empty($cnt)) ? $cnt : ['insert_count' => 0, 'update_count' => 0],
         ];
         try {
-
             if ($this->is_email_send)
             {
                 \Mail::send('emails.master_import', ['results' => $results], function($message) use($email) {
