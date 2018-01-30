@@ -66,14 +66,17 @@ class RosterUserController extends Controller
     }
 
     public function indexAdmin() {
+        $params = \Input::get();
         // ユーザー情報の取得
-        $users    = \App\User::leftJoin('sinren_db.sinren_users', 'users.id', '=', 'sinren_users.user_id')
+        $users  = \App\User::leftJoin('sinren_db.sinren_users', 'users.id', '=', 'sinren_users.user_id')
                 ->leftJoin('roster_db.roster_users', 'users.id', '=', 'roster_users.user_id')
                 ->leftJoin('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->select(\DB::raw('*, users.id as user_id'))
                 ->orderBy('sinren_divisions.division_id', 'desc')
                 ->orderBy('users.id', 'asc')
         ;
+        $users  = $this->selectRosterUsers($params, $users);
+
         // 管轄部署情報の取得
         $controls = \DB::connection('mysql_sinren')
                 ->table('control_divisions')
@@ -81,7 +84,41 @@ class RosterUserController extends Controller
                 ->select(\DB::raw('control_divisions.id AS id, control_divisions.user_id AS user_id, control_divisions.division_id AS division_id, sinren_divisions.division_name AS division_name'))
                 ->get()
         ;
-        return view('roster.admin.user.index', ['users' => $users->paginate(25), 'controls' => $controls]);
+        // 部署情報の取得
+        $divs     = \App\Division::orderBy('division_id', 'asc')->get();
+//        dd($divs);
+        return view('roster.admin.user.index', ['users' => $users->paginate(25), 'controls' => $controls, 'divs' => $divs, 'params' => $params]);
+    }
+
+    private function selectRosterUsers($params, $users) {
+        if ($params['user_state'] == '1')
+        {
+            $users->where('roster_users.is_administrator', '<>', true)
+                    ->where('roster_users.is_chief', '<>', true)
+                    ->where('roster_users.is_proxy', '<>', true)
+            ;
+        }
+        elseif ($params['user_state'] == '2')
+        {
+            $users->where('roster_users.is_chief', '=', true);
+        }
+        elseif ($params['user_state'] == '3')
+        {
+            $users->where('roster_users.is_proxy', '=', true);
+        }
+        elseif ($params['user_state'] == '4')
+        {
+            $users->whereNull('roster_users.is_administrator');
+        }
+        if (!empty($params['last_name']))
+        {
+            $users->where('users.last_name', 'like', "%{$params['last_name']}%");
+        }
+        if (!empty($params['division_id']))
+        {
+            $users->where('sinren_users.division_id', '=', $params['division_id']);
+        }
+        return $users;
     }
 
     public function showAdmin($id) {

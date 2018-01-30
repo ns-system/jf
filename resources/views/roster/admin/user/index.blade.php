@@ -20,7 +20,7 @@
 <div class="col-md-10">
     @include('partial.alert')
     <div class="border-bottom"><h2>勤怠管理システム 管理ユーザーリスト</h2></div>
-
+    @include('roster.admin.user.partial.search')
     <div>
         @if(!empty($users))
         <table class="table table-hover">
@@ -45,8 +45,9 @@
                         <p><small><a href="{{route('app::roster::user::show', ['id'=>$user->user_id])}}">変更する</a></small></p>
                     </td>
                     <td>
-                        @if($user->is_administrator)    <p><span class="label label-danger" >管理者</span></p>
-                        @elseif($user->is_chief)        <p><span class="label label-warning">責任者</span></p>
+                        @if(is_null($user->is_administrator)) <p><span class="label label-default">未登録</span></p>
+                        @elseif($user->is_administrator)    <p><span class="label label-danger" >管理者</span></p>
+                        @elseif($user->is_chief)            <p><span class="label label-warning">責任者</span></p>
                         @elseif($user->is_proxy)
                         @if($user->is_proxy_active)
                         <p>
@@ -61,7 +62,7 @@
                             </span>
                         </p>
                         @endif
-                        @else                           <p><span class="label label-primary">一般ユーザー</span></p>
+                        @else <p><span class="label label-primary">一般ユーザー</span></p>
                         @endif
                         <p><small><a href="{{route('admin::roster::user::show', ['id'=>$user->user_id])}}">変更する</a></small></p>
                     </td>
