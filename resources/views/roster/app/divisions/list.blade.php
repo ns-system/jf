@@ -26,13 +26,14 @@
                     <span class="glyphicon glyphicon-backward" aria-hidden="true"></span> 戻る
                 </a><span></span>
 
-                <a href="{{route('app::roster::division::show', ['div'=>$div,'ym'=>$next])}}" class="btn btn-success btn-sm" style="min-width: 100px;">
-                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> 翌月へ
+                <a href="{{route('app::roster::division::show', ['div'=>$div,'ym'=>$prev])}}" class="btn btn-warning btn-sm" style="min-width: 100px;">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> 前月へ
                 </a><span></span>
 
-                <a href="{{route('app::roster::division::show', ['div'=>$div,'ym'=>$prev])}}" class="btn btn-warning btn-sm" style="min-width: 100px;">
-                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> 前月へ
-                </a>
+                <a href="{{route('app::roster::division::show', ['div'=>$div,'ym'=>$next])}}" class="btn btn-success btn-sm" style="min-width: 100px;">
+                    翌月へ<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                </a><span></span>
+
             </div>
         </div>
     </div>
