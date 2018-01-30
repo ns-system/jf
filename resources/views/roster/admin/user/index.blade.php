@@ -22,7 +22,9 @@
     <div class="border-bottom"><h2>勤怠管理システム 管理ユーザーリスト</h2></div>
     @include('roster.admin.user.partial.search')
     <div>
-        @if(!empty($users))
+        @if($users->isEmpty())
+        <div class="alert alert-warning" role="alert">ユーザーが見つかりませんでした。</div>
+        @else
         <table class="table table-hover">
             <thead>
                 <tr>
