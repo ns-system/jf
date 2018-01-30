@@ -13,7 +13,7 @@ class ChangeNameCollectionCustomerNumberToCustomerInformationFiles extends Migra
         Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
             if (Schema::connection($this->connect)->hasColumn($this->tableName, 'name_correction_customer_number'))
             {
-                $table->renameColumn('name_correction_customer_number', 'name_collection_customer_number');
+                $table->renameColumn('name_correction_customer_number', 'name_collection_number');
             }
         });
     }
