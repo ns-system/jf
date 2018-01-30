@@ -14,7 +14,6 @@
 /*    .small{ font-weight: bolder; }*/
 </style>
 @endsection
-
 @section('sidebar')
 <div class="col-md-2">
     @include('partial.check_sidebar')
@@ -91,34 +90,34 @@
                                     @if(!empty($r))
                                     <button
                                     type="button"
-                                    class="btn btn-primary btn-xs"
+                                    
                                     data-toggle="modal"
                                     data-target="#plan-{{$r->id}}"
                                     @if(!empty($r->is_plan_entry))
-                                    @if($r->is_plan_accept)     disabled><span class=" text-success"
-                                    @elseif($r->is_plan_reject)         ><span class=" text-danger"
-                                    @else                               ><span class=" text-warning" @endif
-                                    @else ><span @endif
-                                    >予定</span>
+                                    @if($r->is_plan_accept)     class="btn btn-success btn-xs" disabled
+                                    @elseif($r->is_plan_reject) class="btn btn-danger  btn-xs"         
+                                    @else                       class="btn btn-warning btn-xs"         @endif
+                                    @else class="btn btn-primary btn-xs"@endif
+                                    ><span>予定</span>
                                 </button>
                                 <button
                                 type="button"
-                                class="btn btn-primary btn-xs"
                                 @if(!empty($r->is_plan_entry))
                                 data-toggle="modal"
                                 data-target="#actual-{{$r->id}}"
                                 @if(!empty($r->is_actual_entry))
-                                @if($r->is_actual_accept)      disabled><span class=" text-success"
-                                @elseif($r->is_actual_reject)          ><span class=" text-danger"
-                                @else                                  ><span class=" text-warning" @endif
-                                @else ><span @endif
-                                @else onclick="alert('先に予定を登録してください。');"><span
+                                @if($r->is_actual_accept)     class="btn btn-success btn-xs" disabled
+                                @elseif($r->is_actual_reject) class="btn btn-danger  btn-xs"          
+                                @else                         class="btn btn-warning btn-xs"          @endif
+                                @else class="btn btn-primary btn-xs" @endif
+                                @else class="btn btn-primary btn-xs" onclick="alert('先に予定を登録してください。');"
                                 @endif
-                                >実績</span>
+                                ><span>実績</span>
                             </button>
                             <a
                             href="{{route('app::roster::calendar::form::delete', ['id'=>$r->id])}}"
                             class="btn btn-primary btn-xs"
+                            style="padding-left: 10px; padding-right: 0px;"
                             @if(!$r->is_plan_entry && !$r->is_actual_entry)     disabled onclick="return false;"
                             @elseif($r->is_plan_accept || $r->is_actual_accept) disabled onclick="alert('承認されているため、削除は行えません。'); return false;"
                             @else                                               onclick="return confirm('予定・実績データが削除されますが本当によろしいですか？');" @endif
