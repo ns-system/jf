@@ -42,7 +42,7 @@
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             @foreach($tables as $table)
                             @endforeach
-                            <select class="form-control" name="zenon_format_id">
+                            <select class="form-control" name="zenon_format_id[]" multiple size="12">
                                 @foreach($tables as $table)
                                 <option value="{{$table->zenon_format_id}}">
                                     {{$table->zenon_data_name}}

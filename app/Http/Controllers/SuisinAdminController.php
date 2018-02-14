@@ -100,40 +100,54 @@ class SuisinAdminController extends Controller
         $page_settings['key']           = $import_setttings['keys'];
         $page_settings['table_columns'] = $import_setttings['table_columns'];
         $view                           = strtolower($system) . '.admin.import';
-        \Session::flash('success_message', 'CSVデータの取り込みが完了しました。');
-        \Session::flash('warn_message', '現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。');
+//        \Session::flash('success_message', 'CSVデータの取り込みが完了しました。');
+//        \Session::flash('warn_message', '現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。');
+
+        $email = \Auth::user()->email;
+        try {
+            $this->dispatch(new \App\Jobs\Suisin\MasterUpload($system, $category, $rows, $page_settings, $email, $service->getFileName(), true));
+        } catch (\Exception $exc) {
+            echo $exc->getTraceAsString();
+        }
+
+        \Session::flash('success_message', 'CSVインポート処理を開始しました。処理結果はメールにて通知いたします。');
+//        return redirect($page_settings['index_route']);
         return view($view, ['configs' => $page_settings, 'rows' => $rows]);
     }
 
-    /**
-     *   関数名     ： upload
-     *   内容       ： 取り込んだCSVファイルをデータベースに反映させる関数
-     *   アクション ： POST
-     *   インプット ： フォーム
-     *   役割       ： 推進支援システム管理者
-     *   備考       ： 成功時・失敗時共にshow画面へ
-     */
-    public function upload($system, $category) {
-        $service       = $this->service;
-        $input         = \Input::except(['_token']);
-        $service->setHtmlPageGenerateConfigs("App\Services\\{$system}CsvConfigService", $category);
-        $page_settings = $service->getHtmlPageGenerateParameter();
-
-
-        try {
-            \DB::connection('mysql_master')->beginTransaction();
-            \DB::connection('mysql_suisin')->beginTransaction();
-            $cnt = $service->uploadToDatabase($input, 'mysql_zenon');
-            \DB::connection('mysql_master')->commit();
-            \DB::connection('mysql_suisin')->commit();
-        } catch (\Exception $e) {
-            \DB::connection('mysql_master')->rollback();
-            \DB::connection('mysql_suisin')->rollback();
-            \Session::flash('danger_message', $e->getMessage());
-            return redirect($page_settings['index_route']);
-        }
-        \Session::flash('success_message', ($cnt['insert_count'] + $cnt['update_count']) . "件の処理が終了しました。（新規：{$cnt['insert_count']}件，更新：{$cnt['update_count']}件）");
-        return redirect($page_settings['index_route']);
-    }
-
+//    /**
+//     *   関数名     ： upload
+//     *   内容       ： 取り込んだCSVファイルをデータベースに反映させる関数
+//     *   アクション ： POST
+//     *   インプット ： フォーム
+//     *   役割       ： 推進支援システム管理者
+//     *   備考       ： 成功時・失敗時共にshow画面へ
+//     */
+//    public function upload($system, $category) {
+//        $input = \Input::except(['_token']);
+//        dd($input);
+//        $email = \Auth::user()->email;
+//        $this->dispatch(new \App\Jobs\Suisin\MasterUpload($input[], $this->service, $system, $category, $input, $email, true));
+//
+//        dd();
+//        $service       = $this->service;
+//        $service->setHtmlPageGenerateConfigs("App\Services\\{$system}CsvConfigService", $category);
+//        $page_settings = $service->getHtmlPageGenerateParameter();
+//
+//
+//        try {
+//            \DB::connection('mysql_master')->beginTransaction();
+//            \DB::connection('mysql_suisin')->beginTransaction();
+//            $cnt = $service->uploadToDatabase($input, 'mysql_zenon');
+//            \DB::connection('mysql_master')->commit();
+//            \DB::connection('mysql_suisin')->commit();
+//        } catch (\Exception $e) {
+//            \DB::connection('mysql_master')->rollback();
+//            \DB::connection('mysql_suisin')->rollback();
+//            \Session::flash('danger_message', $e->getMessage());
+//            return redirect($page_settings['index_route']);
+//        }
+//        \Session::flash('success_message', ($cnt['insert_count'] + $cnt['update_count']) . "件の処理が終了しました。（新規：{$cnt['insert_count']}件，更新：{$cnt['update_count']}件）");
+//        return redirect($page_settings['index_route']);
+//    }
 }

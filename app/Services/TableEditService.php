@@ -356,17 +356,18 @@ class TableEditService
     /**
      * POSTされた値をデータベースに反映させるメソッド。POSTした値は[カラム名][カウントアップ]となっているので、
      * メソッド内で置換している。
+     * -> 2018-01-29修正：
+     *     POSTしたファイルをそのまま反映するように修正。ジョブ化。
      * @param array $raw_input_rows : POSTされた生の配列。2次元配列を想定。
      * @return array                : INSERTした件数、UPDATEした件数を配列で返す。
      */
     public function uploadToDatabase(array $raw_input_rows/* , string $connection */): array {
-        $tmp_rows      = $this->swapPostColumnAndRow($raw_input_rows);
+//        $tmp_rows      = $this->swapPostColumnAndRow($raw_input_rows);
         $convert_rules = $this->makeCsvValueConvertType($this->import_settings['types'], $this->csv_en_columns);
-        $input_rows    = $this->convertTypes($convert_rules, $tmp_rows);
+        $input_rows    = $this->convertTypes($convert_rules, $raw_input_rows);
         $raw_keys      = $this->import_settings['keys'];
         $primary_key   = (is_array($raw_keys)) ? $raw_keys : [$raw_keys];
 
-//        $insert_and_update_count = \DB::connection($connection)->transaction(function() use($input_rows, $primary_key, $convert_rules) {
         // HACK: tosite DBの場所によって貼るトランザクション変えるの面倒くさいからコントローラーでやって(´・ω・`)
         $insert_count = 0;
         $update_count = 0;

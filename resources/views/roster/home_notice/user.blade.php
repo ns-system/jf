@@ -1,6 +1,6 @@
 <div class="col-md-6">
     <div class="panel panel-primary">
-        <div class="panel-heading"><h4>勤怠管理情報</h4></div>
+        <div class="panel-heading"><h4>勤怠管理情報 <small> - 一般</small></h4></div>
         <div class="panel-body">
             @if(!empty($roster_user_cnt) && !$roster_user_cnt->isEmpty())
             @foreach($roster_user_cnt as $cnt)

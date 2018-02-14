@@ -102,22 +102,9 @@ class RosterCsvExportController extends Controller
     }
 
     public function show($ym) {
-
-        $service  = $this->service->setMonth($ym);
-        $rosters  = \App\Roster::where('month_id', '=', $ym)
-                ->join('sinren_db.sinren_users', 'rosters.user_id', '=', 'sinren_users.user_id')
-                ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
-                ->join('roster_db.roster_users', 'rosters.user_id', '=', 'roster_users.user_id')
-                ->leftJoin('laravel_db.users as pa', 'rosters.plan_accept_user_id', '=', 'pa.id')
-                ->leftJoin('laravel_db.users as pr', 'rosters.plan_reject_user_id', '=', 'pr.id')
-                ->leftJoin('laravel_db.users as aa', 'rosters.actual_reject_user_id', '=', 'aa.id')
-                ->leftJoin('laravel_db.users as ar', 'rosters.actual_reject_user_id', '=', 'ar.id')
-                ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
-                ->select(\DB::raw('*, rosters.id as key_id, pa.last_name as plan_accept_last_name, pr.last_name as plan_reject_last_name, aa.last_name as actual_accept_last_name, ar.last_name as actual_reject_last_name'))
-                ->orderBy('sinren_users.division_id', 'asc')
-                ->orderBy('sinren_users.user_id', 'asc')
-                ->paginate(self::INT_RECORD_PER_PAGE)
-        ;
+        $service  = $this->service;
+        $r        = $this->service->setMonth($ym);
+        $rosters  = $r->paginate(self::INT_RECORD_PER_PAGE);
         $calendar = $service->getCalendar();
         $rests    = $this->getRest();
         $types    = $this->getType();
