@@ -61,21 +61,27 @@ class RosterUserController extends Controller
             }
             $roster->save();
         });
+
+        // 責任者フラグが立っておらず、申請があった場合はメール通知を行う
+        if (!$roster->is_chief && $request['is_chief'])
+        {
+            $this->dispatch(new \App\Jobs\Roster\ChiefNotice($user_id));
+        }
         \Session::flash('success_message', 'ユーザーの更新が完了しました。');
         return back();
     }
 
     public function indexAdmin() {
-        $params = \Input::get();
+        $params    = \Input::get();
         // ユーザー情報の取得
-        $users  = \App\User::leftJoin('sinren_db.sinren_users', 'users.id', '=', 'sinren_users.user_id')
+        $tmp_users = \App\User::leftJoin('sinren_db.sinren_users', 'users.id', '=', 'sinren_users.user_id')
                 ->leftJoin('roster_db.roster_users', 'users.id', '=', 'roster_users.user_id')
                 ->leftJoin('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->select(\DB::raw('*, users.id as user_id'))
                 ->orderBy('sinren_divisions.division_id', 'desc')
                 ->orderBy('users.id', 'asc')
         ;
-        $users  = $this->selectRosterUsers($params, $users);
+        $users     = $this->selectRosterUsers($params, $tmp_users);
 
         // 管轄部署情報の取得
         $controls = \DB::connection('mysql_sinren')

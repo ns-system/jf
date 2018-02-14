@@ -10,7 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Services\ImportZenonDataService;
 use \App\Services\Traits\MemoryCheckable;
 
-class EditNotice extends Job implements SelfHandling, ShouldQueue
+class ChiefNotice extends Job implements SelfHandling, ShouldQueue
 {
 
     use InteractsWithQueue,
@@ -18,10 +18,10 @@ class EditNotice extends Job implements SelfHandling, ShouldQueue
         MemoryCheckable
     ;
 
-    protected $results;
+    protected $user_id;
 
-    public function __construct($results) {
-        $this->results = $results;
+    public function __construct($user_id) {
+        $this->user_id = $user_id;
     }
 
     public function failed() {
@@ -30,15 +30,15 @@ class EditNotice extends Job implements SelfHandling, ShouldQueue
     }
 
     public function handle() {
-        echo "==== EditNotice ====" . PHP_EOL;
+        echo "==== ChiefNotice ====" . PHP_EOL;
         echo "[start : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
-
 
         try {
             $users = \App\User::join('roster_db.roster_users as RS', 'users.id', '=', 'RS.user_id')
                     ->where('RS.is_administrator', '=', true)
                     ->get()
             ;
+            $res   = \App\User::find($this->user_id)->first();
         } catch (\Exception $exc) {
             echo $exc->getMessage();
         }
@@ -47,10 +47,10 @@ class EditNotice extends Job implements SelfHandling, ShouldQueue
         try {
             foreach ($users as $user) {
                 $email = $user->email;
-//                $email = 'n.teshima@jf-nssinren.or.jp';
-                \Mail::send('emails.roster.chief_edit', ['res' => $this->results], function($message) use($email) {
+                $email = 'n.teshima@jf-nssinren.or.jp';
+                \Mail::send('emails.roster.chief_add', ['res' => $res], function($message) use($email) {
                     $message->to($email)
-                            ->subject("ユーザー情報が変更されました。")
+                            ->subject("責任者への昇格申請がありました。")
                     ;
                     echo "  -- メール送信先：{$email}" . PHP_EOL;
                 });
