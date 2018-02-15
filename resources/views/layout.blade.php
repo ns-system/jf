@@ -115,75 +115,37 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
 <body class="no-thank-yu">
     @section('header')
     <div class="bs-component" style="margin-bottom: 120px;">
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="/" style="padding: 25px 10px;">
-                        <label class="brand-logo">
-                            @if(env('APP_ENV') !== 'product') <small class="label label-warning" style="position: absolute; top: 2px;">{{env('APP_ENV')}}</small>@endif
-                        </label>
-                    </a>
-                </div>
+        @include('partial.nav')
+    </div>
+    @show
 
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav">
-                        <li><a href="http://www.jf-nssinren.or.jp/" target="_blank" style="margin-top: 25px; margin-bottom: 0px;"><label class="official-logo"></label></a></li>
-                        <li><a href="http://192.1.10.136/myweb10po" target="_blank" style="margin-top: 25px; margin-bottom: 0px;"><label class="gw-logo"></label></a></li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        @if(Auth::check())
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" style="margin-top: 13px; margin-bottom: 13px;">
-                                <div class="media" style="height: 40px; width: 40px; border-radius: 20%; background: #eee;">
-                                    <img style="width: 100%; height: 100%;" @if(\Auth::user()->user_icon != '') src="{{asset('/user_icon/' . \Auth::user()->user_icon)}}" @else src="{{asset('/user_icon/unset.png')}}" @endif>
-                                </div>
-                                <div class="dropdown-menu list-group" role="menu" style="font-size: 80%; padding: 0; border-radius: 5px;">
-                                    <span class="list-group-item user-name">{{Auth::user()->last_name}} {{Auth::user()->first_name}}<small>さん</small></span>
-                                    <a href="{{route('app::user::show', ['id'=>\Auth::user()->id])}}" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ユーザー情報確認</a>
-                                    <a href="/auth/logout" class="list-group-item"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> ログアウト</a>
-                                </ul>
-                            </li>
-                            @endif
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+    <div class="container-fluid">
+        <div class="row">
+            @section('sidebar')
+            @show
+
+            @yield('content')
         </div>
-        @show
+    </div>
 
-        <div class="container-fluid">
-            <div class="row">
-                @section('sidebar')
-                @show
+    @section('footer')
+    <script src="{{asset('/js/js.cookie.js')}}"></script>
 
-                @yield('content')
-            </div>
-        </div>
+    <script type="text/javascript">
+        $(function () {
+            $('.modal-content').draggable();
+            $('[data-toggle="tooltip"]').tooltip();
+            $('.min-width').each(function(){
+                var width = $(this).attr('data-size');
+                $(this).css('min-width', width + 'px');
+            });
 
-        @section('footer')
-        <script src="{{asset('/js/js.cookie.js')}}"></script>
-
-        <script type="text/javascript">
-            $(function () {
-                $('.modal-content').draggable();
-                $('[data-toggle="tooltip"]').tooltip();
-                $('.min-width').each(function(){
-                    var width = $(this).attr('data-size');
-                    $(this).css('min-width', width + 'px');
-                });
-
-                $(document).bind("ajaxSend", function(c, xhr) {
-                    $(window).bind( 'beforeunload', function() {
-                        alert('abort');
-                        xhr.abort();
-                    })
-                });
+            $(document).bind("ajaxSend", function(c, xhr) {
+                $(window).bind( 'beforeunload', function() {
+                    alert('abort');
+                    xhr.abort();
+                })
+            });
 
                 // +==========================================================
                 // | class='btn-group' && data-toggle='buttons'に対して
