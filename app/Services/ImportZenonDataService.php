@@ -359,7 +359,7 @@ class ImportZenonDataService
                 $line_number++;
                 $this->setRow($line)
                         ->setKeyToRow($keys)
-                        ->convertRow($types, true)
+                        ->convertRow($types, false)
                         ->separateAtmNumber($monthly_state->identifier)
                         ->splitAccountAndDepositNumber($monthly_state->is_exist_account_and_deposit)
                         ->splitRow($monthly_state->is_split, $monthly_state->first_column_position, $monthly_state->last_column_position, $monthly_state->column_length)
