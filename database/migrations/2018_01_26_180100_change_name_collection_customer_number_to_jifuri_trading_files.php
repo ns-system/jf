@@ -16,6 +16,13 @@ class ChangeNameCollectionCustomerNumberToJifuriTradingFiles extends Migration
                 $table->renameColumn('name_correction_customer_number', 'name_collection_number');
             }
         });
+
+        Schema::connection($this->connect)->table($this->tableName, function(Blueprint $table) {
+            if (Schema::connection($this->connect)->hasColumn($this->tableName, 'name_correction_level'))
+            {
+                $table->renameColumn('name_correction_LEVEL', 'name_collection_level');
+            }
+        });
     }
 
     public function down() {
