@@ -23,7 +23,7 @@
 
     <div class="border-bottom" id="top">
         <h2>
-            予定データ承認 <small> - {{date('Y年n月', strtotime($ym.'01'))}}</small>
+            勤務データ承認 <small> - {{date('Y年n月', strtotime($ym.'01'))}}</small>
         </h2>
     </div>
 
@@ -37,7 +37,7 @@
                 <a href="#top" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> トップへ</a>
                 <a href="{{route('app::roster::accept::calendar', ['ym'=>$ym, 'div'=>$div, 'all'=>'part'])}}" class="btn btn-warning btn-sm" id="plan">未承認</a>
                 <a href="{{route('app::roster::accept::calendar', ['ym'=>$ym, 'div'=>$div])}}" class="btn btn-success btn-sm" id="reset">全て</a>
-                <button type="submit" class="btn btn-info btn-sm" onclick="return confirm('チェックしたデータが一括で更新されますがよろしいですか？');"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 一括で更新する</button>
+                <button type="submit" class="btn btn-info btn-sm" onclick="return confirm('チェックしたデータが一括で更新されますがよろしいですか？');"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> 変更を全て更新</button>
             </div>
         </div>
 

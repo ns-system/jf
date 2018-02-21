@@ -103,6 +103,7 @@ class RosterAcceptController extends Controller
                 ->where('S_USER.user_id', '<>', \Auth::user()->id)
                 ->where('users.is_super_user', '=', false)
                 ->where('R_USER.is_administrator', '=', false)
+                ->where('R_USER.is_chief', '=', false)
         ;
 
         if ($is_show_all === false)
@@ -150,6 +151,7 @@ class RosterAcceptController extends Controller
                 ->where('sinren_users.division_id', '=', $div)
                 ->where('sinren_users.user_id', '<>', \Auth::user()->id)
                 ->where('R_USER.is_administrator', '=', false)
+                ->where('R_USER.is_chief', '=', false)
                 ->get()
         ;
         $param = [
@@ -177,6 +179,7 @@ class RosterAcceptController extends Controller
         \Session::flash('success_message', 'データの一括更新が完了しました。');
         return back();
     }
+
 //
 //    public function getNotAccept($monthly_id, $division_id) {
 //        \App\Roster::where('month_id', '=', $monthly_id)
@@ -185,7 +188,6 @@ class RosterAcceptController extends Controller
 //
 //        ;
 //    }
-
 //    public function show($ym, $div) {
 //        $plans   = \DB::connection('mysql_sinren')
 //                ->table('sinren_users')
