@@ -87,7 +87,7 @@
                                 <tr>
                                     <td colspan="5">
                                         <a href="{{route('app::roster::accept::calendar', ['ym'=>$m->month_id, 'div'=>$d->division_id])}}" class="btn btn-success btn-block">
-                                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> リストから承認
+                                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 承認メニューへ
                                         </a>
                                     </td>
                                 </tr>
