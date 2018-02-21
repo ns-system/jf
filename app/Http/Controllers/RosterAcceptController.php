@@ -133,7 +133,7 @@ class RosterAcceptController extends Controller
             $calendar[]            = $c;
         }
 
-        $tmp_types = \App\WorkType::orderBy('work_type_id')->get();
+        $tmp_types = \App\WorkType::workTypeList()->orderBy('work_type_id')->get();
         $types     = [];
         foreach ($tmp_types as $t) {
             $types[$t->work_type_id] = [

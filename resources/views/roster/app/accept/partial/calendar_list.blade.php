@@ -57,7 +57,7 @@
                     <div class="panel-body">
                         {{-- データ内容 --}}
                         @if(!empty($r->plan_rest_reason_id))                                            <label>予定休暇理由</label><p>{{$rests[$r->plan_rest_reason_id]}}</p> @endif
-                        @if(!empty($r->plan_work_type_id))                                              <label>予定勤務形態</label><p>{{$types[$r->plan_work_type_id]['name']}} {{$types[$r->plan_work_type_id]['time']}}</p> @endif
+                        @if(!empty($r->plan_work_type_id))                                              <label>予定勤務形態</label><p>{{$types[$r->plan_work_type_id]['name']}} - {{$types[$r->plan_work_type_id]['time']}}</p> @endif
                         @if(!empty($r->plan_overtime_start_time) && !empty($r->plan_overtime_end_time)) <label>予定就業時間</label><p>{{date('G:i', strtotime($r->plan_overtime_start_time))}} ～ {{date('G:i', strtotime($r->plan_overtime_end_time))}}</p> @endif
                         @if(!empty($r->plan_overtime_reason))                                           <label>予定残業理由</label><p>{{$r->plan_overtime_reason}}</p> @endif
                         @if(empty($r->is_plan_entry))                                                   <label>データが入力されていません。</label> @endif
@@ -99,7 +99,7 @@
                     <div class="panel-body">
                         {{-- データ内容 --}}
                         @if(!empty($r->actual_rest_reason_id))                                            <label>実休暇理由</label><p>{{$rests[$r->actual_rest_reason_id]}}</p> @endif
-                        @if(!empty($r->actual_work_type_id))                                              <label>実勤務形態</label><p>{{$types[$r->actual_work_type_id]['name']}} {{$types[$r->actual_work_type_id]['time']}}</p> @endif
+                        @if(!empty($r->actual_work_type_id))                                              <label>実勤務形態</label><p>{{$types[$r->actual_work_type_id]['name']}} - {{$types[$r->actual_work_type_id]['time']}}</p> @endif
                         @if(!empty($r->actual_overtime_start_time) && !empty($r->actual_overtime_end_time)) <label>実就業時間</label><p>{{date('G:i', strtotime($r->actual_overtime_start_time))}} ～ {{date('G:i', strtotime($r->actual_overtime_end_time))}}</p> @endif
                         @if(!empty($r->actual_overtime_reason))                                           <label>実残業理由</label><p>{{$r->actual_overtime_reason}}</p> @endif
                         @if(empty($r->is_actual_entry))                                                   <label>データが入力されていません。</label> @endif
