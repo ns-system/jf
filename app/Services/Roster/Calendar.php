@@ -269,7 +269,7 @@ class Calendar
     public function convertCalendarToList($calendar) {
         $list = [];
         foreach ($calendar as $c) {
-            if ($c['date'] == 0)
+            if (empty($c['date']))
             {
                 continue;
             }
