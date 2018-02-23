@@ -147,40 +147,35 @@
             var s = rows['status'];
             if(s['is_import_error']){
                 setErrorList(s);
-                clearInterval(timer);
-                stopAllAnimation();
-                changeProgressBarToError();
-                return;
+                // clearInterval(timer);
+                // return;
             }
             if(s['is_import_end'] == true){
                 clearInterval(timer);
                 var is_move = confirm('処理は正常に終了しました。処理確認画面に移動しますか？');
                 if(is_move) location = "{{route('admin::super::month::status', ['id'=>$id])}}";
-
-                // $('#process-list').show();
             }
         },
         (error) => {
-            // alert('エラーが発生しました。処理を最初から行ってください。');
             alert('エラーが発生しました。');
             clearInterval(timer);
             location.reload();
         });
-//    console.log('hi');
 }
 
 function editHtml(rows){
     // console.log('call');
     Object.keys(rows).forEach(function(id, index, array){
         var r = rows[id];
-        if(r['is_pre_process_start']){  $('#pre_process_'+id).addClass('glyphicon-repeat rotate'); }
-        if(r['is_pre_process_end']){    $('#pre_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-ok'); }
-        if(r['is_pre_process_error']){  $('#pre_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-remove').parent().removeClass('text-success').addClass('text-warning'); }
-
-        if(r['is_post_process_start']){ $('#post_process_'+id).addClass('glyphicon-repeat rotate'); }
-        if(r['is_post_process_end']){   $('#post_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-ok'); }
-        if(r['is_post_process_error']){ $('#post_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-remove').parent().removeClass('text-success').addClass('text-warning'); }
-
+        // 事前チェックステータスバッヂ
+        if(r['is_pre_process_start'])  $('#pre_process_'+id).addClass('glyphicon-repeat rotate'); 
+        if(r['is_pre_process_end'])    $('#pre_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-ok'); 
+        if(r['is_pre_process_error'])  $('#pre_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-remove').parent().removeClass('text-success').addClass('text-warning'); 
+        // 本処理ステータスバッヂ
+        if(r['is_post_process_start']) $('#post_process_'+id).addClass('glyphicon-repeat rotate'); 
+        if(r['is_post_process_end'])　  $('#post_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-ok'); 
+        if(r['is_post_process_error']) $('#post_process_'+id).removeClass('glyphicon-repeat rotate').addClass('glyphicon-remove').parent().removeClass('text-success').addClass('text-warning'); 
+        // 処理中テーブルステータス
         if(r['is_post_process_start'] == true){
             var now = r['executed_row_count'];
             var max = r['row_count'];
@@ -189,14 +184,16 @@ function editHtml(rows){
             if(!r['is_import']){
                 if(p > 20){ $('#progress_post_'+id).css('width', p+'%').html('処理中...'); }
                 else{       $('#progress_post_'+id).css('width', p+'%'); }
-            }else{
-                $('#progress_post_'+id).css('width', '100%').removeClass('active').html('処理終了');
             }
+            // プログレスバーのステータス変更
+            if(r['is_post_process_end'])   $('#progress_post_'+id).css('width', '100%').removeClass('active　progress-bar-striped').html('処理終了');
+            if(r['is_post_process_error']) $('#progress_post_'+id).css('width', '100%').removeClass('active　progress-bar-striped').addClass('progress-bar-danger').html('処理中断');
         }
         // エラーメッセージ
-        if(r['is_pre_process_error'] || r['is_post_process_error']){
-            $('#progress_post_'+id).css('width', '100%').removeClass('active progress-bar-success').addClass('progress-bar-warning').html('処理中断');
-            console.log(r['key_id'],r['is_pre_process_error'],r['is_post_process_error'],r['warning_message']);
+        // if(r['is_pre_process_error'] || r['is_post_process_error']){
+        if(r['is_pre_process_error']){
+            $('#progress_post_'+id).css('width', '100%').removeClass('active progress-bar-success active　progress-bar-striped').addClass('progress-bar-warning').html('未処理');
+            // console.log(r['key_id'],r['is_pre_process_error'],r['is_post_process_error'],r['warning_message']);
             $('#progress_post_'+id).parent().next('.error_message').html(r['warning_message']);
         }
 
@@ -206,25 +203,8 @@ function editHtml(rows){
         $('#start_time_'+id).html(r['process_started_at']);
         $('#end_time_'+id).html(r['process_ended_at']);
 
-        // progress
     });
     setErrorList(rows);
-}
-
-function stopAllAnimation(){
-    $('.animate').each(function(){
-        $(this).children().removeClass('rotate');
-    });
-}
-
-function changeProgressBarToError(){
-    $('.progress').each(function(){
-        $(this).children().removeClass('active').html('処理中断');
-        if($(this).children().hasClass('progress-bar-warning')){
-        }else{
-            $(this).children().removeClass('progress-bar-success').addClass('progress-bar-danger').css('width','100%');
-        }
-    });
 }
 </script>
 @endsection

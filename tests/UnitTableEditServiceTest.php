@@ -361,12 +361,22 @@ class UnitTableEditServiceTest extends TestCase
     public function 正常系_データベースに反映できる() {
         $before_insert = ["gist_code" => 1, "display_gist" => "その他自振１", "zenon_gist" => "その他自振１", "keizai_gist_kanji" => "", "keizai_gist_half_kana" => "", "keizai_gist_full_kana" => "",];
         $input_rows    = [
-            "gist_code"             => [1, 99999,],
-            "display_gist"          => ["その他自振１", "テストデータ1",],
-            "zenon_gist"            => ["その他自振１", "テストデータ2",],
-            "keizai_gist_kanji"     => ["", "テストデータ3",],
-            "keizai_gist_half_kana" => ["", "ﾃｽﾄﾃﾞｰﾀ4",],
-            "keizai_gist_full_kana" => ["", "テストデータ5",],
+            [
+                "gist_code"             => 1,
+                "display_gist"          => "その他自振１",
+                "zenon_gist"            => "その他自振１",
+                "keizai_gist_kanji"     => "",
+                "keizai_gist_half_kana" => "",
+                "keizai_gist_full_kana" => "",
+            ],
+            [
+                "gist_code"             => 2,
+                "display_gist"          => "テストデータ1",
+                "zenon_gist"            => "テストデータ2",
+                "keizai_gist_kanji"     => "テストデータ3",
+                "keizai_gist_half_kana" => "ﾃｽﾄﾃﾞｰﾀ4",
+                "keizai_gist_full_kana" => "テストデータ5",
+            ],
         ];
         try {
             \DB::connection('mysql_master')->beginTransaction();

@@ -40,10 +40,6 @@ class ImportZenonDataService
     }
 
     private function setTimeStamp($option_timestamp = null) {
-//        if (empty($timestamp))
-//        {
-//            $timestamp = date('Y-m-d H:i:s');
-//        }
         $timestamp                        = (!empty($option_timestamp)) ? $option_timestamp : date('Y-m-d H:i:s');
         $this->row['created_at']          = $timestamp;
         $this->row['updated_at']          = $timestamp;
@@ -54,15 +50,24 @@ class ImportZenonDataService
         return $this;
     }
 
+    /**
+     * カラムの型を変換するメソッド。
+     * @param type $types   カラムごとの型を指定する。DBから取得。
+     * @param type $is_ceil 切り上げを行うかどうか
+     * @return $this
+     */
     private function convertRow($types, $is_ceil = true) {
-//        $row       = $this->convertTypes($types, $this->row, $is_ceil);
-//        $this->row = $row;
         $this->row          = $this->convertTypes($types, $this->row, $is_ceil);
         $this->common_row   = $this->convertTypes($types, $this->common_row, $is_ceil);
         $this->separate_row = $this->convertTypes($types, $this->separate_row, $is_ceil);
         return $this;
     }
 
+    /**
+     * CSV配列にキー値を流し込み、連想配列にするメソッド
+     * @param type $keys キー配列
+     * @return $this
+     */
     private function setKeyToRow($keys) {
         if (count($keys) !== count($this->row))
         {
@@ -94,6 +99,39 @@ class ImportZenonDataService
         return $this;
     }
 
+    /**
+     * 災害口座の口座預入番号を口座番号と預入番号に分割するメソッド
+     * @identifier = テーブル識別子
+     * identifierがD0268のときのみ処理を行い、それ以外はエスケープする
+     */
+    private function splitAccountAndDepositNumber($is_exist_account_and_deposit) {
+        if ($is_exist_account_and_deposit != true)
+        {
+            return $this;
+        }
+        if (isset($this->row['account_number']) || isset($this->row['deposit_number']))
+        {
+            throw new \Exception("既に口座番号もしくは預入番号がセットされているようです。");
+        }
+        if (!isset($this->row['account_and_deposit_number']))
+        {
+            throw new \Exception("口座預入番号がセットされていないようです。");
+        }
+        $target_number  = $this->row['account_and_deposit_number'];
+        $account_number = mb_substr($target_number, 0, -3);
+        $deposit_number = mb_substr($target_number, -3, 3);
+
+        $this->row['account_number'] = $account_number;
+        $this->row['deposit_number'] = $deposit_number;
+        return $this;
+    }
+
+    /**
+     * 口座番号を変換するメソッド
+     * @param type $is_account_convert    口座番号を変換するかどうか
+     * @param type $account_convert_param 分割する科目と口座番号のキー値
+     * @return $this
+     */
     private function setConvertedAccountToRow($is_account_convert, $account_convert_param = null) {
         if (!$is_account_convert)
         {
@@ -143,11 +181,11 @@ class ImportZenonDataService
     }
 
     /**
-     * 
-     * @param type $is_split
-     * @param type $pos_first
-     * @param type $pos_last
-     * @param type $pos_max
+     * 元帳を共通部と個別部に分割するメソッド
+     * @param type $is_split  分割するかどうか
+     * @param type $pos_first 共通部開始位置
+     * @param type $pos_last  共通部終了位置
+     * @param type $pos_max   配列全体の長さ
      * @return $this
      * @throws \Exception
      */
@@ -197,10 +235,25 @@ class ImportZenonDataService
         return $this;
     }
 
-    private function setCommonAccountLedgerKeys() {
-        $this->separate_row['subject_code']    = $this->common_row['subject_code'];
-        $this->separate_row['account_number']  = $this->common_row['account_number'];
-        $this->separate_row['contract_number'] = $this->common_row['contract_number'];
+    /**
+     * 共通部と個別部でそれぞれ一位の値を求めるための複数キーをセットするメソッド
+     * 貯金 -> 科目コード・口座番号・契約番号（定期貯金のみ親子区分も必要）
+     * 貸付 -> 口座番号
+     * @param type $is_deposit_split 貯金元帳かどうか
+     * @param type $is_loan_split    貸付元帳かどうか
+     */
+    private function setCommonLedgerKeys($is_deposit_split, $is_loan_split) {
+        //setCommonAccountLedgerKeys
+        if ($is_deposit_split)
+        {
+            $this->separate_row['subject_code']    = $this->common_row['subject_code'];
+            $this->separate_row['account_number']  = $this->common_row['account_number'];
+            $this->separate_row['contract_number'] = $this->common_row['contract_number'];
+        }
+        if ($is_loan_split)
+        {
+            $this->separate_row['loan_account_number'] = $this->common_row['loan_account_number'];
+        }
     }
 
     private function checkSplitRow($expect_value, $actual_value, $msg = '') {
@@ -208,6 +261,25 @@ class ImportZenonDataService
         {
             throw new \Exception("分割時に{$msg}配列長が一致しませんでした。（想定：{$expect_value} 実際：{$actual_value}）");
         }
+    }
+
+    /**
+     * 為替取引データのATM番号を抽出するメソッド
+     * @param type $identifier テーブル識別子
+     * @return $this
+     * $identifierがM0014のときのみ処理する
+     */
+    private function separateAtmNumber($identifier) {
+        if ($identifier !== "M0014")
+        {
+            return $this;
+        }
+        if (!isset($this->row['exchange_telegram_7']) || !isset($this->row['exchange_telegram_8_8']))
+        {
+            throw new \Exception("カラム名 'exchange_telegram_7' もしくは 'exchange_telegram_8_8' が見つかりませんでした。");
+        }
+        $this->row['atm_number'] = ($this->row['exchange_telegram_7'] === 'ATMﾌﾘｺﾐ') ? $this->row['exchange_telegram_8_8'] : '';
+        return $this;
     }
 
     public function monthlyStatus($ym, $process_ids) {
@@ -239,12 +311,18 @@ class ImportZenonDataService
         $bulk    = [];
         $types   = [];
         $keys    = [];
-        $configs = \App\ZenonTable::format($monthly_state->zenon_format_id)->select(['column_name', 'column_type',])->get();
+        $configs = \App\ZenonTable::format($monthly_state->zenon_format_id)
+                ->select(['column_name', 'column_type',])
+                ->orderBy('zenon_format_id', 'asc')
+                ->orderBy('serial_number', 'asc')
+                ->get()
+        ;
 //        $this->debugMemory('uploadToDatabase - init');
         foreach ($configs as $c) {
             $types[$c->column_name] = $c->column_type;
             $keys[]                 = $c->column_name;
         }
+//        dd($types);
         unset($configs);
         if ($this->isArrayEmpty($keys))
         {
@@ -271,59 +349,63 @@ class ImportZenonDataService
         $this->setPreStartToMonthlyStatus($monthly_state->id);
 
         $line_number = 0;
-        foreach ($csv_file_object as /* $line_number => */ $raw_line) {
-            $line = $this->lineEncode($raw_line);
-            if ($this->isArrayEmpty($line))
-            {
-                continue;
-            }
-            $line_number++;
-            $this->setRow($line)
-                    ->setKeyToRow($keys)
-                    ->convertRow($types, true)
-                    ->splitRow($monthly_state->is_split, $monthly_state->first_column_position, $monthly_state->last_column_position, $monthly_state->column_length)
-                    ->setMonthlyIdToRow(true, $monthly_id)
-                    ->setConvertedAccountToRow($monthly_state->is_account_convert, $account_convert_param)
-                    ->setTimeStamp(date('Y-m-d H:i:s'))
-            ;
-            // 貯金口座だった場合、キーの分割を行う -> 判定がまずい
-            if (strpos($monthly_state->table_name, 'account_ledgers') !== false)
-            {
-                $this->setCommonAccountLedgerKeys();
-            }
-            if ($monthly_state->is_split)
-            {
-                $common_row                = $this->common_row;
-                $separate_row              = $this->separate_row;
-                $common_id                 = $common_table->insertGetId($common_row);
-                $separate_row['common_id'] = $common_id;
-                $tmp_bulk                  = $separate_row;
-                unset($common_id);
-            }
-            else
-            {
-                $tmp_bulk = $this->getRow();
-            }
-            unset($line);
-            // MySQLのバージョンによってはプリペアドステートメントが65536までに制限されているため、動的にしきい値を設ける
-            if ($line_number > 0 && (count($bulk) * count($tmp_bulk) + count($tmp_bulk)) > 65000)
-            {
+        try {
+            foreach ($csv_file_object as /* $line_number => */ $raw_line) {
+                $line = $this->lineEncode($raw_line);
+                if ($this->isArrayEmpty($line))
+                {
+                    continue;
+                }
+                $line_number++;
+                $this->setRow($line)
+                        ->setKeyToRow($keys)
+                        ->convertRow($types, false)
+                        ->separateAtmNumber($monthly_state->identifier)
+                        ->splitAccountAndDepositNumber($monthly_state->is_exist_account_and_deposit)
+                        ->splitRow($monthly_state->is_split, $monthly_state->first_column_position, $monthly_state->last_column_position, $monthly_state->column_length)
+                        ->setMonthlyIdToRow(true, $monthly_id)
+                        ->setConvertedAccountToRow($monthly_state->is_account_convert, $account_convert_param)
+                        ->setTimeStamp(date('Y-m-d H:i:s'))
+                ;
+                // 貯金or融資口座だった場合、キーの分割を行う
+                $this->setCommonLedgerKeys($monthly_state->is_deposit_split, $monthly_state->is_loan_split);
+                if ($monthly_state->is_split)
+                {
+                    $common_row                = $this->common_row;
+                    $separate_row              = $this->separate_row;
+                    $common_id                 = $common_table->insertGetId($common_row);
+                    $separate_row['common_id'] = $common_id;
+                    $tmp_bulk                  = $separate_row;
+                    unset($common_id);
+                }
+                else
+                {
+                    $tmp_bulk = $this->getRow();
+                }
+                unset($line);
+                // MySQLのバージョンによってはプリペアドステートメントが65536までに制限されているため、動的にしきい値を設ける
+                if ($line_number > 0 && (count($bulk) * count($tmp_bulk) + count($tmp_bulk)) > 65000)
+                {
 //                $this->debugMemory('uploadToDatabase - beforeBulkInsert');
+                    $table->insert($bulk);
+                    $this->setExecutedRowCountToMonthlyStatus($monthly_state->id, $line_number);
+                    unset($bulk);
+                }
+                $bulk[] = $tmp_bulk;
+                unset($tmp_bulk);
+            }
+            // 端数分をここでINSERT
+            if (count($bulk) !== 0)
+            {
                 $table->insert($bulk);
                 $this->setExecutedRowCountToMonthlyStatus($monthly_state->id, $line_number);
-                unset($bulk);
             }
-            $bulk[] = $tmp_bulk;
-            unset($tmp_bulk);
+            unset($table);
+            $this->setPostEndToMonthlyStatus($monthly_state->id);
+        } catch (\Exception $exc) {
+            echo "{$monthly_state->zenon_data_name}でエラーが発生しました。（行数：{$line_number}）" . PHP_EOL;
+            throw $exc;
         }
-        // 端数分をここでINSERT
-        if (count($bulk) !== 0)
-        {
-            $table->insert($bulk);
-            $this->setExecutedRowCountToMonthlyStatus($monthly_state->id, $line_number);
-        }
-        unset($table);
-        $this->setPostEndToMonthlyStatus($monthly_state->id);
         return [];
     }
 

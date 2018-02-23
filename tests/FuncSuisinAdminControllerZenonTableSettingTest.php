@@ -131,15 +131,14 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 'is_account_convert'    => trim($data[13]),
                 'is_process'            => trim($data[14]),
                 'is_split'              => trim($data[15]),
-                'zenon_format_id'       => trim($data[16]),
-                'account_column_name'   => trim($data[17]),
-                'subject_column_name'   => trim($data[18]),
-//                'split_foreign_key_1'   => trim($data[19]),
-//                'split_foreign_key_2'   => trim($data[20]),
-//                'split_foreign_key_3'   => trim($data[21]),
-//                'split_foreign_key_4'   => trim($data[22]),
+                'is_deposit_split'      => trim($data[16]),
+                'is_loan_split'         => trim($data[17]),
+                'zenon_format_id'       => trim($data[18]),
+                'account_column_name'   => trim($data[19]),
+                'subject_column_name'   => trim($data[20]),
             ];
             $res   = \App\ZenonCsv::where($where)->count();
+
             $this->assertEquals($res, 1);
         }
     }
@@ -245,7 +244,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
-            $res  = \App\ZenonTable::where('zenon_format_id', trim($data[0]))->where('column_name', trim($data[1]))->where('japanese_column_name', trim($data[2]))->where('column_type', trim($data[3]))->count();
+            $res  = \App\ZenonTable::where('zenon_format_id', trim($data[0]))->where('serial_number', trim($data[1]))->where('column_name', trim($data[2]))->where('japanese_column_name', trim($data[3]))->where('column_type', trim($data[4]))->count();
             $this->assertEquals($res, 1);
         }
     }

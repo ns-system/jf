@@ -77,13 +77,10 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
              */
             Route::group(['middleware' => 'roster_proxy'], function() {
                 Route::group(['as' => 'accept::', 'prefix' => '/accept'], function() {
-                    Route::get('/',                                               ['as' => 'index', 'uses' => 'RosterAcceptController@index']);
-                    Route::get('/list/{year_and_month}/{division_id}',            ['as' => 'list', 'uses' => 'RosterAcceptController@show']);
-                    Route::get('/calendar/{year_and_month}/{division_id}/{all?}', ['as' => 'calendar', 'uses' => 'RosterAcceptController@calendar']);
-                    Route::post('/calendar/edit',                                 ['as' => 'calendar_accept', 'uses' => 'RosterAcceptController@calendarAccept']);
-
-//                    Route::post('/edit/{type}/part/{id}', ['as' => 'part', 'uses' => 'RosterAcceptController@part']);
-//                    Route::post('/edit/{type}/all',       ['as' => 'all', 'uses' => 'RosterAcceptController@all']);
+                    Route::get('/list',                                                                    ['as' => 'index',           'uses' => 'RosterAcceptController@index']);
+                    Route::get('/list/{year_and_month}/divisions/{division_id}/users/{user_id?}{status?}', ['as' => 'calendar',        'uses' => 'RosterAcceptController@calendarIndex']);
+                    Route::post('/list/{year_and_month}/divisions/{division_id}/users/{user_id}/edit',     ['as' => 'calendar_accept', 'uses' => 'RosterAcceptController@calendarAccept']);
+//                    Route::post('/calendar/edit',                                 ['as' => 'calendar_accept', 'uses' => 'RosterAcceptController@calendarAccept']);
                 });
                 Route::group(['as' => 'work_plan::', 'prefix' => '/work_plan'], function() {
                     Route::get('/',                                      ['as' => 'index',    'uses' => 'RosterWorkPlanController@index']);

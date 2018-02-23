@@ -43,7 +43,7 @@ Trait DatabaseNameUsable
         return $pdo;
     }
 
-    public function getDatabaseName(string $option_option): array {
+    public function getDatabaseName(string $option_option) {
         $option = str_replace('[', '', str_replace(']', '', $option_option));
         if (!preg_match('|^[0-9a-z_.,/?-]+$|', $option))
         {
@@ -88,7 +88,7 @@ Trait DatabaseNameUsable
         return $database_names;
     }
 
-    public function getNameLen(array $database_names): int {
+    public function getNameLen(array $database_names) {
         $str_len = 0;
         foreach ($database_names as $name) {
             $str_len = ($str_len > strlen($name)) ? $str_len : strlen($name);

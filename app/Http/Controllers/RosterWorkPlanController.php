@@ -40,8 +40,9 @@ class RosterWorkPlanController extends Controller
                         $query->orWhere(['sinren_users.division_id' => $d->division_id]);
                     }
                 })
-                ->where('roster_users.user_id', '<>', \Auth::user()->id)
+//                ->where('roster_users.user_id', '<>', \Auth::user()->id)
                 ->where('roster_users.is_administrator', '<>', true)
+                ->where('roster_users.is_chief', '<>', true)
                 ->orderBy('sinren_users.division_id', 'asc')
                 ->get()
         ;

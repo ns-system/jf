@@ -88,86 +88,65 @@ input[type=file]{display: none;}
 .btn-info   { border-color: #1b7fc2; }
 .tooltip.top{ background: rgba(255,255,255,0); }
 
-.btn-group .btn{ margin-left: 2px; }
+/*.btn-group .btn{ margin-left: 2px; }*/
+.brand-logo, .official-logo, .gw-logo { 
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: 0.4s;
+}
+.brand-logo{    background-image: url({{asset('/logos/logo_02.png')}}); width: 200px; height: 33px; margin-bottom: 0px; }
+.official-logo{ background-image: url({{asset('/logos/official.png')}}); width: 90px; height: 30px; }
+.gw-logo{       background-image: url({{asset('/logos/groupware.png')}}); width: 120px; height: 30px; }
+.brand-logo:hover{    background-image: url({{asset('/logos/logo_02_hover.png')}}); }
+.official-logo:hover{ background-image: url({{asset('/logos/official_hover.png')}}); }
+.gw-logo:hover{       background-image: url({{asset('/logos/groupware_hover.png')}}); }
 
 .alert-fixed { width: 300px; padding: 10px; padding-right: 30px; font-size: 80%; z-index: 2; left: 20px; position: fixed; bottom: 40px; margin-bottom: 0; max-height: 400px; overflow-y: scroll; };
 .margin-bottom{margin-bottom: 10px;}
+.tooltip-inner{ text-align: left; }
+.list-group-item:last-child{ margin: 0; }
+.navbar-nav > li > .dropdown-menu{ margin-top: -10px; }
+.dropdown-menu{ min-width: 200px; }
+input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
 
 </style>
 </head>
 <body class="no-thank-yu">
     @section('header')
     <div class="bs-component" style="margin-bottom: 120px;">
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="/">
-                        @if(env('APP_ENV') !== 'product') <small class="label label-warning">{{env('APP_ENV')}}</small>@endif
-                        @yield('brand')
-                        {{$configs['brand'] or ''}}
-                    </a>
-                </div>
+        @include('partial.nav')
+    </div>
+    @show
 
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav">
-                        <li><a href="http://www.jf-nssinren.or.jp/" target="_blank">Official</a></li>
-                        <li><a href="http://192.1.10.136/myweb10po" target="_blank">Groupware</a></li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        @if(Auth::check())
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
-                                <div class="media" style="height: 40px; width: 40px; border-radius: 20%; background: #eee;">
-                                    <img style="width: 100%; height: 100%;" @if(\Auth::user()->user_icon != '') src="{{asset('/user_icon/' . \Auth::user()->user_icon)}}" @else src="{{asset('/user_icon/unset.png')}}" @endif>
-                                </div>
-                                <div class="dropdown-menu list-group" role="menu" style="font-size: 80%; padding: 0; border-radius: 5px;">
-                                    <span class="list-group-item user-name">{{Auth::user()->last_name}} {{Auth::user()->first_name}}<small>さん</small></span>
-                                    <a href="{{route('app::user::show', ['id'=>\Auth::user()->id])}}" class="list-group-item"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ユーザー情報確認</a>
-                                    <a href="/auth/logout" class="list-group-item"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> ログアウト</a>
-                                </ul>
-                            </li>
-                            @endif
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+    <div class="container-fluid">
+        <div class="row">
+            @section('sidebar')
+            @show
+
+            @yield('content')
         </div>
-        @show
+    </div>
 
-        <div class="container-fluid">
-            <div class="row">
-                @section('sidebar')
-                @show
+    @section('footer')
+    <script src="{{asset('/js/js.cookie.js')}}"></script>
 
-                @yield('content')
-            </div>
-        </div>
+    <script type="text/javascript">
+        $(function () {
+            $('.modal-content').draggable();
+            $('[data-toggle="tooltip"]').tooltip();
+            $('.min-width').each(function(){
+                var width = $(this).attr('data-size');
+                $(this).css('min-width', width + 'px');
+            });
 
-        @section('footer')
-        <script src="{{asset('/js/js.cookie.js')}}"></script>
+            $(document).bind("ajaxSend", function(c, xhr) {
+                $(window).bind( 'beforeunload', function() {
+                    alert('abort');
+                    xhr.abort();
+                })
+            });
 
-        <script type="text/javascript">
-            $(function () {
-                $('.modal-content').draggable();
-                $('[data-toggle="tooltip"]').tooltip();
-                $('.min-width').each(function(){
-                    var width = $(this).attr('data-size');
-                    $(this).css('min-width', width + 'px');
-                });
-
-                $(document).bind("ajaxSend", function(c, xhr) {
-                    $(window).bind( 'beforeunload', function() {
-                        alert('abort');
-                        xhr.abort();
-                    })
-                });
-                
                 // +==========================================================
                 // | class='btn-group' && data-toggle='buttons'に対して
                 // | チェックされたボタンをハイライト表示する関数

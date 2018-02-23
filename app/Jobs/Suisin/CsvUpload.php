@@ -9,23 +9,27 @@ use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Services\ImportZenonDataService;
 use \App\Services\Traits\MemoryCheckable;
+use App\Services\Traits\ErrorMailSendable;
 
 class CsvUpload extends Job implements SelfHandling, ShouldQueue
 {
 
     use InteractsWithQueue,
         SerializesModels,
-        MemoryCheckable
+        MemoryCheckable,
+        ErrorMailSendable
     ;
 
     protected $process_ids;
     protected $ym;
     protected $job_id;
+    protected $email;
 
-    public function __construct($ym, $process_ids, $job_id) {
+    public function __construct($ym, $process_ids, $job_id, $email) {
         $this->process_ids = $process_ids;
         $this->ym          = $ym;
         $this->job_id      = $job_id;
+        $this->email       = $email;
     }
 
     public function failed() {
@@ -50,9 +54,8 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             $import_zenon_data_service->setImportStartToJobStatus($this->job_id);
 
             // Configファイル読み取り
-            $json      = $import_zenon_data_service->setFilePath(config_path(), 'import_config.json')->getJsonFile();
-            $file_path = $json['csv_folder_path'] . "/monthly/{$ym}";
-
+//            $json      = $import_zenon_data_service->setFilePath(config_path(), 'import_config.json')->getJsonFile();
+//            $file_path = $json['csv_folder_path'] . "/monthly/{$ym}";
             // 事前チェック実施
             $rows = $import_zenon_data_service
                     ->monthlyStatus($ym, $process_ids)
@@ -65,12 +68,15 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             foreach ($rows as $r) {
                 echo "     --> {$r->csv_file_name}" . PHP_EOL;
                 $import_zenon_data_service->setPreStartToMonthlyStatus($r->id);
-                $csv_file = $import_zenon_data_service->setCsvFileObject($file_path . '/' . $r->csv_file_name)->checkCsvFileLength($r->column_length);
+                $file_path = $r->file_path;
+                $csv_file  = $import_zenon_data_service->setCsvFileObject($file_path . '/' . $r->csv_file_name)->checkCsvFileLength($r->column_length);
                 $import_zenon_data_service->setPreEndAndRowCountToMonthlyStatus($r->id, $csv_file->getCsvLines());
             }
         } catch (\Exception $e) {
             echo '[ ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
-            echo $e->getTraceAsString() . PHP_EOL;
+            echo $e->getMessage();
+            $this->sendErrorMessage($e, $this->email);
+//            echo $e->getTraceAsString() . PHP_EOL;
             $import_zenon_data_service->setImportErrorToJobStatus($this->job_id, mb_substr($e->getMessage(), 0, 250));
             exit();
         }
@@ -93,8 +99,11 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
             } catch (\Exception $e) {
                 echo '[ ERROR : ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
                 echo $e->getMessage() . PHP_EOL;
-                echo $e->getTraceAsString() . PHP_EOL;
+                $this->sendErrorMessage($e, $this->email);
+//                echo $e->getTraceAsString() . PHP_EOL;
                 $import_zenon_data_service->setImportErrorToJobStatus($this->job_id, $e->getMessage());
+                $r->is_post_process_error = true;
+                $r->save();
             }
 
             // エラーメッセージ処理
@@ -108,10 +117,11 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
                 {
                     $import_zenon_data_service->setPostEndToMonthlyStatus($r->id);
                 }
-            } catch (\Exception $exc) {
+            } catch (\Exception $e) {
                 echo '[ ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
                 echo $e->getMessage() . PHP_EOL;
-                echo $e->getTraceAsString() . PHP_EOL;
+                $this->sendErrorMessage($e, $this->email);
+//                echo $e->getTraceAsString() . PHP_EOL;
                 $import_zenon_data_service->setImportErrorToJobStatus($this->job_id, $e->getMessage());
             }
         }
@@ -121,41 +131,6 @@ class CsvUpload extends Job implements SelfHandling, ShouldQueue
         }
         $import_zenon_data_service->setImportEndToJobStatus($this->job_id);
 
-//        dd('die');
-//        // 委託者マスタ創生
-//        \DB::connection('mysql_zenon')->transaction(function() use($ym) {
-//            echo "  -- consignors : " . date('Y-m-d H:i:s') . PHP_EOL;
-//            $sql        = "consignor_code, COUNT(*) as total_count, MAX(scheduled_transfer_payment_on) as reference_last_traded_on, MAX(last_traded_on) as last_traded_on";
-//            $consignors = \App\Jifuri::where(['monthly_id' => $ym])->select(\DB::raw($sql))->groupBy('consignor_code')->get();
-//            foreach ($consignors as $cns) {
-//                $tmp_cns        = \App\Jifuri::where(['consignor_code' => $cns->consignor_code, 'monthly_id' => $ym,])->orderBy('last_traded_on', 'desc')->first();
-//                $consignor_name = (!empty($tmp_cns)) ? $tmp_cns->consignor_name : '';
-//
-//                $keys      = ['consignor_code' => $cns->consignor_code];
-//                $table     = \App\Consignor::firstOrNew($keys);
-//                $last_date = (empty($cns->reference_last_traded_on) || $cns->reference_last_traded_on === '0000-00-00' || $cns->reference_last_traded_on === '00000000') ?
-//                        $cns->last_traded_on :
-//                        $cns->reference_last_traded_on
-//                ;
-//
-//                $table->consignor_code           = $cns->consignor_code;
-//                $table->consignor_name           = $consignor_name;
-//                $table->total_count              = $cns->total_count;
-//                $table->reference_last_traded_on = $last_date;
-//                $table->save();
-//            }
-//        });
-//        } catch (\Exception $e) {
-//        // エラー発生時、フラグをリセット
-//        $import_zenon_data_service->resetJobStatus($rows);
-//            echo $e->getMessage();
-//        echo '[ ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
-//        echo $e->getTraceAsString() . PHP_EOL;
-//        $import_zenon_data_service->setImportErrorToJobStatus($this->job_id, $e->getMessage());
-//        \DB::connection('mysql_zenon')->rollback();
-//        exit();
-//        }
-//        \DB::connection('mysql_zenon')->commit();
         echo "[end   : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
     }
 

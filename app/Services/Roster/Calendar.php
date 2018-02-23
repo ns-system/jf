@@ -127,11 +127,13 @@ class Calendar
     }
 
     public function editActual($id, $request) {
+        // 遅刻・早退は打刻しないといけないため無理やり機能実装することにする
+        $rest   = (empty($request['actual_rest_reason_id'])) ? null : \App\Rest::where('rest_reason_id', $request['actual_rest_reason_id'])->first();
         $roster = \App\Roster::findOrFail($id);
 
         $start_time = null;
         $end_time   = null;
-        if (empty($request['actual_rest_reason_id']))
+        if (empty($rest) || !empty($rest) && ($rest->rest_reason_name === '遅刻' || $rest->rest_reason_name === '早退'))
         {
             $start_time                         = date('H:i:s', strtotime($request['actual_start_hour'] . ":" . $request['actual_start_time'] . ":00"));
             $end_time                           = date('H:i:s', strtotime($request['actual_end_hour'] . ":" . $request['actual_end_time'] . ":00"));
@@ -269,7 +271,7 @@ class Calendar
     public function convertCalendarToList($calendar) {
         $list = [];
         foreach ($calendar as $c) {
-            if ($c['date'] == 0)
+            if (empty($c['date']))
             {
                 continue;
             }

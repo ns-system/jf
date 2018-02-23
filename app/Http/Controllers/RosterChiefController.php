@@ -21,7 +21,7 @@ class RosterChiefController extends Controller
                 ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
                 ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-                ->select(\DB::raw('*, roster_users.id as key_id, roster_users.created_at as create_time, roster_users.updated_at as update_time'))
+                ->select(\DB::raw('*, roster_users.id as key_id, sinren_users.user_id as user_id, roster_users.created_at as create_time, roster_users.updated_at as update_time'))
                 ->where(function($query) use ($divs) {
                     foreach ($divs as $d) {
                         $query->orWhere('sinren_users.division_id', '=', $d->division_id);
@@ -46,13 +46,39 @@ class RosterChiefController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Chief $request) {
-        $in   = $request->input();
-        $user = \App\RosterUser::find($in['id']);
+        $in      = $request->input();
+        $user_id = $in['user_id'];
+        $user    = \App\RosterUser::find($user_id);
+        try {
+            $user->is_proxy        = $in['proxy'];
+            $user->is_proxy_active = $in['active'];
 
-        $user->is_proxy        = $in['proxy'];
-        $user->is_proxy_active = $in['active'];
-        $user->save();
-        
+            $user->save();
+            // 管理部署の編集
+            $div = \App\SinrenUser::where('user_id', '=', $user_id)->first();
+            // 現在の管轄部署を一旦クリアする
+            \App\ControlDivision::user($user_id)->delete();
+            if ($in['proxy'] == true && $in['active'] == true)
+            {
+                // 責任者代理が有効なときのみ改めて管轄部署を追加する
+                \App\ControlDivision::create(['user_id' => $user_id, 'division_id' => $div->division_id]);
+            }
+        } catch (\Exception $exc) {
+            \Session::flash('danger_message', $exc->getMessage());
+        }
+
+        try {
+            $res = [
+                'edited_user' => \App\User::where('id', '=', $user_id)->first(),
+                'edit_user'   => \Auth::user(),
+                'result'      => $in,
+            ];
+            $this->dispatch(new \App\Jobs\Roster\EditNotice($res));
+        } catch (\Exception $e) {
+            \Session::flash('danger_message', $e->getMessage());
+        }
+
+
         \Session::flash('success_message', "データを更新しました。");
         return redirect(route('app::roster::chief::index'));
     }

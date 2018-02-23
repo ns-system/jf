@@ -86,53 +86,25 @@ class RosterAcceptController extends Controller
         return view('roster.app.accept.index', $params);
     }
 
-    public function calendar($ym, $div, $all = 'all') {
-        $is_show_all = ($all == 'all') ? true : false;
-//        dd($is_show_all);
-        $obj         = new \App\Services\Roster\Calendar();
-        $tmp         = $obj->setId($ym)->makeCalendar();
-        $cal         = $obj->convertCalendarToList($tmp);
-        $calendar    = [];
+    public function calendarIndex($ym, $div, $user_id = 0) {
 
-        $sql = \App\Roster::join('sinren_db.sinren_users as S_USER', 'rosters.user_id', '=', 'S_USER.user_id')
-                ->join('roster_db.roster_users as R_USER', 'rosters.user_id', '=', 'R_USER.user_id')
-                ->join('sinren_db.sinren_divisions', 'S_USER.division_id', '=', 'sinren_divisions.division_id')
-                ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
-                ->select(\DB::raw('*, rosters.id as key_id'))
-                ->where('S_USER.division_id', '=', $div)
-                ->where('S_USER.user_id', '<>', \Auth::user()->id)
-                ->where('users.is_super_user', '=', false)
+        $input       = \Input::get();
+//        $user_id         = (empty($input['user'])) ? null : $input['user'];
+        $status      = (empty($input['status']) || $input['status'] === 'all') ? 'all' : 'part';
+        $is_show_all = ($status === 'all') ? true : false;
+
+        $users = \App\SinrenUser::join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
+                ->join('roster_db.roster_users as R_USER', 'users.id', '=', 'R_USER.user_id')
+                ->where('sinren_users.division_id', '=', $div)
+                ->where('sinren_users.user_id', '<>', \Auth::user()->id)
                 ->where('R_USER.is_administrator', '=', false)
+                ->where('R_USER.is_chief', '=', false)
+                ->get()
         ;
 
-        if ($is_show_all === false)
-        {
-            $sql = $sql->where('rosters.is_plan_entry', '=', true)
-                    ->where(function($query) {
-                $query->orWhere('rosters.is_plan_accept', '<>', true)->orWhere('rosters.is_actual_accept', '<>', true);
-            })
-            ;
-        }
+        $rows = (empty($user_id)) ? [] : $this->getCalendar($ym, $user_id, $is_show_all);
 
-//        dd($sql->toSql());
-//        $tmp_rows = $sql->get();
-        $rows = [];
-        foreach ($sql->get() as $t) {
-            $rows[date('Y-m-d', strtotime($t->entered_on))] = $t;
-        }
-        foreach ($cal as $c) {
-            $date = $c['date'];
-            if (empty($rows[$date]))
-            {
-                continue;
-            }
-            $row                   = $rows[$date];
-            $roster[$row->user_id] = $row;
-            $c['data']             = $roster;
-            $calendar[]            = $c;
-        }
-
-        $tmp_types = \App\WorkType::orderBy('work_type_id')->get();
+        $tmp_types = \App\WorkType::workTypeList()->orderBy('work_type_id')->get();
         $types     = [];
         foreach ($tmp_types as $t) {
             $types[$t->work_type_id] = [
@@ -145,25 +117,78 @@ class RosterAcceptController extends Controller
         foreach ($tmp_rests as $r) {
             $rests[$r->rest_reason_id] = $r->rest_reason_name;
         }
-        $users = \App\SinrenUser::join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
-                ->join('roster_db.roster_users as R_USER', 'users.id', '=', 'R_USER.user_id')
-                ->where('sinren_users.division_id', '=', $div)
-                ->where('sinren_users.user_id', '<>', \Auth::user()->id)
-                ->where('R_USER.is_administrator', '=', false)
-                ->get()
-        ;
+
         $param = [
-            'ym'    => $ym,
-            'div'   => $div,
-            'rests' => $rests,
-            'types' => $types,
-            'rows'  => $calendar,
-            'users' => $users,
+            'ym'      => $ym,
+            'div'     => $div,
+            'rests'   => $rests,
+            'types'   => $types,
+            'rows'    => $rows,
+            'users'   => $users,
+            'user_id' => $user_id,
+            'status'  => $status,
         ];
         return view('roster.app.accept.calendar_list', $param);
     }
 
-    public function calendarAccept(CalendarAccept $request) {
+    public function getCalendar($ym, $user_id, $is_show_all) {
+        $first_day = date('Y-m-d', strtotime($ym . '01'));
+        $last_day  = date('Y-m-t', strtotime($ym . '01'));
+        $obj       = new \App\Services\Roster\Calendar();
+        $sql       = \App\Roster::leftJoin('sinren_db.sinren_users as S_USER', 'rosters.user_id', '=', 'S_USER.user_id')
+                ->leftJoin('roster_db.roster_users as R_USER', 'rosters.user_id', '=', 'R_USER.user_id')
+                ->leftJoin('sinren_db.sinren_divisions', 'S_USER.division_id', '=', 'sinren_divisions.division_id')
+                ->leftJoin('laravel_db.users', 'rosters.user_id', '=', 'users.id')
+                ->select(\DB::raw('*, rosters.id as key_id'))
+                ->where('R_USER.user_id', '=', $user_id)
+                ->where('rosters.entered_on', '>=', $first_day)
+                ->where('rosters.entered_on', '<=', $last_day)
+        ;
+
+        if ($is_show_all === false)
+        {
+            $sql = $sql->where(function($query) {
+                        $query
+                        ->orWhere('rosters.is_plan_accept', '=', false)
+                        ->orWhere('rosters.is_actual_accept', '=', false)
+                        ;
+                    })
+                    ->where('rosters.is_plan_entry', '=', true)
+            ;
+        }
+        $tmp = $obj->setId($ym)->makeCalendar($sql->get());
+        $cal = $obj->convertCalendarToList($tmp);
+        return $cal;
+    }
+
+    public function calendarAccept(CalendarAccept $request, $monthly_id, $division_id, $user_id) {
+        $chief_user_id = \Auth::user()->id;
+        // 自分自身を更新しようとしていないかチェック
+        if ($chief_user_id == $user_id)
+        {
+            \Session::flash('danger_message', "自分自身のデータを承認することはできません。");
+            return back();
+        }
+        // 対象ユーザーが管轄部署に含まれているかチェック
+        $me  = \App\ControlDivision::user($chief_user_id)->get(['division_id']);
+        $you = \App\SinrenUser::where('user_id', $user_id)->first();
+        if (empty($you))
+        {
+            \Session::flash('danger_message', "勤怠管理ユーザーの登録が行われていないようです。");
+            return back();
+        }
+        $is_contain = false;
+        foreach ($me as $m) {
+            $is_contain = ($you->division_id === $m->division_id) ? true : $is_contain;
+        }
+
+        if (!$is_contain)
+        {
+            \Session::flash('danger_message', "許可されていない部署のデータを承認しようとしました。");
+            return back();
+        }
+
+        // メインロジック
         $input = $request->input();
         try {
             \DB::connection('mysql_roster')->transaction(function() use($input) {
@@ -175,160 +200,7 @@ class RosterAcceptController extends Controller
             return back();
         }
         \Session::flash('success_message', 'データの一括更新が完了しました。');
-        return back();
+        return redirect(route_with_query('app::roster::accept::calendar', ['ym' => $monthly_id, 'div' => $division_id, 'user' => $user_id], ['status' => 'all']));
     }
-//
-//    public function getNotAccept($monthly_id, $division_id) {
-//        \App\Roster::where('month_id', '=', $monthly_id)
-//                ->leftJoin('sinren_db.sinren_users as S_USER', 'rosters.user_id', '=', 'S_USER.user_id')
-//                ->leftJoin('sinren_db.sinren_divisions as S_DIV', 'S_USER.division_id', '=', 'S_DIV.division_id')
-//
-//        ;
-//    }
 
-//    public function show($ym, $div) {
-//        $plans   = \DB::connection('mysql_sinren')
-//                ->table('sinren_users')
-//                ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
-//                ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
-//                ->select(\DB::raw('*, rosters.id as form_id'))
-//                ->where('rosters.month_id', '=', $ym)
-//                ->where('sinren_users.division_id', '=', $div)
-//                ->where('is_plan_entry', '=', true)
-//                ->where('is_plan_accept', '<>', true)
-//                ->where('sinren_users.user_id', '<>', \Auth::user()->id)
-//                ->orderBy('entered_on', 'asc')
-//                ->orderBy('sinren_users.user_id', 'asc')
-//                ->get()
-//        ;
-//        /**
-//         * 予定が承認済みであること
-//         * かつ実績が入力されていること
-//         * かつ実績が承認されていないこと
-//         * かつ自分が入力したデータではないこと
-//         */
-//        $actuals = \DB::connection('mysql_sinren')
-//                ->table('sinren_users')
-//                ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
-//                ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
-//                ->select(\DB::raw('*, rosters.id as form_id'))
-//                ->where('rosters.month_id', '=', $ym)
-//                ->where('sinren_users.division_id', '=', $div)
-//                ->where('is_plan_accept', '=', true) // 予定承認済みのものだけ抽出
-//                ->where('is_actual_entry', '=', true)
-//                ->where('is_actual_accept', '<>', true)
-//                ->where('sinren_users.user_id', '<>', \Auth::user()->id)
-//                ->orderBy('entered_on', 'asc')
-//                ->orderBy('sinren_users.user_id', 'asc')
-//                ->get()
-//        ;
-//        $t_rests = \App\Rest::get()->toArray();
-//        $rests   = [];
-//        foreach ($t_rests as $rest) {
-//            $rests[$rest['id']] = $rest;
-//        }
-////        var_dump($rests);
-////        var_dump($plans);
-////        var_dump($actuals);
-//        $divs   = \App\Division::where('division_id', '=', $div)->first();
-//        $params = [
-//            'actuals' => $actuals,
-//            'plans'   => $plans,
-//            'ym'      => $ym,
-//            'display' => date('Y年n月', strtotime($ym . '01')),
-//            'div'     => $divs,
-//            'rests'   => $rests,
-//        ];
-//        return view('roster.app.accept.list', $params);
-//    }
-//
-//    public function part($type, $id) {
-//        $in    = \Input::get();
-//        $input = [
-//            'id'     => $id,
-//            $type    => $in[$type][$id],
-//            'reject' => $in['reject'][$id],
-//        ];
-//        $rules = [
-//            'id'  => 'required|exists:mysql_roster.rosters,id',
-//            $type => 'required|boolean',
-//        ];
-//        $v     = \Validator::make($input, $rules);
-//        if ($v->fails() || ($type != 'plan' && $type != 'actual'))
-//        {
-//            \Session::flash('warn_message', '予期しないエラーが発生しました。');
-//            return back()->withErrors($v);
-//        }
-//        $roster = \App\Roster::find($input['id']);
-//        if (isset($input[$type]) && !$input[$type])
-//        {
-////            var_dump("1");
-//            $key          = "is_{$type}_accept";
-//            $roster->$key = (int) false;
-//            $key          = "is_{$type}_reject";
-//            $roster->$key = (int) true;
-//            $key          = "{$type}_rejected_at";
-//            $roster->$key = date('Y-m-d H:i:s');
-//            $key          = "{$type}_reject_user_id";
-//            $roster->$key = \Auth::user()->id;
-//        }
-//        else
-//        {
-////            var_dump("2");
-//            $key          = "is_{$type}_accept";
-//            $roster->$key = (int) true;
-//            $key          = "is_{$type}_reject";
-//            $roster->$key = (int) false;
-//            $key          = "{$type}_accepted_at";
-//            $roster->$key = date('Y-m-d H:i:s');
-//            $key          = "{$type}_accept_user_id";
-//            $roster->$key = \Auth::user()->id;
-//        }
-////        exit();
-//        $roster->reject_reason = $input['reject'];
-//        $roster->save();
-//        \Session::flash('success_message', 'データの更新が完了しました。');
-//        return back();
-//    }
-//
-//    public function all($type, AcceptPlan $request) {
-//        $input = $request->all();
-////        var_dump($input);
-//        if ($type != 'plan' && $type != 'actual')
-//        {
-//            \Session::flash('warn_message', '予期しないエラーが発生しました。');
-//            return back();
-//        }
-//        \DB::connection('mysql_roster')->transaction(function() use ($input, $type) {
-//            foreach ($input['form_id'] as $id) {
-//                $roster = \App\Roster::find($id);
-//                if (!$input[$type][$id])
-//                {
-//                    $key          = "is_{$type}_accept";
-//                    $roster->$key = (int) false;
-//                    $key          = "is_{$type}_reject";
-//                    $roster->$key = (int) true;
-//                    $key          = "{$type}_rejected_at";
-//                    $roster->$key = date('Y-m-d H:i:s');
-//                    $key          = "{$type}_reject_user_id";
-//                    $roster->$key = \Auth::user()->id;
-//                }
-//                else
-//                {
-//                    $key          = "is_{$type}_accept";
-//                    $roster->$key = (int) true;
-//                    $key          = "is_{$type}_reject";
-//                    $roster->$key = (int) false;
-//                    $key          = "{$type}_accepted_at";
-//                    $roster->$key = date('Y-m-d H:i:s');
-//                    $key          = "{$type}_accept_user_id";
-//                    $roster->$key = \Auth::user()->id;
-//                }
-//                $roster->reject_reason = $input['reject'][$id];
-//                $roster->save();
-//            }
-//        });
-//        \Session::flash('success_message', 'データの一括更新が完了しました。');
-//        return back();
-//    }
 }
