@@ -48,7 +48,7 @@ class RosterChiefController extends Controller
     public function update(Chief $request) {
         $in      = $request->input();
         $user_id = $in['user_id'];
-        $user    = \App\RosterUser::find($in['id']);
+        $user    = \App\RosterUser::find($user_id);
         try {
             $user->is_proxy        = $in['proxy'];
             $user->is_proxy_active = $in['active'];
