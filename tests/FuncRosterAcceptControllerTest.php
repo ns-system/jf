@@ -69,7 +69,7 @@ class FuncRosterAcceptControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系責任者が勤務予定データを承認できる() {
+    public function 正常系_責任者が勤務予定データを承認できる() {
 
         \App\Roster::truncate();
         for ($i = 1; $i <= 31; $i++) {
@@ -77,12 +77,12 @@ class FuncRosterAcceptControllerTest extends TestCase
         }
         $unaccept_plan = \App\Roster::where('id', 1)->first();
         $this->actingAs($this->admin_user)
-                ->visit('/app/roster/accept/')
+                ->visit(route('app::roster::accept::index'))
                 ->see("2017年12月")
-                ->visit('/app/roster/accept/calendar/201712/1')
-                ->see("予定データ承認")
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "plan" => [1 => 1], "id" => [1 => 1]])
-                ->assertRedirectedTo('/app/roster/accept/calendar/201712/1')
+                ->visit(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]))
+                ->see("勤務データ承認")
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id]), ['_token' => csrf_token(), "plan" => [1 => 1], "id" => [1 => 1]])
+                ->assertRedirectedTo(route_with_query('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id], ['status' => 'all']))
         ;
         $accept_plan   = \App\Roster::where('id', 1)->first();
         $this->assertEquals(0, $unaccept_plan->is_plan_accept);
@@ -92,19 +92,19 @@ class FuncRosterAcceptControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系責任者が勤務予定データを却下できる() {
+    public function 正常系_責任者が勤務予定データを却下できる() {
         \App\Roster::truncate();
         for ($i = 1; $i <= 31; $i++) {
             \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1]);
         }
         $unaccept_plan = \App\Roster::where('id', 1)->first();
         $this->actingAs($this->admin_user)
-                ->visit('/app/roster/accept/')
+                ->visit(route('app::roster::accept::index'))
                 ->see("2017年12月")
-                ->visit('/app/roster/accept/calendar/201712/1')
-                ->see("予定データ承認")
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "plan" => ['1' => 0], "id" => ['1' => 1], "plan_reject" => [1 => "却下"]])
-                ->assertRedirectedTo('/app/roster/accept/calendar/201712/1')
+                ->visit(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]))
+                ->see("勤務データ承認")
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id]), ['_token' => csrf_token(), "plan" => ['1' => 0], "id" => ['1' => 1], "plan_reject" => [1 => "却下"]])
+                ->assertRedirectedTo(route_with_query('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id], ['status' => 'all']))
         ;
 
         $accept_plan = \App\Roster::where('id', 1)->first();
@@ -115,19 +115,19 @@ class FuncRosterAcceptControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系責任者が勤務実績データを承認できる() {
+    public function 正常系_責任者が勤務実績データを承認できる() {
         \App\Roster::truncate();
         for ($i = 1; $i <= 31; $i++) {
             \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
         }
         $unaccept_plan = \App\Roster::where('id', 1)->first();
         $this->actingAs($this->admin_user)
-                ->visit('/app/roster/accept/')
+                ->visit(route('app::roster::accept::index'))
                 ->see("2017年12月")
-                ->visit('/app/roster/accept/calendar/201712/1')
-                ->see("予定データ承認")
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => [1 => 1], "id" => [1 => 1]])
-                ->assertRedirectedTo('/app/roster/accept/calendar/201712/1')
+                ->visit(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]))
+                ->see("勤務データ承認")
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id]), ['_token' => csrf_token(), "actual" => [1 => 1], "id" => [1 => 1]])
+                ->assertRedirectedTo(route_with_query('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id], ['status' => 'all']))
         ;
         $accept_plan   = \App\Roster::where('id', 1)->first();
         $this->assertEquals(0, $unaccept_plan->is_actual_accept);
@@ -137,19 +137,19 @@ class FuncRosterAcceptControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系責任者が勤務実績データを却下できる() {
+    public function 正常系_責任者が勤務実績データを却下できる() {
         \App\Roster::truncate();
         for ($i = 1; $i <= 31; $i++) {
             \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
         }
         $unaccept_plan = \App\Roster::where('id', 1)->first();
         $this->actingAs($this->admin_user)
-                ->visit('/app/roster/accept/')
+                ->visit(route('app::roster::accept::index'))
                 ->see("2017年12月")
-                ->visit('/app/roster/accept/calendar/201712/1')
-                ->see("予定データ承認")
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => ['1' => 0], "id" => ['1' => 1], "actual_reject" => [1 => "却下"]])
-                ->assertRedirectedTo('/app/roster/accept/calendar/201712/1')
+                ->visit(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]))
+                ->see("勤務データ承認")
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id]), ['_token' => csrf_token(), "actual" => ['1' => 0], "id" => ['1' => 1], "actual_reject" => [1 => "却下"]])
+                ->assertRedirectedTo(route_with_query('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id], ['status' => 'all']))
         ;
 
         $accept_plan = \App\Roster::where('id', 1)->first();
@@ -160,7 +160,7 @@ class FuncRosterAcceptControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系勤務実績データの未承認の物を表示できる() {
+    public function 正常系_勤務実績データの未承認の物を表示できる() {
         \App\Roster::truncate();
         for ($i = 1; $i <= 31; $i++) {
             if ($i == 15)
@@ -188,13 +188,13 @@ class FuncRosterAcceptControllerTest extends TestCase
                     "is_actual_accept"  => 1]);
             }
         }
-        $unaccept_plan = \App\Roster::where('id', 1)->first();
+//        $unaccept_plan = \App\Roster::where('id', 1)->first();
         $this->actingAs($this->admin_user)
-                ->visit('/app/roster/accept/')
+                ->visit(route('app::roster::accept::index'))
                 ->see("2017年12月")
-                ->visit('/app/roster/accept/calendar/201712/1/part')
-                ->see("予定データ承認")
-                ->see("12月15日")
+                ->visit(route_with_query('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id], ['status' => 'part']))
+                ->see("勤務データ承認")
+                ->see("2017-12-15")
         ;
         for ($j = 1; $j <= 31; $j++) {
             if ($j != 15)
@@ -207,7 +207,7 @@ class FuncRosterAcceptControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系月毎のレコード件数がNULLの時空配列が返ってくる() {
+    public function 正常系_月毎のレコード件数がNULLの時空配列が返ってくる() {
         $class      = new \App\Http\Controllers\RosterAcceptController;
         $reflection = new \ReflectionClass($class);
         $method     = $reflection->getMethod("editKey");
@@ -219,7 +219,7 @@ class FuncRosterAcceptControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系勤務データIDの配列にnullが入っていた場合その部分はスキップして実行される() {
+    public function 正常系_勤務データIDの配列にnullが入っていた場合その部分はスキップして実行される() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
@@ -230,62 +230,62 @@ class FuncRosterAcceptControllerTest extends TestCase
         try {
             $service->updateRoster($input);
             $this->assertTrue(TRUE);
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $this->fail("想定していない例外発生");
         }
     }
 
-    //異常系
+    //異常系_
 
     /**
      * @tests
      */
-    public function 異常系権限のないユーザーが勤務予定データを承認しようとするとエラー() {
+    public function 異常系_権限のないユーザーが勤務予定データを承認しようとするとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
             \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1]);
         }
         $this->actingAs($this->normal_user)
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "plan" => [1 => 1], "id" => [1 => 1]])
-                ->assertRedirectedTo('/permission_error')
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id]), ['_token' => csrf_token(), "plan" => [1 => 1], "id" => [1 => 1]])
+                ->assertRedirectedTo(route('permission_error'))
         ;
     }
 
     /**
      * @tests
      */
-    public function 異常系権限のないユーザーが勤務予定データを却下しようとするとエラー() {
+    public function 異常系_権限のないユーザーが勤務予定データを却下しようとするとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
             \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1]);
         }
         $this->actingAs($this->normal_user)
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "plan" => ['1' => 0], "id" => ['1' => 1], "plan_reject" => [1 => "却下"]])
-                ->assertRedirectedTo('/permission_error')
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id]), ['_token' => csrf_token(), "plan" => ['1' => 0], "id" => ['1' => 1], "plan_reject" => [1 => "却下"]])
+                ->assertRedirectedTo(route('permission_error'))
         ;
     }
 
     /**
      * @tests
      */
-    public function 異常系権限のないユーザーが勤務実績データを承認しようとするとエラー() {
+    public function 異常系_権限のないユーザーが勤務実績データを承認しようとするとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
             \App\Roster::create(['user_id' => $this->normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
         }
         $this->actingAs($this->normal_user)
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => [1 => 1], "id" => [1 => 1]])
-                ->assertRedirectedTo('/permission_error')
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id]), ['_token' => csrf_token(), "actual" => [1 => 1], "id" => [1 => 1]])
+                ->assertRedirectedTo(route('permission_error'))
         ;
     }
 
     /**
      * @tests
      */
-    public function 異常系権限のないユーザーが勤務実績データを却下しようとするとエラー() {
+    public function 異常系_権限のないユーザーが勤務実績データを却下しようとするとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
@@ -293,35 +293,35 @@ class FuncRosterAcceptControllerTest extends TestCase
         }
 
         $this->actingAs($this->normal_user)
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => ['1' => 0], "id" => ['1' => 1], "actual_reject" => [1 => "却下"]])
-                ->assertRedirectedTo('/permission_error')
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->admin_user->id]), ['_token' => csrf_token(), "actual" => ['1' => 0], "id" => ['1' => 1], "actual_reject" => [1 => "却下"]])
+                ->assertRedirectedTo(route('permission_error'))
         ;
     }
 
     /**
      * @tests
      */
-    public function 異常系自分自身を承認しようとするとエラー() {
+    public function 異常系_自分自身を承認しようとするとエラー() {
         \App\Roster::truncate();
         for ($i = 1; $i <= 31; $i++) {
             \App\Roster::create(['user_id' => $this->admin_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
         }
-        $unaccept_plan = \App\Roster::where('id', 1)->first();
-        $a             = $this->actingAs($this->admin_user)
-                ->visit('/app/roster/accept/')
+//        $unaccept_plan = \App\Roster::where('id', 1)->first();
+        $a = $this->actingAs($this->admin_user)
+                ->visit(route('app::roster::accept::index'))
                 ->see("2017年12月")
-                ->visit('/app/roster/accept/calendar/201712/1')
-                ->see("予定データ承認")
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => ['1' => 1], "id" => ['1' => "1"]])
+                ->visit(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]))
+                ->see("勤務データ承認")
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->admin_user->id]), ['_token' => csrf_token(), "actual" => ['1' => 1], "id" => ['1' => "1"]])
         ;
-        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
-        $a->assertSessionHas("danger_message", "自分自身のデータを承認しようとしました。");
+        $a->assertRedirectedTo(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]));
+        $a->assertSessionHas("danger_message", "自分自身のデータを承認することはできません。");
     }
 
     /**
      * @tests
      */
-    public function 異常系自分の担当以外の部署の予定を承認しようとするとエラー() {
+    public function 異常系_自分の担当以外の部署の予定を承認しようとするとエラー() {
         \App\Roster::truncate();
         $user = factory(\App\User::class)->create();
         \App\RosterUser::create(['user_id' => $user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '1', "is_proxy_active" => '1', "work_type_id" => '1']);
@@ -330,20 +330,42 @@ class FuncRosterAcceptControllerTest extends TestCase
             \App\Roster::create(['user_id' => $user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
         }
         $a = $this->actingAs($this->admin_user)
-                ->visit('/app/roster/accept/')
+                ->visit(route('app::roster::accept::index'))
                 ->see("2017年12月")
-                ->visit('/app/roster/accept/calendar/201712/1')
-                ->see("予定データ承認")
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => ['1' => 1], "id" => ['1' => "1"]])
+                ->visit(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]))
+                ->see("勤務データ承認")
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $user->id]), ['_token' => csrf_token(), "actual" => ['1' => 1], "id" => ['1' => "1"]])
         ;
-        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertRedirectedTo(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]));
         $a->assertSessionHas("danger_message", "許可されていない部署のデータを承認しようとしました。");
     }
 
     /**
      * @tests
      */
-    public function 異常系予定が登録されていないのに承認しようとするとエラー() {
+    public function 異常系_ユーザーがいないとエラー() {
+        \App\Roster::truncate();
+        $user = factory(\App\User::class)->create();
+        \App\RosterUser::create(['user_id' => $user->id, "is_administrator" => '0', "is_chief" => '0', "is_proxy" => '1', "is_proxy_active" => '1', "work_type_id" => '1']);
+        \App\SinrenUser::create(['user_id' => $user->id, "division_id" => '2']);
+        for ($i = 1; $i <= 31; $i++) {
+            \App\Roster::create(['user_id' => $user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712", "is_plan_entry" => 1, "is_plan_accept" => 1, "is_actual_entry" => 1]);
+        }
+        $a = $this->actingAs($this->admin_user)
+                ->visit(route('app::roster::accept::index'))
+                ->see("2017年12月")
+                ->visit(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]))
+                ->see("勤務データ承認")
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => -1]), ['_token' => csrf_token(), "actual" => ['1' => 1], "id" => ['1' => "1"]])
+        ;
+        $a->assertRedirectedTo(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]));
+        $a->assertSessionHas("danger_message", "勤怠管理ユーザーの登録が行われていないようです。");
+    }
+
+    /**
+     * @tests
+     */
+    public function 異常系_予定が登録されていないのに承認しようとするとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
@@ -351,20 +373,20 @@ class FuncRosterAcceptControllerTest extends TestCase
         }
 
         $a = $this->actingAs($this->admin_user)
-                ->visit('/app/roster/accept/')
+                ->visit(route('app::roster::accept::index'))
                 ->see("2017年12月")
-                ->visit('/app/roster/accept/calendar/201712/1')
-                ->see("予定データ承認")
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "plan" => [1 => 1], "id" => ['1' => 1]])
+                ->visit(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]))
+                ->see("勤務データ承認")
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id]), ['_token' => csrf_token(), "plan" => [1 => 1], "id" => ['1' => 1]])
         ;
-        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertRedirectedTo(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]));
         $a->assertSessionHas("danger_message", "2017-12-01の予定データが入力されていないようです。");
     }
 
     /**
      * @tests
      */
-    public function 異常系既に承認されている予定を承認しようとするとエラー() {
+    public function 異常系_既に承認されている予定を承認しようとするとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
@@ -372,20 +394,20 @@ class FuncRosterAcceptControllerTest extends TestCase
         }
 
         $a = $this->actingAs($this->admin_user)
-                ->visit('/app/roster/accept/')
+                ->visit(route('app::roster::accept::index'))
                 ->see("2017年12月")
-                ->visit('/app/roster/accept/calendar/201712/1')
-                ->see("予定データ承認")
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "plan" => [1 => 1], "id" => ['1' => 1]])
+                ->visit(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]))
+                ->see("勤務データ承認")
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id]), ['_token' => csrf_token(), "plan" => [1 => 1], "id" => ['1' => 1]])
         ;
-        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertRedirectedTo(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]));
         $a->assertSessionHas("danger_message", "すでに2017-12-01のデータは承認されています。");
     }
 
     /**
      * @tests
      */
-    public function 異常系予定がないのに実績を承認しようとするとエラー() {
+    public function 異常系_予定がないのに実績を承認しようとするとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
@@ -393,20 +415,20 @@ class FuncRosterAcceptControllerTest extends TestCase
         }
 
         $a = $this->actingAs($this->admin_user)
-                ->visit('/app/roster/accept/')
+                ->visit(route('app::roster::accept::index'))
                 ->see("2017年12月")
-                ->visit('/app/roster/accept/calendar/201712/1')
-                ->see("予定データ承認")
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => [1 => 1], "id" => ['1' => 1]])
+                ->visit(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]))
+                ->see("勤務データ承認")
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id]), ['_token' => csrf_token(), "actual" => [1 => 1], "id" => ['1' => 1]])
         ;
-        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertRedirectedTo(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]));
         $a->assertSessionHas("danger_message", "2017-12-01の予定データが入力されていないようです。");
     }
 
     /**
      * @tests
      */
-    public function 異常系予定が承認されていないのに実績を承認しようとするとエラー() {
+    public function 異常系_予定が承認されていないのに実績を承認しようとするとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
@@ -414,20 +436,20 @@ class FuncRosterAcceptControllerTest extends TestCase
         }
 
         $a = $this->actingAs($this->admin_user)
-                ->visit('/app/roster/accept/')
+                ->visit(route('app::roster::accept::index'))
                 ->see("2017年12月")
-                ->visit('/app/roster/accept/calendar/201712/1')
-                ->see("予定データ承認")
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => [1 => 1], "id" => ['1' => 1]])
+                ->visit(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]))
+                ->see("勤務データ承認")
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id]), ['_token' => csrf_token(), "actual" => [1 => 1], "id" => ['1' => 1]])
         ;
-        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
-        $a->assertSessionHas("danger_message", "2017-12-01の予定データが承認されていないようです。");
+        $a->assertRedirectedTo(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]));
+        $a->assertSessionHas("danger_message", "2017-12-01の予定データが承認されていないようです。先に予定の承認を行ってください。");
     }
 
     /**
      * @tests
      */
-    public function 異常系実績が登録されていないのに実績を承認しようとするとエラー() {
+    public function 異常系_実績が登録されていないのに実績を承認しようとするとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
@@ -435,20 +457,20 @@ class FuncRosterAcceptControllerTest extends TestCase
         }
 
         $a = $this->actingAs($this->admin_user)
-                ->visit('/app/roster/accept/')
+                ->visit(route('app::roster::accept::index'))
                 ->see("2017年12月")
-                ->visit('/app/roster/accept/calendar/201712/1')
-                ->see("予定データ承認")
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => [1 => 1], "id" => ['1' => 1]])
+                ->visit(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]))
+                ->see("勤務データ承認")
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id]), ['_token' => csrf_token(), "actual" => [1 => 1], "id" => ['1' => 1]])
         ;
-        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertRedirectedTo(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]));
         $a->assertSessionHas("danger_message", "2017-12-01の実績データが入力されていないようです。");
     }
 
     /**
      * @tests
      */
-    public function 異常系実績が承認されているのに実績を承認しようとするとエラー() {
+    public function 異常系_実績が承認されているのに実績を承認しようとするとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
@@ -456,20 +478,20 @@ class FuncRosterAcceptControllerTest extends TestCase
         }
 
         $a = $this->actingAs($this->admin_user)
-                ->visit('/app/roster/accept/')
+                ->visit(route('app::roster::accept::index'))
                 ->see("2017年12月")
-                ->visit('/app/roster/accept/calendar/201712/1')
-                ->see("予定データ承認")
-                ->post('/app/roster/accept/calendar/edit', ['_token' => csrf_token(), "actual" => [1 => 1], "id" => ['1' => 1]])
+                ->visit(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]))
+                ->see("勤務データ承認")
+                ->post(route('app::roster::accept::calendar_accept', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id]), ['_token' => csrf_token(), "actual" => [1 => 1], "id" => ['1' => 1]])
         ;
-        $a->assertRedirectedTo('/app/roster/accept/calendar/201712/1');
+        $a->assertRedirectedTo(route('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1]));
         $a->assertSessionHas("danger_message", "すでに2017-12-01のデータは承認されています。");
     }
 
     /**
      * @tests
      */
-    public function 異常系勤務データIDがセットされていないとエラー() {
+    public function 異常系_勤務データIDがセットされていないとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
@@ -480,7 +502,7 @@ class FuncRosterAcceptControllerTest extends TestCase
         try {
             $service->updateRoster($input);
             $this->fail("例外がキャッチできてない");
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $this->assertEquals($ex->getMessage(), "勤務データIDがセットされていないようです。");
         }
     }
@@ -488,7 +510,7 @@ class FuncRosterAcceptControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系責任者の管轄部署が存在しないとエラー() {
+    public function 異常系_責任者の管轄部署が存在しないとエラー() {
         \App\Roster::truncate();
         \Session::start();
         for ($i = 1; $i <= 31; $i++) {
@@ -501,7 +523,7 @@ class FuncRosterAcceptControllerTest extends TestCase
             $service = new App\Services\Roster\RosterAccept($this->admin_user->id);
             $service->updateRoster($input);
             $this->fail("例外がキャッチできてない");
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $this->assertEquals($ex->getMessage(), "責任者の管轄部署が存在しません。");
         }
     }

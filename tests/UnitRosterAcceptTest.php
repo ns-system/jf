@@ -119,37 +119,37 @@ class UnitRosterAcceptTest extends TestCase
         }
     }
 
-    /**
-     * @tests
-     */
-    public function 異常系_許可されていない部署のデータを編集しようとする() {
-        \App\Roster::truncate();
-        $array  = ['user_id' => $this->another_div_user->id];
-        $roster = \App\Roster::create($array);
-        $s      = new RosterAccept($this->chief_user->id);
-        try {
-            $s->updateRoster(['id' => [$roster->id,]]);
-            $this->fail('エラー：例外が発生しませんでした。');
-        } catch (\Exception $e) {
-            $this->assertEquals('許可されていない部署のデータを承認しようとしました。', $e->getMessage());
-        }
-    }
+//    /**
+//     * @tests
+//     */
+//    public function 異常系_許可されていない部署のデータを編集しようとする() {
+//        \App\Roster::truncate();
+//        $array  = ['user_id' => $this->another_div_user->id];
+//        $roster = \App\Roster::create($array);
+//        $s      = new RosterAccept($this->chief_user->id);
+//        try {
+//            $s->updateRoster(['id' => [$roster->id,]]);
+//            $this->fail('エラー：例外が発生しませんでした。');
+//        } catch (\Exception $e) {
+//            $this->assertEquals('許可されていない部署のデータを承認しようとしました。', $e->getMessage());
+//        }
+//    }
 
-    /**
-     * @tests
-     */
-    public function 異常系_自分自身を更新しようとする() {
-        \App\Roster::truncate();
-        $array  = ['user_id' => $this->chief_user->id];
-        $roster = \App\Roster::create($array);
-        $s      = new RosterAccept($this->chief_user->id);
-        try {
-            $s->updateRoster(['id' => [$roster->id,]]);
-            $this->fail('エラー：例外が発生しませんでした。');
-        } catch (\Exception $e) {
-            $this->assertEquals('自分自身のデータを承認しようとしました。', $e->getMessage());
-        }
-    }
+//    /**
+//     * @tests
+//     */
+//    public function 異常系_自分自身を更新しようとする() {
+//        \App\Roster::truncate();
+//        $array  = ['user_id' => $this->chief_user->id];
+//        $roster = \App\Roster::create($array);
+//        $s      = new RosterAccept($this->chief_user->id);
+//        try {
+//            $s->updateRoster(['id' => [$roster->id,]]);
+//            $this->fail('エラー：例外が発生しませんでした。');
+//        } catch (\Exception $e) {
+//            $this->assertEquals('自分自身のデータを承認しようとしました。', $e->getMessage());
+//        }
+//    }
 
     /**
      * @tests
@@ -315,7 +315,7 @@ class UnitRosterAcceptTest extends TestCase
             $ref->invoke($s, $roster_2, [], $roster_2->id, true);
             $this->fail('エラー：例外が発生しませんでした。');
         } catch (\Exception $e) {
-            $this->assertEquals("{$roster_2->entered_on}の予定データが承認されていないようです。", $e->getMessage());
+            $this->assertEquals("{$roster_2->entered_on}の予定データが承認されていないようです。先に予定の承認を行ってください。", $e->getMessage());
         }
         try {
             $ref->invoke($s, $roster_3, [], $roster_3->id, true);
