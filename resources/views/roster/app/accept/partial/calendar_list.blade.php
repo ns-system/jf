@@ -85,7 +85,7 @@
                     </p>
                     @endif
                 </td>
-                @else <td></td><td></td>
+                @else <td style="border-top: none;"></td><td style="border-top: none;"></td>
                 @endif
             </tr>
 
@@ -116,7 +116,7 @@
                     <p>{{ $roster->actual_overtime_reason }}</p>
                     @endif
                 </td>
-                @else <td></td><td></td>
+                @else <td style="border-top: none;"></td><td style="border-top: none;"></td>
                 @endif {{-- <td class="text-left"><pre>{{ var_dump($roster) }}</pre></td>  --}}
             </tr>
 
@@ -138,7 +138,7 @@
                     <p>{{ $rests[$roster->actual_rest_reason_id] }}</p>
                     @endif
                 </td>
-                @else <td></td><td></td>
+                @else <td style="border-top: none;"></td><td style="border-top: none;"></td>
                 @endif
             </tr>
 
@@ -186,7 +186,7 @@
                     @endif
                     @endif
                 </td>
-                @else <td></td><td></td>
+                @else <td style="border-top: none;"></td><td style="border-top: none;"></td>
                 @endif
             </tr>
             @endif
