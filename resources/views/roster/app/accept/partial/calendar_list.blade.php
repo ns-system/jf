@@ -96,7 +96,7 @@
                 @if(!empty($roster))
                 <!-- 予定 -->
                 <td class="text-left" style="border-top: none;">
-                    @if(empty($roster->is_plan_entry) || empty($roster_plan_overtime_start_time) || empty($roster_plan_overtime_end_time))
+                    @if(empty($roster->is_plan_entry) || empty($roster->plan_overtime_start_time) || empty($roster->plan_overtime_end_time))
                     @else
                     <p>
                         {{ date('G:i', strtotime($roster->plan_overtime_start_time)) }} ～ 
@@ -107,7 +107,7 @@
                 </td>
                 <!-- 実績 -->
                 <td class="text-left" style="border-top: none;">
-                    @if(empty($roster->is_actual_entry) || empty($roster_actual_overtime_start_time) || empty($roster_actual_overtime_end_time))
+                    @if(empty($roster->is_actual_entry) || empty($roster->ctual_overtime_start_time) || empty($roster->actual_overtime_end_time))
                     @else
                     <p>
                         {{ date('G:i', strtotime($roster->actual_overtime_start_time)) }} ～ 
