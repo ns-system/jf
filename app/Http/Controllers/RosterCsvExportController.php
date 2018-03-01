@@ -103,7 +103,7 @@ class RosterCsvExportController extends Controller
 
     public function show($ym) {
         $service  = $this->service;
-        $r        = $this->service->setMonth($ym);
+        $r        = $this->service->setMonth($ym)->getRosters();
         $rosters  = $r->paginate(self::INT_RECORD_PER_PAGE);
         $calendar = $service->getCalendar();
         $rests    = $this->getRest();
