@@ -37,8 +37,8 @@ trait ResetsPasswords
 
         switch ($response) {
             case Password::RESET_LINK_SENT:
-                \Session::flash('success_message', 'パスワードリセット用のメールを送信しました。');
-                return redirect()->back()->with('status', trans($response));
+                \Session::flash('success_message', 'パスワードリセット用のメールを送信しました。メールを確認後、手順に沿ってリセットしてください。');
+                return redirect()->route('index')->with('status', trans($response));
             case Password::INVALID_USER:
                 \Session::flash('success_message', 'パスワードリセット用のメールが送信できませんでした。');
                 return redirect()->back()->withErrors(['email' => trans($response)]);

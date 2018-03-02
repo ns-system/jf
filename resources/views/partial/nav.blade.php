@@ -1,11 +1,11 @@
 <style type="text/css">
-    .cover {
-        object-fit: contain;
-        width: 45px;
-        height: 45px;
-        background: #eee;
-        border-radius: 10%;
-    }
+.cover {
+    object-fit: contain;
+    width: 45px;
+    height: 45px;
+    background: #eee;
+    border-radius: 10%;
+}
 </style>
 
 <nav class="navbar navbar-default navbar-fixed-top">
@@ -28,14 +28,14 @@
             <ul class="nav navbar-nav">
                 <li><a href="http://www.jf-nssinren.or.jp/" target="_blank">Official</a></li>
                 <li><a href="http://192.1.10.136/myweb10po" target="_blank">Groupware</a></li>
+                @if(Auth::check())
                 <li>
-                    @if(Auth::check())
                     <a href="{{route('app::user::show', ['id'=>\Auth::user()->id])}}" style="margin: 10px 0; font-size: 80%">
                         <img class="cover img-thumbnail" @if(\Auth::user()->user_icon != '') src="{{asset('/user_icon/' . \Auth::user()->user_icon)}}" @else src="{{asset('/user_icon/unset.png')}}" @endif>
                         {{Auth::user()->last_name}} {{Auth::user()->first_name}}<small>さん</small>
                     </a>
-                    @endif
                 </li>
+                @endif
             </ul>
             @if(Auth::check())
             <ul class="nav navbar-nav navbar-right">
