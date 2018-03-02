@@ -53,6 +53,7 @@ h1,h2,h3,h4,h5,h6,.form-control,.no-thank-yu, .navbar, .btn, .form-control, .inp
 .alert-success{ color: #128f76; }
 .alert-danger { color: #d62c1a; }
 .alert-info   { color: #217dbb; }
+.btn-default  { color: #666; }
 
 th,td{text-align: center;}
 table{width: 100%;}

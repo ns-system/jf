@@ -188,8 +188,8 @@
                 <div class="panel-footer">
                     <div class="text-right">
                         <div class="btn-group">
-                            <a href="{{route('admin::roster::csv::show', ['ym'=>$ym])}}" style="width: 100px;" class="btn btn-primary">戻る</a>
-                            <button type="submit" class="btn btn-danger" style="width: 100px;" onclick="return confirm('データを更新することによって整合性が取れなくなる場合があります。その責任を理解した上でデータの強制変更を行いますか？');">更新する</button>
+                            <a href="{{route('admin::roster::csv::show', ['ym'=>$ym])}}" style="width: 100px;" class="btn btn-success">戻る</a>
+                            <button type="submit" class="btn btn-warning" style="width: 100px;" onclick="return confirm('データを更新することによって整合性が取れなくなる場合があります。データの強制変更を行いますか？');">更新する</button>
                         </div>
                     </div>
                 </div>

@@ -19,7 +19,7 @@
         @include('partial.alert')
         <div class="border-bottom"><h2>管理ユーザー設定</h2></div>
 
-        <div class="text-right">
+        <div class="text-right" style="margin-bottom: 15px;">
             @include('admin.admin.partial.admin_search')
         </div>
 
