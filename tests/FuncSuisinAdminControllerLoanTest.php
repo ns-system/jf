@@ -43,6 +43,7 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         $this->disconnect();
         parent::tearDown();
     }
+
     //貸付
     //摘要コード 
     /**
@@ -75,12 +76,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanCategory/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/LoanCategory')
-                ->see('件の処理が終了しました。')
-        ;
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
@@ -175,12 +174,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFishery/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/LoanFishery')
-                ->see('件の処理が終了しました。')
-        ;
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
@@ -275,12 +272,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFund/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/LoanFund')
-                ->see('件の処理が終了しました。')
-        ;
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
@@ -375,12 +370,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsageCode/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsageCode')
-                ->see('件の処理が終了しました。')
-        ;
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
@@ -476,12 +469,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundAuxiliary/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/LoanFundAuxiliary')
-                ->see('件の処理が終了しました。')
-        ;
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
@@ -577,12 +568,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsage/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsage')
-                ->see('件の処理が終了しました。')
-        ;
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
@@ -677,12 +666,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanJifuriCode/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/LoanJifuriCode')
-                ->see('件の処理が終了しました。')
-        ;
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
@@ -777,12 +764,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanPhasedMoneyRate/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/LoanPhasedMoneyRate')
-                ->see('件の処理が終了しました。')
-        ;
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
@@ -877,12 +862,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanCollateral/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/LoanCollateral')
-                ->see('件の処理が終了しました。')
-        ;
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
@@ -977,12 +960,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSecurityInstitution/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/LoanSecurityInstitution')
-                ->see('件の処理が終了しました。')
-        ;
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
@@ -1077,12 +1058,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyInstitution/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyInstitution')
-                ->see('件の処理が終了しました。')
-        ;
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
@@ -1177,12 +1156,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidy/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidy')
-                ->see('件の処理が終了しました。')
-        ;
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
@@ -1277,12 +1254,10 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyCalculation/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyCalculation')
-                ->see('件の処理が終了しました。')
-        ;
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         $csv_file  = file($path);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
