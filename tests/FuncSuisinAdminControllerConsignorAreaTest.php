@@ -58,6 +58,7 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
         $this->disconnect();
         parent::tearDown();
     }
+
     //共通
     /**
      * @tests
@@ -120,13 +121,12 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/Consignor/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/Consignor')
-                ->see('件の処理が終了しました。')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正')
         ;
         $csv_file  = file($path);
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data  = explode(',', $csv_file[$i]);
             $where = [
@@ -231,14 +231,12 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/ConsignorGroup/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/ConsignorGroup')
-                ->see('件の処理が終了しました。')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
                 ->dontSee('要修正')
         ;
         $csv_file  = file($path);
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
             $res  = \App\ConsignorGroup::where('group_name', trim($data[1]))->where('id', $data[0])->count();
@@ -330,14 +328,12 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/Prefecture/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/Prefecture')
-                ->see('件の処理が終了しました。')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
                 ->dontSee('要修正')
         ;
         $csv_file  = file($path);
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
             $res  = \App\Models\Common\Prefecture::where(['prefecture_code' => trim($data[0]), 'prefecture_name' => trim($data[1])])->count();
@@ -435,14 +431,12 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/Store/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/Store')
-                ->see('件の処理が終了しました。')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
                 ->dontSee('要修正')
         ;
         $csv_file  = file($path);
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
             $res  = \App\Models\Common\Store::where('prefecture_code', trim($data[0]))->where('store_number', trim($data[1]))->where('store_name', trim($data[3]))->count();
@@ -551,14 +545,12 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/SmallStore/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/SmallStore')
-                ->see('件の処理が終了しました。')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
                 ->dontSee('要修正')
         ;
         $csv_file  = file($path);
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data  = explode(',', $csv_file[$i]);
             $where = [
@@ -680,14 +672,12 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/Area/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/Area')
-                ->see('件の処理が終了しました。')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
                 ->dontSee('要修正')
         ;
         $csv_file  = file($path);
+       exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
             $res  = \App\Models\Common\Area::where('prefecture_code', trim($data[0]))->where('store_number', trim($data[1]))->where('area_code', trim($data[3]))->where('area_name', trim($data[7]))->count();
@@ -804,14 +794,12 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/suisin/config/Suisin/ControlStore/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/suisin/config/Suisin/ControlStore')
-                ->see('件の処理が終了しました。')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
                 ->dontSee('要修正')
         ;
         $csv_file  = file($path);
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
             $res  = \App\ControlStore::where('prefecture_code', trim($data[0]))->where('control_store_code', trim($data[1]))->where('control_store_name', trim($data[3]))->count();
