@@ -13,7 +13,7 @@
             @endif
 
 
-            <div class="btn-group">
+            <div class="btn-group" style="margin-bottom: 10px;">
                 @if(!empty($serach_columns))
                 <button
                 type="button"
