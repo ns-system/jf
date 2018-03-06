@@ -91,8 +91,8 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
             });
             /**
              * Middleware : roster_chief
-             * As         : accept::
-             * Prefix     : /accept
+             * As         : chief::
+             * Prefix     : /chief
              */
             Route::group(['middleware' => 'roster_chief', 'as' => 'chief::', 'prefix' => '/chief'], function() {
                 Route::get('/',                                                      ['as' => 'index',  'uses' => 'RosterChiefController@index']);
