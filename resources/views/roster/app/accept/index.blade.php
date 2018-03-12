@@ -35,6 +35,7 @@
     </ul>
     @endif
 
+    @if(!$divs->isEmpty())
     @foreach($divs as $d)
     <div class="border-bottom">
         <h2>{{$d->division_name}}</h2>
@@ -100,12 +101,15 @@
         @endforeach
     </div>
     @endforeach
+    @endif
+
 </div>
 @endsection
 
 @section('footer')
 @parent
 <script>
+    @if(!$divs->isEmpty())
     @foreach($months as $m)
     var plan_{{$m->month_id}} = [
     {
@@ -154,6 +158,7 @@
         });
         @endforeach
     }
+    @endif
     // var myDoughnut = new Chart(document.getElementById("sample").getContext("2d")).Doughnut(doughnutData);
 </script>
 @endsection

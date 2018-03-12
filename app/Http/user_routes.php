@@ -19,5 +19,10 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
         Route::post('/icon/{id}',     ['as' => 'icon', 'uses' => 'UserController@userIcon']);
         Route::post('/division/{id}', ['as' => 'division', 'uses' => 'UserController@division']);
         Route::post('/password/{id}', ['as' => 'password', 'uses' => 'UserController@password']);
+
+        Route::group(['prefix' => '/{id}', 'as' => 'font::'], function() {
+            Route::get('/fonts',         ['as' => 'show', 'uses' => 'FontController@index']);
+            Route::post('/fonts/update', ['as' => 'update', 'uses' => 'FontController@update']);
+        });
     });
 });

@@ -1,10 +1,10 @@
 
 <!-- モーダル・ダイアログ -->
 
-<form method="POST" action="{{route('app::roster::chief::update')}}" class="form-horizontal">
+<form method="POST" action="{{route('app::roster::chief::update', ['user_id'=>$r->user_id,'roster_user_id'=>$r->key_id])}}" class="form-horizontal">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-    <input type="hidden" name="id" value="{{$r->key_id}}">
-    <input type="hidden" name="user_id" value="{{$r->user_id}}">
+    {{--     <input type="hidden" name="id" value="{{$r->key_id}}">
+    <input type="hidden" name="user_id" value="{{$r->user_id}}"> --}}
 
     <div class="modal fade" id="form_{{$r->key_id}}" tabindex="-1">
         <div class="modal-dialog">
@@ -45,7 +45,7 @@
                 <div class="modal-footer">
                     <div class="col-md-10 col-md-offset-1">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">閉じる</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">閉じる</button>
                             <button type="submit" class="btn btn-success">更新する</button>
                         </div>
                     </div>

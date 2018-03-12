@@ -21,6 +21,7 @@
     @include('partial.alert')
     <div class="border-bottom"><h2>勤怠管理システム 管理ユーザーリスト</h2></div>
     @include('roster.admin.user.partial.search')
+    <div style="margin-bottom: 15px;"></div>
     <div>
         @if($users->isEmpty())
         <div class="alert alert-warning" role="alert">ユーザーが見つかりませんでした。</div>

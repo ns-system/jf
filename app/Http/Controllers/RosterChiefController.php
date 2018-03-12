@@ -45,15 +45,14 @@ class RosterChiefController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Chief $request) {
-        $in      = $request->input();
-        $user_id = $in['user_id'];
-        $user    = \App\RosterUser::find($user_id);
+    public function update(Chief $request, $user_id, $roster_user_id) {
+        $in   = $request->input();
+        $roster_user = \App\RosterUser::find($roster_user_id);
         try {
-            $user->is_proxy        = $in['proxy'];
-            $user->is_proxy_active = $in['active'];
+            $roster_user->is_proxy        = $in['proxy'];
+            $roster_user->is_proxy_active = $in['active'];
 
-            $user->save();
+            $roster_user->save();
             // 管理部署の編集
             $div = \App\SinrenUser::where('user_id', '=', $user_id)->first();
             // 現在の管轄部署を一旦クリアする
@@ -65,6 +64,7 @@ class RosterChiefController extends Controller
             }
         } catch (\Exception $exc) {
             \Session::flash('danger_message', $exc->getMessage());
+            return back();
         }
 
         try {
@@ -76,8 +76,10 @@ class RosterChiefController extends Controller
             $this->dispatch(new \App\Jobs\Roster\EditNotice($res));
         } catch (\Exception $e) {
             \Session::flash('danger_message', $e->getMessage());
+            return back();
         }
 
+//        dd($roster_user);
 
         \Session::flash('success_message', "データを更新しました。");
         return redirect(route('app::roster::chief::index'));

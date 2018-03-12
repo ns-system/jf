@@ -10,6 +10,14 @@
     </title>
 
     <link rel="stylesheet" href="https://nkmr6194.github.io/Umi/css/bootstrap.css"></link>
+
+    <link href="https://fonts.googleapis.com/earlyaccess/mplus1p.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/earlyaccess/sawarabimincho.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/earlyaccess/sawarabigothic.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://nkmr6194.github.io/Umi/js/bootstrap.min.js"></script>
@@ -23,14 +31,38 @@
 <script src="https://unpkg.com/bootstrap-material-design@4.0.0-beta.3/dist/js/bootstrap-material-design.js" integrity="sha384-hC7RwS0Uz+TOt6rNG8GX0xYCJ2EydZt1HeElNwQqW+3udRol4XwyBfISrNDgQcGA" crossorigin="anonymous"></script> --}}
 
 <style type="text/css">
-body {word-wrap: break-word; overflow-y: scroll;}
+body {
+    word-wrap: break-word;
+    overflow-y: scroll;
+    @if(\Auth::check())
+    <?php $font = \Auth::user(); ?>
+    font-size:   @if(!empty($font->font_size)) {{ $font->font_size }}px @else 16px @endif;
+    font-family: @if(!empty($font->font)) "{{ $font->font }}" @else "Meiryo" @endif , "Yu Gothic", "MS Gothic";
+    font-weight: @if(!empty($font->font_weight)) {{ $font->font_weight }} @else 400 @endif;
+    color:       @if(!empty($font->font_color)) {{ $font->font_color }} @else #333 @endif;
+    @endif
+}
+
+h1,h2,h3,h4,h5,h6,.form-control,.no-thank-yu, .navbar, .btn, .form-control, .input-gruop, .breadcrumb, .nav-tabs, .nav-pills, .panel-title, .list-group, .pagination, .pager, .alert, .label, .badge, .panel-heading, .lead, .tooltip, .popover {
+    @if(\Auth::check())
+    font-family: @if(!empty($font->font)) "{{ $font->font }}" @else "Meiryo" @endif , "Yu Gothic", "MS Gothic";
+    font-weight: @if(!empty($font->font_weight)) {{ $font->font_weight }} @else 400 @endif;
+    @endif
+}
+.btn, .label { color: #fff; }
+.alert-success{ color: #128f76; }
+.alert-danger { color: #d62c1a; }
+.alert-info   { color: #217dbb; }
+.btn-default  { color: #666; }
+
 th,td{text-align: center;}
 table{width: 100%;}
 
+form { margin: 0; }
 .table-small th,
 .table-small th *,
 .table-small td,
-.table-small td * {font-size: 12px;}
+.table-small td * {font-size: 90%;}
 small, .text-sm {font-size: 80% !important;}
 .margin-0{margin: 0 !important;}
 .va-middle,.va-middle *{vertical-align: middle !important;}
@@ -112,14 +144,21 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
 
 </style>
 </head>
-<body class="no-thank-yu">
+<body>
     @section('header')
     <div class="bs-component" style="margin-bottom: 120px;">
         @include('partial.nav')
+        @if(\Auth::check())
+        <div style="position: absolute; right: 10px; top: 85px;">
+            <a href="{{ route('app::user::font::show', ['user_id'=>\Auth::user()->id]) }}">文字が小さいですか？</a>
+        </div>
+        @endif
     </div>
+
+
     @show
 
-    <div class="container-fluid">
+    <div class="container-fluid user-font">
         <div class="row">
             @section('sidebar')
             @show

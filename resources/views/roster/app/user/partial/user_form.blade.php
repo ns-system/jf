@@ -7,7 +7,7 @@
 
         <p>
             <label>部署</label>
-            <select class="form-control input-sm" name="division_id">
+            <select class="form-control" name="division_id">
                 @foreach($divs as $div)
                 <option value="{{$div->division_id}}" @if($user->division_id == $div->division_id) selected @endif>{{$div->division_name}}</option>
                 @endforeach
@@ -16,7 +16,7 @@
 
         <p>
             <label>標準勤務形態</label>
-            <select class="form-control input-sm" name="work_type_id">
+            <select class="form-control" name="work_type_id">
                 <option value="">勤務形態を選択してください（責任者の場合、選択不要です）</option>
                 @foreach($types as $type)
                 <option value="{{$type->work_type_id}}" @if($user->work_type_id == $type->work_type_id) selected @endif>

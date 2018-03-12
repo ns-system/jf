@@ -13,9 +13,10 @@ else
     $bar_user = null;
 }
 ?>
-
+<div class="menu">
 @if(!empty($bar_user) && ($bar_user->is_super_user || $bar_user->is_administrator))
     @include('admin.sidebar.sidebar')
 @else
     @include('app.sidebar._sidebar')
 @endif
+</div>

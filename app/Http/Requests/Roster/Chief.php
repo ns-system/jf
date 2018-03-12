@@ -24,7 +24,7 @@ class Chief extends Request
     public function rules() {
         $in    = \Input::get();
         $rules = [
-            'id'     => 'required|exists:mysql_roster.roster_users,id',
+//            'id'     => 'required|exists:mysql_roster.roster_users,id',
             'proxy'  => 'required|boolean',
             'active' => 'required|boolean',
         ];
