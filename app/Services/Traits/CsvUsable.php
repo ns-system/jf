@@ -169,7 +169,7 @@ trait CsvUsable
      * @param type $file_header
      * @return type
      */
-    public function exportCsv($export_datas, $file_name, $file_header = []) {
+    public function exportCsv($export_datas, $file_name, $file_header = []/*, $is_enclose = false*/) {
         $this->file_name = $file_name;
         $file_name       = 'attachment; filename=' . $file_name;
         if ($file_header !== [null])
@@ -178,7 +178,15 @@ trait CsvUsable
         }
         $stream = fopen('php://temp', 'r+b');
         foreach ($export_datas as $export_data) {
-            fputcsv($stream, $export_data);
+/*            if ($is_enclose)
+            {*/
+                fputcsv($stream, $export_data,',','"');
+//                fputcsv($stream, $export_data, ',', "\n");
+//            }
+//            else
+//            {
+//                fputcsv($stream, $export_data);
+//            }
         }
         rewind($stream);
         $csv     = str_replace(PHP_EOL, "\r\n", stream_get_contents($stream));

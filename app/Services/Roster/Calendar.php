@@ -25,50 +25,25 @@ class Calendar
     }
 
     public function setTimes(/* $type, */$row) {
-        $start           = null;
-        $end             = null;
-        $plan_start      = null;
-        $plan_end        = null;
-        $actual_start    = null;
-        $actual_end      = null;
-        $is_plan_entry   = false;
-        $is_actual_entry = false;
-        $plan_type       = null;
-        $actual_type     = null;
+//        $plan_type   = null;
+//        $actual_type = null;
+//        $work_type_id = (!empty($this->user->work_type_id)) ? $this->user->work_type_id : null;
+//        dd($this->work_types);
 
-        $types = $this->work_types;
+        $types    = $this->work_types;
+        $tmp_type = (!empty($this->user->work_type_id)) ? $types[$this->user->work_type_id] : null;
 
-        if (isset($row->is_plan_entry))
-        {
-            $is_plan_entry = $row->is_plan_entry;
-        }
+        $is_plan_entry       = (isset($row->is_plan_entry)) ? $row->is_plan_entry : false;
+        $is_actual_entry     = (isset($row->is_actual_entry)) ? $row->is_actual_entry : false;
+        $plan_type           = (!empty($row->plan_work_type_id)) ? $types[$row->plan_work_type_id] : $tmp_type;
+        $actual_type         = (!empty($row->actual_work_type_id)) ? $types[$row->actual_work_type_id] : $tmp_type;
+        $is_plan_different   = ((/* 空じゃない */!empty($row->plan_overtime_start_time) && !empty($row->plan_overtime_end_time)) && (/* 違ってる */$row->plan_overtime_start_time != $row->plan_overtime_end_time)) ? true : false;
+        $is_actual_different = ((/* 空じゃない */!empty($row->actual_overtime_start_time) && !empty($row->actual_overtime_end_time)) && (/* 違ってる */$row->actual_overtime_start_time != $row->actual_overtime_end_time)) ? true : false;
 
-        if (isset($row->is_actual_entry))
-        {
-            $is_actual_entry = $row->is_actual_entry;
-        }
-
-        if (!empty($this->user->work_type_id))
-        {
-            $plan_type   = $types[$this->user->work_type_id];
-            $actual_type = $types[$this->user->work_type_id];
-        }
-
-        if (!empty($row->plan_work_type_id))
-        {
-            $plan_type = $types[$row->plan_work_type_id];
-        }
-
-        if (!empty($row->actual_work_type_id))
-        {
-            $actual_type = $types[$row->actual_work_type_id];
-        }
-
-        $plan_start   = $plan_type->work_start_time;
-        $plan_end     = $plan_type->work_end_time;
-        $actual_start = $actual_type->work_start_time;
-        $actual_end   = $actual_type->work_end_time;
-
+        $plan_start   = ($is_plan_different) ? $row->plan_overtime_start_time : $plan_type->work_start_time;
+        $plan_end     = ($is_plan_different) ? $row->plan_overtime_end_time : $plan_type->work_end_time;
+        $actual_start = ($is_actual_different) ? $row->actual_overtime_start_time : $actual_type->work_start_time;
+        $actual_end   = ($is_actual_different) ? $row->actual_overtime_end_time : $actual_type->work_end_time;
 
         $plan_start_hour   = (int) date('H', strtotime($plan_start));
         $plan_start_time   = (int) date('i', strtotime($plan_start));
