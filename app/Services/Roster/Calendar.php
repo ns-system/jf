@@ -70,6 +70,7 @@ class Calendar
     }
 
     public function editPlan($id, $request) {
+//        dd($request->input());
         $roster = \App\Roster::findOrFail($id);
 
         $start_time = null;
@@ -82,6 +83,11 @@ class Calendar
             {
                 throw new \Exception("開始時間 < 終了時間となるように入力してください。");
             }
+            // 勤務形態より少しでもオーバーしたら残業理由を強制的に入力させる
+            if (!$this->inTime($roster->plan_work_type_id, $start_time, $end_time) && empty($request['plan_overtime_reason']))
+            {
+                throw new \Exception("予定勤務時間を超過する場合、必ず理由を入力してください。");
+            }
         }
         $roster->user_id                  = \Auth::user()->id;
         $roster->is_plan_entry            = (int) true;
@@ -91,6 +97,16 @@ class Calendar
         $roster->plan_overtime_end_time   = $end_time;
         $roster->plan_entered_at          = date('Y-m-d H:i:s');
         $roster->save();
+    }
+
+    private function inTime($work_type_id, $start_time, $end_time) {
+        $work_type = (!empty($work_type_id)) ? \App\WorkType::workTypeId($work_type_id)->first() : null;
+//        dd($work_type);
+        if (empty($work_type) || (empty($work_type->work_start_time) && $work_type->work_end_time))
+        {
+            return true;
+        }
+        return (($work_type->work_start_time == $start_time) && ($work_type->work_end_time == $end_time)) ? true : false;
     }
 
     public function getPages() {
@@ -110,14 +126,20 @@ class Calendar
         $end_time   = null;
         if (empty($rest) || !empty($rest) && ($rest->rest_reason_name === '遅刻' || $rest->rest_reason_name === '早退'))
         {
-            $start_time                         = date('H:i:s', strtotime($request['actual_start_hour'] . ":" . $request['actual_start_time'] . ":00"));
-            $end_time                           = date('H:i:s', strtotime($request['actual_end_hour'] . ":" . $request['actual_end_time'] . ":00"));
-            $roster->actual_overtime_start_time = $start_time;
-            $roster->actual_overtime_end_time   = $end_time;
+            $start_time = date('H:i:s', strtotime($request['actual_start_hour'] . ":" . $request['actual_start_time'] . ":00"));
+            $end_time   = date('H:i:s', strtotime($request['actual_end_hour'] . ":" . $request['actual_end_time'] . ":00"));
             if ($start_time > $end_time)
             {
                 throw new \Exception("開始時間 < 終了時間となるように入力してください。");
             }
+            // 勤務形態より少しでもオーバーしたら残業理由を強制的に入力させる
+            $work_type = (empty($request['actual_work_type_id'])) ? $roster->plan_work_type_id : $request['actual_work_type_id'];
+            if (!$this->inTime($work_type, $start_time, $end_time) && empty($request['actual_overtime_reason']))
+            {
+                throw new \Exception("勤務時間を超過する場合、必ず理由を入力してください。");
+            }
+            $roster->actual_overtime_start_time = $start_time;
+            $roster->actual_overtime_end_time   = $end_time;
         }
         else
         {

@@ -151,45 +151,45 @@
                         @if($r->is_plan_entry)
                         <span data-toggle="tooltip" data-placement="top" @if(!empty($r->plan_accept_user_id)) title="{{ \App\User::find($r->plan_accept_user_id)->last_name }}さん" @endif @if(!empty($r->plan_reject_user_id)) title="{{ \App\User::find($r->plan_reject_user_id)->last_name }}さん @if(!empty($r->reject_reason)) ／ {{ $r->reject_reason }} @endif" @endif>
 
-                        @if($r->is_plan_reject)     <span class="label label-danger">申請</span>
-                        @elseif($r->is_plan_accept) <span class="label label-success">申請</span>
-                        @else                       <span class="label label-warning">申請</span>
+                            @if($r->is_plan_reject)     <span class="label label-danger">申請</span>
+                            @elseif($r->is_plan_accept) <span class="label label-success">申請</span>
+                            @else                       <span class="label label-warning">申請</span>
+                            @endif
+                        </span>
+
+                        @else <span><span class="label label-default">申請</span></span> @endif
+                        @if(!empty($r->plan_work_type_id))      <p class="small">{{$types[$r->plan_work_type_id]['name']}} {{$types[$r->plan_work_type_id]['time']}}</p> @endif
+                        @if(!empty($r->plan_overtime_start_time) &&
+                        !empty($r->plan_overtime_end_time))     <p class="small">{{date('G:i', strtotime($r->plan_overtime_start_time))}} ～ {{date('G:i', strtotime($r->plan_overtime_end_time))}}</p> @endif
+                        @if(!empty($r->plan_rest_reason_id))        <p class="small">{{$rests[$r->plan_rest_reason_id]}}</p> @endif
+                        @if(!empty($r->plan_overtime_reason))       <p class="small">{{$r->plan_overtime_reason}}</p> @endif
+
+                        {{-- Actual --}}
+                        @if($r->is_actual_entry)
+                        <span data-toggle="tooltip" data-placement="top" @if(!empty($r->actual_accept_user_id)) title="{{ \App\User::find($r->actual_accept_user_id)->last_name }}さん" @endif @if(!empty($r->actual_reject_user_id)) title="{{ \App\User::find($r->actual_reject_user_id)->last_name }}さん @if(!empty($r->reject_reason)) ／ {{ $r->reject_reason }} @endif" @endif>
+
+
+                            @if($r->is_actual_reject)     <span class="label label-danger">実績</span>
+                            @elseif($r->is_actual_accept) <span class="label label-success">実績</span>
+                            @else                         <span class="label label-warning">実績</span> @endif
+                        </span>
+
+                        @if(!empty($r->actual_work_type_id))      <p class="small">{{$types[$r->actual_work_type_id]['name']}} {{$types[$r->actual_work_type_id]['time']}}</p> @endif
+                        @if(!empty($r->actual_overtime_start_time) &&
+                        !empty($r->actual_overtime_end_time))     <p class="small">{{date('G:i',strtotime($r->actual_overtime_start_time))}} ～ {{date('G:i', strtotime($r->actual_overtime_end_time))}}</p> @endif
+                        @if(!empty($r->actual_rest_reason_id))        <p class="small">{{$rests[$r->actual_rest_reason_id]}}</p> @endif
+                        @if(!empty($r->actual_overtime_reason))       <p class="small">{{$r->actual_overtime_reason}}</p> @endif
                         @endif
-                    </span>
-
-                    @else <span><span class="label label-default">申請</span></span> @endif
-                    @if(!empty($r->plan_work_type_id))      <p class="small">{{$types[$r->plan_work_type_id]['name']}} {{$types[$r->plan_work_type_id]['time']}}</p> @endif
-                    @if(!empty($r->plan_overtime_start_time) &&
-                    !empty($r->plan_overtime_end_time))     <p class="small">{{date('G:i', strtotime($r->plan_overtime_start_time))}} ～ {{date('G:i', strtotime($r->plan_overtime_end_time))}}</p> @endif
-                    @if(!empty($r->plan_rest_reason_id))        <p class="small">{{$rests[$r->plan_rest_reason_id]}}</p> @endif
-                    @if(!empty($r->plan_overtime_reason))       <p class="small">{{$r->plan_overtime_reason}}</p> @endif
-
-                    {{-- Actual --}}
-                    @if($r->is_actual_entry)
-                    <span data-toggle="tooltip" data-placement="top" @if(!empty($r->actual_accept_user_id)) title="{{ \App\User::find($r->actual_accept_user_id)->last_name }}さん" @endif @if(!empty($r->actual_reject_user_id)) title="{{ \App\User::find($r->actual_reject_user_id)->last_name }}さん @if(!empty($r->reject_reason)) ／ {{ $r->reject_reason }} @endif" @endif>
-
-
-                        @if($r->is_actual_reject)     <span class="label label-danger">実績</span>
-                        @elseif($r->is_actual_accept) <span class="label label-success">実績</span>
-                        @else                         <span class="label label-warning">実績</span> @endif
-                    </span>
-                    
-                    @if(!empty($r->actual_work_type_id))      <p class="small">{{$types[$r->actual_work_type_id]['name']}} {{$types[$r->actual_work_type_id]['time']}}</p> @endif
-                    @if(!empty($r->actual_overtime_start_time) &&
-                    !empty($r->actual_overtime_end_time))     <p class="small">{{date('G:i',strtotime($r->actual_overtime_start_time))}} ～ {{date('G:i', strtotime($r->actual_overtime_end_time))}}</p> @endif
-                    @if(!empty($r->actual_rest_reason_id))        <p class="small">{{$rests[$r->actual_rest_reason_id]}}</p> @endif
-                    @if(!empty($r->actual_overtime_reason))       <p class="small">{{$r->actual_overtime_reason}}</p> @endif
+                    </div>
                     @endif
+                    {{-- パネル内容 --}}
                 </div>
-                @endif
-                {{-- パネル内容 --}}
             </div>
-        </div>
-        <?php unset($r); ?>
-        @endif
-    </td>
-@if($day['week'] == 6) </tr> @endif
-@endforeach
+            <?php unset($r); ?>
+            @endif
+        </td>
+    @if($day['week'] == 6) </tr> @endif
+    @endforeach
 </tbody>
 </table>
 
@@ -219,5 +219,36 @@
             });
         });
     })
+
+    function checkHolidayWork(id){
+        var target = $('#' + id);
+        // console.log(target.find('*[name=actual_start_hour]').html());
+        var work_name  = target.find('*[name=actual_work_type_id] option:selected').text();
+
+        var start_hour = target.find('*[name=actual_start_hour] option:selected').val();
+        var start_time = target.find('*[name=actual_start_time] option:selected').val();
+        var end_hour   = target.find('*[name=actual_end_hour]   option:selected').val();
+        var end_time   = target.find('*[name=actual_end_time]   option:selected').val();
+        console.log(work_name, start_hour, start_time, end_hour, end_time);
+        if(!work_name.match(/休日出勤/)){
+            console.log('['+work_name+']');
+            return true;
+        }
+        if(!start_hour || !start_time || !end_hour || !end_time){
+            return true;
+        }
+
+        var start = new Date(2000, 0, 1, start_hour, start_time);
+        var end   = new Date(2000, 0, 1, end_hour, end_time);
+        var diff  = end.getTime() - start.getTime();
+        var hour  = diff / (1000*60*60);
+        // var time  = diff / (1000*60);
+
+        if(hour < 8){
+            return confirm("休日出勤かつ勤務時間が８時間以下の場合、休憩時間を差し引いた時間を入力する必要があります。\n現在入力されている時間は休憩時間を差し引いた時間ですか？");
+        }
+
+        return true;
+    }
 </script>
 @endsection

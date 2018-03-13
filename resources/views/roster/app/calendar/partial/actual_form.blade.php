@@ -11,7 +11,7 @@
                     <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
                     <h4 class="modal-title">実入力フォーム <small> - {{$r->entered_on}}</small></h4>
                 </div>
-                <div class="modal-body" style="color: #444;">
+                <div class="modal-body" style="color: #444;"  id="actual-time-{{ $r->id }}">
                     <div class="row" style="margin-bottom: 10px;">
                         <div class="col-md-10 col-md-offset-1">
                             <label>実勤務形態</label>
@@ -139,7 +139,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="col-md-10 col-md-offset-1 text-right">
-                        <button type="submit" class="btn btn-success">更新する</button>
+                        <button type="submit" class="btn btn-success" onclick="return checkHolidayWork('actual-time-{{ $r->id }}');">更新する</button>
                     </div>
                 </div>
             </div>
