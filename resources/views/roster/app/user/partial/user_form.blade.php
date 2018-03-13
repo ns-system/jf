@@ -5,6 +5,7 @@
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 
+        @if(empty($user) || !$user->exists())
         <p>
             <label>部署</label>
             <select class="form-control" name="division_id">
@@ -13,6 +14,7 @@
                 @endforeach
             </select>
         </p>
+        @endif
 
         <p>
             <label>標準勤務形態</label>
