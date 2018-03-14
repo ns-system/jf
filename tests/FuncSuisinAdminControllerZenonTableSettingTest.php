@@ -105,42 +105,10 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/super_user/config/Admin/ZenonCsv/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/super_user/config/Admin/ZenonCsv')
-                ->see('件の処理が終了しました。')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
                 ->dontSee('要修正')
         ;
-        $csv_file  = file($path);
-        for ($i = 1; $i < count($csv_file); $i++) {
-            $data  = explode(',', $csv_file[$i]);
-            $where = [
-                'identifier'            => trim($data[1]),
-                'zenon_data_type_id'    => trim($data[2]),
-                'zenon_data_name'       => trim($data[3]),
-                'first_column_position' => trim($data[4]),
-                'last_column_position'  => trim($data[5]),
-                'column_length'         => trim($data[6]),
-                'reference_return_date' => trim($data[7]),
-                'cycle'                 => trim($data[8]),
-                'database_name'         => trim($data[9]),
-                'table_name'            => trim($data[10]),
-                'common_table_name'     => trim($data[11]),
-                'is_cumulative'         => trim($data[12]),
-                'is_account_convert'    => trim($data[13]),
-                'is_process'            => trim($data[14]),
-                'is_split'              => trim($data[15]),
-                'is_deposit_split'      => trim($data[16]),
-                'is_loan_split'         => trim($data[17]),
-                'zenon_format_id'       => trim($data[18]),
-                'account_column_name'   => trim($data[19]),
-                'subject_column_name'   => trim($data[20]),
-            ];
-            $res   = \App\ZenonCsv::where($where)->count();
-
-            $this->assertEquals($res, 1);
-        }
+        
     }
 
     /**
@@ -234,19 +202,10 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/super_user/config/Admin/ZenonTable/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/super_user/config/Admin/ZenonTable')
-                ->see('件の処理が終了しました。')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
                 ->dontSee('要修正')
         ;
-        $csv_file  = file($path);
-        for ($i = 1; $i < count($csv_file); $i++) {
-            $data = explode(',', $csv_file[$i]);
-            $res  = \App\ZenonTable::where('zenon_format_id', trim($data[0]))->where('serial_number', trim($data[1]))->where('column_name', trim($data[2]))->where('japanese_column_name', trim($data[3]))->where('column_type', trim($data[4]))->count();
-            $this->assertEquals($res, 1);
-        }
+        
     }
 
     /**
@@ -338,19 +297,10 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/super_user/config/Admin/ZenonType/import')
-                ->see('CSVデータの取り込みが完了しました。')
-                ->see('現段階ではデータベースに反映されていません。引き続き更新処理を行ってください。')
-                ->press('更新する')
-                ->seePageIs('/admin/super_user/config/Admin/ZenonType')
-                ->see('件の処理が終了しました。')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
                 ->dontSee('要修正')
         ;
-        $csv_file  = file($path);
-        for ($i = 1; $i < count($csv_file); $i++) {
-            $data = explode(',', $csv_file[$i]);
-            $res  = \App\ZenonType::where('data_type_name', trim($data[1]))->count();
-            $this->assertEquals($res, 1);
-        }
+       
     }
 
     /**
