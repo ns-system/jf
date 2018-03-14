@@ -58,6 +58,10 @@ class Roster extends Model
 //        return $query->where('is_accept', '=', 1)->groupBy('is_plan_accept')->count();
 //    }
 //
+    public function laraveluser() {
+        return $this->hasOne('\App\User', 'id', 'user_id');
+    }
+
     public function PlanType() {
         return $this->hasOne('\App\WorkType', 'work_type_id', 'plan_work_type_id');
     }

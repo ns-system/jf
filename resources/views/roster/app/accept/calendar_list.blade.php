@@ -31,7 +31,7 @@
     <div style="margin-bottom: 20px;">
         <ul class="nav nav-tabs">
             <li @if(empty($user_id)) class="active" @endif>
-                <a href="{{route_with_query('app::roster::accept::calendar', ['ym'=>$ym, 'div'=>$div])}}">選択してください</a>
+                <a href="{{route_with_query('app::roster::accept::calendar', ['ym'=>$ym, 'div'=>$div])}}">未承認のみ</a>
             </li>
             @foreach($users as $i => $u)
             <li @if(!empty($user_id) && ($u->user_id == $user_id)) class="active" @endif>
@@ -47,7 +47,7 @@
     <!-- タブ内容 -->
     <div class="tab-content">
         @if(empty($user_id))
-        <p>ユーザーを選択してください。</p>
+        @include('roster.app.accept.partial.all_list')
         @else
         @include('roster.app.accept.partial.calendar_list')
         @endif

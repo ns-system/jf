@@ -104,6 +104,9 @@ class RosterAcceptController extends Controller
 
         $rows = (empty($user_id)) ? [] : $this->getCalendar($ym, $user_id, $is_show_all);
 
+        // 未承認 or 却下のみを抽出するクエリを発行
+        $unchecked_rows = $this->getUncheckedRows($users, $ym);
+
         $tmp_types = \App\WorkType::workTypeList()->orderBy('work_type_id')->get();
         $types     = [];
         foreach ($tmp_types as $t) {
@@ -119,16 +122,54 @@ class RosterAcceptController extends Controller
         }
 
         $param = [
-            'ym'      => $ym,
-            'div'     => $div,
-            'rests'   => $rests,
-            'types'   => $types,
-            'rows'    => $rows,
-            'users'   => $users,
-            'user_id' => $user_id,
-            'status'  => $status,
+            'ym'        => $ym,
+            'div'       => $div,
+            'rests'     => $rests,
+            'types'     => $types,
+            'rows'      => $rows,
+            'users'     => $users,
+            'user_id'   => $user_id,
+            'status'    => $status,
+            'unchecked' => $unchecked_rows,
         ];
         return view('roster.app.accept.calendar_list', $param);
+    }
+
+    private function getUncheckedRows($users, $monthly_id) {
+        $ids = [];
+        foreach ($users as $u) {
+            $ids[] = $u->user_id;
+        }
+        $serial    = strtotime($monthly_id . '01');
+        $first_day = date('Y-m-d', $serial);
+        $last_day  = date('Y-m-t', $serial);
+
+        $unchecked_rows = \App\Roster::where(function($query) use($ids) {
+                    foreach ($ids as $id) {
+                        $query->orWhere('user_id', $id);
+                    }
+                })
+                ->where('entered_on', '>=', $first_day)
+                ->where('entered_on', '<=', $last_day)
+//                ->where('is_plan_entry', true)
+//                ->where('is_plan_accept', false)
+                ->where(function($query) {
+                    $query->orWhere(function($query) {
+                        $query->where('is_plan_entry', true)->where('is_plan_accept', false);
+                    })->orWhere(function($query) {
+                        $query->where('is_actual_entry', true)->where('is_actual_accept', false);
+                    });
+                })
+                ->orderBy('user_id')
+                ->orderBy('entered_on')
+                ->with('laraveluser')
+                ->get()
+        ;
+//        var_dump($ids);
+//        var_dump($first_day);
+//        var_dump($last_day);
+//        dd($unchecked_rows);
+        return $unchecked_rows;
     }
 
     public function getCalendar($ym, $user_id, $is_show_all) {
@@ -162,6 +203,8 @@ class RosterAcceptController extends Controller
     }
 
     public function calendarAccept(CalendarAccept $request, $monthly_id, $division_id, $user_id) {
+        $is_bulk       = (!empty($request['is_bulk'])) ? $request['is_bulk'] : false;
+        $is_contain    = false;
         $chief_user_id = \Auth::user()->id;
         // 自分自身を更新しようとしていないかチェック
         if ($chief_user_id == $user_id)
@@ -172,17 +215,19 @@ class RosterAcceptController extends Controller
         // 対象ユーザーが管轄部署に含まれているかチェック
         $me  = \App\ControlDivision::user($chief_user_id)->get(['division_id']);
         $you = \App\SinrenUser::where('user_id', $user_id)->first();
-        if (empty($you))
+        if (empty($you) && !$is_bulk)
         {
             \Session::flash('danger_message', "勤怠管理ユーザーの登録が行われていないようです。");
             return back();
         }
-        $is_contain = false;
-        foreach ($me as $m) {
-            $is_contain = ($you->division_id === $m->division_id) ? true : $is_contain;
+        if (!$is_bulk)
+        {
+            foreach ($me as $m) {
+                $is_contain = ($you->division_id === $m->division_id) ? true : $is_contain;
+            }
         }
 
-        if (!$is_contain)
+        if (!$is_contain && !$is_bulk)
         {
             \Session::flash('danger_message', "許可されていない部署のデータを承認しようとしました。");
             return back();
