@@ -23,16 +23,16 @@ class FuncRosterControllerTest extends TestCase
     protected static $proxy_user;
     protected $calender_plan_post_dummy_data   = [
         "plan_start_hour"      => 9,
-        "plan_start_time"      => 30,
+        "plan_start_time"      => 00,
         "plan_end_hour"        => 17,
-        "plan_end_time"        => 30,
+        "plan_end_time"        => 00,
         "plan_overtime_reason" => ""
     ];
     protected $calender_actual_post_dummy_data = [
         "actual_start_hour"      => 9,
-        "actual_start_time"      => 30,
+        "actual_start_time"      => 00,
         "actual_end_hour"        => 17,
-        "actual_end_time"        => 30,
+        "actual_end_time"        => 00,
         "actual_rest_reason_id"  => "0",
         "actual_work_type_id"    => 1,
         "actual_overtime_reason" => ""
@@ -49,8 +49,8 @@ class FuncRosterControllerTest extends TestCase
                 \Artisan::call('db:create', ['--dbenv' => 'testing', '--hide' => 'true']);
                 \Artisan::call('migrate');
                 \App\Division::firstOrCreate(["division_id" => '1', 'division_name' => 'test']);
-                \App\WorkType::firstOrCreate(["work_type_id" => '1', "work_type_name" => "テスト用", "work_start_time" => "05:00:00", "work_end_time" => "07:12:32"]);
-                \App\WorkType::firstOrCreate(["work_type_id" => '2', "work_type_name" => "テスト用2", "work_start_time" => "05:20:00", "work_end_time" => "23:12:32"]);
+                \App\WorkType::firstOrCreate(["work_type_id" => '1', "work_type_name" => "テスト用", "work_start_time" => "09:00:00", "work_end_time" => "17:00:00"]);
+                \App\WorkType::firstOrCreate(["work_type_id" => '2', "work_type_name" => "テスト用2", "work_start_time" => "010:20:00", "work_end_time" => "18:00:00"]);
                 \App\Holiday::firstOrCreate(["holiday" => '2017-12-23', "holiday_name" => "勤労感謝の日"]);
                 static::$super_user  = factory(\App\User::class)->create(['is_super_user' => '1']);
                 static::$admin_user  = factory(\App\User::class)->create();
@@ -98,10 +98,12 @@ class FuncRosterControllerTest extends TestCase
                 ->post('/app/roster/calendar/plan/edit/201712/' . $roster[0]->id, array_merge($this->calender_plan_post_dummy_data, ["plan_rest_reason_id" => "", '_token' => csrf_token()]))
                 ->assertRedirectedTo('/app/roster/calendar/201712')
         ;
+       
         $entry_plan   = \App\Roster::where('id', $roster[0]->id)->first();
         $this->assertEquals(0, $unentry_plan->is_plan_entry);
         $this->assertEquals(1, $entry_plan->is_plan_entry);
         unset($roster);
+        
     }
 
     /**
