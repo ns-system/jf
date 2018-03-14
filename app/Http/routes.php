@@ -129,6 +129,8 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
         Route::get('/config/{system}/{category}/export', ['as' => 'export', 'uses' => 'SuisinAdminController@export']);
         Route::post('/config/{system}/{category}/import', ['as' => 'import', 'uses' => 'SuisinAdminController@import']);
         Route::post('/config/{system}/{category}/upload', ['as' => 'upload', 'uses' => 'SuisinAdminController@upload']);
+        Route::post('/config/{system}/{category}/delete', ['as' => 'delete', 'uses' => 'SuisinAdminController@delete']);
+
     });
 });
 /**

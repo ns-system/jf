@@ -11,6 +11,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
         Route::get('/config/{system}/{category}/export',  ['as' => 'export', 'uses' => 'SuisinAdminController@export']);
         Route::post('/config/{system}/{category}/import', ['as' => 'import', 'uses' => 'SuisinAdminController@import']);
         Route::post('/config/{system}/{category}/upload', ['as' => 'upload', 'uses' => 'SuisinAdminController@upload']);
+//        Route::post('/config/{system}/{category}/delete', ['as' => 'delete', 'uses' => 'SuisinAdminController@delete']);
         Route::group(['as' => 'user::', 'prefix' => '/user'], function() {
             Route::get('/',            ['as' => 'index',  'uses' => 'RosterUserController@indexAdmin']);
             Route::get('/{id}',        ['as' => 'show',   'uses' => 'RosterUserController@showAdmin']);

@@ -12,7 +12,7 @@
 {{--                         <a href="{{route('app::roster::accept::calendar', ['ym'=>$cnt->month_id, 'div'=>$cnt->division_id, 'all'=>'part'])}}" class="btn btn-primary btn-block"> --}}
                         <a href="{{route('app::roster::accept::calendar', ['ym'=>$cnt->month_id, 'div'=>$cnt->division_id])}}" class="btn btn-primary btn-block">
                             {{$cnt->division_name}}
-                            <span class="badge">{{date('n月', strtotime($cnt->month_id.'01'))}} / {{$cnt->total}}件</span>
+                            <span class="badge">{{date('n月', strtotime($cnt->month_id.'01'))}} / {{$cnt->total}}件</span>{{ var_dump($cnt->division_id) }}
                         </a>
                     </div>
                 </div>
