@@ -42,7 +42,7 @@ class FuncRosterUserControllerTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系_一般ユーザーで部署の登録ができる() {
+    public function 正常系_一般ユーザーで勤怠ユーザーの登録ができる() {
         $actor = $this->user;
         $this->actingAs($actor)
                 ->visit('/app/roster/user/' . $actor->id)
@@ -207,6 +207,63 @@ class FuncRosterUserControllerTest extends TestCase
 
         $actual_1 = \App\ControlDivision::where('user_id', '=', $user->id)->get()->toArray();
         $this->assertEquals([], $actual_1);
+    }
+    /**
+     * @tests
+     */
+    public function 正常系_一般ユーザーで勤怠ユーザーの登録後部署の変更ができなくなる() {
+        $actor = $this->user;
+        $this->actingAs($actor)
+                ->visit('/app/roster/user/' . $actor->id)
+                ->select('1', 'division_id')
+                ->check('is_chief')
+                ->press('submit')
+                ->seePageIs('/app/roster/user/' . $actor->id)
+                ->see('ユーザーの更新が完了しました。')
+                ->dontSee('要修正')
+                ->select('2', 'work_type_id')
+                ->press('submit')
+                ->seePageIs('/app/roster/user/' . $actor->id)
+                ->see('ユーザーの更新が完了しました。')
+                ->dontSee('要修正')
+        ;
+        $this->actingAs($actor)
+                ->visit('/app/roster/user/' . $actor->id)
+                ->dontSee("<label>部署</label>")
+                ->dontSee('<select class="form-control" name="division_id">')
+                ;
+        
+    }
+     /**
+     * @tests
+     */
+    public function 正常系_一般ユーザーで勤怠ユーザーの登録後部署を入力しなくても標準勤務形態を変更できる() {
+        $actor = $this->user;
+        $this->actingAs($actor)
+                ->visit('/app/roster/user/' . $actor->id)
+                ->select('1', 'division_id')
+                ->check('is_chief')
+                ->press('submit')
+                ->seePageIs('/app/roster/user/' . $actor->id)
+                ->see('ユーザーの更新が完了しました。')
+                ->dontSee('要修正')
+                ->select('2', 'work_type_id')
+                ->press('submit')
+                ->seePageIs('/app/roster/user/' . $actor->id)
+                ->see('ユーザーの更新が完了しました。')
+                ->dontSee('要修正')
+        ;
+        $this->actingAs($actor)
+                ->visit('/app/roster/user/' . $actor->id)
+                ->dontSee("<label>部署</label>")
+                ->dontSee('<select class="form-control" name="division_id">')
+                ->select('2', 'work_type_id')
+                ->press('submit')
+                ->seePageIs('/app/roster/user/' . $actor->id)
+                ->see('ユーザーの更新が完了しました。')
+                ->dontSee('要修正')
+                ;
+        
     }
 
 }
