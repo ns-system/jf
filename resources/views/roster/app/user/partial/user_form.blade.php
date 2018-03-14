@@ -5,7 +5,7 @@
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 
-        @if(empty($user) || !$user->exists())
+        @if(empty($user) || empty($user->user_id))
         <p>
             <label>部署</label>
             <select class="form-control" name="division_id">
