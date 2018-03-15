@@ -143,6 +143,54 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_委託者リストでマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Consignor::truncate();
+        \App\ConsignorGroup::truncate();
+        \App\Consignor::insert($this->preregistration_consignor_data);
+        \App\ConsignorGroup::insert($this->dummy_consignor_group_data);
+        $file_name = '委託者リスト.csv';
+        $system    = 'Suisin';
+        $category  = "Consignor";
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs(route('admin::suisin::import', ['system' => $system, 'category' => $category,]))
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正')
+        ;
+        $csv_file  = file($path);
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data  = explode(',', $csv_file[$i]);
+            $where = [
+                'consignor_code'         => trim($data[0]),
+                'consignor_name'         => trim($data[1]),
+                'display_consignor_name' => trim($data[2]),
+                'consignor_group_id'     => trim($data[3]),
+            ];
+            $res   = \App\Consignor::where($where)->count();
+            $this->assertEquals($res, 1);
+        }
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Consignor::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_委託者リストで内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Consignor::truncate();
@@ -247,6 +295,45 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_委託者グループでマスタの削除ができる() {
+        $user      = static::$user;
+        \App\ConsignorGroup::truncate();
+        $file_name = '委託者グループ.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/ConsignorGroup')
+                ->seePageIs('/admin/suisin/config/Suisin/ConsignorGroup')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/ConsignorGroup/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正')
+        ;
+        $csv_file  = file($path);
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $res  = \App\ConsignorGroup::where('group_name', trim($data[1]))->where('id', $data[0])->count();
+            $this->assertEquals($res, 1);
+        }
+        $system   = 'Suisin';
+        $category = "ConsignorGroup";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\ConsignorGroup::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_委託者グループで内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Consignor::truncate();
@@ -339,6 +426,46 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
             $res  = \App\Models\Common\Prefecture::where(['prefecture_code' => trim($data[0]), 'prefecture_name' => trim($data[1])])->count();
             $this->assertEquals($res, 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_県コードでCSVファイルをマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Common\Prefecture::truncate();
+        $file_name = '県コード.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/Prefecture')
+                ->seePageIs('/admin/suisin/config/Suisin/Prefecture')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/Prefecture/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正')
+        ;
+        $csv_file  = file($path);
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $res  = \App\Models\Common\Prefecture::where(['prefecture_code' => trim($data[0]), 'prefecture_name' => trim($data[1])])->count();
+            $this->assertEquals($res, 1);
+        }
+
+        $system   = 'Suisin';
+        $category = "Prefecture";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Common\Prefecture::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -442,6 +569,47 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
             $res  = \App\Models\Common\Store::where('prefecture_code', trim($data[0]))->where('store_number', trim($data[1]))->where('store_name', trim($data[3]))->count();
             $this->assertEquals($res, 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_店番でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Common\Prefecture::truncate();
+        \App\Models\Common\Store::truncate();
+        \App\Models\Common\Prefecture::insert($this->dummy_prefecture_data);
+        $file_name = '店番.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/Store')
+                ->seePageIs('/admin/suisin/config/Suisin/Store')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/Store/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正')
+        ;
+        $csv_file  = file($path);
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $res  = \App\Models\Common\Store::where('prefecture_code', trim($data[0]))->where('store_number', trim($data[1]))->where('store_name', trim($data[3]))->count();
+            $this->assertEquals($res, 1);
+        }
+        $system   = 'Suisin';
+        $category = "Store";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Common\Store::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -568,6 +736,57 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_小規模店番でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Common\Prefecture::truncate();
+        \App\Models\Common\Store::truncate();
+        \App\Models\Common\SmallStore::truncate();
+        \App\Models\Common\Prefecture::insert($this->dummy_prefecture_data);
+        \App\Models\Common\Store::insert($this->dummy_store_data);
+        $file_name = '小規模店番.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/SmallStore')
+                ->seePageIs('/admin/suisin/config/Suisin/SmallStore')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/SmallStore/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正')
+        ;
+        $csv_file  = file($path);
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data  = explode(',', $csv_file[$i]);
+            $where = [
+                'prefecture_code'    => trim($data[0]),
+                'store_number'       => trim($data[1]),
+                'control_store_code' => trim($data[2]),
+                'small_store_number' => trim($data[3]),
+                'small_store_name'   => trim($data[7]),
+            ];
+            $res   = \App\Models\Common\SmallStore::where($where)->count();
+            $this->assertEquals($res, 1);
+        }
+
+        $system   = 'Suisin';
+        $category = "SmallStore";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Common\SmallStore::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_小規模店番で内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Models\Common\Prefecture::truncate();
@@ -676,13 +895,57 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
                 ->dontSee('要修正')
         ;
         $csv_file  = file($path);
-       exec("php artisan queue:listen --timeout=4");
+        exec("php artisan queue:listen --timeout=4");
         sleep(5);
         for ($i = 1; $i < count($csv_file); $i++) {
             $data = explode(',', $csv_file[$i]);
             $res  = \App\Models\Common\Area::where('prefecture_code', trim($data[0]))->where('store_number', trim($data[1]))->where('area_code', trim($data[3]))->where('area_name', trim($data[7]))->count();
             $this->assertEquals($res, 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_地区コードでマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Common\Prefecture::truncate();
+        \App\Models\Common\Store::truncate();
+        \App\Models\Common\SmallStore::truncate();
+        \App\Models\Common\Prefecture::insert($this->dummy_prefecture_data);
+        \App\Models\Common\Store::insert($this->dummy_store_data);
+        \App\Models\Common\SmallStore::insert($this->dummy_smallstore_data);
+        $file_name = '地区コード.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/Area')
+                ->seePageIs('/admin/suisin/config/Suisin/Area')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/Area/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正')
+        ;
+        $csv_file  = file($path);
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $res  = \App\Models\Common\Area::where('prefecture_code', trim($data[0]))->where('store_number', trim($data[1]))->where('area_code', trim($data[3]))->where('area_name', trim($data[7]))->count();
+            $this->assertEquals($res, 1);
+        }
+        $system   = 'Suisin';
+        $category = "Area";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Common\Area::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -805,6 +1068,53 @@ class FuncSuisinAdminControllerConsignorAreaTest extends TestCase
             $res  = \App\ControlStore::where('prefecture_code', trim($data[0]))->where('control_store_code', trim($data[1]))->where('control_store_name', trim($data[3]))->count();
             $this->assertEquals($res, 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_管轄店舗でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Common\Prefecture::truncate();
+        \App\Models\Common\Store::truncate();
+        \App\Models\Common\SmallStore::truncate();
+        \App\Models\Common\Area::truncate();
+        \App\ControlStore::truncate();
+        \App\Models\Common\Prefecture::insert($this->dummy_prefecture_data);
+        \App\Models\Common\Store::insert($this->dummy_store_data);
+        \App\Models\Common\SmallStore::insert($this->dummy_smallstore_data);
+        \App\Models\Common\Area::insert($this->dummy_area_data);
+        $file_name = '管轄店舗.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/ControlStore')
+                ->seePageIs('/admin/suisin/config/Suisin/ControlStore')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/ControlStore/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正')
+        ;
+        $csv_file  = file($path);
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $res  = \App\ControlStore::where('prefecture_code', trim($data[0]))->where('control_store_code', trim($data[1]))->where('control_store_name', trim($data[3]))->count();
+            $this->assertEquals($res, 1);
+        }
+        $system   = 'Suisin';
+        $category = "ControlStore";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\ControlStore::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
