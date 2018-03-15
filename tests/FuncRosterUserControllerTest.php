@@ -22,13 +22,15 @@ class FuncRosterUserControllerTest extends TestCase
         }
         \App\Division::truncate();
         \App\WorkType::truncate();
-
+        \App\User::truncate();
+        \App\RosterUser::truncate();
+        \App\WorkType::truncate();
         $this->user  = factory(\App\User::class)->create();
         $this->chief = factory(\App\User::class)->create();
         $this->admin = factory(\App\User::class)->create();
         $this->super = factory(\App\User::class)->create();
-        \App\Division::insert([['division_id' => 1, 'division_name' => 'division_1'], ['division_id' => 2, 'division_name' => 'division_2']]);
-        \App\WorkType::insert([['work_type_id' => 1, 'work_type_name' => 'work_type_1'], ['work_type_id' => 2, 'work_type_name' => 'work_type_2']]);
+        \App\Division::insert([['division_id' => 1, 'division_name' => 'division_1'], ['division_id' => 2, 'division_name' => 'division_2',]]);
+        \App\WorkType::insert([['work_type_id' => 1, 'work_type_name' => 'work_type_1',"work_start_time" => "09:00:00", "work_end_time" => "17:00:00"], ['work_type_id' => 2, 'work_type_name' => 'work_type_2',"work_start_time" => "10:00:00", "work_end_time" => "18:00:00"]]);
 
         $this->super->is_super_user = true;
         $this->super->save();
