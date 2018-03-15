@@ -110,6 +110,46 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_科目コードでマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Common\Subject::truncate();
+        $file_name = '科目コード.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/Subject')
+                ->seePageIs('/admin/suisin/config/Suisin/Subject')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/Subject/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Common\Subject::
+                            where('subject_code', trim($data[0]))->
+                            where('subject_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "Subject";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Common\Subject::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_科目コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Models\Common\Subject::truncate();
@@ -205,6 +245,48 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
             ];
             $this->assertEquals(\App\Models\Common\Industry::where($where)->count(), 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_業種コードでマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Common\Industry::truncate();
+        $file_name = '業種コード.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/Industry')
+                ->seePageIs('/admin/suisin/config/Suisin/Industry')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/Industry/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data  = explode(',', $csv_file[$i]);
+            $where = [
+                'industry_code'    => trim($data[0]),
+                'industry_name'    => trim($data[1]),
+                'industry_content' => trim($data[2]),
+            ];
+            $this->assertEquals(\App\Models\Common\Industry::where($where)->count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "Industry";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Common\Industry::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -310,6 +392,48 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_資格区分でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Common\Qualification::truncate();
+        $file_name = '資格区分.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/Qualification')
+                ->seePageIs('/admin/suisin/config/Suisin/Qualification')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/Qualification/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data  = explode(',', $csv_file[$i]);
+            $where = [
+                'qualification_code' => trim($data[0]),
+                'qualification_type' => trim($data[1]),
+                'qualification_name' => trim($data[2]),
+            ];
+            $this->assertEquals(\App\Models\Common\Qualification::where($where)->count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "Qualification";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Common\Qualification::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_資格区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Models\Common\Qualification::truncate();
@@ -403,6 +527,47 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
             ];
             $this->assertEquals(\App\Models\Common\Personality::where($where)->count(), 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_人格コードでマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Common\Personality::truncate();
+        $file_name = '人格コード.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/Personality')
+                ->seePageIs('/admin/suisin/config/Suisin/Personality')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/Personality/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data  = explode(',', $csv_file[$i]);
+            $where = [
+                'personality_code' => trim($data[0]),
+                'personality_name' => trim($data[1]),
+            ];
+            $this->assertEquals(\App\Models\Common\Personality::where($where)->count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "Personality";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Common\Personality::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -507,6 +672,47 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_課税区分でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Deposit\Taxation::truncate();
+        $file_name = '課税区分.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/DepositTaxation')
+                ->seePageIs('/admin/suisin/config/Suisin/DepositTaxation')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/DepositTaxation/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data  = explode(',', $csv_file[$i]);
+            $where = [
+                'taxation_code' => trim($data[0]),
+                'taxation_name' => trim($data[1]),
+            ];
+            $this->assertEquals(\App\Models\Deposit\Taxation::where($where)->count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "DepositTaxation";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Deposit\Taxation::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_課税区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Models\Deposit\Taxation::truncate();
@@ -606,6 +812,47 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_期間コードでマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Deposit\Term::truncate();
+        $file_name = '期間コード.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/DepositTerm')
+                ->seePageIs('/admin/suisin/config/Suisin/DepositTerm')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/DepositTerm/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data  = explode(',', $csv_file[$i]);
+            $where = [
+                'term_code' => trim($data[0]),
+                'term_name' => trim($data[1]),
+            ];
+            $this->assertEquals(\App\Models\Deposit\Term::where($where)->count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "DepositTerm";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Deposit\Term::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_期間コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Models\Deposit\Term::truncate();
@@ -700,6 +947,47 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
             ];
             $this->assertEquals(\App\Models\Deposit\Continuation::where($where)->count(), 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_継続区分でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Deposit\Continuation::truncate();
+        $file_name = '継続区分.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/DepositContinuation')
+                ->seePageIs('/admin/suisin/config/Suisin/DepositContinuation')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/DepositContinuation/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data  = explode(',', $csv_file[$i]);
+            $where = [
+                'continuation_code' => trim($data[0]),
+                'continuation_name' => trim($data[1]),
+            ];
+            $this->assertEquals(\App\Models\Deposit\Continuation::where($where)->count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "DepositContinuation";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Deposit\Continuation::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -809,6 +1097,50 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_貯金種類コードでマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Deposit\Category::truncate();
+        \App\Models\Common\Subject::truncate();
+        \App\Models\Common\Subject::insert($this->dummy_subject_code_data);
+        $file_name = '貯金種類コード.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/DepositCategory')
+                ->seePageIs('/admin/suisin/config/Suisin/DepositCategory')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/DepositCategory/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data  = explode(',', $csv_file[$i]);
+            $where = [
+                'subject_code'  => trim($data[0]),
+                'category_code' => trim($data[2]),
+                'category_name' => trim($data[3]),
+            ];
+            $this->assertEquals(\App\Models\Deposit\Category::where($where)->count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "DepositCategory";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Deposit\Category::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_貯金種類コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Models\Deposit\Category::truncate();
@@ -907,6 +1239,47 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
             ];
             $this->assertEquals(\App\Models\Deposit\BankbookType::where($where)->count(), 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_通証タイプでマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Deposit\BankbookType::truncate();
+        $file_name = '通証タイプ.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/DepositBankbookType')
+                ->seePageIs('/admin/suisin/config/Suisin/DepositBankbookType')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/DepositBankbookType/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data  = explode(',', $csv_file[$i]);
+            $where = [
+                'bankbook_deed_type' => trim($data[0]),
+                'bankbook_deed_name' => trim($data[1]),
+            ];
+            $this->assertEquals(\App\Models\Deposit\BankbookType::where($where)->count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "DepositBankbookType";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Deposit\BankbookType::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -1016,6 +1389,54 @@ class FuncSuisinAdminControllerDepositTest extends TestCase
 
             $this->assertEquals(\App\Models\Deposit\Gist:: where($where)->count(), 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_摘要コードでマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Deposit\Gist::truncate();
+        $file_name = '摘要コード.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/DepositGist')
+                ->seePageIs('/admin/suisin/config/Suisin/DepositGist')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/DepositGist/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+
+            $where = [
+                'gist_code'             => trim($data[0]),
+                'display_gist'          => trim($data[1]),
+                'zenon_gist'            => trim($data[2]),
+                'keizai_gist_kanji'     => trim($data[3]),
+                'keizai_gist_half_kana' => trim($data[4]),
+                'keizai_gist_full_kana' => trim($data[5]),
+                'is_keizai'             => trim($data[6]),
+            ];
+
+            $this->assertEquals(\App\Models\Deposit\Gist:: where($where)->count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "DepositGist";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Deposit\Gist::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
