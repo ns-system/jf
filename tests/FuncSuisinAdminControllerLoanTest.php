@@ -93,6 +93,46 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_貸付種類でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Loan\Category::truncate();
+        $file_name = '貸付種類.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/LoanCategory')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanCategory')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanCategory/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Loan\Category::
+                            where('loan_category_code', trim($data[0]))->
+                            where('loan_category_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "LoanCategory";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Loan\Category::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_貸付種類で内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Models\Loan\Category::truncate();
@@ -186,6 +226,46 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                             where('fishery_form_name', trim($data[1]))->
                             count(), 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_漁業形態でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Loan\Fishery::truncate();
+        $file_name = '漁業形態.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/LoanFishery')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanFishery')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanFishery/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Loan\Fishery::
+                            where('fishery_form_code', trim($data[0]))->
+                            where('fishery_form_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "LoanFishery";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Loan\Fishery::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -289,6 +369,46 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_資金区分でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Loan\Fund::truncate();
+        $file_name = '資金区分.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/LoanFund')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanFund')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanFund/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Loan\Fund::
+                            where('fund_code', trim($data[0]))->
+                            where('fund_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "LoanFund";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Loan\Fund::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_資金区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Models\Loan\Fund::truncate();
@@ -382,6 +502,46 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                             where('fund_usage_name', trim($data[1]))->
                             count(), 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_資金使途区分でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Loan\FundUsageCode::truncate();
+        $file_name = '資金使途区分.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/LoanFundUsageCode')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsageCode')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsageCode/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Loan\FundUsageCode::
+                            where('fund_usage_code', trim($data[0]))->
+                            where('fund_usage_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "LoanFundUsageCode";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Loan\FundUsageCode::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -487,6 +647,47 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_資金補助区分でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Loan\FundAuxiliary::truncate();
+        $file_name = '資金補助区分.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/LoanFundAuxiliary')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanFundAuxiliary')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanFundAuxiliary/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Loan\FundAuxiliary::
+                            where('fund_auxiliary_code', trim($data[0]))->
+                            where('fund_auxiliary_category', trim($data[1]))->
+                            where('fund_auxiliary_name', trim($data[2]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "LoanFundAuxiliary";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Loan\FundAuxiliary::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_資金補助区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Models\Loan\FundAuxiliary::truncate();
@@ -580,6 +781,46 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                             where('fund_usage_name', trim($data[1]))->
                             count(), 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_資金用途でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Loan\FundUsage::truncate();
+        $file_name = '資金用途.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/LoanFundUsage')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsage')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanFundUsage/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Loan\FundUsage::
+                            where('fund_usage', trim($data[0]))->
+                            where('fund_usage_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "LoanFundUsage";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Loan\FundUsage::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -683,6 +924,46 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_自振区分でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Loan\JifuriCode::truncate();
+        $file_name = '自振区分.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/LoanJifuriCode')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanJifuriCode')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanJifuriCode/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Loan\JifuriCode::
+                            where('jifuri_code', trim($data[0]))->
+                            where('jifuri_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "LoanJifuriCode";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Loan\JifuriCode::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_自振区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Models\Loan\JifuriCode::truncate();
@@ -776,6 +1057,46 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                             where('phased_money_rate_name', trim($data[1]))->
                             count(), 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_段階金利制区分でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Loan\PhasedMoneyRate::truncate();
+        $file_name = '段階金利制区分.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/LoanPhasedMoneyRate')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanPhasedMoneyRate')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanPhasedMoneyRate/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Loan\PhasedMoneyRate::
+                            where('phased_money_rate_code', trim($data[0]))->
+                            where('phased_money_rate_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "LoanPhasedMoneyRate";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Loan\PhasedMoneyRate::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -879,6 +1200,46 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_担保コードでマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Loan\Collateral::truncate();
+        $file_name = '担保コード.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/LoanCollateral')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanCollateral')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanCollateral/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Loan\Collateral::
+                            where('collateral_code', trim($data[0]))->
+                            where('collateral_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "LoanCollateral";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Loan\Collateral::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_担保コードで内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Models\Loan\Collateral::truncate();
@@ -972,6 +1333,46 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                             where('security_institution_name', trim($data[1]))->
                             count(), 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_保証機関コードでマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Loan\SecurityInstitution::truncate();
+        $file_name = '保証機関コード.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/LoanSecurityInstitution')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanSecurityInstitution')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanSecurityInstitution/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Loan\SecurityInstitution::
+                            where('security_institution_code', trim($data[0]))->
+                            where('security_institution_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "LoanSecurityInstitution";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Loan\SecurityInstitution::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -1072,6 +1473,46 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
         }
     }
 
+     /**
+     * @tests
+     */
+    public function 正常系_利子補給助成機関区分でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Loan\SubsidyInstitution::truncate();
+        $file_name = '利子補給・助成機関区分.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/LoanSubsidyInstitution')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyInstitution')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyInstitution/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Loan\SubsidyInstitution::
+                            where('subsidy_institution_code', trim($data[0]))->
+                            where('subsidy_institution_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "LoanSubsidyInstitution";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Loan\SubsidyInstitution::count();
+        $this->assertEquals($res, 0);
+        
+    }
     /**
      * @tests
      */
@@ -1173,6 +1614,46 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_利子補給助成区分でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Loan\Subsidy::truncate();
+        $file_name = '利子補給・助成区分.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/LoanSubsidy')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidy')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidy/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Loan\Subsidy::
+                            where('subsidy_code', trim($data[0]))->
+                            where('subsidy_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "LoanSubsidy";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Loan\Subsidy::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_利子補給助成区分で内容に不備のあるCSVファイルがインポートされたときエラー() {
         $user      = static::$user;
         \App\Models\Loan\Subsidy::truncate();
@@ -1266,6 +1747,46 @@ class FuncSuisinAdminControllerLoanTest extends TestCase
                             where('subsidy_calculation_name', trim($data[1]))->
                             count(), 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_利子補給助成計算区分でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\Models\Loan\SubsidyCalculation::truncate();
+        $file_name = '利子補給・助成計算区分.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/suisin/config/Suisin/LoanSubsidyCalculation')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyCalculation')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/suisin/config/Suisin/LoanSubsidyCalculation/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Models\Loan\SubsidyCalculation::
+                            where('subsidy_calculation_code', trim($data[0]))->
+                            where('subsidy_calculation_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Suisin';
+        $category = "LoanSubsidyCalculation";
+        $this->actingAs($user)
+                ->visit(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::suisin::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Models\Loan\SubsidyCalculation::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
