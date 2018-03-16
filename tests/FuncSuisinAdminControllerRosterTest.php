@@ -123,6 +123,47 @@ class FuncSuisinAdminControllerRosterTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_勤務時間マスタの削除ができる() {
+        \App\WorkType::truncate();
+        $file_name = '勤務時間マスタ.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs(static::$user)
+                ->visit('/admin/roster/config/Roster/WorkType')
+                ->seePageIs('/admin/roster/config/Roster/WorkType')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/roster/config/Roster/WorkType/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\WorkType::
+                            where('work_type_id', trim($data[0]))->
+                            where('work_type_name', trim($data[1]))->
+                            where('work_start_time', trim($data[2]))->
+                            where('work_end_time', trim($data[3]))->
+                            count(), 1);
+        }
+        $system   = 'Roster';
+        $category = "WorkType";
+        $this->actingAs(static::$user)
+                ->visit(route('admin::roster::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::roster::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\WorkType::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_勤務時間マスタで内容に不備のあるCSVファイルがインポートされたときエラー() {
         \App\WorkType::truncate();
         $file_name = '勤務時間マスタ.csv';
@@ -216,6 +257,46 @@ class FuncSuisinAdminControllerRosterTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_部署マスタの削除ができる() {
+
+        \App\Division::truncate();
+        $file_name = '部署マスタ.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs(static::$user)
+                ->visit('/admin/roster/config/Roster/Division')
+                ->seePageIs('/admin/roster/config/Roster/Division')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/roster/config/Roster/Division/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Division::
+                            where('division_id', trim($data[0]))->
+                            where('division_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Roster';
+        $category = "Division";
+        $this->actingAs(static::$user)
+                ->visit(route('admin::roster::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::roster::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Division::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_部署マスタで内容に不備のあるCSVファイルがインポートされたときエラー() {
         \App\Division::truncate();
         $file_name = '部署マスタ.csv';
@@ -303,6 +384,46 @@ class FuncSuisinAdminControllerRosterTest extends TestCase
                             where('rest_reason_name', trim($data[1]))->
                             count(), 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_休暇マスタの削除ができる() {
+
+        \App\Rest::truncate();
+        $file_name = '休暇マスタ.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs(static::$user)
+                ->visit('/admin/roster/config/Roster/Rest')
+                ->seePageIs('/admin/roster/config/Roster/Rest')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/roster/config/Roster/Rest/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Rest::
+                            where('rest_reason_id', trim($data[0]))->
+                            where('rest_reason_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Roster';
+        $category = "Rest";
+        $this->actingAs(static::$user)
+                ->visit(route('admin::roster::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::roster::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Rest::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -402,6 +523,46 @@ class FuncSuisinAdminControllerRosterTest extends TestCase
     /**
      * @tests
      */
+    public function 正常系_ユーザーマスタの削除ができる() {
+
+
+        $file_name = 'ユーザーマスタ.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs(static::$user)
+                ->visit('/admin/roster/config/Roster/RosterUser')
+                ->seePageIs('/admin/roster/config/Roster/RosterUser')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/roster/config/Roster/RosterUser/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\RosterUser::
+                            where('user_id', trim($data[0]))->
+                            where('staff_number', trim($data[4]))->
+                            count(), 1);
+        }
+        $system   = 'Roster';
+        $category = "RosterUser";
+        $this->actingAs(static::$user)
+                ->visit(route('admin::roster::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::roster::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\RosterUser::count();
+        $this->assertEquals($res, 0);
+    }
+
+    /**
+     * @tests
+     */
     public function 異常系_ユーザーマスタで内容に不備のあるCSVファイルがインポートされたときエラー() {
 
 
@@ -492,6 +653,46 @@ class FuncSuisinAdminControllerRosterTest extends TestCase
                             where('holiday_name', trim($data[1]))->
                             count(), 1);
         }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_休日マスタの削除ができる() {
+
+        \App\Holiday::truncate();
+        $file_name = '休日マスタ.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs(static::$user)
+                ->visit('/admin/roster/config/Roster/Holiday')
+                ->seePageIs('/admin/roster/config/Roster/Holiday')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/roster/config/Roster/Holiday/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正');
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\Holiday::
+                            where('holiday', trim($data[0]))->
+                            where('holiday_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Roster';
+        $category = "Holiday";
+        $this->actingAs(static::$user)
+                ->visit(route('admin::roster::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::roster::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\Holiday::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
