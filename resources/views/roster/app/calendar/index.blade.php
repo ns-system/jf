@@ -158,11 +158,11 @@
                         </span>
 
                         @else <span><span class="label label-default">申請</span></span> @endif
-                        @if(!empty($r->plan_work_type_id))      <p class="small">{{$types[$r->plan_work_type_id]['name']}} {{$types[$r->plan_work_type_id]['time']}}</p> @endif
+                        @if(!empty($r->plan_work_type_id))      <p class="small" id="plan_work_type_id_{{$r->id}}">{{$types[$r->plan_work_type_id]['name']}} {{$types[$r->plan_work_type_id]['time']}}</p> @endif
                         @if(!empty($r->plan_overtime_start_time) &&
-                        !empty($r->plan_overtime_end_time))     <p class="small">{{date('G:i', strtotime($r->plan_overtime_start_time))}} ～ {{date('G:i', strtotime($r->plan_overtime_end_time))}}</p> @endif
-                        @if(!empty($r->plan_rest_reason_id))        <p class="small">{{$rests[$r->plan_rest_reason_id]}}</p> @endif
-                        @if(!empty($r->plan_overtime_reason))       <p class="small">{{$r->plan_overtime_reason}}</p> @endif
+                        !empty($r->plan_overtime_end_time))     <p class="small" id="plan_overtime_end_time_{{$r->id}}">{{date('G:i', strtotime($r->plan_overtime_start_time))}} ～ {{date('G:i', strtotime($r->plan_overtime_end_time))}}</p> @endif
+                        @if(!empty($r->plan_rest_reason_id))        <p class="small" id="plan_rest_reason_id_{{$r->id}}">{{$rests[$r->plan_rest_reason_id]}}</p> @endif
+                        @if(!empty($r->plan_overtime_reason))       <p class="small"id="plan_overtime_reason_{{$r->id}}">{{$r->plan_overtime_reason}}</p> @endif
 
                         {{-- Actual --}}
                         @if($r->is_actual_entry)
@@ -174,11 +174,11 @@
                             @else                         <span class="label label-warning">実績</span> @endif
                         </span>
 
-                        @if(!empty($r->actual_work_type_id))      <p class="small">{{$types[$r->actual_work_type_id]['name']}} {{$types[$r->actual_work_type_id]['time']}}</p> @endif
+                        @if(!empty($r->actual_work_type_id))      <p class="small" id="actual_work_type_id_{{$r->id}}">{{$types[$r->actual_work_type_id]['name']}} {{$types[$r->actual_work_type_id]['time']}}</p> @endif
                         @if(!empty($r->actual_overtime_start_time) &&
-                        !empty($r->actual_overtime_end_time))     <p class="small">{{date('G:i',strtotime($r->actual_overtime_start_time))}} ～ {{date('G:i', strtotime($r->actual_overtime_end_time))}}</p> @endif
-                        @if(!empty($r->actual_rest_reason_id))        <p class="small">{{$rests[$r->actual_rest_reason_id]}}</p> @endif
-                        @if(!empty($r->actual_overtime_reason))       <p class="small">{{$r->actual_overtime_reason}}</p> @endif
+                        !empty($r->actual_overtime_end_time))     <p class="small" id="actual_overtime_end_time_{{$r->id}}">{{date('G:i',strtotime($r->actual_overtime_start_time))}} ～ {{date('G:i', strtotime($r->actual_overtime_end_time))}}</p> @endif
+                        @if(!empty($r->actual_rest_reason_id))        <p class="small" id="actual_rest_reason_id_{{$r->id}}">{{$rests[$r->actual_rest_reason_id]}}</p> @endif
+                        @if(!empty($r->actual_overtime_reason))       <p class="small" id="actual_overtime_reason_{{$r->id}}">{{$r->actual_overtime_reason}}</p> @endif
                         @endif
                     </div>
                     @endif
