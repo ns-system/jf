@@ -98,12 +98,12 @@ class FuncRosterControllerTest extends TestCase
                 ->post('/app/roster/calendar/plan/edit/201712/' . $roster[0]->id, array_merge($this->calender_plan_post_dummy_data, ["plan_rest_reason_id" => "", '_token' => csrf_token()]))
                 ->assertRedirectedTo('/app/roster/calendar/201712')
         ;
-       
-        $entry_plan   = \App\Roster::where('id', $roster[0]->id)->first();
+
+        $entry_plan = \App\Roster::where('id', $roster[0]->id)->first();
         $this->assertEquals(0, $unentry_plan->is_plan_entry);
         $this->assertEquals(1, $entry_plan->is_plan_entry);
         unset($roster);
-        
+       
     }
 
     /**
@@ -220,6 +220,49 @@ class FuncRosterControllerTest extends TestCase
         unset($roster);
     }
 
+    /**
+     * @tests
+     */
+    public function 正常系_登録した勤務予定実績データが正しく表示される() {
+        \App\Roster::truncate();
+        \Session::start();
+        $roster = [];
+        for ($i = 1; $i <= 31; $i++) {
+            $roster[] = \App\Roster::create(['user_id' => static::$normal_user->id, "plan_work_type_id" => "1", "entered_on" => "2017-12-" . $i, "month_id" => "201712"]);
+        }
+
+        $unentry_plan = \App\Roster::where('id', 1)->first();
+        $this->actingAs(static::$normal_user)
+                ->visit('/app/roster/calendar/201712')
+                ->post('/app/roster/calendar/plan/edit/201712/' . $roster[0]->id, array_merge($this->calender_plan_post_dummy_data, ["plan_rest_reason_id" => "", '_token' => csrf_token()]))
+                ->assertRedirectedTo('/app/roster/calendar/201712')
+        ;
+        
+
+        $this->actingAs(static::$normal_user)
+                ->visit('/app/roster/calendar/201712')
+                ->post('/app/roster/calendar/actual/edit/201712/' . $roster[0]->id, array_merge([
+                    "actual_start_hour"      => 10,
+                    "actual_start_time"      => 00,
+                    "actual_end_hour"        => 18,
+                    "actual_end_time"        => 30,
+                    "actual_rest_reason_id"  => "0",
+                    "actual_work_type_id"    => 1,
+                    "actual_overtime_reason" => "a"
+                                ], ['_token' => csrf_token()]))
+                ->assertRedirectedTo('/app/roster/calendar/201712')
+        ;
+        
+
+        $this->actingAs(static::$normal_user)
+                ->visit('/app/roster/calendar/201712')
+                ->see("class=\"small\" id=\"plan_overtime_end_time_1\">9:00 ～ 17:00")
+                ->see("class=\"small\" id=\"actual_overtime_end_time_1\">10:00 ～ 18:30")
+        ;
+
+        unset($roster);
+    }
+
     //異常系_
     /**
      * @tests
@@ -329,5 +372,4 @@ class FuncRosterControllerTest extends TestCase
         ;
         unset($roster);
     }
-
 }
