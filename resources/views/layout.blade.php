@@ -204,11 +204,13 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
                         var color = $(this).attr('data-color');
                         if(color == null) color = 'btn-primary';
                         $(this).removeClass(color).addClass('btn-default');
+                        $(this).find('input[type=checkbox]').attr('checked',false);
                     });
                     var color = $(this).attr('data-color');
                     if(color == null) color = 'btn-primary';
 
                     $(this).removeClass('btn-default').addClass(color);
+                    $(this).find('input[type=checkbox]').attr('checked',true);
                 });
 
                 // +==========================================================

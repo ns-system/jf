@@ -172,10 +172,9 @@ class FuncRosterAcceptControllerTest extends TestCase
                     "month_id"          => "201712",
                     "is_plan_entry"     => 1,
                     "is_plan_accept"    => 1,
-                    "is_actual_entry"   => 0,
+                    "is_actual_entry"   => 1,
                     "is_actual_accept"  => 0]);
-            }
-            else
+            } else
             {
                 \App\Roster::create([
                     'user_id'           => $this->normal_user->id,
@@ -197,9 +196,12 @@ class FuncRosterAcceptControllerTest extends TestCase
                 ->see("2017-12-15")
         ;
         for ($j = 1; $j <= 31; $j++) {
+            $checkdate="2017\-12\-" . strval($j);
             if ($j != 15)
             {
-                $this->dontsee("12月" . $j . "日");
+                $this->actingAs($this->admin_user)
+                        ->visit(route_with_query('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id], ['status' => 'part']))
+                        ->dontsee(strval($checkdate) );
             }
         }
     }
@@ -232,6 +234,58 @@ class FuncRosterAcceptControllerTest extends TestCase
             $this->assertTrue(TRUE);
         } catch (\Exception $ex) {
             $this->fail("想定していない例外発生");
+        }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_勤務実績データの未承認の物だけが表示される() {
+        \App\Roster::truncate();
+        for ($i = 1; $i <= 31; $i++) {
+            if ($i % 2 == 0)
+            {
+                \App\Roster::create([
+                    'user_id'           => $this->normal_user->id,
+                    "plan_work_type_id" => "1",
+                    "entered_on"        => "2017-12-" . $i,
+                    "month_id"          => "201712",
+                    "is_plan_entry"     => 1,
+                    "is_plan_accept"    => 0,
+                    "is_actual_entry"   => 0,
+                    "is_actual_accept"  => 0]);
+            } else
+            {
+                \App\Roster::create([
+                    'user_id'           => $this->normal_user->id,
+                    "plan_work_type_id" => "1",
+                    "entered_on"        => "2017-12-" . $i,
+                    "month_id"          => "201712",
+                    "is_plan_entry"     => 1,
+                    "is_plan_accept"    => 1,
+                    "is_actual_entry"   => 1,
+                    "is_actual_accept"  => 1]);
+            }
+        }
+//        $unaccept_plan = \App\Roster::where('id', 1)->first();
+        $this->actingAs($this->admin_user)
+                ->visit(route('app::roster::accept::index'))
+                ->see("2017年12月")
+                ->visit(route_with_query('app::roster::accept::calendar', ['ym' => '201712', 'div' => 1, 'user_id' => $this->normal_user->id], ['status' => 'part']))
+                ->see("勤務データ承認")
+                
+        ;
+        for ($j = 1; $j <= 31; $j++) {
+             $checkdate="2017\-12\-" . strval($j);
+            if ($j % 2 != 0)
+            {
+                
+                $this->dontsee($checkdate);
+            }
+            if ($j % 2 == 0)
+            {
+             $this->dontsee($checkdate);
+            }
         }
     }
 

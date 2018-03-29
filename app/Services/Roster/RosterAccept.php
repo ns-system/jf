@@ -42,15 +42,18 @@ class RosterAccept
 
             $is_plan_entered   = (isset($input['plan'][$id])) ? true : false;
             $is_actual_entered = (isset($input['actual'][$id])) ? true : false;
+            $is_plan           = (isset($input['plan'][$id])) ? $input['plan'][$id] : 9;
+            $is_actual         = (isset($input['actual'][$id])) ? $input['actual'][$id] : 9;
+            $can_check_skip    = $this->canSkip($is_plan, $is_actual);
             if ($is_plan_entered)
             {
                 $is_plan_accept = ($input['plan'][$id]) ? true : false;
-                $this->updatePlan($roster, $input, $id, $is_plan_accept);
+                $this->updatePlan($roster, $input, $id, $is_plan_accept, $can_check_skip);
             }
             if ($is_actual_entered)
             {
                 $is_actual_accept = ($input['actual'][$id]) ? true : false;
-                $this->updateActual($roster, $input, $id, $is_actual_accept);
+                $this->updateActual($roster, $input, $id, $is_actual_accept, $can_check_skip);
             }
             $roster->save();
 
@@ -58,7 +61,23 @@ class RosterAccept
         }
     }
 
-    private function updatePlan($roster, $input, $id, $is_plan_accept) {
+    private function canSkip($is_plan, $is_actual) {
+        if ($is_plan == 1)
+        {
+            return true;
+        }
+        if ($is_plan == 0 && $is_actual == 0)
+        {
+            return true;
+        }
+        if ($is_actual == 9)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private function updatePlan($roster, $input, $id, $is_plan_accept, $can_check_skip) {
         if (!$roster->is_plan_entry)
         {
             throw new \Exception("{$roster->entered_on}の予定データが入力されていないようです。");
@@ -86,12 +105,12 @@ class RosterAccept
         }
     }
 
-    private function updateActual($roster, $input, $id, $is_actual_accept) {
+    private function updateActual($roster, $input, $id, $is_actual_accept, $can_check_skip) {
         if (!$roster->is_plan_entry)
         {
             throw new \Exception("{$roster->entered_on}の予定データが入力されていないようです。");
         }
-        if (!$roster->is_plan_accept)
+        if (!$roster->is_plan_accept && !$can_check_skip)
         {
             throw new \Exception("{$roster->entered_on}の予定データが承認されていないようです。先に予定の承認を行ってください。");
         }

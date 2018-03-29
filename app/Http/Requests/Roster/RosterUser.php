@@ -22,16 +22,13 @@ class RosterUser extends Request
      * @return array
      */
     public function rules() {
-//        $input = \Request::only(['is_chief', 'work_type_id']);
         $input = \Request::all();
-        $rules = [
-            'division_id' => 'required|exists:mysql_sinren.sinren_divisions,division_id',
-        ];
 
-//        if (!isset($input['work_type_id']))
-//        {
-//            
-//        }
+        $user_id = \Auth::user()->id;
+        if (!\App\SinrenUser::user($user_id)->exists())
+        {
+            $rules ['division_id'] = 'required|exists:mysql_sinren.sinren_divisions,division_id';
+        }
 
         if (isset($input['is_chief']))
         {

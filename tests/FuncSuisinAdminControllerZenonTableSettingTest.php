@@ -108,7 +108,95 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
                 ->dontSee('要修正')
         ;
-        
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\ZenonCsv::
+                            where('identifier', trim($data[1]))->
+                            where('zenon_data_type_id', trim($data[2]))->
+                            where('zenon_data_name', trim($data[3]))->
+                            where('first_column_position', trim($data[4]))->
+                            where('last_column_position', trim($data[5]))->
+                            where('column_length', trim($data[6]))->
+                            where('reference_return_date', trim($data[7]))->
+                            where('cycle', trim($data[8]))->
+                            where('database_name', trim($data[9]))->
+                            where('table_name', trim($data[10]))->
+                            where('common_table_name', trim($data[11]))->
+                            where('is_cumulative', trim($data[12]))->
+                            where('is_account_convert', trim($data[13]))->
+                            where('is_exist_account_and_deposit', trim($data[14]))->
+                            where('is_process', trim($data[15]))->
+                            where('is_split', trim($data[16]))->
+                            where('is_deposit_split', trim($data[17]))->
+                            where('is_loan_split', trim($data[18]))->
+                            where('zenon_format_id', trim($data[19]))->
+                            where('account_column_name', trim($data[20]))->
+                            where('subject_column_name', trim($data[21]))->
+                            count(), 1);
+        }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_全オン還元CSVファイル設定でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\ZenonCsv::truncate();
+        $file_name = '全オン還元CSVファイル設定.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Admin/ZenonCsv')
+                ->seePageIs('/admin/super_user/config/Admin/ZenonCsv')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/super_user/config/Admin/ZenonCsv/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正')
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\ZenonCsv::
+                            where('identifier', trim($data[1]))->
+                            where('zenon_data_type_id', trim($data[2]))->
+                            where('zenon_data_name', trim($data[3]))->
+                            where('first_column_position', trim($data[4]))->
+                            where('last_column_position', trim($data[5]))->
+                            where('column_length', trim($data[6]))->
+                            where('reference_return_date', trim($data[7]))->
+                            where('cycle', trim($data[8]))->
+                            where('database_name', trim($data[9]))->
+                            where('table_name', trim($data[10]))->
+                            where('common_table_name', trim($data[11]))->
+                            where('is_cumulative', trim($data[12]))->
+                            where('is_account_convert', trim($data[13]))->
+                            where('is_exist_account_and_deposit', trim($data[14]))->
+                            where('is_process', trim($data[15]))->
+                            where('is_split', trim($data[16]))->
+                            where('is_deposit_split', trim($data[17]))->
+                            where('is_loan_split', trim($data[18]))->
+                            where('zenon_format_id', trim($data[19]))->
+                            where('account_column_name', trim($data[20]))->
+                            where('subject_column_name', trim($data[21]))->
+                            count(), 1);
+        }
+        $system   = 'Admin';
+        $category = "ZenonCsv";
+        $this->actingAs(static::$user)
+                ->visit(route('admin::super::config::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::super::config::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\ZenonCsv::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -205,7 +293,65 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
                 ->dontSee('要修正')
         ;
-        
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\ZenonTable::
+                            where('zenon_format_id', trim($data[0]))->
+                            where('serial_number', trim($data[1]))->
+                            where('column_name', trim($data[2]))->
+                            where('japanese_column_name', trim($data[3]))->
+                            where('column_type', trim($data[4]))->
+                            count(), 1);
+        }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_テーブルカラム設定でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\ZenonTable::truncate();
+        \App\ZenonCsv::truncate();
+        \App\ZenonCsv::insert($this->dummy_zenon_csv_data);
+        $file_name = 'テーブルカラム設定.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Admin/ZenonTable')
+                ->seePageIs('/admin/super_user/config/Admin/ZenonTable')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/super_user/config/Admin/ZenonTable/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正')
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\ZenonTable::
+                            where('zenon_format_id', trim($data[0]))->
+                            where('serial_number', trim($data[1]))->
+                            where('column_name', trim($data[2]))->
+                            where('japanese_column_name', trim($data[3]))->
+                            where('column_type', trim($data[4]))->
+                            count(), 1);
+        }
+        $system   = 'Admin';
+        $category = "ZenonTable";
+        $this->actingAs(static::$user)
+                ->visit(route('admin::super::config::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::super::config::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\ZenonTable::count();
+        $this->assertEquals($res, 0);
     }
 
     /**
@@ -300,7 +446,55 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
                 ->dontSee('要修正')
         ;
-       
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\ZenonType::
+                            where('data_type_name', trim($data[1]))->
+                            count(), 1);
+        }
+    }
+
+    /**
+     * @tests
+     */
+    public function 正常系_全オンカテゴリ名でマスタの削除ができる() {
+        $user      = static::$user;
+        \App\ZenonType::truncate();
+        $file_name = '全オン還元データ種類.csv';
+        $path      = storage_path() . '/tests/csvUploadSuccessTestFile/' . $file_name;
+        $this->actingAs($user)
+                ->visit('/admin/super_user/config/Admin/ZenonType')
+                ->seePageIs('/admin/super_user/config/Admin/ZenonType')
+                ->attach($path, 'csv_file')
+                ->press('ImportCSV')
+                ->seePageIs('/admin/super_user/config/Admin/ZenonType/import')
+                ->see('CSVインポート処理を開始しました。処理結果はメールにて通知いたします。')
+                ->dontSee('要修正')
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $csv_file  = file($path);
+        for ($i = 1; $i < count($csv_file); $i++) {
+            $data = explode(',', $csv_file[$i]);
+            $this->assertEquals(\App\ZenonType::
+                            where('data_type_name', trim($data[1]))->
+                            count(), 1);
+        }
+        $system   = 'Admin';
+        $category = "ZenonType";
+        $this->actingAs(static::$user)
+                ->visit(route('admin::super::config::index', ['system' => $system, 'category' => $category,]))
+                ->seePageIs(route('admin::super::config::index', ['system' => $system, 'category' => $category,]))
+                ->post(route('admin::suisin::delete', ['system' => $system, 'category' => $category,]), ['_token' => csrf_token(), "confirm" => 1])
+
+        ;
+        exec("php artisan queue:listen --timeout=4");
+        sleep(5);
+        $res = \App\ZenonType::count();
+        $this->assertEquals($res, 0);
     }
 
     /**

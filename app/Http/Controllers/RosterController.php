@@ -35,11 +35,7 @@ class RosterController extends Controller
         }
         $pages = $this->service->setId($ym)->getPages();
 
-
         $rosters   = \App\Roster::user()->month($ym)->get();
-//        $rosters = \App\Roster::join('','','=','')
-//                ->get();
-//        var_dump($rosters);
         $tmp_types = \App\WorkType::get();
         $tmp_rests = \App\Rest::get();
         $types     = [];
@@ -64,13 +60,9 @@ class RosterController extends Controller
         }
 
         $times = [];
-        foreach ($rosters as $i => $r) {
-//            if($i == 4){
+        foreach ($rosters as $r) {
             $times[$r->id] = $this->service->setTimes($r);
-//                exit();
-//            }
         }
-//        var_dump($times);        exit();
         foreach ($tmp_rests as $r) {
             $rests[$r->rest_reason_id] = $r->rest_reason_name;
         }
@@ -99,10 +91,10 @@ class RosterController extends Controller
         try {
             $this->service->editPlan($id, $request);
             \Session::flash('success_message', '予定データを更新しました。');
-            return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
+            return redirect()->route('app::roster::calendar::show', ['ym' => $ym]);
         } catch (\Exception $e) {
             \Session::flash('warn_message', $e->getMessage());
-            return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
+            return redirect()->route('app::roster::calendar::show', ['ym' => $ym]);
         }
     }
 
@@ -125,11 +117,10 @@ class RosterController extends Controller
             $this->service->editActual($id, $request);
 
             \Session::flash('success_message', '実績データを更新しました。');
-            return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
+            return redirect()->route('app::roster::calendar::show', ['ym' => $ym]);
         } catch (\Exception $e) {
             \Session::flash('warn_message', $e->getMessage());
-            return redirect(route('app::roster::calendar::show', ['ym' => $ym]));
-//            return back();
+            return redirect()->route('app::roster::calendar::show', ['ym' => $ym]);
         }
     }
 

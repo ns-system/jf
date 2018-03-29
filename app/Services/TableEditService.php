@@ -15,6 +15,7 @@ class TableEditService
 
     protected $page_generate_parameter_array;
     protected $model;
+    protected $plane_model;
     protected $html_titles;
     protected $top_page_table_settings;
     protected $raw_csv_en_columns;
@@ -120,7 +121,8 @@ class TableEditService
      *                               データベースの値を利用する場合は必ずget()すること。
      */
     private function setModel(string $model_name, array $join_settings, array $table_orders, $as) {
-        $model = new $model_name;
+        $model             = new $model_name;
+        $this->plane_model = new $model_name;
         if (!$this->isArrayEmpty($join_settings))
         {
             foreach ($join_settings as $join) {
@@ -143,6 +145,10 @@ class TableEditService
         }
         $model       = $model->select(\DB::raw($select));
         $this->model = $model;
+    }
+
+    public function getPlaneModel() {
+        return $this->plane_model;
     }
 
     public function getModel() {

@@ -254,16 +254,28 @@ class CsvExport
         $actual_rows = [];
         foreach ($rs as $r) {
             $ebas001 = $r->staff_number;
-            $lsls001 = date('Y/n/j', strtotime($r->entered_on));
+            $lsls001 = date('Y/m/j', strtotime($r->entered_on));
             $ltlt001 = $lsls001;
             $lsls002 = 1;
             $ltlt002 = 1;
-            $lsls003 = (!empty($r->plan_work_type_id)) ? $r->plan_work_type_id : '';
-            $ltlt003 = (!empty($r->actual_work_type_id)) ? $r->actual_work_type_id : '';
-            $lsls004 = (!empty($r->plan_rest_reason_id)) ? $r->plan_rest_reason_id : '';
-            $ltlt004 = (!empty($r->actual_rest_reason_id)) ? $r->actual_rest_reason_id : '';
-            $ltdt001 = (!empty($r->actual_overtime_start_time) && $r->actual_overtime_start_time != '0000-00-00 00:00:00') ? date('G:i', strtotime($r->actual_overtime_start_time)) : '';
-            $ltdt002 = (!empty($r->actual_overtime_end_time) && $r->actual_overtime_end_time != '0000-00-00 00:00:00') ? date('G:i', strtotime($r->actual_overtime_end_time)) : '';
+            $lsls003 = (!empty($r->plan_work_type_id)) ?
+                    sprintf('%03d', $r->plan_work_type_id) :
+                    '';
+            $ltlt003 = (!empty($r->actual_work_type_id)) ?
+                    sprintf('%03d', $r->actual_work_type_id) :
+                    '';
+            $lsls004 = (!empty($r->plan_rest_reason_id)) ?
+                    $r->plan_rest_reason_id :
+                    '';
+            $ltlt004 = (!empty($r->actual_rest_reason_id)) ?
+                    $r->actual_rest_reason_id :
+                    '';
+            $ltdt001 = (!empty($r->actual_overtime_start_time) && $r->actual_overtime_start_time != '0000-00-00 00:00:00') ?
+                    date('G:i', strtotime($r->actual_overtime_start_time)) :
+                    '';
+            $ltdt002 = (!empty($r->actual_overtime_end_time) && $r->actual_overtime_end_time != '0000-00-00 00:00:00') ?
+                    date('G:i', strtotime($r->actual_overtime_end_time)) :
+                    '';
             $ltlt009 = $r->actual_overtime_reason;
 
             $plan_rows[]   = [$ebas001, $lsls001, $lsls002, $lsls003, $lsls004,];
@@ -283,9 +295,9 @@ class CsvExport
         return ($type === 'plan') ? $this->plan_rows : $this->actual_rows;
     }
 
-    public function export($rows, $file_name, $header) {
+    public function export($rows, $file_name, $header/* , $is_enclose */) {
 //        $obj = new CsvService();
-        return $this->exportCsv($rows, $file_name, $header);
+        return $this->exportCsv($rows, $file_name, $header/* , $is_enclose */);
     }
 
     public function getRawData($input) {

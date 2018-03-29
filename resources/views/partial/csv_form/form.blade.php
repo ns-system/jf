@@ -14,6 +14,17 @@
 
 
             <div class="btn-group" style="margin-bottom: 10px;">
+
+                {{-- @if(!empty($serach_columns)) --}}
+                <button
+                type="button"
+                class="btn btn-danger btn-xs"
+                style="min-width: 75px;"
+                data-toggle="modal"
+                data-target="#deleteForm"
+                >削除</button><span></span>
+                {{-- @endif --}}
+
                 @if(!empty($serach_columns))
                 <button
                 type="button"
@@ -103,6 +114,43 @@
     </div>
 </form>
 
+<!-- モーダル・ダイアログ -->
+<form method="POST" action="{{ route('admin::suisin::delete', ['system'=>$system, 'category'=>$category]) }}">
+    {{ csrf_field() }}
+    <div class="modal fade" id="deleteForm" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary-important">
+                    <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+                    <h4 class="modal-title">削除</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-10 col-md-offset-1">
+                            <div class="text-danger margin-bottom">
+                                <p class="text-center"><b>画面に表示されている全てのマスタデータを削除します。</b></p>
+                                <p class="text-center"><b>作業後、復元することはできません。</b></p>
+                                <p class="text-center"><b>事前のバックアップを強くお勧めいたします。</b></p>
+                            </div>
+                            
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="confirm" value="1"><b>私は理解した上で削除します</b>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-danger" name="delete-submit" onclick="return window.confirm('本当に削除してもよろしいですか？');">削除する</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 
 <script type="text/javascript">
     function checkFile(file_name) {
