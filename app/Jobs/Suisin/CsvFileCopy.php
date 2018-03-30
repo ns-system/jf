@@ -49,7 +49,7 @@ class CsvFileCopy extends Job implements SelfHandling, ShouldQueue
                     ->setDirectoryPath($accumulation_dir_path)
                     ->copyCsvFile()
                     ->tableTemplateCreation()
-                    ->registrationCsvFileToDatabase()
+                    // ->registrationCsvFileToDatabase()
             ;
             $copy_csv_file_service->tempFileErase();
             $copy_csv_file_service->outputForJsonFile($ignore_and_not_exist_file_lists['ignore'], storage_path() . '/jsonlogs', $this->ym . '_ignore_file_list.json');

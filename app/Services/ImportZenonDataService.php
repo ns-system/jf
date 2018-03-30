@@ -317,7 +317,7 @@ class ImportZenonDataService
                 ->orderBy('serial_number', 'asc')
                 ->get()
         ;
-//        $this->debugMemory('uploadToDatabase - init');
+        $this->debugMemory('uploadToDatabase - init');
         foreach ($configs as $c) {
             $types[$c->column_name] = $c->column_type;
             $keys[]                 = $c->column_name;
@@ -334,7 +334,7 @@ class ImportZenonDataService
             'account_column_name' => $monthly_state->account_column_name,
             'subject_column_name' => $monthly_state->subject_column_name,
         ];
-//        $this->debugMemory('uploadToDatabase - beforeGetTableObject');
+        $this->debugMemory('uploadToDatabase - beforeGetTableObject');
         // インサートするモデルを取得する
         try {
             $table        = $this->getTableObject('mysql_zenon', $monthly_state->table_name);
@@ -344,7 +344,7 @@ class ImportZenonDataService
             $this->setPreErrorToMonthlyStatus($monthly_state->id, $e->getMessage());
             return $this->makeErrorLog($monthly_state, $e->getMessage());
         }
-//        $this->debugMemory('uploadToDatabase - afterGetTableObject');
+        $this->debugMemory('uploadToDatabase - afterGetTableObject');
 
         $this->setPreStartToMonthlyStatus($monthly_state->id);
 
@@ -386,7 +386,7 @@ class ImportZenonDataService
                 // MySQLのバージョンによってはプリペアドステートメントが65536までに制限されているため、動的にしきい値を設ける
                 if ($line_number > 0 && (count($bulk) * count($tmp_bulk) + count($tmp_bulk)) > 65000)
                 {
-//                $this->debugMemory('uploadToDatabase - beforeBulkInsert');
+                $this->debugMemory('uploadToDatabase - beforeBulkInsert');
                     $table->insert($bulk);
                     $this->setExecutedRowCountToMonthlyStatus($monthly_state->id, $line_number);
                     unset($bulk);
