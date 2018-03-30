@@ -83,7 +83,7 @@ class CopyCsvFileService
     private function createDirectory($path) {
         if (!file_exists($path))
         {
-            exec("mkdir -m=777 {$path}");
+            exec("mkdir -m 777 -p {$path}");
 //            exec("sudo mkdir -m=777 {$path}");
             return true;
         }
@@ -108,8 +108,9 @@ class CopyCsvFileService
         {
             foreach ($file_lists as $f) {
                 $src       = $temp_file_path . '/' . $f['csv_file_name'];
-                $daily_dir = $accumulation_dir_path . "/" . $this->directorys['daily'] . "/" . $f['monthly_id'];
-                $this->createDirectory($daily_dir);
+                // $daily_dir = $accumulation_dir_path . "/" . $this->directorys['daily'] . "/" . $f['monthly_id'];
+                // $this->createDirectory($daily_dir);
+                // var_dump(file_exists($f['destination']));
                 $this->createDirectory($f["destination"]);
                 $dest      = $f["destination"] . "/" . $f["csv_file_name"];
                 if ($f["cycle"] != 'M')
@@ -227,11 +228,10 @@ class CopyCsvFileService
     public function registrationCsvFileToDatabase() {
 
         $file_lists = [];
-        $monthly_id = $this->monthly_id;
+        $monthly_id = $this->monthly_id - 1;
 //        $tmp_file_lists            = $this->getCsvFileList($this->directory_path . "/" . $this->directorys['temp'] . "/");
 //        $target_monyhly_file_lists = $this->getCsvFileList($this->directory_path . "/" . $this->directorys['monthly'] . "/" . $monthly_id . "/");
         $path       = $this->directory_path . "/" . $this->directorys['monthly'] . "/" . $monthly_id . "/";
-
         $target_monyhly_file_lists = $this->getCsvFileList($path);
         foreach ($target_monyhly_file_lists as $l) {
             $file_lists[$l['identifier']] = $l;
