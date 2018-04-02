@@ -165,22 +165,21 @@ class ProcessStatusController extends Controller
             return back();
         }
         $copy_csv_file_service = new \App\Services\CopyCsvFileService();
-        try {
-            // 週次・日次の場合はDBのスケルトンだけ生成する
-            $copy_csv_file_service->setMonthlyId($id)
-                    ->setDirectoryPath($this->path)
-                    ->tableTemplateCreation(null, $id)
-            ;
-            // 月次の場合はDBにファイル名まで流し込む
-            if ($term_status === 'monthly')
-            {
-                $copy_csv_file_service->registrationCsvFileToDatabase();
-            }
-        } catch (\Exception $exc) {
-            \Session::flash('danger_message', $exc->getMessage());
-            return back();
+//        try {
+        // 週次・日次の場合はDBのスケルトンだけ生成する
+        $copy_csv_file_service->setMonthlyId($id)
+                ->setDirectoryPath($this->path)
+                ->tableTemplateCreation(null, $id)
+        ;
+        // 月次の場合はDBにファイル名まで流し込む
+        if ($term_status === 'monthly')
+        {
+            $copy_csv_file_service->registrationCsvFileToDatabase();
         }
-
+//        } catch (\Exception $exc) {
+//            \Session::flash('danger_message', $exc->getMessage());
+//            return back();
+//        }
         // 場合に応じてリダイレクト先を変える
         try {
             switch ($term_status) {
@@ -566,7 +565,16 @@ class ProcessStatusController extends Controller
                 ->where('table_name', '<>', '')
                 ->get()
         ;
-        return view('admin.month.delete_confirm', ['term_status' => $term_status, 'monthly_id' => $monthly_id, 'table_lists' => $table_lists]);
+        $count       = [];
+        foreach ($table_lists as $table) {
+            try {
+                $counts[$table->key_id] = \DB::connection('mysql_zenon')->table($table->table_name)->where('monthly_id', $table->monthly_id)->count();
+            } catch (\Exception $e) {
+                \Session::flash('danger_message', $e->getMessage());
+                return back();
+            }
+        }
+        return view('admin.month.delete_confirm', ['term_status' => $term_status, 'monthly_id' => $monthly_id, 'table_lists' => $table_lists, 'counts' => $counts]);
     }
 
     public function delete(\App\Http\Requests\Suisin\TableDelete $input) {

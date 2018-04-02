@@ -46,10 +46,7 @@ class TableDelete extends Job implements SelfHandling, ShouldQueue
                     ->first()
             ;
             $tmp   = \DB::connection('mysql_zenon')->transaction(function () use($table) {
-//                $count = \DB::connection('mysql_zenon')->table($table->table_name)->where('monthly_id', '=', $table->monthly_id)->count();
-//                \DB::connection('mysql_zenon')->table($table->table_name)->where('monthly_id', '=', $table->monthly_id)->delete();
                 $db = \DB::connection('mysql_zenon')->table($table->table_name);
-//                \DB::connection('mysql_zenon')->table($table->table_name)->where('monthly_id', '=', $table->monthly_id)->delete();
                 if (!$this->is_monthly_select)
                 {
                     $count = $db->count();
@@ -73,6 +70,14 @@ class TableDelete extends Job implements SelfHandling, ShouldQueue
             });
             $results[] = $tmp;
         }
+        // 月次処理ファイルの削除処理追加
+        $ids = $this->table_ids;
+        \DB::connection('mysql_zenon')->transaction(function () use($ids) {
+            foreach ($ids as $id) {
+                \App\ZenonMonthlyStatus::where('zenon_data_monthly_process_status.id', '=', $id)->delete();
+            }
+        });
+
         $email = $this->email;
 //        $email = 'n.teshima@jf-nssinren.or.jp';
         if ($this->is_email_send)

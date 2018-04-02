@@ -58,7 +58,7 @@
             </div>
         </div>
         <div class="border-bottom"><h2>月別マスタ選択</h2></div>
-        <div class="text-right" data-spy="affix" data-offset-top="120" style="top: 115px; right: 30px; z-index: 1;">
+        <div class="text-right" data-spy="affix" data-offset-top="130" style="top: 115px; right: 30px; z-index: 1;">
             <div style="margin-bottom: 10px;">
                 {!! $rows->render() !!}
             </div>

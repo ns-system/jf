@@ -41,7 +41,12 @@
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <select class="form-control input-sm" multiple size="18" name="tables[]">
                         @foreach($table_lists as $table)
-                        <option value="{{$table->key_id}}">{{$table->zenon_data_name}} / {{$table->table_name}}</option>
+                        <option value="{{$table->key_id}}" @if($counts[$table->key_id] == 0) class="text-muted" @endif>
+                            {{$table->identifier}} / 
+                            {{ number_format(intval($counts[$table->key_id])) }}件 / 
+                            {{$table->zenon_data_name}}
+                            ({{ $table->table_name }})
+                        </option>
                         @endforeach
                     </select>
                     <div class="checkbox">
