@@ -54,8 +54,9 @@ class TableDelete extends Job implements SelfHandling, ShouldQueue
                 }
                 else
                 {
+                    $db    = $db->where('monthly_id', '=', $table->monthly_id)->delete();
                     $count = $db->count();
-                    $db->where('monthly_id', '=', $table->monthly_id)->delete();
+                    $db->delete();
                 }
                 echo "  -- {$table->table_name}" . PHP_EOL .
                 "       件数：" . number_format($count) . "件" . PHP_EOL .
