@@ -45,6 +45,10 @@ class TableDelete extends Job implements SelfHandling, ShouldQueue
                     ->where('zenon_data_monthly_process_status.id', '=', $id)
                     ->first()
             ;
+            if(empty($table) || !$table->exists())
+            {
+                continue;
+            }
             $tmp   = \DB::connection('mysql_zenon')->transaction(function () use($table) {
                 $db = \DB::connection('mysql_zenon')->table($table->table_name);
                 if (!$this->is_monthly_select)
@@ -54,7 +58,7 @@ class TableDelete extends Job implements SelfHandling, ShouldQueue
                 }
                 else
                 {
-                    $db    = $db->where('monthly_id', '=', $table->monthly_id)->delete();
+                    $db    = $db->where('monthly_id', '=', $table->monthly_id);
                     $count = $db->count();
                     $db->delete();
                 }
