@@ -226,9 +226,10 @@ class CopyCsvFileService
     }
 
     public function registrationCsvFileToDatabase() {
-
         $file_lists = [];
-        $monthly_id = $this->monthly_id - 1;
+        // $date     = date('Y-m-d', strtotime($this->monthly_id . '01'));
+        // $monthly_id = date('Ym', strtotime($date . '-1 month'));
+        $monthly_id = $this->monthly_id;
 //        $tmp_file_lists            = $this->getCsvFileList($this->directory_path . "/" . $this->directorys['temp'] . "/");
 //        $target_monyhly_file_lists = $this->getCsvFileList($this->directory_path . "/" . $this->directorys['monthly'] . "/" . $monthly_id . "/");
         $path       = $this->directory_path . "/" . $this->directorys['monthly'] . "/" . $monthly_id . "/";
