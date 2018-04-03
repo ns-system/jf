@@ -47,7 +47,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
          * As         : user::
          */
         Route::group(['prefix' => '/user', 'as' => 'user::'], function() {
-            Route::get('/', ['as' => 'show', 'uses' => 'SuperUserController@show']);
+            Route::get('/', ['as' => 'show', 'uses' => 'SuperUserController@showCounts']);
             Route::get('/search', ['as' => 'search', 'uses' => 'SuperUserController@search']);
             Route::get('/{id}', ['as' => 'detail', 'uses' => 'SuperUserController@user']);
             Route::post('/edit/{id}', ['as' => 'edit', 'uses' => 'SuperUserController@edit']);
@@ -56,6 +56,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
          * As         : term
          */
         Route::group(['prefix' => '/term', 'as' => 'term::'], function() {
+            Route::get('/counts', ['as' => 'count', 'uses' => 'ProcessStatusController@showCount']);
             Route::get('/delete_list/{id}', ['as' => 'delete_list', 'uses' => 'ProcessStatusController@deleteList']);
             Route::post('/delete', ['as' => 'delete', 'uses' => 'ProcessStatusController@delete']);
             Route::get('/{term_status}/delete_confirm/{id}', ['as' => 'delete_confirm', 'uses' => 'ProcessStatusController@deleteConfirm']);

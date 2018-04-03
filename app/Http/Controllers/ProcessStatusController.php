@@ -586,4 +586,24 @@ class ProcessStatusController extends Controller
         return redirect()->route('admin::super::month::show');
     }
 
+    public function showCount() {
+        $tables = \App\ZenonCsv::get();
+        $counts = [];
+        $months = \App\Month::orderBy('monthly_id', 'desc')->get();
+        foreach ($tables as $table) {
+            foreach ($months as $month) {
+//                $counts[$month->monthly_id][$table->id]['monthly_id'] = $month->monthly_id;
+                if (empty($table->table_name))
+                {
+//                    $counts[$table->id][$month->monthly_id]['count'] = 0;
+                    continue;
+                }
+                $counts[$table->id][$month->monthly_id]['table_name'] = $table->table_name;
+                $counts[$table->id][$month->monthly_id]['table_name_jp'] = $table->zenon_data_name;
+                $counts[$table->id][$month->monthly_id]['count']      = \DB::connection('mysql_zenon')->table($table->table_name)->where('monthly_id', $month->monthly_id)->groupBy('monthly_id')->count();
+            }
+        }
+        return view('admin.month.counts', ['counts' => $counts, 'months' => $months]);
+    }
+
 }

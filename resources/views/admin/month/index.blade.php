@@ -64,11 +64,14 @@
             </div>
             <div class="btn-group" style="margin-bottom: 10px;">
                 <a 
+                href="{{route('admin::super::term::count')}}" class="btn btn-primary btn-sm">DB内件数確認</a>
+                <span></span>
+                <a 
                 href="{{route('admin::super::month::copy_confirm', ['id'=>date('Ym')])}}"
                 class="btn btn-primary btn-sm"
                 data-toggle="tooltip"
                 title="CSVファイルをサーバーにアップロードします。この時点ではDBに登録されません。"
-                style="width: 120px;">アップロード</a>
+                >アップロード</a>
                 <span></span>
                 <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#job-status">処理状況確認</button>
                 <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#add-month">新規ID生成</button>
