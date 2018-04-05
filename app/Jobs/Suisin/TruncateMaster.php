@@ -38,24 +38,24 @@ class TruncateMaster extends Job implements SelfHandling, ShouldQueue
     }
 
     public function handle() {
-        echo "==== TruncateMaster ====" . PHP_EOL;
-        echo "[start : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
-        $email = $this->email;
+
         try {
+            echo "==== TruncateMaster ====" . PHP_EOL;
+            echo "[start : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
+            $email   = $this->email;
             $results = $this->truncateTable();
             \Mail::send('emails.table_delete', ['results' => $results], function($message) use($email) {
                 $message->to($email)
                         ->subject("マスタファイルの削除が完了しました")
                 ;
             });
-        } catch (\Exception $e) {
-            echo $e->getMessage() . PHP_EOL;
-            $this->sendErrorMessage($e, $email);
-            exit();
+            echo "  -- メール送信先：{$email}" . PHP_EOL;
+            echo "[end   : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
+        } catch (\Throwable $e) {
+            echo '[error : ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
+            $this->sendErrorMessage($e, $this->email);
+            throw $e;
         }
-
-        echo "  -- メール送信先：{$email}" . PHP_EOL;
-        echo "[end   : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
     }
 
     private function truncateTable() {

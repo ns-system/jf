@@ -66,39 +66,30 @@ class MasterUpload extends Job implements SelfHandling, ShouldQueue
     }
 
     public function handle() {
-        $email = $this->email;
-//        $email = 'n.teshima@jf-nssinren.or.jp';
-        echo "==== MasterUpload ====" . PHP_EOL;
-        echo "[start : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
 
         try {
+            $email   = $this->email;
+//        $email = 'n.teshima@jf-nssinren.or.jp';
+            echo "==== MasterUpload ====" . PHP_EOL;
+            echo "[start : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
             $service = new TableEditService();
             $service->setHtmlPageGenerateConfigs("App\Services\\{$this->system}CsvConfigService", $this->category);
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-            $this->sendErrorMessage($e, $email);
-            exit();
-        }
-
-        try {
-            \DB::connection('mysql_master')->beginTransaction();
-            \DB::connection('mysql_suisin')->beginTransaction();
-            $cnt = $service->uploadToDatabase($this->input, 'mysql_zenon');
-            \DB::connection('mysql_master')->commit();
-            \DB::connection('mysql_suisin')->commit();
-        } catch (\Exception $e) {
-            \DB::connection('mysql_master')->rollback();
-            \DB::connection('mysql_suisin')->rollback();
-            echo $e->getMessage();
-            $this->sendErrorMessage($e, $email);
-            exit();
-        }
-        $results = [
-            'table'     => $service->getHtmlPageGenerateParameter()['title'],
-            'file_name' => (!empty($this->file_name)) ? $this->file_name : '',
-            'counts'    => (!empty($cnt)) ? $cnt : ['insert_count' => 0, 'update_count' => 0],
-        ];
-        try {
+            try {
+                \DB::connection('mysql_master')->beginTransaction();
+                \DB::connection('mysql_suisin')->beginTransaction();
+                $cnt = $service->uploadToDatabase($this->input, 'mysql_zenon');
+                \DB::connection('mysql_master')->commit();
+                \DB::connection('mysql_suisin')->commit();
+            } catch (\Throwable $e) {
+                \DB::connection('mysql_master')->rollback();
+                \DB::connection('mysql_suisin')->rollback();
+                throw $e;
+            }
+            $results = [
+                'table'     => $service->getHtmlPageGenerateParameter()['title'],
+                'file_name' => (!empty($this->file_name)) ? $this->file_name : '',
+                'counts'    => (!empty($cnt)) ? $cnt : ['insert_count' => 0, 'update_count' => 0],
+            ];
             if ($this->is_email_send)
             {
                 \Mail::send('emails.master_import', ['results' => $results], function($message) use($email) {
@@ -108,10 +99,12 @@ class MasterUpload extends Job implements SelfHandling, ShouldQueue
                 });
                 echo "  -- メール送信先：{$email}" . PHP_EOL;
             }
-        } catch (\Exception $exc) {
-            echo $exc->getMessage();
+            echo "[end   : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
+        } catch (\Throwable $e) {
+            echo '[error : ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
+            $this->sendErrorMessage($e, $this->email);
+            throw $e;
         }
-        echo "[end   : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
     }
 
 }

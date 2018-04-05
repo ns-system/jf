@@ -17,8 +17,10 @@ class SetDepositAmount extends Job implements SelfHandling, ShouldQueue
         ErrorMailSendable
     ;
 
-    public function __construct() {
-        
+    protected $email;
+
+    public function __construct($email) {
+        $this->email = $email;
     }
 
     /**
@@ -55,14 +57,15 @@ class SetDepositAmount extends Job implements SelfHandling, ShouldQueue
                 // zaikei
                 $this->updateModel('zaikei_account_ledgers', 'bankbook_balance', new \App\Models\Deposit\Zaikei());
             });
+            $this->sendSuccessMessage('', $this->email);
             echo "[end   : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
         } catch (\Throwable $e) {
             echo "[error : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
-            $this->sendErrorMessage($e, 'n.teshima@jf-nssinren.or.jp');
+            $this->sendErrorMessage($e, $this->email);
             throw $e;
         }
     }
-
+    
     private function updateModel($table_name, $amount_name, $model) {
 //        echo "{$table_name} - {$amount_name}";
 

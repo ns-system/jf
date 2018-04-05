@@ -23,4 +23,12 @@ trait ErrorMailSendable
         }
     }
 
+    public function sendSuccessMessage($process_name, $email) {
+        \Mail::send('emails.success', ['process_name' => $process_name], function($message) use($email, $process_name) {
+            $message->to($email)
+                    ->subject("[{$process_name}] 処理が正常に終了しました")
+            ;
+        });
+    }
+
 }

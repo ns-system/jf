@@ -609,7 +609,7 @@ class ProcessStatusController extends Controller
     public function setDepositAmounts() {
         $email = \Auth::user()->email;
         $this->dispatch(new \App\Jobs\SetDepositAmount($email));
-        \Session::flash('success_message', "データの削除が開始されました。処理結果はメールアドレス（{$email}）にお送りいたします。");
+        \Session::flash('success_message', "残高情報の更新処理が開始されました。処理結果はメールアドレス（{$email}）にお送りいたします。");
         return redirect()->route('admin::super::month::show');
     }
 
