@@ -598,12 +598,19 @@ class ProcessStatusController extends Controller
 //                    $counts[$table->id][$month->monthly_id]['count'] = 0;
                     continue;
                 }
-                $counts[$table->id][$month->monthly_id]['table_name'] = $table->table_name;
+                $counts[$table->id][$month->monthly_id]['table_name']    = $table->table_name;
                 $counts[$table->id][$month->monthly_id]['table_name_jp'] = $table->zenon_data_name;
-                $counts[$table->id][$month->monthly_id]['count']      = \DB::connection('mysql_zenon')->table($table->table_name)->where('monthly_id', $month->monthly_id)->groupBy('monthly_id')->count();
+                $counts[$table->id][$month->monthly_id]['count']         = \DB::connection('mysql_zenon')->table($table->table_name)->where('monthly_id', $month->monthly_id)->groupBy('monthly_id')->count();
             }
         }
         return view('admin.month.counts', ['counts' => $counts, 'months' => $months]);
+    }
+
+    public function setDepositAmounts() {
+        $email = \Auth::user()->email;
+        $this->dispatch(new \App\Jobs\SetDepositAmount($email));
+        \Session::flash('success_message', "データの削除が開始されました。処理結果はメールアドレス（{$email}）にお送りいたします。");
+        return redirect()->route('admin::super::month::show');
     }
 
 }

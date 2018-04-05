@@ -12,7 +12,13 @@ trait ErrorMailSendable
                         ->subject("[" . date('Y-m-d H:i:s') . "] 処理中にエラーが発生しました")
                 ;
             });
-        } catch (\Exception $exc) {
+            echo "==== ErrorLog =========================" . PHP_EOL;
+            echo "TIMESTAMP: " . date("Y-m-d H:i:s") . PHP_EOL;
+            echo "FILE     : " . $error->getFile() . PHP_EOL;
+            echo "LINE     : " . $error->getLine() . PHP_EOL;
+            echo "MESSAGE  : " . $error->getMessage() . PHP_EOL;
+            echo "=======================================" . PHP_EOL;
+        } catch (\Throwable $exc) {
             var_dump($exc->getMessage());
         }
     }

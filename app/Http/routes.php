@@ -57,6 +57,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
          */
         Route::group(['prefix' => '/term', 'as' => 'term::'], function() {
             Route::get('/counts', ['as' => 'count', 'uses' => 'ProcessStatusController@showCount']);
+            Route::get('/amounts', ['as' => 'amounts', 'uses' => 'ProcessStatusController@setDepositAmounts']);
             Route::get('/delete_list/{id}', ['as' => 'delete_list', 'uses' => 'ProcessStatusController@deleteList']);
             Route::post('/delete', ['as' => 'delete', 'uses' => 'ProcessStatusController@delete']);
             Route::get('/{term_status}/delete_confirm/{id}', ['as' => 'delete_confirm', 'uses' => 'ProcessStatusController@deleteConfirm']);

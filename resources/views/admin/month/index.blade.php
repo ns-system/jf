@@ -64,6 +64,9 @@
             </div>
             <div class="btn-group" style="margin-bottom: 10px;">
                 <a 
+                href="{{route('admin::super::term::amounts')}}" class="btn btn-primary btn-sm">残高テーブル生成</a>
+                <span></span>
+                <a 
                 href="{{route('admin::super::term::count')}}" class="btn btn-primary btn-sm" onclick="alert('件数が多い場合、表示に時間がかかることがあります。')">DB内件数確認</a>
                 <span></span>
                 <a 
