@@ -25,6 +25,12 @@ class CreateDepositAmounts extends Migration
             $table->double("key_account_number")->index();
             $table->double("contract_number")->index();
             $table->integer("monthly_id")->index();
+            $table->boolean("is_aggregate")->index();
+
+            $table->integer("filioparental_state")->index()->default(0);
+            $table->boolean("is_plus")->index()->default(false);
+            $table->integer("tr_state_1")->index()->default(0);
+            $table->integer("tr_state_2")->index()->default(0);
 //            $table->timestamps("");
         });
     }
