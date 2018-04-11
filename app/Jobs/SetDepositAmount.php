@@ -58,7 +58,7 @@ class SetDepositAmount extends Job implements SelfHandling, ShouldQueue
                 // zaikei
                 $this->updateModel('zaikei_account_ledgers', 'bankbook_balance', new \App\Models\Deposit\Zaikei());
             });
-            $this->sendSuccessMessage('', $this->email);
+            $this->sendSuccessMessage('残高テーブル生成処理', $this->email);
             echo "[end   : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;
         } catch (\Throwable $e) {
             echo "[error : " . date('Y-m-d H:i:s') . "]" . PHP_EOL;

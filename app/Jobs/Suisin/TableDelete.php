@@ -56,11 +56,13 @@ class TableDelete extends Job implements SelfHandling, ShouldQueue
                     if (!$this->is_monthly_select)
                     {
                         $count = $db->count();
+                        $this->deleteCommonLedgers($table->table_name);
                         $db->truncate();
                     }
                     else
                     {
                         $db    = $db->where('monthly_id', '=', $table->monthly_id);
+                        $this->deleteCommonLedgers($table->table_name, $table->monthly_id);
                         $count = $db->count();
                         $db->delete();
                     }
@@ -101,6 +103,31 @@ class TableDelete extends Job implements SelfHandling, ShouldQueue
             echo '[error : ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
             $this->sendErrorMessage($e, $this->email);
             throw $e;
+        }
+    }
+
+    private function deleteCommonLedgers($table_name, $monthly_id = 0) {
+        // common_account_ledgersの削除
+        if (strpos($table_name, '_account_ledgers') !== false || strpos($table_name, '_loan_ledgers') !== false)
+        {
+            $common_table = (strpos($table_name, '_account_ledgers') !== false) ? 'common_account_ledgers' : 'common_loan_ledgers';
+            $db           = \DB::connection('mysql_zenon')->table($table_name);
+            if ($monthly_id > 0)
+            {
+                $db->where('monthly_id', '=', $monthly_id);
+            }
+            $count = $db->count();
+            $db->select(['id'])->chunk(60000, function($ids) use ($common_table) {
+                $key = [];
+                foreach ($ids as $id) {
+                    $key['id'] = $id->id;
+                }
+                \DB::connection('mysql_zenon')->table($common_table)->orWhere($key)->delete();
+            });
+            echo "  -- {$common_table} ({$table_name})" . PHP_EOL .
+            "       件数：" . number_format($count) . "件" . PHP_EOL .
+            "       月別：" . $monthly_id . PHP_EOL
+            ;
         }
     }
 

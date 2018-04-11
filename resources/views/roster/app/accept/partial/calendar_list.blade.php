@@ -16,7 +16,7 @@
     </div>
     <div class="margin-bottom"></div>
     {{ csrf_field() }}
-    <table class="table table-small none-border va-middle">
+    <table class="table table-small none-border va-middle padding-sm">
         <thead>
             <tr>
                 <th class="bg-primary" width="10%">日付</th>
