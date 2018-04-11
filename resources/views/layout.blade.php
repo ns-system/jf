@@ -141,7 +141,7 @@ input[type=file]{display: none;}
 .navbar-nav > li > .dropdown-menu{ margin-top: -10px; }
 .dropdown-menu{ min-width: 200px; }
 input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
-.padding-sm, .padding-sm th, .padding-sm td { padding: 2px; }
+.padding-sm, .padding-sm th, .padding-sm td { padding: 2px !important; }
 
 </style>
 </head>
