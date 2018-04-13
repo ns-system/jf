@@ -12,28 +12,33 @@ class RosterUserController extends Controller
 
     public function index($user_id) {
         // 自分自身もしくは管理ユーザーで入った場合のみ処理を通す
-        $u = \Auth::user();
-        $r = \App\RosterUser::user($user_id)->first();
+        $u        = \Auth::user();
+        $r        = \App\RosterUser::user($u->id)->first();
+        $is_admin = ($u->is_super_user || (!empty($r) && $r->is_administrator)) ? true : false;
 
-        if ($u->id != $user_id && !$u->is_super_user && (empty($r) || !$r->is_administrator))
+
+        if ($u->id != $user_id && !$is_admin)
         {
             return redirect()->route('permission_error');
         }
 
-        $divs  = \App\Division::orderBy('division_id', 'asc')->get();
-        $types = \App\WorkType::workTypeList()->get();
-        $user  = \App\User::where('users.id', '=', $user_id)
+        $divs         = \App\Division::orderBy('division_id', 'asc')->get();
+        $types        = \App\WorkType::workTypeList()->get();
+        $user         = \App\User::where('users.id', '=', $user_id)
                 ->leftJoin('sinren_db.sinren_users', 'users.id', '=', 'sinren_users.user_id')
                 ->leftJoin('roster_db.roster_users', 'users.id', '=', 'roster_users.user_id')
                 ->select(\DB::raw('*, users.id as id'))
                 ->first()
         ;
+        $not_register = (empty($user) || empty($user->user_id)) ? true : false;
 
         $params = [
-            'id'    => $user_id,
-            'divs'  => $divs,
-            'types' => $types,
-            'user'  => $user,
+            'id'           => $user_id,
+            'divs'         => $divs,
+            'types'        => $types,
+            'user'         => $user,
+            'is_admin'     => $is_admin,
+            'not_register' => $not_register,
         ];
         return view('roster.app.user.index', $params);
     }

@@ -35,50 +35,50 @@ class FuncUserControllerTest extends TestCase
         parent::tearDown();
     }
 
-    /**
-     * @tests
-     */
-    public function 異常系部署が無いときに変更しようとするとエラーになる() {
-        $user = factory(\App\User::class)->create();
+//    /**
+//     * @tests
+//     */
+//    public function 異常系部署が無いときに変更しようとするとエラーになる() {
+//        $user = factory(\App\User::class)->create();
+//
+//        $this->actingAs($user)
+//                ->visit(route('app::user::show', ['id' => $user->id]))
+//                ->see($user->first_name)
+//                ->press('btn_division')
+//                ->seePageIs('/app/user/1')
+//                ->see('部署は必須です。')
+//                ->dontSee('成功：要修正')
+//
+//        ;
+//    }
 
-        $this->actingAs($user)
-                ->visit(route('app::user::show', ['id' => $user->id]))
-                ->see($user->first_name)
-                ->press('btn_division')
-                ->seePageIs('/app/user/1')
-                ->see('部署は必須です。')
-                ->dontSee('成功：要修正')
-
-        ;
-    }
-
-    /**
-     * @tests
-     */
-    public function 正常系部署の変更ができる() {
-        $user = factory(\App\User::class)->create();
-        \App\SinrenDivision::insert([['division_id' => 1, 'division_name' => 'System'], ['division_id' => 2, 'division_name' => 'Sales']]);
-        $this->actingAs($user)
-                ->visit(route('app::user::show', ['id' => $user->id]))
-                ->select(2, 'division_id')
-                ->press('btn_division')
-                ->seePageIs('/app/user/' . $user->id)
-                ->see('部署を変更しました。')
-                ->dontSee('成功：要修正')
-        ;
-    }
-
-    /**
-     * @tests
-     */
-    public function 異常系本人以外が部署を変更しようとするとエラーになる() {
-        \Session::start();
-        $user = factory(\App\User::class)->create();
-        $this->actingAs($user)
-                ->POST('/app/user/division/999999', ['_token' => csrf_token(), 'division_id' => '2'])
-                ->assertRedirectedTo('/permission_error')
-        ;
-    }
+//    /**
+//     * @tests
+//     */
+//    public function 正常系部署の変更ができる() {
+//        $user = factory(\App\User::class)->create();
+//        \App\SinrenDivision::insert([['division_id' => 1, 'division_name' => 'System'], ['division_id' => 2, 'division_name' => 'Sales']]);
+//        $this->actingAs($user)
+//                ->visit(route('app::user::show', ['id' => $user->id]))
+//                ->select(2, 'division_id')
+//                ->press('btn_division')
+//                ->seePageIs('/app/user/' . $user->id)
+//                ->see('部署を変更しました。')
+//                ->dontSee('成功：要修正')
+//        ;
+//    }
+//
+//    /**
+//     * @tests
+//     */
+//    public function 異常系本人以外が部署を変更しようとするとエラーになる() {
+//        \Session::start();
+//        $user = factory(\App\User::class)->create();
+//        $this->actingAs($user)
+//                ->POST('/app/user/division/999999', ['_token' => csrf_token(), 'division_id' => '2'])
+//                ->assertRedirectedTo('/permission_error')
+//        ;
+//    }
 
     /**
      * @tests
@@ -177,166 +177,166 @@ class FuncUserControllerTest extends TestCase
         ;
     }
 
-    /**
-     * @tests
-     */
-    public function 異常系パスワードを変更時現在のパスワードを空欄にするとエラーになる() {
-        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
-        $this->actingAs($user)
-                ->visit(route('app::user::show', ['id' => $user->id]))
-                ->type('', 'password')
-                ->type('newpass', 'new_password')
-                ->see('btn_password')
-                ->press('btn_password')
-                ->seePageIs('/app/user/' . $user->id)
-                ->see('現在のパスワードは必須です。')
-                ->dontsee('新しいパスワードは必須です。')
-                ->dontSee('成功：要修正')
-        ;
-    }
-
-    /**
-     * @tests
-     */
-    public function 異常系パスワードを変更時新しいパスワードを空欄にするとエラーになる() {
-        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
-        $this->actingAs($user)
-                ->visit(route('app::user::show', ['id' => $user->id]))
-                ->type('', 'new_password')
-                ->type('password', 'password')
-                ->see('btn_password')
-                ->press('btn_password')
-                ->seePageIs('/app/user/' . $user->id)
-                ->see('新しいパスワードは必須です。')
-                ->dontsee('現在のパスワードは必須です。')
-                ->dontSee('成功：要修正')
-        ;
-    }
-
-    /**
-     * @tests
-     */
-    public function 異常系パスワードを変更時をパスワード再入力を空欄にするとエラーになる() {
-        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
-        $this->actingAs($user)
-                ->visit(route('app::user::show', ['id' => $user->id]))
-                ->type('password', 'password')
-                ->type('newpass', 'new_password')
-                ->type('', 'new_password_confirmation')
-                ->see('btn_password')
-                ->press('btn_password')
-                ->seePageIs('/app/user/' . $user->id)
-                ->see('新しいパスワードは確認用項目と一致していません。')
-                ->dontsee('現在のパスワードは必須です。')
-                ->dontsee('新しいパスワードは必須です。')
-                ->dontSee('成功：要修正')
-        ;
-    }
-
-    /**
-     * @tests
-     */
-    public function 異常系パスワードを変更時現在のパスワード六文字未満にするとエラーになる() {
-        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
-        $this->actingAs($user)
-                ->visit(route('app::user::show', ['id' => $user->id]))
-                ->type('12345', 'password')
-                ->type('newpass', 'new_password')
-                ->type('newpass', 'new_password_confirmation')
-                ->see('btn_password')
-                ->press('btn_password')
-                ->seePageIs('/app/user/' . $user->id)
-                ->see('現在のパスワードは6文字以上にしてください。')
-                ->dontsee('新しいパスワードは必須です。')
-                ->dontSee('成功：要修正')
-        ;
-    }
-
-    /**
-     * @tests
-     */
-    public function 異常系パスワードを変更時新しいパスワードを六文字未満にするとエラーになる() {
-        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
-        $this->actingAs($user)
-                ->visit(route('app::user::show', ['id' => $user->id]))
-                ->type('password', 'password')
-                ->type('123', 'new_password')
-                ->type('123', 'new_password_confirmation')
-                ->see('btn_password')
-                ->press('btn_password')
-                ->seePageIs('/app/user/' . $user->id)
-                ->see('新しいパスワードは6文字以上にしてください。')
-                ->dontsee('現在のパスワードは必須です。')
-                ->dontSee('成功：要修正')
-        ;
-    }
-
-    /**
-     * @tests
-     */
-    public function 異常系パスワードを変更時新しいパスワードと再入力を異なる値にするとエラーになる() {
-        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
-        $this->actingAs($user)
-                ->visit(route('app::user::show', ['id' => $user->id]))
-                ->type('password', 'password')
-                ->type('123456', 'new_password')
-                ->type('654321', 'new_password_confirmation')
-                ->see('btn_password')
-                ->press('btn_password')
-                ->seePageIs('/app/user/' . $user->id)
-                ->see('新しいパスワードは確認用項目と一致していません。')
-                ->dontSee('成功：要修正')
-        ;
-    }
-
-    /**
-     * @tests
-     */
-    public function 正常系パスワードを変更できる() {
-
-        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
-        $this->actingAs($user)
-                ->visit(route('app::user::show', ['id' => $user->id]))
-                ->type('password', 'password')
-                ->type('123456', 'new_password')
-                ->type('123456', 'new_password_confirmation')
-                ->see('btn_password')
-                ->press('btn_password')
-                ->seePageIs('/app/user/' . $user->id)
-                ->see('パスワードを変更しました。')
-                ->dontSee('成功：要修正')
-        ;
-    }
-
-    /**
-     * @tests
-     */
-    public function 異常系パスワードが異なるとエラーになる() {
-        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
-        $this->actingAs($user)
-                ->visit(route('app::user::show', ['id' => $user->id]))
-                ->type('altpassword', 'password')
-                ->type('123456', 'new_password')
-                ->type('123456', 'new_password_confirmation')
-                ->see('btn_password')
-                ->press('btn_password')
-                ->seePageIs('/app/user/' . $user->id)
-                ->see('パスワードが一致しませんでした。')
-                ->dontSee('成功：要修正')
-        ;
-    }
-
-    /**
-     * @tests
-     */
-    public function 異常系本人以外がパスワードを変更しようとするとエラーになる() {
-        \Session::start();
-        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
-        $this->actingAs($user)
-                ->POST('/app/user/password/999999', ['_token' => csrf_token(), 'password' => 'password', 'new_password' => '123456', 'new_password_confirmation' => '123456'])
-                ->assertRedirectedTo('/permission_error')
-        ;
-    }
+//    /**
+//     * @tests
+//     */
+//    public function 異常系パスワードを変更時現在のパスワードを空欄にするとエラーになる() {
+//        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
+//        $this->actingAs($user)
+//                ->visit(route('app::user::show', ['id' => $user->id]))
+//                ->type('', 'password')
+//                ->type('newpass', 'new_password')
+//                ->see('btn_password')
+//                ->press('btn_password')
+//                ->seePageIs('/app/user/' . $user->id)
+//                ->see('現在のパスワードは必須です。')
+//                ->dontsee('新しいパスワードは必須です。')
+//                ->dontSee('成功：要修正')
+//        ;
+//    }
+//
+//    /**
+//     * @tests
+//     */
+//    public function 異常系パスワードを変更時新しいパスワードを空欄にするとエラーになる() {
+//        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
+//        $this->actingAs($user)
+//                ->visit(route('app::user::show', ['id' => $user->id]))
+//                ->type('', 'new_password')
+//                ->type('password', 'password')
+//                ->see('btn_password')
+//                ->press('btn_password')
+//                ->seePageIs('/app/user/' . $user->id)
+//                ->see('新しいパスワードは必須です。')
+//                ->dontsee('現在のパスワードは必須です。')
+//                ->dontSee('成功：要修正')
+//        ;
+//    }
+//
+//    /**
+//     * @tests
+//     */
+//    public function 異常系パスワードを変更時をパスワード再入力を空欄にするとエラーになる() {
+//        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
+//        $this->actingAs($user)
+//                ->visit(route('app::user::show', ['id' => $user->id]))
+//                ->type('password', 'password')
+//                ->type('newpass', 'new_password')
+//                ->type('', 'new_password_confirmation')
+//                ->see('btn_password')
+//                ->press('btn_password')
+//                ->seePageIs('/app/user/' . $user->id)
+//                ->see('新しいパスワードは確認用項目と一致していません。')
+//                ->dontsee('現在のパスワードは必須です。')
+//                ->dontsee('新しいパスワードは必須です。')
+//                ->dontSee('成功：要修正')
+//        ;
+//    }
+//
+//    /**
+//     * @tests
+//     */
+//    public function 異常系パスワードを変更時現在のパスワード六文字未満にするとエラーになる() {
+//        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
+//        $this->actingAs($user)
+//                ->visit(route('app::user::show', ['id' => $user->id]))
+//                ->type('12345', 'password')
+//                ->type('newpass', 'new_password')
+//                ->type('newpass', 'new_password_confirmation')
+//                ->see('btn_password')
+//                ->press('btn_password')
+//                ->seePageIs('/app/user/' . $user->id)
+//                ->see('現在のパスワードは6文字以上にしてください。')
+//                ->dontsee('新しいパスワードは必須です。')
+//                ->dontSee('成功：要修正')
+//        ;
+//    }
+//
+//    /**
+//     * @tests
+//     */
+//    public function 異常系パスワードを変更時新しいパスワードを六文字未満にするとエラーになる() {
+//        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
+//        $this->actingAs($user)
+//                ->visit(route('app::user::show', ['id' => $user->id]))
+//                ->type('password', 'password')
+//                ->type('123', 'new_password')
+//                ->type('123', 'new_password_confirmation')
+//                ->see('btn_password')
+//                ->press('btn_password')
+//                ->seePageIs('/app/user/' . $user->id)
+//                ->see('新しいパスワードは6文字以上にしてください。')
+//                ->dontsee('現在のパスワードは必須です。')
+//                ->dontSee('成功：要修正')
+//        ;
+//    }
+//
+//    /**
+//     * @tests
+//     */
+//    public function 異常系パスワードを変更時新しいパスワードと再入力を異なる値にするとエラーになる() {
+//        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
+//        $this->actingAs($user)
+//                ->visit(route('app::user::show', ['id' => $user->id]))
+//                ->type('password', 'password')
+//                ->type('123456', 'new_password')
+//                ->type('654321', 'new_password_confirmation')
+//                ->see('btn_password')
+//                ->press('btn_password')
+//                ->seePageIs('/app/user/' . $user->id)
+//                ->see('新しいパスワードは確認用項目と一致していません。')
+//                ->dontSee('成功：要修正')
+//        ;
+//    }
+//
+//    /**
+//     * @tests
+//     */
+//    public function 正常系パスワードを変更できる() {
+//
+//        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
+//        $this->actingAs($user)
+//                ->visit(route('app::user::show', ['id' => $user->id]))
+//                ->type('password', 'password')
+//                ->type('123456', 'new_password')
+//                ->type('123456', 'new_password_confirmation')
+//                ->see('btn_password')
+//                ->press('btn_password')
+//                ->seePageIs('/app/user/' . $user->id)
+//                ->see('パスワードを変更しました。')
+//                ->dontSee('成功：要修正')
+//        ;
+//    }
+//
+//    /**
+//     * @tests
+//     */
+//    public function 異常系パスワードが異なるとエラーになる() {
+//        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
+//        $this->actingAs($user)
+//                ->visit(route('app::user::show', ['id' => $user->id]))
+//                ->type('altpassword', 'password')
+//                ->type('123456', 'new_password')
+//                ->type('123456', 'new_password_confirmation')
+//                ->see('btn_password')
+//                ->press('btn_password')
+//                ->seePageIs('/app/user/' . $user->id)
+//                ->see('パスワードが一致しませんでした。')
+//                ->dontSee('成功：要修正')
+//        ;
+//    }
+//
+//    /**
+//     * @tests
+//     */
+//    public function 異常系本人以外がパスワードを変更しようとするとエラーになる() {
+//        \Session::start();
+//        $user = factory(\App\User::class)->create(['unencrypt_password' => 'password']);
+//        $this->actingAs($user)
+//                ->POST('/app/user/password/999999', ['_token' => csrf_token(), 'password' => 'password', 'new_password' => '123456', 'new_password_confirmation' => '123456'])
+//                ->assertRedirectedTo('/permission_error')
+//        ;
+//    }
 
     /**
      * @tests

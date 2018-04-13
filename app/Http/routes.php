@@ -47,7 +47,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
          * As         : user::
          */
         Route::group(['prefix' => '/user', 'as' => 'user::'], function() {
-            Route::get('/', ['as' => 'show', 'uses' => 'SuperUserController@showCounts']);
+            Route::get('/', ['as' => 'show', 'uses' => 'SuperUserController@show']);
             Route::get('/search', ['as' => 'search', 'uses' => 'SuperUserController@search']);
             Route::get('/{id}', ['as' => 'detail', 'uses' => 'SuperUserController@user']);
             Route::post('/edit/{id}', ['as' => 'edit', 'uses' => 'SuperUserController@edit']);

@@ -3,9 +3,7 @@
     <form class="form-horizontal" role="form" method="POST" action="{{route('app::roster::user::edit', ['$id'=>$id])}}">
         {{-- CSRF対策--}}
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-
-        @if(empty($user) || empty($user->user_id))
+        @if($not_register || $is_admin)
         <p>
             <label>部署</label>
             <select class="form-control" name="division_id">
@@ -22,13 +20,13 @@
                 <option value="">勤務形態を選択してください（責任者の場合、選択不要です）</option>
                 @foreach($types as $type)
                 <option value="{{$type->work_type_id}}" @if($user->work_type_id == $type->work_type_id) selected @endif>
-                 {{$type->work_type_name}}@if($type->display_time) ({{$type->display_time}}) @endif
-             </option>
-             @endforeach
-         </select>
-     </p>
+                   {{$type->work_type_name}}@if($type->display_time) ({{$type->display_time}}) @endif
+               </option>
+               @endforeach
+           </select>
+       </p>
 
-     <p>
+       <p>
         <div class="checkbox">
             <label class="text-success"><input type="checkbox" name="is_chief" value="1" @if($user->is_chief) checked @endif> <b>私は部署の責任者です</b></label>
         </div>

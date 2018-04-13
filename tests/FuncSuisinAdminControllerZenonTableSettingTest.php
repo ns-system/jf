@@ -8,7 +8,7 @@
 
 use App\Services\Traits;
 
-class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
+class FuncSuisinAdminControllerZenonTableSettingTest extends TestCase
 {
 
     use Traits\CsvUsable;
@@ -213,7 +213,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/super_user/config/Admin/ZenonCsv')
-                ->see('CSVファイルの内容に不備がありました。')
+                ->see('CSVファイル列数が一致しませんでした。')
                 ->dontSee('要修正')
         ;
     }
@@ -370,7 +370,7 @@ class FuncSuisinAdminControllerConsignorSettingTest extends TestCase
                 ->attach($path, 'csv_file')
                 ->press('ImportCSV')
                 ->seePageIs('/admin/super_user/config/Admin/ZenonTable')
-                ->see('CSVファイルの内容に不備がありました。')
+                ->see('CSVファイル列数が一致しませんでした。')
                 ->dontSee('要修正')
         ;
     }
