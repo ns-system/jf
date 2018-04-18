@@ -8,7 +8,7 @@
             <label class="input-group-addon control-label bg-success-important" style="min-width: 150px;">
                 <small>メールアドレス</small>
             </label>
-            <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="登録されているメールアドレスを入力してください">
+            <input type="email" class="form-control" name="email" @if(!empty(old('email'))) value="{{ old('email') }}" @else value="@jf-nssinren.or.jp" @endif placeholder="登録されているメールアドレスを入力してください">
         </div>
 
         <div class="input-group" style="margin-bottom: 10px;">

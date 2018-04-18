@@ -27,10 +27,10 @@ class RosterUserController extends Controller
         $user         = \App\User::where('users.id', '=', $user_id)
                 ->leftJoin('sinren_db.sinren_users', 'users.id', '=', 'sinren_users.user_id')
                 ->leftJoin('roster_db.roster_users', 'users.id', '=', 'roster_users.user_id')
-                ->select(\DB::raw('*, users.id as id'))
+                ->select(\DB::raw('*, users.id as id, sinren_users.id as sinren_id, roster_users.id as roster_id'))
                 ->first()
         ;
-        $not_register = (empty($user) || empty($user->user_id)) ? true : false;
+        $not_register = (empty($user) || empty($user->user_id) || empty($user->sinren_id) || empty($user->rositer_id)) ? true : false;
 
         $params = [
             'id'           => $user_id,
