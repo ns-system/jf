@@ -2,6 +2,7 @@
 @if(!empty($s_user) && $s_user->is_administrator) @include('admin.sidebar.roster')
 @else
     {{-- 一般ユーザーの場合 --}}
+        @if(roster_role() !== "chief")
     <a
         role="presentation"
         class="list-group-item collapse list-second"
@@ -9,6 +10,7 @@
         data-toggle="tooltip"
         title="カレンダーから勤務表を入力します。"
         data-placement="right">カレンダー表示</a><span></span>
+        @endif
 
     <a
         role="presentation"

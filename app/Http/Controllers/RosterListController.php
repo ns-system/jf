@@ -97,7 +97,9 @@ class RosterListController extends Controller
         $users    = \DB::connection('mysql_sinren')
                 ->table('sinren_users')
                 ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
+                ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
                 ->where('sinren_users.division_id', '=', $div)
+                ->where('roster_users.is_chief', '=', false)
                 ->get()
         ;
 //        var_dump($rows);
