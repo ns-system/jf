@@ -30,28 +30,35 @@ class RosterListController extends Controller
         return false;
     }
 
-    public function check() {
-        $id = \Auth::user()->id;
-        if (empty(\App\SinrenUser::user($id)->first()))
-        {
-            return redirect()->route('app::roster::user::show', ['id' => $id]);
-        }
-        return redirect()->route('app::roster::division::index', ['div' => \App\SinrenUser::user($id)->first()->division_id]);
-    }
+//    public function check() {
+//        $id = \Auth::user()->id;
+//        if (empty(\App\SinrenUser::user($id)->first()))
+//        {
+//            return redirect()->route('app::roster::user::show', ['id' => $id]);
+//        }
+//        return redirect()->route('app::roster::division::index', ['div' => \App\SinrenUser::user($id)->first()->division_id]);
+//    }
 
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($id) {
-//        var_dump($this->is_valid_division($id));
+    public function index() {
+        $user_id = \Auth::user()->id;
+        $user    = \App\SinrenUser::user($user_id)->first();
+        if (empty($user))
+        {
+            \Session::flash('warn_message', "先にユーザー登録を行ってください。");
+            return redirect()->route('app::roster::user::show', ['id' => $user_id]);
+        }
+
+        $id = $user->division_id;
         if (!$this->is_valid_division($id))
         {
             \Session::flash('warn_message', "許可されていない部署を閲覧しようとしました。");
             return redirect(route('index'));
         }
-        $user_id  = \Auth::user()->id;
         $tmp_div  = \App\Division::where('division_id', '=', $id)->first();
         $tmp_divs = \App\ControlDivision::join('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')->where('user_id', '=', $user_id)->get();
         $divs     = (empty($tmp_divs)) ? [$tmp_div] : $tmp_divs;

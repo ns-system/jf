@@ -15,7 +15,7 @@
     <a
         role="presentation"
         class="list-group-item collapse list-second"
-        href="{{route('app::roster::division::check')}}"
+        href="{{route('app::roster::division::index')}}"
         data-toggle="tooltip"
         title="部署内の勤務状況を確認します。"
         data-placement="right">部署内勤務データ確認</a><span></span>

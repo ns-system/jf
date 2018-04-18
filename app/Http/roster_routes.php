@@ -67,8 +67,8 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
              * Prefix     : /divisions
              */
             Route::group(['as' => 'division::', 'prefix' => '/division'], function() {
-                Route::get('/check', ['as' => 'check', 'uses' => 'RosterListController@check']);
-                Route::get('/home/{div}', ['as' => 'index', 'uses' => 'RosterListController@index']);
+//                Route::get('/check', ['as' => 'check', 'uses' => 'RosterListController@check']);
+                Route::get('/home',  ['as' => 'index', 'uses' => 'RosterListController@index']);
                 Route::get('/list/{div}/{ym}', ['as' => 'show', 'uses' => 'RosterListController@show']);
             });
             /**
