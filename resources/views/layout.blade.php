@@ -9,7 +9,7 @@
         @yield('title'){{$configs['title'] or ''}}
     </title>
 
-    <link rel="stylesheet" href="https://nkmr6194.github.io/Umi/css/bootstrap.css"></link>
+{{--     <link rel="stylesheet" href="https://nkmr6194.github.io/Umi/css/bootstrap.css"></link> --}}
 
     <link href="https://fonts.googleapis.com/earlyaccess/mplus1p.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
@@ -17,10 +17,14 @@
     <link href="https://fonts.googleapis.com/earlyaccess/sawarabigothic.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
 
+    <link href="{{ asset('/css/bootstrap.css') }}" rel="stylesheet"></link>
+    <link href="{{ asset('/css/bootstrap.min.css') }}" rel="stylesheet"></link>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="https://nkmr6194.github.io/Umi/js/bootstrap.min.js"></script>
+
+    <script src="{{ asset('/js/bootstrap.js') }}"></script>
+{{--     <script src="https://nkmr6194.github.io/Umi/js/bootstrap.min.js"></script> --}}
 
 
     {{-- マテリアルデザインがクソかっこいい --}}
