@@ -1,4 +1,10 @@
 <!-- タブ・メニュー -->
+@if(empty($users))
+<div class="row">
+    <div style="margin-bottom: 50px;"></div>
+    <div class="alert alert-warning" role="alert">データが見つかりませんでした。</div>
+</div>
+@else
 <ul class="nav nav-tabs" style="margin-bottom: 10px;">
     <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">ユーザー選択 <span class="caret"></span></a>
@@ -70,3 +76,4 @@
     </div>
     @endforeach
 </div>
+@endif

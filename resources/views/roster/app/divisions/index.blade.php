@@ -17,23 +17,14 @@
 <div class="col-md-10">
     @include('partial.alert')
     <div class="border-bottom">
-        <h2>{{$div->division_name}}<small> - 月を選択</small></h2>
+        <h2>勤務データ <small> - {{ date('Y年n月分') }}</small></h2>
     </div>
-
-    @if(!empty($month))
-    @foreach($month as $m)
-    <div class="col-md-3" style="margin-bottom: 20px; ">
-        <a href="{{route('app::roster::division::show', ['division'=>$id, 'ym'=>$m['id']])}}"
-            @if($m['id'] == $this_month) class="btn btn-lg btn-success btn-block"
-            @else class="btn btn-lg btn-primary btn-block"
-            @endif
-            >{{$m['display']}} <span class="badge">{{$m['count']}}件</span></a>
-        </div>
-        @endforeach
-        @else
-        <div class="alert alert-warning" role="alert">データが見つかりませんでした。</div>
-        @endif
+    @foreach($divs as $key => $div)
+    <div class="col-md-4">
+        <a class="btn btn-primary btn-block" href="{{ route('app::roster::division::show', ['division'=>$div->division_id, 'ym'=>intval(date('Ym'))]) }}">{{$div->division_name}}</a>
     </div>
+    @if($key == 2) <div class="col-md-12" style="margin-bottom: 20px;"></div> @endif
+    @endforeach
 </div>
 @endsection
 

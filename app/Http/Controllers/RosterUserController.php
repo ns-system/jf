@@ -30,7 +30,11 @@ class RosterUserController extends Controller
                 ->select(\DB::raw('*, users.id as id, sinren_users.id as sinren_id, roster_users.id as roster_id'))
                 ->first()
         ;
-        $not_register = (empty($user) || empty($user->user_id) || empty($user->sinren_id) || empty($user->rositer_id)) ? true : false;
+        $not_register = (empty($user) || empty($user->user_id) || empty($user->sinren_id) || empty($user->roster_id)) ? true : false;
+        if (!empty($user->is_administrator) && $user->is_administrator == true)
+        {
+            $not_register = false;
+        }
 
         $params = [
             'id'           => $user_id,
