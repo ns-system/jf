@@ -88,28 +88,18 @@ class SuperUserService
     }
 
     public function editUser($input, $id) {
-
+//        dd($input->input());
+        $input = $input->input();
         try {
-            $user                = \App\User::find($id);
-            $user->is_super_user = (int) $input['is_super_user'];
+            $user        = \App\User::find($id);
+            $roster_user = \App\RosterUser::where('user_id', '=', $id)->first();
+
+            $user->is_super_user = ($input['is_super_user'] == 1) ? true : false;
             $user->save();
-
-//            if (isset($input['suisin_is_administrator']) && !empty($user->SuisinUser))
-//            {
-//                $suisin_users = \App\SuisinUser::where('user_id', '=', $id)->get();
-//                foreach ($suisin_users as $suisin_user) {
-//                    $suisin_user->is_administrator = $input['suisin_is_administrator'];
-//                    $suisin_user->save();
-//                }
-//            }
-
-            if (isset($input['roster_is_administrator']) && $user->RosterUser($id))
+            if (isset($input['roster_is_administrator']) && !empty($roster_user))
             {
-                $roster_users = \App\RosterUser::where('user_id', '=', $id)->get();
-                foreach ($roster_users as $roster_user) {
-                    $roster_user->is_administrator = $input['roster_is_administrator'];
-                    $roster_user->save();
-                }
+                $roster_user->is_administrator = ($input['roster_is_administrator'] == 1) ? true : false;
+                $roster_user->save();
             }
             return true;
         } catch (\Exception $e) {
