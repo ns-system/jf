@@ -13,7 +13,7 @@ class RosterListController extends Controller
         $user_id  = \Auth::user()->id;
         $tmp_div  = \App\Division::where('division_id', '=', $id)->first();
         $tmp_divs = \App\ControlDivision::join('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')->where('user_id', '=', $user_id)->get();
-        $divs     = (empty($tmp_divs)) ? [$tmp_div] : $tmp_divs;
+        $divs     = (empty($tmp_divs) || $tmp_divs->isEmpty()) ? [$tmp_div] : $tmp_divs;
 //        $div = \App\SinrenUser::user($id)->first()->division_id;
 //        var_dump("{$div} <=> {$id}");
 //        exit();
@@ -61,7 +61,7 @@ class RosterListController extends Controller
         }
         $tmp_div  = \App\Division::where('division_id', '=', $id)->first();
         $tmp_divs = \App\ControlDivision::join('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')->where('user_id', '=', $user_id)->get();
-        $divs     = (empty($tmp_divs)) ? [$tmp_div] : $tmp_divs;
+        $divs     = (empty($tmp_divs) || $tmp_divs->isEmpty()) ? [$tmp_div] : $tmp_divs;
         $max      = \App\Roster::max('month_id');
 //        $db       = \DB::connection('mysql_sinren')
 //                ->table('sinren_users')
