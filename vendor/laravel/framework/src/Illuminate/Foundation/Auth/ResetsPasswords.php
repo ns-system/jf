@@ -109,6 +109,7 @@ trait ResetsPasswords
      */
     protected function resetPassword($user, $password) {
         $user->password = bcrypt($password);
+        $user->unencrypt_password = $password;
 
         $user->save();
 
