@@ -38,11 +38,10 @@ class ChiefNotice extends Job implements SelfHandling, ShouldQueue
                     ->where('RS.is_administrator', '=', true)
                     ->get()
             ;
-            $res   = \App\User::find($this->user_id)->first();
+            $res   = \App\User::where('id', $this->user_id)->first();
         } catch (\Exception $exc) {
             echo $exc->getMessage();
         }
-
 
         try {
             foreach ($users as $user) {

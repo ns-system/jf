@@ -10,6 +10,8 @@
   | されたときに呼び出されるコントローラを指定してください。
   |
  */
+Route::get('/countdown',  ['as'=>'limit',       'uses' => 'DateLimitController@index']);
+Route::post('/countdown', ['as'=>'limit.store', 'uses' => 'DateLimitController@store']);
 
 Route::Controller('/auth', 'Auth\AuthController');
 Route::controller('/password', 'Auth\PasswordController');

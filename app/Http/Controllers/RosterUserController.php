@@ -58,8 +58,11 @@ class RosterUserController extends Controller
         $roster = \App\RosterUser::firstOrNew(['user_id' => $user_id]);
         $sinren = \App\SinrenUser::firstOrNew(['user_id' => $user_id]);
 
-        $sinren->user_id     = $user_id;
-        $sinren->division_id = $request['division_id'];
+        $sinren->user_id = $user_id;
+        if (empty($sinren->division_id))
+        {
+            $sinren->division_id = $request['division_id'];
+        }
         $sinren->save();
 
         \DB::connection('mysql_roster')->transaction(function() use($user_id, $roster, $request) {
