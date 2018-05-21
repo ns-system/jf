@@ -50,7 +50,7 @@ class RosterUserController extends Controller
 
     public function edit($user_id, RosterUser $request) {
         $u = \Auth::user();
-        $r = \App\RosterUser::user($user_id)->first();
+        $r = \App\RosterUser::user($u->id)->first();
         if ($u->id != $user_id && !$u->is_super_user && (empty($r) || !$r->is_administrator))
         {
             return redirect()->route('permission_error');

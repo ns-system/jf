@@ -21,7 +21,7 @@
 
 	<div class="col-md-8 col-md-offset-2">
 		<div class="panel panel-primary">
-			<div class="panel-heading">ユーザー情報更新</div>
+			<div class="panel-heading">ユーザー情報更新 <small>{{ $user->last_name }} {{ $user->first_name }} さん</small></div>
 			<div class="panel-body">
 			    @include('roster.app.user.partial.user_form')
 			</div>
