@@ -39,7 +39,6 @@
         <span></span>
     {{--     <a role="presentation" class="list-group-item collapse" href="{{route('admin::super::user::show')}}">処理状況確認</a> --}}
 
-
         <a role="presentation" class="list-group-item collapse list-second" data-toggle="collapse" href="#4_config"><span class="caret"></span> 設定ファイル</a>
         <div class="collapse" id="4_config">
 

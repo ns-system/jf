@@ -33,20 +33,23 @@ body{
             @include('partial.alert')
         </div>
     </div>
-    
-    <div clas="row">
+
+    <div style="margin-bottom: 20px;">
+        @include('auth.partial.notification', ['dark' => true])
+    </div>
+
+    <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <!-- タブ・メニュー -->
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#login-form" data-toggle="tab"><span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> ログイン</a></li>
                 <li><a href="#register-form" data-toggle="tab"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> ユーザー登録</a></li>
-                <li><a href="#manual-form" data-toggle="tab"><span class="glyphicon glyphicon-book" aria-hidden="true"></span> マニュアル</a></li>
             </ul>
 
             <!-- タブ内容 -->
             <div class="tab-content" style="margin-top: 20px;">
                 <div class="tab-pane active" id="login-form">
-                    <div style="background: rgba(255,255,255,0.1); padding: 30px 0px; border-radius: 2px; border: 1px solid #999;">
+                    <div style="background: rgba(255,255,255,0.1); padding: 30px 0px; border-radius: 2px; border: 1px solid #999; margin-bottom: 20px;">
                         @include('auth.partial.login_form')
                     </div>
                 </div>
@@ -55,12 +58,8 @@ body{
                         @include('auth.partial.register_form')
                     </div>
                 </div>
-                <div class="tab-pane" id="manual-form">
-                    <div style="background: rgba(255,255,255,0.1); padding: 30px 0px; border-radius: 2px; border: 1px solid #999;">
-                        @include('auth.partial.manual_form')
-                    </div>
-                </div>
             </div>
+
         </div>
     </div>
 

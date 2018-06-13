@@ -10,32 +10,34 @@ class IndexController extends Controller
 {
 
     public function show() {
-        $new_users = [];
+        $new_users     = [];
+        $notifications = \App\Notification::with('user')->deadline(date('Y-m-d'))->orderBy('deadline', 'desc')->take(5)->get();
+
         if (!\Auth::check())
         {
-            return view('auth.login');
+            return view('auth.login', ['notifications' => $notifications]);
         }
         $user = \Auth::user();
 
         if ($user->is_super_user)
         {
             $new_users = $this->getNewUser();
-            return view('admin.home', ['new_users' => $new_users]);
+            return view('admin.home', ['new_users' => $new_users, 'notifications' => $notifications]);
         }
         $roster = \App\RosterUser::user($user->id);
         if ($roster->exists() && $roster->first()->is_administrator)
         {
-            return view('admin.home', ['new_users' => $new_users]);
+            return view('admin.home', ['new_users' => $new_users, 'notifications' => $notifications]);
         }
         if (!$roster->exists())
         {
-            return view('app.home', ['rows' => null]);
+            return view('app.home', ['rows' => null, 'notifications' => $notifications]);
         }
 
         $roster_user      = $roster->first();
         $roster_chief_cnt = ($roster_user->is_chief || ($roster_user->is_proxy && $roster_user->is_proxy_active)) ? $this->getRosterChiefNotice(\Auth::user()->id) : null;
         $roster_user_cnt  = $this->getRosterUserNotice(\Auth::user()->id, date('Y-m-d'));
-        return view('app.home', ['roster_chief_cnt' => $roster_chief_cnt, 'roster_user_cnt' => $roster_user_cnt]);
+        return view('app.home', ['roster_chief_cnt' => $roster_chief_cnt, 'roster_user_cnt' => $roster_user_cnt, 'notifications' => $notifications]);
     }
 
     public function permissionError() {

@@ -14,6 +14,8 @@
 Route::Controller('/auth', 'Auth\AuthController');
 Route::controller('/password', 'Auth\PasswordController');
 Route::get('/permission_error', ['as' => 'permission_error', 'uses' => 'IndexController@permissionError']);
+
+Route::resource('/notifications', 'NotificationController');
 Route::get('/', ['as' => 'index', 'uses' => 'IndexController@show']);
 Route::get('/home', function() {
     return redirect('/');
@@ -132,7 +134,6 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
         Route::post('/config/{system}/{category}/import', ['as' => 'import', 'uses' => 'SuisinAdminController@import']);
         Route::post('/config/{system}/{category}/upload', ['as' => 'upload', 'uses' => 'SuisinAdminController@upload']);
         Route::post('/config/{system}/{category}/delete', ['as' => 'delete', 'uses' => 'SuisinAdminController@delete']);
-
     });
 });
 /**

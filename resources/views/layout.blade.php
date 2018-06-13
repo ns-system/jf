@@ -1,33 +1,33 @@
 <html>
 <head>
-    <meta http-equiv="content-language" content="ja">
-    <meta charset="UTF-8">
-    @yield('meta')
+  <meta http-equiv="content-language" content="ja">
+  <meta charset="UTF-8">
+  @yield('meta')
 
-    <title>
-        @if(env('APP_ENV') !== "product") [{{env('APP_ENV')}}] @endif
-        @yield('title'){{$configs['title'] or ''}}
-    </title>
+  <title>
+    @if(env('APP_ENV') !== "product") [{{env('APP_ENV')}}] @endif
+    @yield('title'){{$configs['title'] or ''}}
+  </title>
 
-{{--     <link rel="stylesheet" href="https://nkmr6194.github.io/Umi/css/bootstrap.css"></link> --}}
+  {{--     <link rel="stylesheet" href="https://nkmr6194.github.io/Umi/css/bootstrap.css"></link> --}}
 
-    <link href="https://fonts.googleapis.com/earlyaccess/mplus1p.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/earlyaccess/sawarabimincho.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/earlyaccess/sawarabigothic.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/mplus1p.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/sawarabimincho.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/sawarabigothic.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
 
-    <link href="{{ asset('/css/bootstrap.css') }}" rel="stylesheet"></link>
-    <link href="{{ asset('/css/bootstrap.min.css') }}" rel="stylesheet"></link>
+  <link href="{{ asset('/css/bootstrap.css') }}" rel="stylesheet"></link>
+  <link href="{{ asset('/css/bootstrap.min.css') }}" rel="stylesheet"></link>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
-    <script src="{{ asset('/js/bootstrap.js') }}"></script>
-{{--     <script src="https://nkmr6194.github.io/Umi/js/bootstrap.min.js"></script> --}}
+  <script src="{{ asset('/js/bootstrap.js') }}"></script>
+  {{--     <script src="https://nkmr6194.github.io/Umi/js/bootstrap.min.js"></script> --}}
 
 
-    {{-- マテリアルデザインがクソかっこいい --}}
+  {{-- マテリアルデザインがクソかっこいい --}}
 {{-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
 <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.0.0-beta.3/dist/css/bootstrap-material-design.min.css" integrity="sha384-k5bjxeyx3S5yJJNRD1eKUMdgxuvfisWKku5dwHQq9Q/Lz6H8CyL89KF52ICpX4cL" crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -36,22 +36,22 @@
 
 <style type="text/css">
 body {
-    word-wrap: break-word;
-    overflow-y: scroll;
-    @if(\Auth::check())
-    <?php $font = \Auth::user(); ?>
-    font-size:   @if(!empty($font->font_size)) {{ $font->font_size }}px @else 16px @endif;
-    font-family: @if(!empty($font->font)) "{{ $font->font }}" @else "Meiryo" @endif , "Yu Gothic", "MS Gothic";
-    font-weight: @if(!empty($font->font_weight)) {{ $font->font_weight }} @else 400 @endif;
-    color:       @if(!empty($font->font_color)) {{ $font->font_color }} @else #333 @endif;
-    @endif
+  word-wrap: break-word;
+  overflow-y: scroll;
+  @if(\Auth::check())
+  <?php $font = \Auth::user(); ?>
+  font-size:   @if(!empty($font->font_size)) {{ $font->font_size }}px @else 16px @endif;
+  font-family: @if(!empty($font->font)) "{{ $font->font }}" @else "Meiryo" @endif , "Yu Gothic", "MS Gothic";
+  font-weight: @if(!empty($font->font_weight)) {{ $font->font_weight }} @else 400 @endif;
+  color:       @if(!empty($font->font_color)) {{ $font->font_color }} @else #333 @endif;
+  @endif
 }
 
 h1,h2,h3,h4,h5,h6,.form-control,.no-thank-yu, .navbar, .btn, .form-control, .input-gruop, .breadcrumb, .nav-tabs, .nav-pills, .panel-title, .list-group, .pagination, .pager, .alert, .label, .badge, .panel-heading, .lead, .tooltip, .popover {
-    @if(\Auth::check())
-    font-family: @if(!empty($font->font)) "{{ $font->font }}" @else "Meiryo" @endif , "Yu Gothic", "MS Gothic";
-    font-weight: @if(!empty($font->font_weight)) {{ $font->font_weight }} @else 400 @endif;
-    @endif
+  @if(\Auth::check())
+  font-family: @if(!empty($font->font)) "{{ $font->font }}" @else "Meiryo" @endif , "Yu Gothic", "MS Gothic";
+  font-weight: @if(!empty($font->font_weight)) {{ $font->font_weight }} @else 400 @endif;
+  @endif
 }
 .btn, .label { color: #fff; }
 .alert-success{ color: #128f76; }
@@ -126,10 +126,10 @@ input[type=file]{display: none;}
 
 /*.btn-group .btn{ margin-left: 2px; }*/
 .brand-logo, .official-logo, .gw-logo { 
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    cursor: pointer;
-    transition: 0.4s;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  transition: 0.4s;
 }
 .brand-logo{    background-image: url({{asset('/logos/logo_02.png')}}); width: 200px; height: 33px; margin-bottom: 0px; }
 .official-logo{ background-image: url({{asset('/logos/official.png')}}); width: 90px; height: 30px; }
@@ -150,121 +150,120 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
 </style>
 </head>
 <body>
-    @section('header')
-    <div class="bs-component" style="margin-bottom: 120px;">
-        @include('partial.nav')
-        @if(\Auth::check())
-        <div style="position: absolute; right: 10px; top: 85px;">
-            <a href="{{ route('app::user::font::show', ['user_id'=>\Auth::user()->id]) }}">文字が小さいですか？</a>
-        </div>
-        @endif
+  @section('header')
+  <div class="bs-component" style="margin-bottom: 120px;">
+    @include('partial.nav')
+    @if(\Auth::check())
+    <div style="position: absolute; right: 10px; top: 85px;">
+      <a href="{{ route('app::user::font::show', ['user_id'=>\Auth::user()->id]) }}">文字が小さいですか？</a>
     </div>
+    @endif
+  </div>
 
 
-    @show
+  @show
 
-    <div class="container-fluid user-font">
-        <div class="row">
-            @section('sidebar')
-            @show
+  <div class="container-fluid user-font">
+    <div class="row">
+      @section('sidebar')
+      @show
 
-            @yield('content')
-        </div>
+      @yield('content')
     </div>
+  </div>
 
-    @section('footer')
-    <script src="{{asset('/js/js.cookie.js')}}"></script>
+  @section('footer')
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+  <script src="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
 
-    <script type="text/javascript">
-        $(function () {
-            $('.modal-content').draggable();
-            $('[data-toggle="tooltip"]').tooltip();
-            $('.min-width').each(function(){
-                var width = $(this).attr('data-size');
-                $(this).css('min-width', width + 'px');
-            });
+  <script src="{{asset('/js/js.cookie.js')}}"></script>
 
-            $(document).bind("ajaxSend", function(c, xhr) {
-                $(window).bind( 'beforeunload', function() {
-                    alert('abort');
-                    xhr.abort();
-                })
-            });
+  <script type="text/javascript">
+    $(function () {
+      $('.modal-content').draggable();
+      $('[data-toggle="tooltip"]').tooltip();
+      $('.min-width').each(function(){
+        var width = $(this).attr('data-size');
+        $(this).css('min-width', width + 'px');
+      });
 
-                // +==========================================================
-                // | class='btn-group' && data-toggle='buttons'に対して
-                // | チェックされたボタンをハイライト表示する関数
-                // | class='btn'内のdata-color属性に変えたい色のボタンクラスを与えることで
-                // | 好きな色に変更できる(デフォルト値はbtn-primary)
-                $('.btn-group[data-toggle="buttons"] .btn input:checked').each(function(){
-                    var btn = $(this).parent('.btn');
-                    var color = $(this).parent('.btn').attr('data-color');
-                    console.log(color);
-                    if(color == null) color = 'btn-primary';
-                    btn.removeClass('btn-default').addClass(color);
-                });
-                $('.btn-group[data-toggle="buttons"] .btn').click(function(){
-                    var obj = $(this).siblings();
-                    obj.each(function(){
-                        var color = $(this).attr('data-color');
-                        if(color == null) color = 'btn-primary';
-                        $(this).removeClass(color).addClass('btn-default');
-                        $(this).find('input[type=checkbox]').attr('checked',false);
-                    });
-                    var color = $(this).attr('data-color');
-                    if(color == null) color = 'btn-primary';
+      $(document).bind("ajaxSend", function(c, xhr) {
+        $(window).bind( 'beforeunload', function() {
+          alert('abort');
+          xhr.abort();
+        })
+      });
+      // +==========================================================
+      // | class='btn-group' && data-toggle='buttons'に対して
+      // | チェックされたボタンをハイライト表示する関数
+      // | class='btn'内のdata-color属性に変えたい色のボタンクラスを与えることで
+      // | 好きな色に変更できる(デフォルト値はbtn-primary)
+      $('.btn-group[data-toggle="buttons"] .btn input:checked').each(function(){
+        var btn = $(this).parent('.btn');
+        var color = $(this).parent('.btn').attr('data-color');
+        console.log(color);
+        if(color == null) color = 'btn-primary';
+        btn.removeClass('btn-default').addClass(color);
+      });
+      $('.btn-group[data-toggle="buttons"] .btn').click(function(){
+        var obj = $(this).siblings();
+        obj.each(function(){
+          var color = $(this).attr('data-color');
+          if(color == null) color = 'btn-primary';
+          $(this).removeClass(color).addClass('btn-default');
+          $(this).find('input[type=checkbox]').attr('checked',false);
+        });
+        var color = $(this).attr('data-color');
+        if(color == null) color = 'btn-primary';
 
-                    $(this).removeClass('btn-default').addClass(color);
-                    $(this).find('input[type=checkbox]').attr('checked',true);
-                });
-
-                // +==========================================================
-                // | ページ遷移してもアコーディオンパネルを開いたままにしておく関数
-                // | Cookieに開いたタブ情報があればinクラスを与えて開いた状態にする
-                // +==========================================================
-                // Cookie情報の読み込み
-                var cookie_array = [];
-                var raw_tabs = Cookies.get('activeAccordionGroup'); /* console.log(raw_tabs); */
-                // 配列情報が文字列で取得されるため、不要な文字を削除して配列に変換する
-                if(raw_tabs != null) {
-                    raw_tabs     = raw_tabs.replace(/\[/g, '').replace(/]/g, '').replace(/"/g, '');
-                    var tabs     = raw_tabs.split(',');
-                    $.each(tabs, function(i, tab){
-                        // console.log(i + ' : ' + tab);
-                        $(tab).addClass('in');
-                    });
-                    var cookie_array = tabs; console.log('cookie_array : ' + cookie_array);
-                }
-                // cookie情報を扱う配列にセット
-                // 注意：この時点ではまだcookieを操作していない
-                // #### アコーディオンパネルをクリックしたタイミングで発火する ####
-                $('.collapse[data-toggle="collapse"]').click(function() {
-                    // 共通処理：idを取得してcookie配列に追加
-                    var id = $(this).attr('href');
-                    if(id != null && cookie_array.indexOf(id) == -1) cookie_array.push(id);
-                    // タブが閉じられたときの処理：アクティブなタブとその子タブを配列から削除する
-                    if($(this).next().hasClass('in')){  console.log('close -> ' + id);
-                    var remove_id = getGroupId(id);
-                        // 削除する要素を検出して子要素を全て消す
-                        if(cookie_array.length == 0) { /*console.log('undefined');*/ return false; }
-                        $.each(cookie_array, function(i, buf) {
-                            //console.log(buf + ' <=> ' + remove_id);
-                            if(buf == null) return false;
-                            if(buf.indexOf(remove_id) != -1) cookie_array.splice(i /* i番目の要素から */, 1 /* つ削除 */);
-                        });
-                    }
-                    // console.log(cookie_array);
-                    // 改めてcookie情報としてセットする
-                    Cookies.set('activeAccordionGroup', cookie_array, { expires: 7 });
-                });
-            });
-function getGroupId(id) {
-    var tmp_id = id.replace(/#/g, '');
-    var arr_id = tmp_id.split('_');
-    if(!(arr_id instanceof Array) || arr_id.length < 2) return false;
-    return arr_id[0];
-}
-</script>
-@show
+        $(this).removeClass('btn-default').addClass(color);
+        $(this).find('input[type=checkbox]').attr('checked',true);
+      });
+      // +==========================================================
+      // | ページ遷移してもアコーディオンパネルを開いたままにしておく関数
+      // | Cookieに開いたタブ情報があればinクラスを与えて開いた状態にする
+      // +==========================================================
+      // Cookie情報の読み込み
+      var cookie_array = [];
+      var raw_tabs = Cookies.get('activeAccordionGroup'); /* console.log(raw_tabs); */
+      // 配列情報が文字列で取得されるため、不要な文字を削除して配列に変換する
+      if(raw_tabs != null) {
+        raw_tabs     = raw_tabs.replace(/\[/g, '').replace(/]/g, '').replace(/"/g, '');
+        var tabs     = raw_tabs.split(',');
+        $.each(tabs, function(i, tab){
+          $(tab).addClass('in');
+        });
+        var cookie_array = tabs; console.log('cookie_array : ' + cookie_array);
+      }
+      // cookie情報を扱う配列にセット
+      // 注意：この時点ではまだcookieを操作していない
+      // #### アコーディオンパネルをクリックしたタイミングで発火する ####
+      $('.collapse[data-toggle="collapse"]').click(function() {
+      // 共通処理：idを取得してcookie配列に追加
+      var id = $(this).attr('href');
+      if(id != null && cookie_array.indexOf(id) == -1) cookie_array.push(id);
+      // タブが閉じられたときの処理：アクティブなタブとその子タブを配列から削除する
+      if($(this).next().hasClass('in')){  console.log('close -> ' + id);
+      var remove_id = getGroupId(id);
+      // 削除する要素を検出して子要素を全て消す
+      if(cookie_array.length == 0) { /*console.log('undefined');*/ return false; }
+      $.each(cookie_array, function(i, buf) {
+        if(buf == null) return false;
+        if(buf.indexOf(remove_id) != -1) cookie_array.splice(i /* i番目の要素から */, 1 /* つ削除 */);
+      });
+    }
+    // console.log(cookie_array);
+    // 改めてcookie情報としてセットする
+    Cookies.set('activeAccordionGroup', cookie_array, { expires: 7 });
+  });
+    });
+    function getGroupId(id) {
+      var tmp_id = id.replace(/#/g, '');
+      var arr_id = tmp_id.split('_');
+      if(!(arr_id instanceof Array) || arr_id.length < 2) return false;
+      return arr_id[0];
+    }
+  </script>
+  @show
 </body>
 </html>

@@ -18,6 +18,9 @@
 <div class="col-md-9">
     <div class="container-fluid">
         @include('partial.alert')
+        <div class="well" style="padding: 0;">
+            @include('auth.partial.notification')
+        </div>
 
         @include('roster.home_notice.chief')
         @include('roster.home_notice.user')
