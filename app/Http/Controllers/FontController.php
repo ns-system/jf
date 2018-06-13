@@ -28,7 +28,7 @@ class FontController extends Controller
             ['name_jp' => 'さわらびゴシック', 'name' => 'Sawarabi Gothic',],
             ['name_jp' => 'Noto Sans Japanese', 'name' => 'Noto Sans Japanese',],
             ['name_jp' => 'MSゴシック', 'name' => 'MS Gothic',],
-            ['name_jp' => 'MS明朝', 'name' => 'MS Micho',],
+            ['name_jp' => 'MS明朝', 'name' => 'MS Mincho',],
             ['name_jp' => 'HG丸ゴシックM-PRO', 'name' => 'HG丸ｺﾞｼｯｸM-PRO',],
 //            ['name_jp' => 'メイリオ', 'name' => '"Meiryo"',],
 //            ['name_jp' => '游ゴシック', 'name' => '"Yu Gothic"',],
