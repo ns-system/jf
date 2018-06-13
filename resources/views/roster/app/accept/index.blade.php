@@ -23,17 +23,6 @@
 <div class="col-md-10">
   @include('partial.alert')
 
-  @if($divs->isEmpty())
-  <div class="alert alert-warning" role="alert">
-    <p><b>管轄部署が登録されていないようです。</b></p>
-    <p><small>担当部署に部署の登録を行ってもらうよう連絡してください。</small></p>
-  </div>
-  @else
-  <p class="margin-bottom"><b>担当部署</b></p>
-  <ul class="list-group" style="width: 300px;">
-    @foreach($divs as $d) <li class="list-group-item"><small>{{$d->division_name}}</small></li> @endforeach
-  </ul>
-  @endif
 
   @if(!$divs->isEmpty())
   @foreach($divs as $d)
@@ -51,7 +40,7 @@
           <div class="row">
             <div class="col-md-6">
               <p class="border-bottom"><small><b>予定</small></b></p>
-              <canvas id="plan-{{ $d->division_id }}-{{$m->month_id}}"></canvas>
+              <canvas id="plan-{{ $d->division_id }}-{{$m->month_id}}" style="height: 300px;"></canvas>
             </div>
             <div class="col-md-6">
               <p class="border-bottom"><small><b>実績</small></b></p>

@@ -46,7 +46,7 @@ class RosterChiefController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Chief $request, $user_id, $roster_user_id) {
-        $in   = $request->input();
+        $in          = $request->input();
         $roster_user = \App\RosterUser::find($roster_user_id);
         try {
             $roster_user->is_proxy        = $in['proxy'];
@@ -83,6 +83,92 @@ class RosterChiefController extends Controller
 
         \Session::flash('success_message', "データを更新しました。");
         return redirect(route('app::roster::chief::index'));
+    }
+
+    private function makeCalendar($month, $rosters) {
+        $str  = date('Y-m-01', strtotime($month));
+        $date = new \DateTimeImmutable($str . ' 00:00:00');
+        $day  = (int) $date->format('w');
+        $week = 0;
+        $max  = (int) $date->format('t');
+        $key  = new \DateTime($str);
+        $rows = [];
+        $frm  = ['day' => '', 'key' => '', 'holiday' => '', 'data' => []];
+
+        $holidays = \App\Holiday::whereBetween('holiday', [$date->format('Y-m-01'), $date->format('Y-m-t')])
+                ->get()
+                ->keyBy('holiday')
+                ->toArray()
+        ;
+        for ($i = $day; $i > 0; --$i) {
+            $rows[$week][] = $frm;
+        }
+
+        for ($i = 1; $i <= $max; ++$i) {
+            if ($day > 6)
+            {
+                ++$week;
+                $day = 0;
+            }
+            $key_day       = $key->format('Y-m-d');
+            $rows[$week][] = [
+                'day'     => $i,
+                'key'     => $key_day,
+                'holiday' => (!empty($holidays[$key_day])) ? $holidays[$key_day]['holiday_name'] : '',
+                'data'    => (!empty($rosters[$key_day])) ? $rosters[$key_day] : [],
+            ];
+            ++$day;
+            $key->modify('+1 day');
+        }
+        for ($i = $day; $i <= 6; $i++) {
+            $rows[$week][] = $frm;
+        }
+
+        return $rows;
+    }
+
+    public function calendarIndex($month = null) {
+        $date    = (!empty($month)) ? new \DateTime($month . '01') : new \DateTime();
+        $user_id = \Auth::user()->id;
+
+        $rows = \App\ControlDivision::join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
+                ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
+                ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+                ->whereBetween('rosters.entered_on', [$date->format('Y-m-01'), $date->format('Y-m-t')])
+                ->where('control_divisions.user_id', $user_id)
+                ->where('roster_users.is_administrator', '!=', true)
+                ->where('roster_users.is_chief', '!=', true)
+                ->groupBy('entered_on')
+                ->select(\DB::raw("entered_on, count(*) as total"))
+                ->addSelect(\DB::raw("count(if(is_plan_entry = true, 1, null)) as pEntry"))
+                ->addSelect(\DB::raw("count(if(is_actual_entry = true, 1, null)) as aEntry"))
+                ->addSelect(\DB::raw("count(if(is_plan_accept = true, 1, null)) as pAccept"))
+                ->addSelect(\DB::raw("count(if(is_actual_accept = true, 1, null)) as aAccept"))
+                ->get()
+                ->keyBy('entered_on')
+                ->toArray()
+        ;
+
+        $user_count = \App\ControlDivision::join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
+                ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+                ->where('control_divisions.user_id', $user_id)
+                ->where('roster_users.is_administrator', '!=', true)
+                ->where('roster_users.is_chief', '!=', true)
+                ->count()
+        ;
+
+        $calendar = $this->makeCalendar($date->format('Y-m-d'), $rows);
+        $next     = (!empty($month)) ? new \DateTime($month . '01') : new \DateTime();
+        $before   = (!empty($month)) ? new \DateTime($month . '01') : new \DateTime();
+
+        $params = [
+            'calendar'     => $calendar,
+            'this_month'   => $date->format('Y年n月'),
+            'user_count'   => $user_count,
+            'next_month'   => $next->modify('+1 month')->format('Ym'),
+            'before_month' => $before->modify('-1 month')->format('Ym'),
+        ];
+        return view('roster.chief.calendar', $params);
     }
 
 }

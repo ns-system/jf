@@ -51,6 +51,9 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
             Route::get('/', ['as' => 'home', 'uses' => 'RosterController@home']);
 
             Route::group(['as' => 'calendar::', 'prefix' => '/calendar'], function() {
+                
+                Route::get('/{month?}', ['as' => 'index', 'uses' => 'RosterChiefController@calendarIndex']);
+
                 Route::get('/{year_and_month}', ['as' => 'show', 'uses' => 'RosterController@show']);
                 /**
                  * As         : form::
@@ -77,6 +80,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
              * Prefix     : /accept
              */
             Route::group(['middleware' => 'roster_proxy'], function() {
+
                 Route::group(['as' => 'accept::', 'prefix' => '/accept'], function() {
                     Route::get('/list',                                                                    ['as' => 'index',           'uses' => 'RosterAcceptController@index']);
                     Route::get('/list/{year_and_month}/divisions/{division_id}/users/{user_id?}{status?}', ['as' => 'calendar',        'uses' => 'RosterAcceptController@calendarIndex']);

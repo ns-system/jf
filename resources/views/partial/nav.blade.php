@@ -28,6 +28,14 @@
             <ul class="nav navbar-nav">
                 <li><a href="http://www.jf-nssinren.or.jp/" target="_blank">Official</a></li>
                 <li><a href="http://192.1.10.136/myweb10po" target="_blank">Groupware</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">マニュアル <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="{{ asset('/manuals/01_01_勤怠管理システム_マニュアル_v1.00.pdf') }}" target="_blank">勤怠管理システム</a></li>
+                        <li><a href="{{ asset('/manuals/02_01_推進支援システム_マニュアル_v2.00.pdf') }}" target="_blank">推進支援システム</a></li>
+                        <li><a href="{{ asset('/manuals/02_03_推進支援システム_補足_エクセル操作方法.pdf') }}" target="_blank">推進支援システム 補足</a></li>
+                    </ul>
+                </li>
                 @if(Auth::check())
                 <li>
                     <a href="{{route('app::user::show', ['id'=>\Auth::user()->id])}}" style="margin: 10px 0; font-size: 80%">

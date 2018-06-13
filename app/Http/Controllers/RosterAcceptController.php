@@ -11,7 +11,7 @@ use \App\Services\Roster\RosterAccept;
 class RosterAcceptController extends Controller
 {
 
-    const INT_MONTH_COUNT = 12;
+    const INT_MONTH_COUNT = 2;
 
     private function getQuery() {
         $id = \Auth::user()->id;
@@ -71,8 +71,10 @@ class RosterAcceptController extends Controller
         ;
 
         // 最大INT_MONTH_COUNTヶ月分の表示する月を生成
-        $months = \App\Roster::groupBy('month_id')->where('month_id', '<>', 0)->take(self::INT_MONTH_COUNT)->orderBy('month_id', 'desc')->get(['month_id']);
-        $params = [
+        $next_month = new \DateTime();
+//        $next_month->modify('+1 month');
+        $months     = \App\Roster::groupBy('month_id')->where('month_id', '<>', 0)->where('month_id', '<=', $next_month->format('Ym'))->take(self::INT_MONTH_COUNT)->orderBy('month_id', 'desc')->get(['month_id']);
+        $params     = [
             'rows'          => $rows,
             'divs'          => $divs,
             'plan_accept'   => $plan_accept,

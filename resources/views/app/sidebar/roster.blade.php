@@ -33,6 +33,15 @@
         <a
             role="presentation"
             class="list-group-item collapse list-second"
+            href="{{route('app::roster::calendar::index')}}"
+            data-toggle="tooltip"
+            title="（責任者・責任者代理用機能）勤務データの承認状況をカレンダーから確認します。"
+            data-placement="right"><span class="text-success"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> 勤務カレンダー</span>
+        </a><span></span>
+
+        <a
+            role="presentation"
+            class="list-group-item collapse list-second"
             href="{{route('app::roster::accept::index')}}"
             data-toggle="tooltip"
             title="（責任者・責任者代理用機能）勤務データの承認・却下を行います。"
