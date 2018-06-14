@@ -12,11 +12,11 @@
   </div>
   @else
   <div id="sampleCarousel" class="carousel slide" data-ride="carousel">
-    <ol class="carousel-indicators" style="margin-bottom: 30px;">
+{{--     <ol class="carousel-indicators" style="margin-bottom: 30px;">
       @foreach($notifications as $i => $n)
       <li @if($i == 0) class="active" @endif data-target="#sampleCarousel" data-slide-to="{{ $i }}"></li>
       @endforeach
-    </ol>
+    </ol> --}}
     <div class="carousel-inner" role="listbox" style="padding-bottom: 20px;">
       @foreach($notifications as $i => $n)
       <div @if($i == 0) class="item active" @else class="item" @endif>
