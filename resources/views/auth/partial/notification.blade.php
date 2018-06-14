@@ -22,12 +22,19 @@
       <div @if($i == 0) class="item active" @else class="item" @endif>
         <div class="row">
           <div class="col-md-8 col-md-offset-2 @if(!empty($dark)) white @endif">
-            <p>
-              <span class="label label-info">{{ date('n月j日', strtotime($n->created_at)) }}</span>
-              <span class="label label-warning">{{ $n->category }}</span>
-              <span>{{ $n->message }}</span>
-              <i> - {{ $n->user->last_name }}</i>
-            </p>
+
+            <table @if(!empty($dark)) class="white" @endif>
+              <tr>
+                <td width="75px" style="padding-left: 5px;"><span class="label label-info">{{ date('n月j日', strtotime($n->created_at)) }}</span></td>
+                <td width="75px" style="padding-left: 5px;"><span class="label label-warning">{{ $n->category }}</span></td>
+                <td width="90%" class="text-left" style="padding-left: 5px;">
+                  <span>{{ $n->message }}</span>
+                  <i> - {{ $n->user->last_name }}</i>
+                </td>
+              </tr>
+            </table>
+
+
           </div>
         </div>
       </div>
