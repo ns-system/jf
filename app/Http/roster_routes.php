@@ -49,11 +49,11 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
          */
         Route::group(['middleware' => 'roster_user'], function() {
             Route::get('/', ['as' => 'home', 'uses' => 'RosterController@home']);
+            
+            Route::get('/chief/calendar/{month?}', ['as' => 'chief_index', 'uses' => 'RosterChiefController@calendarIndex']);
 
             Route::group(['as' => 'calendar::', 'prefix' => '/calendar'], function() {
                 
-                Route::get('/{month?}', ['as' => 'index', 'uses' => 'RosterChiefController@calendarIndex']);
-
                 Route::get('/{year_and_month}', ['as' => 'show', 'uses' => 'RosterController@show']);
                 /**
                  * As         : form::

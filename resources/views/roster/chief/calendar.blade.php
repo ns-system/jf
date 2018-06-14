@@ -30,8 +30,8 @@
       <span class="headline">{{ $this_month }}</span>
       <span>ユーザー数：{{ $user_count }}人</span>
       <div class="btn-group" role="group" style="margin-bottom: 20px;">
-        <a class="btn btn-warning btn-sm" href="{{ route('app::roster::calendar::index', ['month' => $before_month]) }}"><i class="glyphicon glyphicon-chevron-left"></i>前月</a>
-        <a class="btn btn-info btn-sm"    href="{{ route('app::roster::calendar::index', ['month' => $next_month]) }}">翌月<i class="glyphicon glyphicon-chevron-right"></i></a>
+        <a class="btn btn-warning btn-sm" href="{{ route('app::roster::chief_index', ['month' => $before_month]) }}"><i class="glyphicon glyphicon-chevron-left"></i>前月</a>
+        <a class="btn btn-info btn-sm"    href="{{ route('app::roster::chief_index', ['month' => $next_month]) }}">翌月<i class="glyphicon glyphicon-chevron-right"></i></a>
       </div>
 
       {{-- {{ dd($calendar) }} --}}
