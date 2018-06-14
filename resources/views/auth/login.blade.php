@@ -34,7 +34,7 @@ body{
         </div>
     </div>
 
-    <div style="margin-bottom: 20px;">
+    <div style="background: rgba(255,255,255,0.1); border-radius: 2px; border: 1px solid #999; margin-bottom: 20px;">
         @include('auth.partial.notification', ['dark' => true])
     </div>
 
