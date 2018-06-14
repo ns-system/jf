@@ -27,6 +27,9 @@ class RosterController extends Controller
 //    }
 
     public function show($ym) {
+        $input    = \Input::get();
+        $position = (!empty($input['position'])) ? $input['position'] : 0;
+
         $d = \DateTime::createFromFormat('Ymd', $ym . '01');
         if (!$d)
         {
@@ -77,11 +80,13 @@ class RosterController extends Controller
             'rests'     => $rests,
             'prev'      => $pages['prev'],
             'next'      => $pages['next'],
+            'position'  => $position,
         ];
         return view('roster.app.calendar.index', $param);
     }
 
     public function editPlan($ym, $id, Plan $request) {
+        $position = (!empty($request->input()['position'])) ? $request->input()['position'] : 0;
         if (!$this->isDate($ym))
         {
 
@@ -91,10 +96,10 @@ class RosterController extends Controller
         try {
             $this->service->editPlan($id, $request);
             \Session::flash('success_message', '予定データを更新しました。');
-            return redirect()->route('app::roster::calendar::show', ['ym' => $ym]);
+            return redirect()->route('app::roster::calendar::show', ['ym' => $ym, 'position' => $position]);
         } catch (\Exception $e) {
             \Session::flash('warn_message', $e->getMessage());
-            return redirect()->route('app::roster::calendar::show', ['ym' => $ym]);
+            return redirect()->route('app::roster::calendar::show', ['ym' => $ym, 'position' => $position]);
         }
     }
 
@@ -113,14 +118,15 @@ class RosterController extends Controller
     }
 
     public function editActual($ym, $id, Actual $request) {
+        $position = (!empty($request->input()['position'])) ? $request->input()['position'] : 0;
         try {
             $this->service->editActual($id, $request);
 
             \Session::flash('success_message', '実績データを更新しました。');
-            return redirect()->route('app::roster::calendar::show', ['ym' => $ym]);
+            return redirect()->route('app::roster::calendar::show', ['ym' => $ym, 'position' => $position]);
         } catch (\Exception $e) {
             \Session::flash('warn_message', $e->getMessage());
-            return redirect()->route('app::roster::calendar::show', ['ym' => $ym]);
+            return redirect()->route('app::roster::calendar::show', ['ym' => $ym, 'position' => $position]);
         }
     }
 
