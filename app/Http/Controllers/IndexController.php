@@ -11,7 +11,7 @@ class IndexController extends Controller
 
     public function show() {
         $new_users     = [];
-        $notifications = \App\Notification::with('user')->deadline(date('Y-m-d'))->orderBy('deadline', 'desc')->take(5)->get();
+        $notifications = \App\Notification::with('user')->deadline(date('Y-m-d'))->orderBy('created_at', 'desc')->take(5)->get();
 
         if (!\Auth::check())
         {
