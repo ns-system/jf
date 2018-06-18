@@ -17,7 +17,8 @@ class IndexController extends Controller
         {
             return view('auth.login', ['notifications' => $notifications]);
         }
-        $user = \Auth::user();
+        $user       = \Auth::user();
+        $roster_log = $this->getRosterUserLog($user->id);
 
         if ($user->is_super_user)
         {
@@ -37,7 +38,9 @@ class IndexController extends Controller
         $roster_user      = $roster->first();
         $roster_chief_cnt = ($roster_user->is_chief || ($roster_user->is_proxy && $roster_user->is_proxy_active)) ? $this->getRosterChiefNotice(\Auth::user()->id) : null;
         $roster_user_cnt  = $this->getRosterUserNotice(\Auth::user()->id, date('Y-m-d'));
-        return view('app.home', ['roster_chief_cnt' => $roster_chief_cnt, 'roster_user_cnt' => $roster_user_cnt, 'notifications' => $notifications]);
+        $params = ['roster_chief_cnt' => $roster_chief_cnt, 'roster_user_cnt' => $roster_user_cnt, 'notifications' => $notifications, 'roster_log' => $roster_log];
+        \Log::debug($params);
+        return view('app.home', $params);
     }
 
     public function permissionError() {
@@ -48,7 +51,7 @@ class IndexController extends Controller
         $start = date('Y-m-d', strtotime('-1 month'));
         $res   = \App\User::select(\DB::raw('first_name, last_name, updated_at, created_at = updated_at as is_new'))
                 ->where('updated_at', '>=', $start)
-                ->orderBy('updated_at')
+                ->orderBy('updated_at', 'desc')
                 ->take(10)
                 ->get()
         ;
@@ -75,6 +78,29 @@ class IndexController extends Controller
                 ->get()
         ;
         return $res;
+    }
+
+    private function getRosterUserLog($user_id) {
+        $columns = ['users.first_name', 'users.last_name', 'rosters.updated_at as timestamp', 'sinren_divisions.division_name'];
+        $rows    = \App\ControlDivision::join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
+                ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
+                ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+                ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
+                ->leftJoin('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')
+                ->select($columns)
+                ->where('control_divisions.user_id', $user_id)
+                ->where('roster_users.is_administrator', '!=', true)
+                ->where('roster_users.is_chief', '!=', true)
+                ->take(60)
+                ->groupBy('entered_on')
+                ->orderBy('timestamp', 'desc')
+                ->get()
+                ->chunk(5)
+//                ->toArray()
+        ;
+        if(env("APP_DEBUG")) \Log::debug($rows->toArray());
+//        dd($rows);
+        return $rows;
     }
 
     private function getRosterUserNotice($user_id, $limit_date) {
