@@ -188,7 +188,8 @@
 
 <script type="text/javascript">
   function checkAll (selector) {
-    $(selector).each((i, e) => {
+    $(selector).each(function (i, e) {
+      console.log('hoge')
       $(e).prop('checked', true).attr('checked', 'checked')
       $(e).parent().removeClass('btn-default').addClass('btn-success')
     })

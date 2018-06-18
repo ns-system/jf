@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <meta http-equiv="content-language" content="ja">
@@ -17,8 +18,8 @@
   <link href="https://fonts.googleapis.com/earlyaccess/sawarabigothic.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
 
-  <link href="{{ asset('/css/bootstrap.css') }}" rel="stylesheet"></link>
-  <link href="{{ asset('/css/bootstrap.min.css') }}" rel="stylesheet"></link>
+  <link href="{{ asset('/css/bootstrap.css') }}" rel="stylesheet" />
+  <link href="{{ asset('/css/bootstrap.min.css') }}" rel="stylesheet" />
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>

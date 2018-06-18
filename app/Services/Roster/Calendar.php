@@ -122,8 +122,12 @@ class Calendar
         $rest   = (empty($request['actual_rest_reason_id'])) ? null : \App\Rest::where('rest_reason_id', $request['actual_rest_reason_id'])->first();
         $roster = \App\Roster::findOrFail($id);
 
-        $start_time = null;
-        $end_time   = null;
+        $start_time    = null;
+        $end_time      = null;
+        $is_rest       = (!empty($rest)) ? true : false;
+//        $is_short_time = false;
+        $is_short_time = (!empty($rest) && ($rest->rest_reason_name === '遅刻' || $rest->rest_reason_name === '早退')) ? true : false;
+
         if (empty($rest) || !empty($rest) && ($rest->rest_reason_name === '遅刻' || $rest->rest_reason_name === '早退'))
         {
             $start_time = date('H:i:s', strtotime($request['actual_start_hour'] . ":" . $request['actual_start_time'] . ":00"));
@@ -138,20 +142,23 @@ class Calendar
             {
                 throw new \Exception("勤務時間を超過する場合、必ず理由を入力してください。");
             }
-            $roster->actual_overtime_start_time = $start_time;
-            $roster->actual_overtime_end_time   = $end_time;
         }
-        else
-        {
-            $roster->actual_rest_reason_id = $request['actual_rest_reason_id'];
-        }
-        $roster->user_id                = \Auth::user()->id;
-        $roster->is_actual_entry        = (int) true;
-        $roster->is_actual_reject       = (int) false;
-        $roster->actual_work_type_id    = $request['actual_work_type_id'];
-        $roster->actual_overtime_reason = $request['actual_overtime_reason'];
-        $roster->actual_entered_at      = date('Y-m-d H:i:s');
+        $roster->user_id                    = \Auth::user()->id;
+        $roster->is_actual_entry            = (int) true;
+        $roster->is_actual_reject           = (int) false;
+        $roster->actual_work_type_id        = (!$is_rest || $is_short_time) ? $request['actual_work_type_id'] : 0;
+        $roster->actual_rest_reason_id      = ($is_rest) ? $request['actual_rest_reason_id'] : 0;
+        $roster->actual_overtime_reason     = $request['actual_overtime_reason'];
+        $roster->actual_entered_at          = date('Y-m-d H:i:s');
+        $roster->actual_overtime_start_time = $start_time;
+        $roster->actual_overtime_end_time   = $end_time;
         $roster->save();
+        if (env('APP_DEBUG'))
+        {
+            \Log::info('actual edit :');
+            \Log::info(['start_time' => $start_time, 'end_time' => $end_time]);
+            \Log::info(['is_rest' => $is_rest, 'is_short_time' => $is_short_time, $roster->toArray(),]);
+        }
     }
 
     public function delete($id) {

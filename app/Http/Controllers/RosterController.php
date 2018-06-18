@@ -82,6 +82,7 @@ class RosterController extends Controller
             'next'      => $pages['next'],
             'position'  => $position,
         ];
+//        \Log::debug($param);
         return view('roster.app.calendar.index', $param);
     }
 

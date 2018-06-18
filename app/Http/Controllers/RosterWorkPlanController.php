@@ -15,7 +15,8 @@ class RosterWorkPlanController extends Controller
 
     public function index() {
         // 勤務データが登録されていれば最新のもの、でなければ今月を当月扱いとする
-        $current_month = (!empty(\App\Roster::max('month_id'))) ? \App\Roster::max('month_id') : date('Ym');
+//        $current_month = (!empty(\App\Roster::max('month_id'))) ? \App\Roster::max('month_id') : date('Ym');
+        $current_month = date('Ym');
 
         $months = [];
         $tmp    = $current_month . '01';
@@ -31,7 +32,7 @@ class RosterWorkPlanController extends Controller
     public function division($month) {
 
         $divs  = \App\ControlDivision::user(\Auth::user()->id)->get();
-        $cnt =[];
+        $cnt   = [];
         $users = \App\SinrenUser::join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
                 ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
@@ -87,6 +88,7 @@ class RosterWorkPlanController extends Controller
         try {
             $service->updateWorkPlan($input, $user_id, $month_id, $chief_id);
         } catch (\Exception $e) {
+            \Log::error(['errors' => $e, 'input' => $input, 'user_id' => $user_id, 'month_id' => $month_id, 'chief_id' => $chief_id]);
             \Session::flash('warn_message', 'エラーがあったため処理を中断しました。');
             return back();
         }
