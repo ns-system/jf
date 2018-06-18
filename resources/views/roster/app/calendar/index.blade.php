@@ -141,7 +141,7 @@
           <div
           @if(date('Ymd', strtotime($ym.sprintf('%02d', (int) $day['day']))) == date('Ymd')) class="panel-body bg-info"
           @else class="panel-body" @endif
-          style="height: 175px; overflow-y: scroll; padding: 5px;"
+          style="height: 200px; overflow-y: scroll; padding: 5px;"
           >
           {{-- パネル内容 --}}
           @if($day['data'] != [])
