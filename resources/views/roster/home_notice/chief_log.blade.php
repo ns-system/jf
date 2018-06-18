@@ -11,7 +11,7 @@
           @foreach($chunk as $r)
           <div style="border-bottom: 1px solid #ddd; padding: 5px 20px;" class="small">
             <p><span class="label label-info">{{ date('n/j H:i', strtotime($r->timestamp)) }}</span></p>
-            <p>{{ $r->last_name }} {{ $r->first_name }} さんが情報を更新しました。</p>
+            <p>{{ $r->last_name }} {{ $r->first_name }} さんが{{ date('n/j', strtotime($r->entered_on)) }}の情報を更新しました。</p>
           </div>
           @endforeach
         </div>

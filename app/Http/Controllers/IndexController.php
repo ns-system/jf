@@ -81,7 +81,7 @@ class IndexController extends Controller
     }
 
     private function getRosterUserLog($user_id) {
-        $columns = ['users.first_name', 'users.last_name', 'rosters.updated_at as timestamp', 'sinren_divisions.division_name'];
+        $columns = ['users.first_name', 'users.last_name', 'rosters.updated_at as timestamp', 'sinren_divisions.division_name', 'entered_on'];
         $rows    = \App\ControlDivision::join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
                 ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
                 ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
@@ -91,8 +91,10 @@ class IndexController extends Controller
                 ->where('control_divisions.user_id', $user_id)
                 ->where('roster_users.is_administrator', '!=', true)
                 ->where('roster_users.is_chief', '!=', true)
+                ->where('rosters.is_plan_entry', true)
                 ->take(60)
-                ->groupBy('entered_on')
+//                ->groupBy('users.id')
+//                ->groupBy('entered_on')
                 ->orderBy('timestamp', 'desc')
                 ->get()
                 ->chunk(5)
