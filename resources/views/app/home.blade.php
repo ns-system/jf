@@ -22,9 +22,11 @@
       @include('auth.partial.notification')
     </div>
     <div class="row">
+      @if($is_chief)
       <div class="col-md-4">
         @include('roster.home_notice.chief')
       </div>
+      @endif
       <div class="col-md-4">
         @include('roster.home_notice.user')
       </div>

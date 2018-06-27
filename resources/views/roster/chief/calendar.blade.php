@@ -47,7 +47,14 @@
             @foreach($c as $w => $d)
             <td class="text-left">
               @if(!empty($d['day']))
-              <p><small class="label @if(!empty($d['holiday'] || $w == 0)) label-danger @elseif($w == 6) label-info @else label-primary @endif">{{ $d['day'] }} ({{ $jp_week[$w] }})</small></p>
+              @include('roster.chief.partial.dialog', ['key'=>$d['key'], 'eusers' => $entered_users[$d['key']]])
+              <p>
+                <small class="label @if(!empty($d['holiday'] || $w == 0)) label-danger @elseif($w == 6) label-info @else label-primary @endif">{{ $d['day'] }} ({{ $jp_week[$w] }})</small>
+                <button type="button" class="btn btn-link btn-xs" data-toggle="modal" data-target="#{{ $d['key'] }}">
+                  <span class="glyphicon glyphicon-search text-success" aria-hidden="true"></span>
+                </button>
+
+              </p>
               @endif
 
               @if(!empty($d['data']))

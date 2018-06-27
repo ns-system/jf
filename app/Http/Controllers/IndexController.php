@@ -35,11 +35,28 @@ class IndexController extends Controller
             return view('app.home', ['rows' => null, 'notifications' => $notifications]);
         }
 
-        $roster_user      = $roster->first();
-        $roster_chief_cnt = ($roster_user->is_chief || ($roster_user->is_proxy && $roster_user->is_proxy_active)) ? $this->getRosterChiefNotice(\Auth::user()->id) : null;
-        $roster_user_cnt  = $this->getRosterUserNotice(\Auth::user()->id, date('Y-m-d'));
-        $params = ['roster_chief_cnt' => $roster_chief_cnt, 'roster_user_cnt' => $roster_user_cnt, 'notifications' => $notifications, 'roster_log' => $roster_log];
-        \Log::debug($params);
+        $roster_user = $roster->first();
+
+        $cu       = \App\ControlDivision::where('control_divisions.user_id', $user->id)
+                ->join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
+                ->join('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')
+                ->get(['sinren_users.user_id', 'control_divisions.division_id', 'sinren_divisions.division_name'])
+        ;
+        $users    = [];
+        $is_chief = ($roster_user->is_chief || ($roster_user->is_proxy && $roster_user->is_proxy_active)) ? true : false;
+        foreach ($cu as $c) {
+            $users[$c->division_id]['division_name'] = $c->division_name;
+            $users[$c->division_id]['users'][]       = $c->user_id;
+        }
+
+        foreach ($users as $div => $u) {
+            $r                    = ($is_chief) ? $this->getRosterChiefNotice($u['users']) : null;
+            $users[$div]['count'] = $r;
+        }
+        $roster_chief_cnt = $users;
+//        \Log::debug(['roster_chief_cnt' => $roster_chief_cnt]);
+        $roster_user_cnt  = $this->getRosterUserNotice($user->id, date('Y-m-d'));
+        $params           = ['roster_chief_cnt' => $roster_chief_cnt, 'roster_user_cnt' => $roster_user_cnt, 'notifications' => $notifications, 'roster_log' => $roster_log, 'is_chief' => $is_chief];
         return view('app.home', $params);
     }
 
@@ -58,26 +75,59 @@ class IndexController extends Controller
         return $res;
     }
 
-    private function getRosterChiefNotice($user_id) {
-//        dd($user_id);
-        $res = \App\ControlDivision::leftJoin('sinren_db.sinren_divisions as S_DIV', 'control_divisions.division_id', '=', 'S_DIV.division_id')
-                ->leftJoin('sinren_db.sinren_users as S_USER', 'control_divisions.division_id', '=', 'S_USER.division_id')
-                ->leftJoin('roster_db.rosters as ROSTER', 'S_USER.user_id', '=', 'ROSTER.user_id')
-                ->where('control_divisions.user_id', '=', $user_id)
-                ->where('S_USER.user_id', '<>', $user_id)
-                ->where('ROSTER.is_plan_entry', '=', true)
-                ->where(function ($query) {
-                    $query->orWhere('is_plan_accept', '=', false);
-                    $query->orWhere('is_actual_accept', '=', false);
+    private function getRosterChiefNotice($users) {
+
+        $cnt = \App\Roster::where(function ($query) use ($users) {
+                    foreach ($users as $user_id) {
+                        $query->orWhere('user_id', $user_id);
+                    }
                 })
-                ->orderby('month_id', 'desc')
+                ->where(function($query) {
+                    $query->orWhere(function($query) {
+                        $query->where('is_plan_entry', true)->where('is_plan_accept', false);
+                    })->orWhere(function($query) {
+                        $query->where('is_actual_entry', true)->where('is_actual_accept', false);
+                    });
+                })
                 ->groupBy('month_id')
-                ->select(\DB::raw('count(*) as total, S_DIV.division_id as division_id, S_DIV.division_name as division_name, ROSTER.month_id as month_id'))
-                ->orderBy('ROSTER.month_id', 'desc')
+                ->select(\DB::raw('count(*) as total, month_id'))
                 ->take(4)
                 ->get()
         ;
-        return $res;
+        return (!empty($cnt) && !$cnt->isEmpty()) ? $cnt->toArray() : [['month_id' => null, 'total' => 0]];
+//        dd($res);
+//        $res = \App\ControlDivision::where('control_divisions.user_id', $user_id)
+//                ->join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
+//                ->get()
+//                ->toArray()
+//        ;
+//        \Log::debug($res);
+//        dd($res);
+//        $res = \App\ControlDivision::leftJoin('sinren_db.sinren_divisions as S_DIV', 'control_divisions.division_id', '=', 'S_DIV.division_id')
+//                ->leftJoin('sinren_db.sinren_users as S_USER', 'control_divisions.division_id', '=', 'S_USER.division_id')
+//                ->leftJoin('roster_db.rosters as ROSTER', 'S_USER.user_id', '=', 'ROSTER.user_id')
+//                ->where('control_divisions.user_id', '=', $user_id)
+//                ->where('S_USER.user_id', '<>', $user_id)
+//                ->where('ROSTER.is_plan_entry', '=', true)
+////                ->where(function ($query) {
+////                    $query->orWhere('is_plan_accept', '=', false);
+////                    $query->orWhere('is_actual_accept', '=', false);
+////                })
+//                ->where(function($query) {
+//                    $query->orWhere(function($query) {
+//                        $query->where('ROSTER.is_plan_entry', true)->where('ROSTER.is_plan_accept', false);
+//                    })->orWhere(function($query) {
+//                        $query->where('ROSTER.is_actual_entry', true)->where('ROSTER.is_actual_accept', false);
+//                    });
+//                })
+//                ->select(\DB::raw('count(*) as total, S_DIV.division_id as division_id, S_DIV.division_name as division_name, ROSTER.month_id as month_id'))
+//                ->groupBy('month_id')
+//                ->orderBy('ROSTER.month_id', 'desc')
+//                ->take(4)
+//                ->get()
+//        ;
+////        dd($res);
+//        return $res;
     }
 
     private function getRosterUserLog($user_id) {
@@ -100,7 +150,8 @@ class IndexController extends Controller
                 ->chunk(5)
 //                ->toArray()
         ;
-        if(env("APP_DEBUG")) \Log::debug($rows->toArray());
+        if (env("APP_DEBUG"))
+            \Log::debug($rows->toArray());
 //        dd($rows);
         return $rows;
     }

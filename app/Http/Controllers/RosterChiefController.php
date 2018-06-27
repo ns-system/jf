@@ -127,17 +127,30 @@ class RosterChiefController extends Controller
         return $rows;
     }
 
+    private function getRosterUser($user_id) {
+        $users = \App\ControlDivision::join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
+                ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+                ->where('control_divisions.user_id', $user_id)
+                ->where('roster_users.is_administrator', '!=', true)
+                ->where('roster_users.is_chief', '!=', true)
+                ->get(['sinren_users.user_id'])
+        ;
+        \Log::debug($users->toArray());
+        return $users;
+//        dd($users->toArray());
+    }
+
     public function calendarIndex($month = null) {
         $date    = (!empty($month)) ? new \DateTime($month . '01') : new \DateTime();
         $user_id = \Auth::user()->id;
 
-        $rows = \App\ControlDivision::join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
-                ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
-                ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-                ->whereBetween('rosters.entered_on', [$date->format('Y-m-01'), $date->format('Y-m-t')])
-                ->where('control_divisions.user_id', $user_id)
-                ->where('roster_users.is_administrator', '!=', true)
-                ->where('roster_users.is_chief', '!=', true)
+        $users = $this->getRosterUser($user_id);
+        $rows  = \App\Roster::whereBetween('rosters.entered_on', [$date->format('Y-m-01'), $date->format('Y-m-t')])
+                ->where(function($query)use($users) {
+                    foreach ($users as $user) {
+                        $query->orWhere('rosters.user_id', $user->user_id);
+                    }
+                })
                 ->groupBy('entered_on')
                 ->select(\DB::raw("entered_on, count(*) as total"))
                 ->addSelect(\DB::raw("count(if(is_plan_entry = true, 1, null)) as pEntry"))
@@ -148,6 +161,23 @@ class RosterChiefController extends Controller
                 ->keyBy('entered_on')
                 ->toArray()
         ;
+
+        $eu = \App\Roster::whereBetween('rosters.entered_on', [$date->format('Y-m-01'), $date->format('Y-m-t')])
+                ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
+                ->where(function($query)use($users) {
+                    foreach ($users as $user) {
+                        $query->orWhere('rosters.user_id', $user->user_id);
+                    }
+                })
+                ->get(['entered_on', 'first_name', 'last_name', 'is_plan_entry', 'is_actual_entry', 'is_plan_accept', 'is_actual_accept', 'is_plan_reject', 'is_actual_reject'])
+//                ->toSql()
+        ;
+//                dd($eu->toArray());
+        $entered_users = [];
+        foreach ($eu as $e) {
+            $entered_users[$e->entered_on][] = $e;
+        }
+        \Log::debug(['entered_users' => $entered_users]);
 
         $user_count = \App\ControlDivision::join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
                 ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
@@ -162,11 +192,12 @@ class RosterChiefController extends Controller
         $before   = (!empty($month)) ? new \DateTime($month . '01') : new \DateTime();
 
         $params = [
-            'calendar'     => $calendar,
-            'this_month'   => $date->format('Y年n月'),
-            'user_count'   => $user_count,
-            'next_month'   => $next->modify('+1 month')->format('Ym'),
-            'before_month' => $before->modify('-1 month')->format('Ym'),
+            'calendar'      => $calendar,
+            'this_month'    => $date->format('Y年n月'),
+            'user_count'    => $user_count,
+            'entered_users' => $entered_users,
+            'next_month'    => $next->modify('+1 month')->format('Ym'),
+            'before_month'  => $before->modify('-1 month')->format('Ym'),
         ];
         return view('roster.chief.calendar', $params);
     }

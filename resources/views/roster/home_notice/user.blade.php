@@ -2,12 +2,12 @@
   <div class="panel-heading"><h4>勤怠管理情報 <small> - 一般</small></h4></div>
   @if(!empty($roster_user_cnt) && !$roster_user_cnt->isEmpty())
   <table class="table va-middle">
-    <thead>
+{{--     <thead>
       <tr>
         <th>年月</th>
         <th class="text-left">内容</th>
       </tr>
-    </thead>
+    </thead> --}}
     <tbody>
       @foreach($roster_user_cnt as $cnt)
       <tr>
