@@ -11,8 +11,7 @@ class IndexController extends Controller
 
     public function show() {
         $new_users     = [];
-        $is_chief      = false;
-        $notifications = \App\Notification::with('user')->deadline(date('Y-m-d'))->orderBy('created_at', 'desc')->take(5)->get();
+        $is_chief = ($roster_user->is_chief || ($roster_user->is_proxy && $roster_user->is_proxy_active)) ? true : false;        $notifications = \App\Notification::with('user')->deadline(date('Y-m-d'))->orderBy('created_at', 'desc')->take(5)->get();
 
         if (!\Auth::check())
         {
@@ -24,16 +23,16 @@ class IndexController extends Controller
         if ($user->is_super_user)
         {
             $new_users = $this->getNewUser();
-            return view('admin.home', ['new_users' => $new_users, 'notifications' => $notifications]);
+            return view('admin.home', ['new_users' => $new_users, 'notifications' => $notifications, 'is_chief'=>$is_chief]);
         }
         $roster = \App\RosterUser::user($user->id);
         if ($roster->exists() && $roster->first()->is_administrator)
         {
-            return view('admin.home', ['new_users' => $new_users, 'notifications' => $notifications]);
+            return view('admin.home', ['new_users' => $new_users, 'notifications' => $notifications, 'is_chief'=>$is_chief]);
         }
         if (!$roster->exists())
         {
-            return view('app.home', ['rows' => null, 'notifications' => $notifications]);
+            return view('app.home', ['rows' => null, 'notifications' => $notifications, 'is_chief'=>$is_chief]);
         }
 
         $roster_user = $roster->first();
@@ -44,7 +43,6 @@ class IndexController extends Controller
                 ->get(['sinren_users.user_id', 'control_divisions.division_id', 'sinren_divisions.division_name'])
         ;
         $users    = [];
-        $is_chief = ($roster_user->is_chief || ($roster_user->is_proxy && $roster_user->is_proxy_active)) ? true : false;
         foreach ($cu as $c) {
             $users[$c->division_id]['division_name'] = $c->division_name;
             $users[$c->division_id]['users'][]       = $c->user_id;
