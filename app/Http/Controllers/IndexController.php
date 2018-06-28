@@ -11,7 +11,7 @@ class IndexController extends Controller
 
     public function show() {
         $new_users     = [];
-        $is_chief = ($roster_user->is_chief || ($roster_user->is_proxy && $roster_user->is_proxy_active)) ? true : false;        $notifications = \App\Notification::with('user')->deadline(date('Y-m-d'))->orderBy('created_at', 'desc')->take(5)->get();
+        $is_chief = false;
 
         if (!\Auth::check())
         {
@@ -43,6 +43,7 @@ class IndexController extends Controller
                 ->get(['sinren_users.user_id', 'control_divisions.division_id', 'sinren_divisions.division_name'])
         ;
         $users    = [];
+        $is_chief = ($roster_user->is_chief || ($roster_user->is_proxy && $roster_user->is_proxy_active)) ? true : false;
         foreach ($cu as $c) {
             $users[$c->division_id]['division_name'] = $c->division_name;
             $users[$c->division_id]['users'][]       = $c->user_id;
