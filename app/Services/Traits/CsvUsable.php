@@ -193,8 +193,10 @@ trait CsvUsable
         $csv     = mb_convert_encoding($csv, "SJIS-win", "UTF-8");
         $headers = array(
             'Content-Type'        => 'text/csv',
-            'Content-Disposition' => $file_name,
+            // 'Content-Disposition' => $file_name,
+            'Content-Disposition' => mb_convert_encoding($file_name, 'sjis', 'utf-8'),
         );
+        // dd($headers);
         return \Response::make($csv, 200, $headers);
     }
 
