@@ -127,27 +127,47 @@ class RosterCsvExportController extends Controller
         $types  = $this->getType();
         $roster = \App\Roster::find($id);
         $user   = \App\User::find($roster->user_id);
-        $params = [
-            'id'     => $id,
-            'ym'     => $ym,
-            'user'   => $user,
-            'roster' => $roster,
-            'rests'  => $rests,
-            'types'  => $types,
+
+        $query_string = '';
+        foreach (\Input::get() as $key => $para) {
+            $query_string .= (mb_strlen($query_string) != 0) ? '&' : '';
+            $query_string .= "{$key}={$para}";
+        }
+        $query_string = '?' . $query_string;
+//        dd($query_string);
+        $params       = [
+            'id'           => $id,
+            'ym'           => $ym,
+            'user'         => $user,
+            'roster'       => $roster,
+            'rests'        => $rests,
+            'types'        => $types,
+            'query_string' => $query_string,
         ];
         return view('roster.admin.csv.edit', $params);
     }
 
     public function update(ForceEdit $request, $ym) {
-        $in = $request->input();
+        $in           = $request->input();
+        $query_string = (isset($in['query_string'])) ? $in['query_string'] : '';
         $this->service->update($in);
         \Session::flash('success_message', 'データの更新が完了しました。');
-        return redirect(route('admin::roster::csv::show', ['ym' => $ym]));
+
+        $query_string = str_replace('?', '', $query_string);
+        $arr          = explode('&', $query_string);
+        $search       = [];
+        foreach ($arr as $key => $str) {
+            $search[$key] = $str;
+        }
+//        dd($params);
+
+//        $params = $this->skipSearch($ym, $search);
+//        dd($params);
+//        return view('roster.admin.csv.list', $params);
+        return redirect(route('admin::roster::csv::search', ['ym' => $ym]) . '?' .$query_string);
     }
 
-    public function search($ym, CsvSearch $request) {
-
-        $in       = $request->input();
+    private function skipSearch($ym, $in) {
         $r        = $this->service->setMonth($ym)->getSearchRosters($in);
         $rosters  = $r->paginate(self::INT_RECORD_PER_PAGE);
         $calendar = $this->service->getCalendar();
@@ -174,6 +194,39 @@ class RosterCsvExportController extends Controller
             \Session::flash('success_message', '検索が終了しました。');
             \Session::flash('warn_message', null);
         }
+        return $params;
+    }
+
+    public function search($ym, CsvSearch $request) {
+
+        $in     = $request->input();
+        $params = $this->skipSearch($ym, $in);
+//        $r        = $this->service->setMonth($ym)->getSearchRosters($in);
+//        $rosters  = $r->paginate(self::INT_RECORD_PER_PAGE);
+//        $calendar = $this->service->getCalendar();
+//        $rests    = $this->getRest();
+//        $types    = $this->getType();
+//
+//        $divs   = \App\Division::orderBy('division_id')->get();
+//        $params = [
+//            'rosters'  => $rosters,
+//            'ym'       => $ym,
+//            'types'    => $types,
+//            'rests'    => $rests,
+//            'calendar' => $calendar,
+//            'divs'     => $divs,
+//            'search'   => $in,
+//        ];
+//        if ($rosters->isEmpty())
+//        {
+//            \Session::flash('success_message', null);
+//            \Session::flash('warn_message', '指定した条件ではデータが見つかりませんでした。');
+//        }
+//        else
+//        {
+//            \Session::flash('success_message', '検索が終了しました。');
+//            \Session::flash('warn_message', null);
+//        }
         return view('roster.admin.csv.list', $params);
     }
 

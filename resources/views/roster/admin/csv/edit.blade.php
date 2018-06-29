@@ -25,6 +25,7 @@
     <form method="POST" action="{{route('admin::roster::csv::update', ['ym'=>$ym,])}}">
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <input type="hidden" name="id" value="{{$roster->id}}">
+        <input type="hidden" name="query_string" value="{{ $query_string }}">
 
         <div class="col-md-10 col-md-offset-1">
             <div class="panel panel-primary">
@@ -188,7 +189,7 @@
                 <div class="panel-footer">
                     <div class="text-right">
                         <div class="btn-group">
-                            <a href="{{route('admin::roster::csv::show', ['ym'=>$ym])}}" style="width: 100px;" class="btn btn-success">戻る</a>
+                            <a href="{{ route('admin::roster::csv::show', ['ym'=>$ym]) }}" style="width: 100px;" class="btn btn-success">戻る</a>
                             <button type="submit" class="btn btn-warning" style="width: 100px;" onclick="return confirm('データを更新することによって整合性が取れなくなる場合があります。データの強制変更を行いますか？');">更新する</button>
                         </div>
                     </div>
