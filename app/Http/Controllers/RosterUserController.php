@@ -59,7 +59,7 @@ class RosterUserController extends Controller
         $sinren = \App\SinrenUser::firstOrNew(['user_id' => $user_id]);
 
         $sinren->user_id = $user_id;
-        if (empty($sinren->division_id))
+        if (empty($sinren->division_id) || $u->is_super_user || $r->is_administrator)
         {
             $sinren->division_id = $request['division_id'];
         }
