@@ -98,7 +98,91 @@ class RosterCsvExportController extends Controller
                 ->get()
         ;
         $current = date('Ym');
-        return view('roster.admin.csv.index', ['months' => $months, 'current' => $current,]);
+        $chart   = $this->getChartData($current);
+        $colors  = [
+            '未入力' => '200, 200, 200',
+            '未承認' => '218, 131,0',
+            '却下'  => '206, 51, 35',
+            '承認'  => '0, 163, 131',
+        ];
+        return view('roster.admin.csv.index', ['months' => $months, 'current' => $current, 'chart' => $chart, 'colors' => $colors]);
+    }
+
+    private function getChartData() {
+        $d       = new \DateTime();
+        $current = $d->format('Ym');
+        $past    = $d->modify('-1 month')->format('Ym');
+
+        $summary = \App\Roster::groupBy('month_id')
+                ->whereBetween('month_id', [$past, $current])
+                ->orderBy('month_id', 'desc')
+                ->select(['month_id'])
+                // plan
+                ->addSelect(\DB::raw('count((is_plan_entry = false) or null)                                                            as 予定未入力'))
+                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = false and is_plan_reject = false) or null)       as 予定未承認'))
+                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_reject = true) or null)                                   as 予定却下'))
+                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = true) or null)                                   as 予定承認済'))
+                // actual
+                ->addSelect(\DB::raw('count((is_actual_entry = false) or null) as 実績未入力'))
+                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = false and is_actual_reject = false) or null) as 実績未承認'))
+                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
+                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
+                ->get()
+                ->toArray()
+        ;
+
+        $summary_with_division = \App\Roster::join('sinren_db.sinren_users', 'sinren_users.user_id', '=', 'rosters.user_id')
+                ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+                ->whereBetween('month_id', [$past, $current])
+                ->orderBy('month_id', 'desc')
+                ->orderBy('sinren_users.division_id')
+                ->groupBy('month_id')
+                ->groupBy('sinren_users.division_id')
+                // plan
+                ->select(['month_id', 'sinren_users.division_id', 'sinren_divisions.division_name'])
+                ->addSelect(\DB::raw('count((is_plan_entry = false) or null)                                                            as 予定未入力'))
+                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = false and is_plan_reject = false) or null)       as 予定未承認'))
+                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_reject = true) or null)                                   as 予定却下'))
+                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = true) or null)                                   as 予定承認済'))
+                // actual
+                ->addSelect(\DB::raw('count((is_actual_entry = false) or null) as 実績未入力'))
+                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = false and is_actual_reject = false) or null) as 実績未承認'))
+                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
+                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
+                ->get()
+                ->toArray()
+        ;
+
+        $summary_with_date = \App\Roster::groupBy('entered_on')
+                ->whereBetween('month_id', [$past, $current])
+                // plan
+                ->select(['month_id', 'entered_on'])
+                ->addSelect(\DB::raw('count((is_plan_entry = false) or null)                                                            as 予定未入力'))
+                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = false and is_plan_reject = false) or null)       as 予定未承認'))
+                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_reject = true) or null)                                   as 予定却下'))
+                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = true) or null)                                   as 予定承認済'))
+                // actual
+                ->addSelect(\DB::raw('count((is_actual_entry = false) or null) as 実績未入力'))
+                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = false and is_actual_reject = false) or null) as 実績未承認'))
+                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
+                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
+                ->get()
+                ->toArray()
+        ;
+
+        $res = [];
+        foreach ($summary as $s) {
+            $res[$s['month_id']]['summary'][] = $s;
+        }
+        foreach ($summary_with_division as $s) {
+            $res[$s['month_id']]['summary_with_division'][] = $s;
+        }
+        foreach ($summary_with_date as $s) {
+            $res[$s['month_id']]['summary_with_date'][] = $s;
+        }
+
+        \Log::debug([get_class($this) => $res]);
+        return $res;
     }
 
     public function show($ym) {
@@ -160,11 +244,10 @@ class RosterCsvExportController extends Controller
             $search[$key] = $str;
         }
 //        dd($params);
-
 //        $params = $this->skipSearch($ym, $search);
 //        dd($params);
 //        return view('roster.admin.csv.list', $params);
-        return redirect(route('admin::roster::csv::search', ['ym' => $ym]) . '?' .$query_string);
+        return redirect(route('admin::roster::csv::search', ['ym' => $ym]) . '?' . $query_string);
     }
 
     private function skipSearch($ym, $in) {
