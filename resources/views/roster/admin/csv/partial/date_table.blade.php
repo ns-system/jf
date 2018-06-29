@@ -1,5 +1,6 @@
 <style type="text/css">
 tr.tr-top, tr.tr-top td { border-top: 1px solid #999 !important; }
+.table-small th, .table-small th *, .table-small td, .table-small td * { font-size: 60%; padding: 2px !important; }
 </style>
 <a data-toggle="modal" href="#summary-table-{{ $key }}">
     <i class="glyphicon glyphicon-search"></i>
