@@ -31,12 +31,17 @@ class Calendar
 //        dd($this->work_types);
 
         $types    = $this->work_types;
-        $tmp_type = (!empty($this->user->work_type_id)) ? $types[$this->user->work_type_id] : null;
+        $ttypes = [];
+        foreach($types as $t) {
+            $ttypes[$t->work_type_id] = $t;
+        }
+
+        $tmp_type = (!empty($this->user->work_type_id)) ? $ttypes[$this->user->work_type_id] : null;
 
         $is_plan_entry       = (isset($row->is_plan_entry)) ? $row->is_plan_entry : false;
         $is_actual_entry     = (isset($row->is_actual_entry)) ? $row->is_actual_entry : false;
-        $plan_type           = (!empty($row->plan_work_type_id)) ? $types[$row->plan_work_type_id] : $tmp_type;
-        $actual_type         = (!empty($row->actual_work_type_id)) ? $types[$row->actual_work_type_id] : $tmp_type;
+        $plan_type           = (!empty($row->plan_work_type_id)) ? $ttypes[$row->plan_work_type_id] : $tmp_type;
+        $actual_type         = (!empty($row->actual_work_type_id)) ? $ttypes[$row->actual_work_type_id] : $tmp_type;
         $is_plan_different   = ((/* 空じゃない */!empty($row->plan_overtime_start_time) && !empty($row->plan_overtime_end_time)) && (/* 違ってる */$row->plan_overtime_start_time != $row->plan_overtime_end_time)) ? true : false;
         $is_actual_different = ((/* 空じゃない */!empty($row->actual_overtime_start_time) && !empty($row->actual_overtime_end_time)) && (/* 違ってる */$row->actual_overtime_start_time != $row->actual_overtime_end_time)) ? true : false;
 
