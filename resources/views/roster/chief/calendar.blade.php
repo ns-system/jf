@@ -42,11 +42,16 @@
           @endforeach
         </thead>
         <tbody>
+          @if(count($entered_users) == 0)
+          <tr>
+            <td colspan="7"><b class="text-danger">未入力データが見つかりませんでした。</b></td>
+          </tr>
+          @else
           @foreach($calendar as $c)
           <tr>
             @foreach($c as $w => $d)
             <td class="text-left">
-              @if(!empty($d['day']))
+              @if(!empty($d['day']) && !empty($d['key']) && !empty($entered_users[$d['key']]))
               @include('roster.chief.partial.dialog', ['key'=>$d['key'], 'eusers' => $entered_users[$d['key']]])
               <p>
                 <small class="label @if(!empty($d['holiday'] || $w == 0)) label-danger @elseif($w == 6) label-info @else label-primary @endif">{{ $d['day'] }} ({{ $jp_week[$w] }})</small>
@@ -59,20 +64,6 @@
 
               @if(!empty($d['data']))
               <?php $r = $d['data']; ?>
-{{--               <div>
-                @if($w == 0 || $w == 6 || !empty($d['holiday']))
-                <span class="label label-warning">入力</span> <small>{{ $r['pEntry'] }} / {{ $r['aEntry'] }}</small>
-                @else
-                <span class="label outline">入力</span> <small>{{ $r['pEntry'] }} / {{ $r['aEntry'] }}</small>
-                @endif
-              </div>
-              <div>
-                <span class="label outline">承認</span> <small>{{ $r['pAccept'] }} / {{ $r['aAccept'] }}</small>
-              </div>
-              <div>
-                <span class="label outline">合計</span> <small>@if($w == 0 || $w == 6 || !empty($d['holiday'])) 0 @else {{ $r['total'] }} @endif 人</small>
-              </div> --}}
-
               @if($w == 0 || $w == 6 || !empty($d['holiday'])) {{-- holiday --}}
               <div>
                 <p><span @if($r['aEntry'] == 0)  class="label outline" @else class="label label-warning" @endif>入力</span> <small>{{ $r['aEntry'] }}件</small></p>
@@ -90,6 +81,7 @@
             @endforeach
           </tr>
           @endforeach
+          @endif
         </tbody>
       </table>
 

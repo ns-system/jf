@@ -63,27 +63,6 @@ class RosterListController extends Controller
         $tmp_divs = \App\ControlDivision::join('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')->where('user_id', '=', $user_id)->get();
         $divs     = (empty($tmp_divs) || $tmp_divs->isEmpty()) ? [$tmp_div] : $tmp_divs;
         $max      = \App\Roster::max('month_id');
-//        $db       = \DB::connection('mysql_sinren')
-//                ->table('sinren_users')
-//                ->select(\DB::Raw('month_id, COUNT(*) AS cnt'))
-//                ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
-////                ->where('is_plan_entry', '=', true)
-//                ->where('rosters.month_id', '<>', 0)
-//                ->groupBy('rosters.month_id')
-//                ->groupBy('sinren_users.division_id')
-//                ->orderBy('rosters.month_id', 'desc')
-//                ->take(24)
-//        ;
-//        
-//        $month    = [];
-//        foreach ($db->get() as $r) {
-//            $tmp     = strtotime($r->month_id . '01');
-//            $month[] = [
-//                'id'      => (int) date('Ym', $tmp),
-//                'display' => date('Y年n月', $tmp),
-//                'count'   => $r->cnt,
-//            ];
-//        }
         return view('roster.app.divisions.index', ['this_month' => $max, 'divs' => $divs, 'id' => $id]);
     }
 

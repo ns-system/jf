@@ -26,6 +26,8 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
             Route::get('/search/{ym}',        ['as' => 'search', 'uses' => 'RosterCsvExportController@search']);
             Route::get('/export/{ym}/all',    ['as' => 'export', 'uses' => 'RosterCsvExportController@rawDataExport']);
             Route::get('/export/{ym}/{type}', ['as' => 'export', 'uses' => 'RosterCsvExportController@export']);
+            Route::get('/entered/{ym?}',      ['as' => 'entered','uses' => 'RosterCsvExportController@indexEnteredUsers']);
+
         });
     });
 });

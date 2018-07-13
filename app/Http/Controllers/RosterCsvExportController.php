@@ -7,6 +7,7 @@ use App\Http\Requests\Roster\ForceEdit;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Roster\CsvSearch;
 use App\Services\Roster\CsvExport;
+use Illuminate\Redis\Database;
 
 class RosterCsvExportController extends Controller
 {
@@ -58,16 +59,24 @@ class RosterCsvExportController extends Controller
         '実績残業理由',
         '最終更新時刻',
     ];
+    const COLORS                = [
+        '未入力' => '200, 200, 200',
+        '未承認' => '218, 131,0',
+        '却下'  => '206, 51, 35',
+        '承認'  => '0, 163, 131',
+    ];
     const INT_MONTH_COUNT       = 12;
     const INT_RECORD_PER_PAGE   = 50;
 
     protected $service;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->service = new CsvExport();
     }
 
-    private function getRest() {
+    private function getRest()
+    {
         $tmp_rests = \App\Rest::orderBy('rest_reason_id')->get();
         $rests     = [];
         foreach ($tmp_rests as $r) {
@@ -76,7 +85,8 @@ class RosterCsvExportController extends Controller
         return $rests;
     }
 
-    private function getType() {
+    private function getType()
+    {
         $tmp_types = \App\WorkType::workTypeList()->get();
         $types     = [];
         foreach ($tmp_types as $t) {
@@ -89,86 +99,80 @@ class RosterCsvExportController extends Controller
         return $types;
     }
 
-    public function index() {
+    public function index()
+    {
         $months  = \App\Roster::groupBy('month_id')
-                ->select(\DB::raw('COUNT(*) as cnt, month_id'))
-                ->orderBy('month_id', 'desc')
-                ->where('month_id', '<>', 0)
-                ->take(self::INT_MONTH_COUNT)
-                ->get()
-        ;
+            ->select(\DB::raw('COUNT(*) as cnt, month_id'))
+            ->orderBy('month_id', 'desc')
+            ->where('month_id', '<>', 0)
+            ->take(self::INT_MONTH_COUNT)
+            ->get();
         $current = date('Ym');
         $chart   = $this->getChartData($current);
-        $colors  = [
-            '未入力' => '200, 200, 200',
-            '未承認' => '218, 131,0',
-            '却下'  => '206, 51, 35',
-            '承認'  => '0, 163, 131',
-        ];
+        $colors  = self::COLORS;
+
         return view('roster.admin.csv.index', ['months' => $months, 'current' => $current, 'chart' => $chart, 'colors' => $colors]);
     }
 
-    private function getChartData() {
+    private function getChartData()
+    {
         $d       = new \DateTime();
         $current = $d->format('Ym');
         $past    = $d->modify('-1 month')->format('Ym');
 
         $summary = \App\Roster::groupBy('month_id')
-                ->whereBetween('month_id', [$past, $current])
-                ->orderBy('month_id', 'desc')
-                ->select(['month_id'])
-                // plan
-                ->addSelect(\DB::raw('count((is_plan_entry = false) or null)                                                            as 予定未入力'))
-                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = false and is_plan_reject = false) or null)       as 予定未承認'))
-                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_reject = true) or null)                                   as 予定却下'))
-                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = true) or null)                                   as 予定承認済'))
-                // actual
-                ->addSelect(\DB::raw('count((is_actual_entry = false) or null) as 実績未入力'))
-                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = false and is_actual_reject = false) or null) as 実績未承認'))
-                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
-                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
-                ->get()
-                ->toArray()
-        ;
+            ->whereBetween('month_id', [$past, $current])
+            ->orderBy('month_id', 'desc')
+            ->select(['month_id'])
+            // plan
+            ->addSelect(\DB::raw('count((is_plan_entry = false) or null)                                                            as 予定未入力'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = false and is_plan_reject = false) or null)       as 予定未承認'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_reject = true) or null)                                   as 予定却下'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = true) or null)                                   as 予定承認済'))
+            // actual
+            ->addSelect(\DB::raw('count((is_actual_entry = false) or null) as 実績未入力'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = false and is_actual_reject = false) or null) as 実績未承認'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
+            ->get()
+            ->toArray();
 
         $summary_with_division = \App\Roster::join('sinren_db.sinren_users', 'sinren_users.user_id', '=', 'rosters.user_id')
-                ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
-                ->whereBetween('month_id', [$past, $current])
-                ->orderBy('month_id', 'desc')
-                ->orderBy('sinren_users.division_id')
-                ->groupBy('month_id')
-                ->groupBy('sinren_users.division_id')
-                // plan
-                ->select(['month_id', 'sinren_users.division_id', 'sinren_divisions.division_name'])
-                ->addSelect(\DB::raw('count((is_plan_entry = false) or null)                                                            as 予定未入力'))
-                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = false and is_plan_reject = false) or null)       as 予定未承認'))
-                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_reject = true) or null)                                   as 予定却下'))
-                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = true) or null)                                   as 予定承認済'))
-                // actual
-                ->addSelect(\DB::raw('count((is_actual_entry = false) or null) as 実績未入力'))
-                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = false and is_actual_reject = false) or null) as 実績未承認'))
-                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
-                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
-                ->get()
-                ->toArray()
-        ;
+            ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+            ->whereBetween('month_id', [$past, $current])
+            ->orderBy('month_id', 'desc')
+            ->orderBy('sinren_users.division_id')
+            ->groupBy('month_id')
+            ->groupBy('sinren_users.division_id')
+            // plan
+            ->select(['month_id', 'sinren_users.division_id', 'sinren_divisions.division_name'])
+            ->addSelect(\DB::raw('count((is_plan_entry = false) or null)                                                            as 予定未入力'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = false and is_plan_reject = false) or null)       as 予定未承認'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_reject = true) or null)                                   as 予定却下'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = true) or null)                                   as 予定承認済'))
+            // actual
+            ->addSelect(\DB::raw('count((is_actual_entry = false) or null) as 実績未入力'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = false and is_actual_reject = false) or null) as 実績未承認'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
+            ->get()
+            ->toArray();
 
         $summary_with_date = \App\Roster::groupBy('entered_on')
-                ->whereBetween('month_id', [$past, $current])
-                // plan
-                ->select(['month_id', 'entered_on'])
-                ->addSelect(\DB::raw('count((is_plan_entry = false) or null)                                                            as 予定未入力'))
-                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = false and is_plan_reject = false) or null)       as 予定未承認'))
-                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_reject = true) or null)                                   as 予定却下'))
-                ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = true) or null)                                   as 予定承認済'))
-                // actual
-                ->addSelect(\DB::raw('count((is_actual_entry = false) or null) as 実績未入力'))
-                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = false and is_actual_reject = false) or null) as 実績未承認'))
-                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
-                ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
-                ->get()
-                ->toArray()
-        ;
+            ->whereBetween('month_id', [$past, $current])
+            // plan
+            ->select(['month_id', 'entered_on'])
+            ->addSelect(\DB::raw('count((is_plan_entry = false) or null)                                                            as 予定未入力'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = false and is_plan_reject = false) or null)       as 予定未承認'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_reject = true) or null)                                   as 予定却下'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = true) or null)                                   as 予定承認済'))
+            // actual
+            ->addSelect(\DB::raw('count((is_actual_entry = false) or null) as 実績未入力'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = false and is_actual_reject = false) or null) as 実績未承認'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
+            ->get()
+            ->toArray();
 
         $res = [];
         foreach ($summary as $s) {
@@ -185,7 +189,8 @@ class RosterCsvExportController extends Controller
         return $res;
     }
 
-    public function show($ym) {
+    public function show($ym)
+    {
         $service  = $this->service;
         $r        = $this->service->setMonth($ym)->getRosters();
         $rosters  = $r->paginate(self::INT_RECORD_PER_PAGE);
@@ -206,7 +211,8 @@ class RosterCsvExportController extends Controller
         return view('roster.admin.csv.list', $params);
     }
 
-    public function edit($ym, $id) {
+    public function edit($ym, $id)
+    {
         $rests  = \App\Rest::orderBy('rest_reason_id')->get();
         $types  = $this->getType();
         $roster = \App\Roster::find($id);
@@ -219,7 +225,7 @@ class RosterCsvExportController extends Controller
         }
         $query_string = '?' . $query_string;
 //        dd($query_string);
-        $params       = [
+        $params = [
             'id'           => $id,
             'ym'           => $ym,
             'user'         => $user,
@@ -231,7 +237,8 @@ class RosterCsvExportController extends Controller
         return view('roster.admin.csv.edit', $params);
     }
 
-    public function update(ForceEdit $request, $ym) {
+    public function update(ForceEdit $request, $ym)
+    {
         $in           = $request->input();
         $query_string = (isset($in['query_string'])) ? $in['query_string'] : '';
         $this->service->update($in);
@@ -250,7 +257,8 @@ class RosterCsvExportController extends Controller
         return redirect(route('admin::roster::csv::search', ['ym' => $ym]) . '?' . $query_string);
     }
 
-    private function skipSearch($ym, $in) {
+    private function skipSearch($ym, $in)
+    {
         $r        = $this->service->setMonth($ym)->getSearchRosters($in);
         $rosters  = $r->paginate(self::INT_RECORD_PER_PAGE);
         $calendar = $this->service->getCalendar();
@@ -267,20 +275,18 @@ class RosterCsvExportController extends Controller
             'divs'     => $divs,
             'search'   => $in,
         ];
-        if ($rosters->isEmpty())
-        {
+        if ($rosters->isEmpty()) {
             \Session::flash('success_message', null);
             \Session::flash('warn_message', '指定した条件ではデータが見つかりませんでした。');
-        }
-        else
-        {
+        } else {
             \Session::flash('success_message', '検索が終了しました。');
             \Session::flash('warn_message', null);
         }
         return $params;
     }
 
-    public function search($ym, CsvSearch $request) {
+    public function search($ym, CsvSearch $request)
+    {
 
         $in     = $request->input();
         $params = $this->skipSearch($ym, $in);
@@ -313,25 +319,24 @@ class RosterCsvExportController extends Controller
         return view('roster.admin.csv.list', $params);
     }
 
-    public function export($ym, $type, CsvSearch $request) {
+    public function export($ym, $type, CsvSearch $request)
+    {
         $in = $request->input();
         try {
             $obj  = $this->service->setMonth($ym)->makeExportData($in);
             $rows = $obj->getRows($type);
-        } catch (\Exception $exc) {
+        }
+        catch (\Exception $exc) {
             \Session::flash('warn_message', '予期しないデータが入力されたため、処理が中断されました。');
             return back();
         }
 
         $month  = date('Y年n月', strtotime($ym . '01'));
         $header = [];
-        if ($type == 'plan')
-        {
+        if ($type == 'plan') {
             $file_name = '予定データ';
             $header    = self::ARR_CSV_HEADER_PLAN;
-        }
-        else
-        {
+        } else {
             $file_name = '実績データ';
             $header    = self::ARR_CSV_HEADER_ACTUAL;
         }
@@ -339,12 +344,66 @@ class RosterCsvExportController extends Controller
         return $obj->export($rows, $file_name, $header);
     }
 
-    public function rawDataExport($ym, CsvSearch $request) {
+    public function rawDataExport($ym, CsvSearch $request)
+    {
         $obj       = $this->service->setMonth($ym);
         $month     = date('Y年n月', strtotime($ym . '01'));
         $rows      = $obj->getRawData($request->input());
         $file_name = $month . '分_勤怠管理データ_' . date('Ymd_His') . '.csv';
         return $obj->export($rows, $file_name, self::ARR_CSV_HEADER_RAW);
+    }
+
+    public function indexEnteredUsers($ym = '')
+    {
+        $dt            = (!empty($ym)) ? new \DateTime($ym . '01') : new \DateTime();
+        $rows          = $this->getEnteredUsers($dt->format('Ym'));
+        $current_month = $dt->format('Ym');
+        $last_month    = $dt->modify('-1 month')->format('Ym');
+        $next_month    = $dt->modify('+2 month')->format('Ym');
+        return view('roster.admin.csv.entered_users', [
+            'ym'         => $current_month,
+            'rows'       => $rows,
+            'colors'     => self::COLORS,
+            'last_month' => $last_month,
+            'next_month' => $next_month,
+        ]);
+
+    }
+
+    public function getEnteredUsers($ym = '')
+    {
+        $dt   = (!empty($ym)) ? new \DateTime($ym . '01') : new \DateTime();
+        $id   = \Auth::user()->id;
+        $user = \App\User::find($id)->RosterUser($id);
+        $date = [$dt->format('Y-m-01'), $dt->format('Y-m-t')];
+
+        $query = \App\User::leftJoin('roster_db.rosters', 'users.id', '=', 'rosters.user_id')
+            ->leftJoin('sinren_db.sinren_users', 'sinren_users.user_id', '=', 'users.id')
+            ->leftJoin('sinren_db.sinren_divisions', 'sinren_divisions.division_id', '=', 'sinren_users.division_id')
+            ->whereBetween('rosters.entered_on', $date)
+            ->groupBy('users.id')
+            ->select('users.id as id', 'first_name', 'last_name', 'sinren_divisions.division_name', 'sinren_divisions.division_id')
+            ->addSelect(\DB::raw('count((is_plan_entry = false) or null)                                                            as 予定未入力'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = false and is_plan_reject = false) or null)       as 予定未承認'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_reject = true) or null)                                   as 予定却下'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = true) or null)                                   as 予定承認済'))
+            ->addSelect(\DB::raw('count((is_actual_entry = false) or null)                                                          as 実績未入力'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = false and is_actual_reject = false) or null) as 実績未承認'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
+            ->orderBy('sinren_divisions.division_id');
+
+        if (!$user->is_super_user && !$user->is_administrator) {
+            $div = ($user->is_chief) ? \App\ControlDivision::where('user_id', $id)->get() : \App\SinrenUser::where('user_id', $id)->get();
+            $query->where(function ($query) use ($div) {
+                foreach ($div as $d) {
+                    $query->orWhere('sinren_users.division_id', $d->division_id);
+                }
+            });
+        }
+
+        return $query->get();
+//        return view('roster.admin.csv.entered_users', ['ym' => $dt->format('Ym'), 'rows' => $query->get(), 'colors' => self::COLORS]);
     }
 
 }

@@ -59,12 +59,10 @@
                     @if(!empty($day['data']))
                     <?php $data = $day['data']; ?>
                     {{-- 承認済み→入力不可 --}}
-                    @if($data->is_plan_accept || $data->is_actual_accept || $data->is_plan_entry || $data->is_actual_entry)
+                    {{-- @if($data->is_plan_accept || $data->is_actual_accept || $data->is_plan_entry || $data->is_actual_entry) --}}
                     @if($data->is_plan_accept || $data->is_actual_accept)
                     <td><span class="label label-success" data-toggle="tooltip" title="データは承認されています。以降の修正は行えません。">勤務データ承認済</span></td>
-                    @else
-                    <td><span class="label label-warning" data-toggle="tooltip" title="ユーザーが勤務データを入力しているため、修正は行えません。">勤務データ入力済</span></td>
-                    @endif
+                    {{-- <td><span class="label label-warning" data-toggle="tooltip" title="ユーザーが勤務データを入力しているため、修正は行えません。">勤務データ入力済</span></td> --}}
                     <td>
                         @if(!empty($types[$data->plan_work_type_id]))
                         {{$types[$data->plan_work_type_id]['work_type_name']}}
@@ -78,7 +76,11 @@
                     </td>
                     {{-- 未承認→入力可能 --}}
                     @else
+                    @if($data->is_plan_entry)
+                    <td><span class="label label-warning" data-toggle="tooltip" title="予定データは入力されていますが、修正できます。">予定データ未承認</span></td>
+                    @else
                     <td><span class="label label-info" data-toggle="tooltip" title="予定データは入力されていますが、修正できます。">予定データ入力済</span></td>
+                    @endif
                     <td>
                         <select class="form-control input-sm" name="work_type[{{$day['date']}}]">
                             <option value="0"></option>

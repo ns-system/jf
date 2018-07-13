@@ -7,7 +7,7 @@
   @if(empty($notifications) || $notifications->isEmpty())
   <div class="row">
     <div class="col-md-8 col-md-offset-2 @if(!empty($dark)) white @endif">
-      <p>新しいお知らせはありません。</p>
+      <p style="margin: 20px 0;">新しいお知らせはありません。</p>
     </div>
   </div>
   @else

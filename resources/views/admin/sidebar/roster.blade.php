@@ -9,6 +9,14 @@ data-placement="right">CSVファイル出力</a>
 <a
 role="presentation"
 class="list-group-item collapse list-second"
+href="{{route('admin::roster::csv::entered')}}"
+data-toggle="tooltip"
+title="月中の個人ごとの入力状況を確認できます。"
+data-placement="right">入力状況確認</a>
+
+<a
+role="presentation"
+class="list-group-item collapse list-second"
 href="{{route('admin::roster::user::index')}}"
 data-toggle="tooltip"
 title="責任者ユーザーの選任他、ユーザーの管理を行います。"
