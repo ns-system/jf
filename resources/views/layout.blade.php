@@ -300,7 +300,7 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
       }, 5000)
 
       $(window).bind('beforeunload', function (e) {
-        $("#app").addClass('loading', 200)
+        $("#app").addClass('loading')
         console.log('load')
         $('body').prepend('<div class="loader loader-pos"></div>')
         // $("#loader").fadeOut(200, function () { $(this).remove() })
