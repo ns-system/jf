@@ -133,6 +133,7 @@
                 class="form-control"
                 style="width: 100%;"
                 placeholder="残業した場合、理由を記入してください"
+                maxlength="20"
                 >
                 <p class="text-right">
                     <small>
@@ -144,7 +145,7 @@
                     </span> / 20
                     </small>
                 </p>
-                @if($r->is_actual_reject && !empty($r->reject_reason)) <small class="helpBlock text-danger" maxlength="20">{{$r->reject_reason}}</small> @endif
+                @if($r->is_actual_reject && !empty($r->reject_reason)) <small class="helpBlock text-danger">{{$r->reject_reason}}</small> @endif
               </div>
             </div>
           </div>
