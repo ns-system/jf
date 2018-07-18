@@ -21,7 +21,15 @@
             <table @if(!empty($dark)) class="white" @endif>
               <tr>
                 <td width="75px" style="padding-left: 5px;"><span class="label label-info">{{ date('n月j日', strtotime($n->created_at)) }}</span></td>
-                <td width="75px" style="padding-left: 5px;"><span class="label label-warning">{{ $n->category }}</span></td>
+                <td width="75px" style="padding-left: 5px;">
+                    <span
+                    @if($n->category === '重要' || $n->category === '緊急') class="label label-danger"
+                    @elseif($n->category === '告知') class="label label-info"
+                    @elseif($n->category === '依頼') class="label label-warning"
+                    @else                            class="label label-default"
+                    @endif
+                    >{{ $n->category }}</span>
+                </td>
                 <td width="90%" class="text-left" style="padding-left: 5px;">
                   <span>{{ $n->message }}</span>
                   <i> - {{ $n->user->last_name }}</i>
