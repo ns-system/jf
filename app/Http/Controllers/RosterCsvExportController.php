@@ -185,7 +185,7 @@ class RosterCsvExportController extends Controller
             $res[$s['month_id']]['summary_with_date'][] = $s;
         }
 
-        \Log::debug([get_class($this) => $res]);
+//        \Log::debug([get_class($this) => $res]);
         return $res;
     }
 
