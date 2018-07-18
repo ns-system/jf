@@ -12,26 +12,32 @@ class RosterAcceptController extends Controller
 {
 
     const INT_MONTH_COUNT = 2;
+    const COLORS          = [
+        '未入力' => '200, 200, 200',
+        '未承認' => '218, 131,0',
+        '却下'  => '206, 51, 35',
+        '承認'  => '0, 163, 131',
+    ];
 
-    private function getQuery() {
+    private function getQuery()
+    {
         $id = \Auth::user()->id;
         $t  = \App\ControlDivision::joinUsers($id)
-                ->joinDivisions()
-                // connect to rosters
-                ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-                ->where('roster_users.user_id', '<>', $id)
-                ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
-                ->where('rosters.month_id', '<>', 0)
-                ->select(\DB::raw('COUNT(*) AS cnt, sinren_divisions.division_id, rosters.month_id'))
-                ->groupBy('rosters.month_id')
-                ->orderBy('rosters.month_id', 'desc')
-        ;
+            ->joinDivisions()
+            // connect to rosters
+            ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+            ->where('roster_users.user_id', '<>', $id)
+            ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
+            ->where('rosters.month_id', '<>', 0)
+            ->select(\DB::raw('COUNT(*) AS cnt, sinren_divisions.division_id, rosters.month_id'))
+            ->groupBy('rosters.month_id')
+            ->orderBy('rosters.month_id', 'desc');
         return $t;
     }
 
-    private function editKey($rows) {
-        if ($rows == null)
-        {
+    private function editKey($rows)
+    {
+        if ($rows == null) {
             return [];
         }
         $tmp = [];
@@ -41,68 +47,104 @@ class RosterAcceptController extends Controller
         return $tmp;
     }
 
-    public function index() {
+    public function index()
+    {
         // 月ごとのレコード件数を集計する
-        $plan_accept       = $this->getQuery()->groupBy('rosters.is_plan_accept')->where('is_plan_accept', '=', true)->take(self::INT_MONTH_COUNT)->get();
-        $plan_reject       = $this->getQuery()->groupBy('rosters.is_plan_reject')->where('is_plan_reject', '=', true)->take(self::INT_MONTH_COUNT)->get();
-        $actual_accept     = $this->getQuery()->groupBy('rosters.is_actual_accept')->where('is_actual_accept', '=', true)->take(self::INT_MONTH_COUNT)->get();
-        $actual_reject     = $this->getQuery()->groupBy('rosters.is_actual_reject')->where('is_actual_reject', '=', true)->take(self::INT_MONTH_COUNT)->get();
-        $plan_entry        = $this->getQuery()->groupBy('rosters.is_plan_entry')->where('is_plan_entry', '=', true)->take(self::INT_MONTH_COUNT)->get();
-        $actual_entry      = $this->getQuery()->groupBy('rosters.is_actual_entry')->where('is_actual_entry', '=', true)->take(self::INT_MONTH_COUNT)->get();
-        $plan_not_accept   = $this->getQuery()->groupBy('rosters.is_plan_entry')->where(['is_plan_entry' => true, 'is_plan_accept' => false, 'is_plan_reject' => false,])->take(self::INT_MONTH_COUNT)->get();
-        $actual_not_accept = $this->getQuery()->groupBy('rosters.is_actual_entry')->where(['is_actual_entry' => true, 'is_actual_accept' => false, 'is_actual_reject' => false,])->take(self::INT_MONTH_COUNT)->get();
+//        $plan_accept       = $this->getQuery()->groupBy('rosters.is_plan_accept')->where('is_plan_accept', '=', true)->take(self::INT_MONTH_COUNT)->get();
+//        $plan_reject       = $this->getQuery()->groupBy('rosters.is_plan_reject')->where('is_plan_reject', '=', true)->take(self::INT_MONTH_COUNT)->get();
+//        $actual_accept     = $this->getQuery()->groupBy('rosters.is_actual_accept')->where('is_actual_accept', '=', true)->take(self::INT_MONTH_COUNT)->get();
+//        $actual_reject     = $this->getQuery()->groupBy('rosters.is_actual_reject')->where('is_actual_reject', '=', true)->take(self::INT_MONTH_COUNT)->get();
+//        $plan_entry        = $this->getQuery()->groupBy('rosters.is_plan_entry')->where('is_plan_entry', '=', true)->take(self::INT_MONTH_COUNT)->get();
+//        $actual_entry      = $this->getQuery()->groupBy('rosters.is_actual_entry')->where('is_actual_entry', '=', true)->take(self::INT_MONTH_COUNT)->get();
+//        $plan_not_accept   = $this->getQuery()->groupBy('rosters.is_plan_entry')->where(['is_plan_entry' => true, 'is_plan_accept' => false, 'is_plan_reject' => false,])->take(self::INT_MONTH_COUNT)->get();
+//        $actual_not_accept = $this->getQuery()->groupBy('rosters.is_actual_entry')->where(['is_actual_entry' => true, 'is_actual_accept' => false, 'is_actual_reject' => false,])->take(self::INT_MONTH_COUNT)->get();
 
-        $rows = [
-            'plan_accepts'       => $this->editKey($plan_accept),
-            'plan_rejects'       => $this->editKey($plan_reject),
-            'plan_entry'         => $this->editKey($plan_entry),
-            'actual_accepts'     => $this->editKey($actual_accept),
-            'actual_rejects'     => $this->editKey($actual_reject),
-            'actual_entry'       => $this->editKey($actual_entry),
-            'plan_not_accepts'   => $this->editKey($plan_not_accept),
-            'actual_not_accepts' => $this->editKey($actual_not_accept),
-        ];
+        $user_id          = \Auth::user()->id;
+        $date             = new \DateTime();
+        $current_month_id = $date->format('Ym');
+        $last_month_id    = $date->modify('-1 month')->format('Ym');
+
+        $rosters = \App\ControlDivision::join('sinren_db.sinren_divisions', 'sinren_divisions.division_id', '=', 'control_divisions.division_id')
+            ->join('sinren_db.sinren_users', 'sinren_divisions.division_id', '=', 'sinren_users.division_id')
+            ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
+            ->where(function ($query) use ($user_id) {
+                $query->orWhere('control_divisions.user_id', $user_id)->orWhere('sinren_users.user_id', $user_id);
+            })
+            ->whereBetween('rosters.month_id', [$last_month_id, $current_month_id])
+            ->groupBy('rosters.month_id')
+            ->groupBy('sinren_divisions.division_id')
+            ->orderBy('rosters.month_id', 'desc')
+            ->orderBy('sinren_divisions.division_id')
+            ->select('sinren_users.division_id', 'rosters.month_id', 'sinren_divisions.division_name')
+            ->addSelect(\DB::raw('count((is_plan_entry = true)  or null)                                                            as 予定合計'))
+            ->addSelect(\DB::raw('count((is_plan_entry = false) or null)                                                            as 予定未入力'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = false and is_plan_reject = false) or null)       as 予定未承認'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_reject = true) or null)                                   as 予定却下'))
+            ->addSelect(\DB::raw('count((is_plan_entry = true and is_plan_accept = true) or null)                                   as 予定承認済'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true)  or null)                                                          as 実績合計'))
+            ->addSelect(\DB::raw('count((is_actual_entry = false) or null)                                                          as 実績未入力'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = false and is_actual_reject = false) or null) as 実績未承認'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
+            ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
+            ->get();
+
+        $rows = [];
+        foreach ($rosters as $roster) {
+            $rows[$roster->division_id][$roster->month_id] = $roster->toArray();
+        }
+//        \Log::debug($rows);
+//        dd($rows);
+//        $rows = [
+//            'plan_accepts'       => $this->editKey($plan_accept),
+//            'plan_rejects'       => $this->editKey($plan_reject),
+//            'plan_entry'         => $this->editKey($plan_entry),
+//            'actual_accepts'     => $this->editKey($actual_accept),
+//            'actual_rejects'     => $this->editKey($actual_reject),
+//            'actual_entry'       => $this->editKey($actual_entry),
+//            'plan_not_accepts'   => $this->editKey($plan_not_accept),
+//            'actual_not_accepts' => $this->editKey($actual_not_accept),
+//        ];
 
         // 管理部署のリストを取得する
         $divs = \App\ControlDivision::joinDivisions()
-                ->user(\Auth::user()->id)
-                ->orderBy('sinren_divisions.division_id', 'asc')
-                ->get()
-        ;
+            ->user(\Auth::user()->id)
+            ->orderBy('sinren_divisions.division_id', 'asc')
+            ->get();
 
         // 最大INT_MONTH_COUNTヶ月分の表示する月を生成
         $next_month = new \DateTime();
 //        $next_month->modify('+1 month');
-        $months     = \App\Roster::groupBy('month_id')->where('month_id', '<>', 0)->where('month_id', '<=', $next_month->format('Ym'))->take(self::INT_MONTH_COUNT)->orderBy('month_id', 'desc')->get(['month_id']);
-        $params     = [
-            'rows'          => $rows,
-            'divs'          => $divs,
-            'plan_accept'   => $plan_accept,
-            'plan_reject'   => $plan_reject,
-            'actual_accept' => $actual_accept,
-            'actual_reject' => $actual_reject,
-            'plan_entry'    => $plan_entry,
-            'actual_entry'  => $actual_entry,
-            'months'        => $months,
+        $months = \App\Roster::groupBy('month_id')->where('month_id', '<>', 0)->where('month_id', '<=', $next_month->format('Ym'))->take(self::INT_MONTH_COUNT)->orderBy('month_id', 'desc')->get(['month_id']);
+        $params = [
+            'rows'   => $rows,
+            'divs'   => $divs,
+            'colors' => self::COLORS,
+            //            'plan_accept'   => $plan_accept,
+            //            'plan_reject'   => $plan_reject,
+            //            'actual_accept' => $actual_accept,
+            //            'actual_reject' => $actual_reject,
+            //            'plan_entry'    => $plan_entry,
+            //            'actual_entry'  => $actual_entry,
+            'months' => $months,
         ];
         return view('roster.app.accept.index', $params);
     }
 
-    public function calendarIndex($ym, $div, $user_id = 0) {
+    public function calendarIndex($ym, $div, $user_id = 0)
+    {
 
-        $input       = \Input::get();
+        $input = \Input::get();
 //        $user_id         = (empty($input['user'])) ? null : $input['user'];
         $status      = (empty($input['status']) || $input['status'] === 'all') ? 'all' : 'part';
         $is_show_all = ($status === 'all') ? true : false;
 
         $users = \App\SinrenUser::join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
-                ->join('roster_db.roster_users as R_USER', 'users.id', '=', 'R_USER.user_id')
-                ->where('sinren_users.division_id', '=', $div)
-                ->where('sinren_users.user_id', '<>', \Auth::user()->id)
-                ->where('R_USER.is_administrator', '=', false)
-                ->where('R_USER.is_chief', '=', false)
-                ->get()
-        ;
+            ->join('roster_db.roster_users as R_USER', 'users.id', '=', 'R_USER.user_id')
+            ->where('sinren_users.division_id', '=', $div)
+            ->where('sinren_users.user_id', '<>', \Auth::user()->id)
+            ->where('R_USER.is_administrator', '=', false)
+            ->where('R_USER.is_chief', '=', false)
+            ->get();
 
         $rows = (empty($user_id)) ? [] : $this->getCalendar($ym, $user_id, $is_show_all);
 
@@ -137,7 +179,8 @@ class RosterAcceptController extends Controller
         return view('roster.app.accept.calendar_list', $param);
     }
 
-    private function getUncheckedRows($users, $monthly_id) {
+    private function getUncheckedRows($users, $monthly_id)
+    {
         $ids = [];
         foreach ($users as $u) {
             $ids[] = $u->user_id;
@@ -146,27 +189,26 @@ class RosterAcceptController extends Controller
         $first_day = date('Y-m-d', $serial);
         $last_day  = date('Y-m-t', $serial);
 
-        $unchecked_rows = \App\Roster::where(function($query) use($ids) {
-                    foreach ($ids as $id) {
-                        $query->orWhere('user_id', $id);
-                    }
-                })
-                ->where('entered_on', '>=', $first_day)
-                ->where('entered_on', '<=', $last_day)
+        $unchecked_rows = \App\Roster::where(function ($query) use ($ids) {
+            foreach ($ids as $id) {
+                $query->orWhere('user_id', $id);
+            }
+        })
+            ->where('entered_on', '>=', $first_day)
+            ->where('entered_on', '<=', $last_day)
 //                ->where('is_plan_entry', true)
 //                ->where('is_plan_accept', false)
-                ->where(function($query) {
-                    $query->orWhere(function($query) {
-                        $query->where('is_plan_entry', true)->where('is_plan_accept', false);
-                    })->orWhere(function($query) {
-                        $query->where('is_actual_entry', true)->where('is_actual_accept', false);
-                    });
-                })
-                ->orderBy('user_id')
-                ->orderBy('entered_on')
-                ->with('laraveluser')
-                ->get()
-        ;
+            ->where(function ($query) {
+                $query->orWhere(function ($query) {
+                    $query->where('is_plan_entry', true)->where('is_plan_accept', false);
+                })->orWhere(function ($query) {
+                    $query->where('is_actual_entry', true)->where('is_actual_accept', false);
+                });
+            })
+            ->orderBy('user_id')
+            ->orderBy('entered_on')
+            ->with('laraveluser')
+            ->get();
 //        var_dump($ids);
 //        var_dump($first_day);
 //        var_dump($last_day);
@@ -174,63 +216,57 @@ class RosterAcceptController extends Controller
         return $unchecked_rows;
     }
 
-    public function getCalendar($ym, $user_id, $is_show_all) {
+    public function getCalendar($ym, $user_id, $is_show_all)
+    {
         $first_day = date('Y-m-d', strtotime($ym . '01'));
         $last_day  = date('Y-m-t', strtotime($ym . '01'));
         $obj       = new \App\Services\Roster\Calendar();
         $sql       = \App\Roster::leftJoin('sinren_db.sinren_users as S_USER', 'rosters.user_id', '=', 'S_USER.user_id')
-                ->leftJoin('roster_db.roster_users as R_USER', 'rosters.user_id', '=', 'R_USER.user_id')
-                ->leftJoin('sinren_db.sinren_divisions', 'S_USER.division_id', '=', 'sinren_divisions.division_id')
-                ->leftJoin('laravel_db.users', 'rosters.user_id', '=', 'users.id')
-                ->select(\DB::raw('*, rosters.id as key_id'))
-                ->where('R_USER.user_id', '=', $user_id)
-                ->where('rosters.entered_on', '>=', $first_day)
-                ->where('rosters.entered_on', '<=', $last_day)
-        ;
+            ->leftJoin('roster_db.roster_users as R_USER', 'rosters.user_id', '=', 'R_USER.user_id')
+            ->leftJoin('sinren_db.sinren_divisions', 'S_USER.division_id', '=', 'sinren_divisions.division_id')
+            ->leftJoin('laravel_db.users', 'rosters.user_id', '=', 'users.id')
+            ->select(\DB::raw('*, rosters.id as key_id'))
+            ->where('R_USER.user_id', '=', $user_id)
+            ->where('rosters.entered_on', '>=', $first_day)
+            ->where('rosters.entered_on', '<=', $last_day);
 
-        if ($is_show_all === false)
-        {
-            $sql = $sql->where(function($query) {
-                        $query
-                        ->orWhere('rosters.is_plan_accept', '=', false)
-                        ->orWhere('rosters.is_actual_accept', '=', false)
-                        ;
-                    })
-                    ->where('rosters.is_plan_entry', '=', true)
-            ;
+        if ($is_show_all === false) {
+            $sql = $sql->where(function ($query) {
+                $query
+                    ->orWhere('rosters.is_plan_accept', '=', false)
+                    ->orWhere('rosters.is_actual_accept', '=', false);
+            })
+                ->where('rosters.is_plan_entry', '=', true);
         }
         $tmp = $obj->setId($ym)->makeCalendar($sql->get());
         $cal = $obj->convertCalendarToList($tmp);
         return $cal;
     }
 
-    public function calendarAccept(CalendarAccept $request, $monthly_id, $division_id, $user_id) {
+    public function calendarAccept(CalendarAccept $request, $monthly_id, $division_id, $user_id)
+    {
         $is_bulk       = (!empty($request['is_bulk'])) ? $request['is_bulk'] : false;
         $is_contain    = false;
         $chief_user_id = \Auth::user()->id;
         // 自分自身を更新しようとしていないかチェック
-        if ($chief_user_id == $user_id)
-        {
+        if ($chief_user_id == $user_id) {
             \Session::flash('danger_message', "自分自身のデータを承認することはできません。");
             return back();
         }
         // 対象ユーザーが管轄部署に含まれているかチェック
         $me  = \App\ControlDivision::user($chief_user_id)->get(['division_id']);
         $you = \App\SinrenUser::where('user_id', $user_id)->first();
-        if (empty($you) && !$is_bulk)
-        {
+        if (empty($you) && !$is_bulk) {
             \Session::flash('danger_message', "勤怠管理ユーザーの登録が行われていないようです。");
             return back();
         }
-        if (!$is_bulk)
-        {
+        if (!$is_bulk) {
             foreach ($me as $m) {
                 $is_contain = ($you->division_id === $m->division_id) ? true : $is_contain;
             }
         }
 
-        if (!$is_contain && !$is_bulk)
-        {
+        if (!$is_contain && !$is_bulk) {
             \Session::flash('danger_message', "許可されていない部署のデータを承認しようとしました。");
             return back();
         }
@@ -238,11 +274,12 @@ class RosterAcceptController extends Controller
         // メインロジック
         $input = $request->input();
         try {
-            \DB::connection('mysql_roster')->transaction(function() use($input) {
+            \DB::connection('mysql_roster')->transaction(function () use ($input) {
                 $service = new RosterAccept(\Auth::user()->id);
                 $service->updateRoster($input);
             });
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             \Session::flash('danger_message', $e->getMessage());
             return back();
         }

@@ -90,7 +90,8 @@
             </div>
             <div class="col-md-10 col-md-offset-1">
               <div class="form-group" style="width: 100%;">
-                <input type="text" name="plan_overtime_reason" value="{{$r->plan_overtime_reason}}" class="form-control" style="width: 100%;" placeholder="残業する場合、理由を記入してください">
+                <input type="text" name="plan_overtime_reason" value="{{$r->plan_overtime_reason}}" class="form-control" style="width: 100%;" placeholder="残業する場合、理由を記入してください" maxlength="20" id="plan_overtime_reason_{{ $r->id }}">
+                <p class="text-right"><small><span id="plan_count_{{ $r->id }}">{{ mb_strlen($r->plan_overtime_reason) }}</span> / 20</small></p>
                 @if($r->is_plan_reject && !empty($r->reject_reason)) <small class="helpBlock text-danger">{{$r->reject_reason}}</small> @endif
               </div>
             </div>
@@ -105,4 +106,11 @@
     </div>
   </div>
 </form>
+
+<script type="text/javascript">
+    $("#plan_overtime_reason_{{ $r->id }}").keyup(function () {
+        let str = $(this).val()
+        $("#plan_count_{{ $r->id }}").html(str.length)
+    })
+</script>
 @endif

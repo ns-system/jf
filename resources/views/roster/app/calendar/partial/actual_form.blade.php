@@ -127,13 +127,24 @@
                 <input
                 type="text"
                 name="actual_overtime_reason"
+                id="actual_overtime_reason_{{ $r->id }}"
                 @if(!empty($r->actual_overtime_reason))   value="{{$r->actual_overtime_reason}}"
                 @elseif(!empty($r->plan_overtime_reason)) value="{{$r->plan_overtime_reason}}" @endif
                 class="form-control"
                 style="width: 100%;"
                 placeholder="残業した場合、理由を記入してください"
                 >
-                @if($r->is_actual_reject && !empty($r->reject_reason)) <small class="helpBlock text-danger">{{$r->reject_reason}}</small> @endif
+                <p class="text-right">
+                    <small>
+                        <span id="actual_count_{{ $r->id }}">
+                            @if(!empty($r->actual_overtime_reason)) {{ mb_strlen($r->actual_overtime_reason) }}
+                            @elseif(!empty($r->plan_overtime_reason)) {{ mb_strlen($r->plan_overtime_reason) }}
+                            @else 0
+                        @endif
+                    </span> / 20
+                    </small>
+                </p>
+                @if($r->is_actual_reject && !empty($r->reject_reason)) <small class="helpBlock text-danger" maxlength="20">{{$r->reject_reason}}</small> @endif
               </div>
             </div>
           </div>
@@ -147,4 +158,11 @@
     </div>
   </div>
 </form>
+
+<script type="text/javascript">
+    $("#actual_overtime_reason_{{ $r->id }}").keyup(function () {
+        let str = $(this).val()
+        $("#actual_count_{{ $r->id }}").html(str.length)
+    })
+</script>
 @endif

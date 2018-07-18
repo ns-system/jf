@@ -11,7 +11,7 @@
     </div>
   </div>
   @else
-  <div id="sampleCarousel" class="carousel slide" data-ride="carousel" style="padding: 20px 0;">
+  <div id="sampleCarousel" class="carousel slide" data-ride="carousel" style="padding: 20px 0; min-height: 100px;">
     <div class="carousel-inner" role="listbox">
       @foreach($notifications as $i => $n)
       <div @if($i == 0) class="item active" @else class="item" @endif>

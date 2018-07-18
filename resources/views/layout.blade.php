@@ -148,52 +148,70 @@ input[type=file]{display: none;}
 input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
 .padding-sm, .padding-sm th, .padding-sm td { padding: 2px !important; }
 
+.loading { opacity: 0.05; }
+.loader {
+  border: 16px solid #18bc9c; /* Light grey */
+  border-top: 16px solid #2c3e50; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+.loader-pos { left: 0; right: 0; top: 0; bottom: 0; margin: auto; position: fixed; }
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 </style>
 </head>
 <body>
-  @section('header')
-  <div class="bs-component" style="margin-bottom: 120px;">
-    @include('partial.nav')
-    @if(\Auth::check())
-    <div style="position: absolute; right: 10px; top: 85px;">
-      <a href="{{ route('app::user::font::show', ['user_id'=>\Auth::user()->id]) }}">文字が小さいですか？</a>
+  <div class="loader loader-pos" id="loader"></div>
+  <div class="loading" id="app">
+    @section('header')
+    <div class="bs-component" style="margin-bottom: 120px;">
+      @include('partial.nav')
+      @if(\Auth::check())
+      <div style="position: absolute; right: 10px; top: 85px;">
+        <a href="{{ route('app::user::font::show', ['user_id'=>\Auth::user()->id]) }}">文字が小さいですか？</a>
+      </div>
+      @endif
     </div>
-    @endif
-  </div>
 
 
-  @show
+    @show
 
-  <div class="container-fluid user-font">
-    <div class="row">
-      @section('sidebar')
-      @show
+    <div class="container-fluid user-font">
+      <div class="row">
+        @section('sidebar')
+        @show
 
-      @yield('content')
+        @yield('content')
+      </div>
     </div>
-  </div>
 
-  @section('footer')
-  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
-  <script src="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
+    @section('footer')
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+    <script src="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
 
-  <script src="{{asset('/js/js.cookie.js')}}"></script>
+    <script src="{{asset('/js/js.cookie.js')}}"></script>
 
-  <script type="text/javascript">
-    $(function () {
-      $('.modal-content').draggable();
-      $('[data-toggle="tooltip"]').tooltip();
-      $('.min-width').each(function(){
-        var width = $(this).attr('data-size');
-        $(this).css('min-width', width + 'px');
-      });
+    <script type="text/javascript">
+      $(function () {
+        $('.modal-content').draggable();
+        $('[data-toggle="tooltip"]').tooltip();
+        $('.min-width').each(function(){
+          var width = $(this).attr('data-size');
+          $(this).css('min-width', width + 'px');
+        });
 
-      $(document).bind("ajaxSend", function(c, xhr) {
-        $(window).bind( 'beforeunload', function() {
-          alert('abort');
-          xhr.abort();
-        })
-      });
+        $(document).bind("ajaxSend", function(c, xhr) {
+          $(window).bind( 'beforeunload', function() {
+            alert('abort');
+            xhr.abort();
+          })
+        });
       // +==========================================================
       // | class='btn-group' && data-toggle='buttons'に対して
       // | チェックされたボタンをハイライト表示する関数
@@ -258,13 +276,36 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
     Cookies.set('activeAccordionGroup', cookie_array, { expires: 7 });
   });
     });
-    function getGroupId(id) {
-      var tmp_id = id.replace(/#/g, '');
-      var arr_id = tmp_id.split('_');
-      if(!(arr_id instanceof Array) || arr_id.length < 2) return false;
-      return arr_id[0];
-    }
-  </script>
-  @show
+      function getGroupId(id) {
+        var tmp_id = id.replace(/#/g, '');
+        var arr_id = tmp_id.split('_');
+        if(!(arr_id instanceof Array) || arr_id.length < 2) return false;
+        return arr_id[0];
+      }
+    </script>
+    @show
+
+    <script type="text/javascript">
+      // ロード完了：正常時
+      $(document).ready(function () {
+        setTimeout(function() {
+        $("#app").removeClass('loading', 200)
+        $("#loader").fadeOut(200, function () { $(this).remove() })
+      }, 200)
+      })
+      // 5秒待ってもロードできない場合
+      setTimeout(function () {
+        $("#app").removeClass('loading', 200)
+        $("#loader").fadeOut(200, function () { $(this).remove() })
+      }, 5000)
+
+      $(window).bind('beforeunload', function (e) {
+        $("#app").addClass('loading', 200)
+        console.log('load')
+        $('body').prepend('<div class="loader loader-pos"></div>')
+        // $("#loader").fadeOut(200, function () { $(this).remove() })
+      })
+    </script>
+  </div>
 </body>
 </html>
