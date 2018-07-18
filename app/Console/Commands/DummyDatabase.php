@@ -19,6 +19,21 @@ class DummyDatabase extends Command
         parent::__construct();
     }
 
+    private function changeUsers($users, $name, $name_kana, $email)
+    {
+        foreach ($users as $i => $user) {
+            $key = $i + 1;
+            $user->first_name         = "ユーザー{$key}";
+            $user->first_name_kana    = "ゆーざー{$key}";
+            $user->last_name          = $name;
+            $user->last_name_kana     = $name_kana;
+            $user->unencrypt_password = 'password';
+            $user->password           = bcrypt('password');
+            $user->email              = "{$email}{$key}@example.com";
+            $user->save();
+        }
+    }
+
     /**
      * Execute the console command.
      *
@@ -33,17 +48,33 @@ class DummyDatabase extends Command
         }
 
         $this->info('== ユーザーテーブル処理開始 ==');
+
         $users = \App\User::get();
-        foreach ($users as $i => $user) {
-            $user->first_name         = "ユーザー{$i}";
-            $user->first_name_kana    = "ゆーざー{$i}";
-            $user->last_name          = 'サンプル';
-            $user->last_name_kana     = 'さんぷる';
-            $user->unencrypt_password = 'password';
-            $user->password           = bcrypt('password');
-            $user->email              = "user{$i}@example.com";
-            $user->save();
-        }
+        $this->changeUsers($users, '一般', 'いっぱん', 'user');
+
+        $admins = \App\User::where('is_super_user', true)->get();
+        $this->changeUsers($admins, '管理', 'かんり', 'admin');
+
+        $roster_admin_id = \App\RosterUser::where('is_administrator', true)->select('user_id')->get();
+        $roster_admins   = \App\User::where(function ($query) use ($roster_admin_id) {
+            foreach ($roster_admin_id as $id) {
+                $query->orWhere('id', $id->user_id);
+            }
+        })->get();
+        $this->changeUsers($roster_admins, '勤怠管理', 'きんたいかんり', 'roster_admin');
+
+        $roster_chief_id = \App\RosterUser::where('is_chief', true)->select('user_id')->get();
+        $roster_chiefs   = \App\User::where(function ($query) use ($roster_chief_id) {
+            foreach ($roster_chief_id as $id) {
+                $query->orWhere('id', $id->user_id);
+            }
+        })->get();
+//        dd($roster_chiefs);
+        $this->changeUsers($roster_chiefs, '勤怠承認', 'きんたいしょうにん', 'roster_chief');
+
+        $users = \App\User::where('last_name', '一般')->orderBy('last_name')->get();
+        $this->changeUsers($users, '一般', 'いっぱん', 'user');
+
 
         $this->info('== 部署処理開始 ==');
         $divisions = \App\Division::get();
