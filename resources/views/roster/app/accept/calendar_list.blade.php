@@ -36,8 +36,11 @@
         <ul class="dropdown-menu" role="menu">
           <li><a href="{{route_with_query('app::roster::accept::calendar', ['ym'=>$ym, 'div'=>$div])}}">未承認のみ</a></li>
           @foreach($users as $i => $u)
-          <li data-name="{{ $u->last_name }}" @if(!empty($user_id) && ($u->user_id == $user_id)) class="active" @endif>
-            <a href="{{route_with_query('app::roster::accept::calendar', ['ym'=>$ym, 'div'=>$div, 'user'=>$u->user_id], ['status' => $status])}}">{{$u->last_name}} <small>さん</small></a>
+          <li data-name="{{ $u->last_name }} {{ $u->first_name }}" @if(!empty($user_id) && ($u->user_id == $user_id)) class="active" @endif>
+            <a href="{{route_with_query('app::roster::accept::calendar', ['ym'=>$ym, 'div'=>$div, 'user'=>$u->user_id], ['status' => $status])}}">
+              @include('partial.avatar', ['avatar' => $u->user_icon, 'size' => '40px',])
+              {{$u->last_name}} {{ $u->first_name }} <small>さん</small>
+            </a>
           </li>
           @endforeach
         </ul>

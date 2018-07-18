@@ -9,7 +9,7 @@
 
 @section('sidebar')
 <div class="col-md-2">
-    @include('partial.check_sidebar')
+  @include('partial.check_sidebar')
 </div>
 @endsection
 
@@ -17,27 +17,32 @@
 @section('content')
 <div class="col-md-10">
 
-    @include('partial.alert')
-    <div class="border-bottom"><h2>{{date('Y年n月', strtotime($month.'01'))}}分 勤務予定データ作成<small> - ユーザー選択</small></h2></div>
-    @if(!empty($users))
-    <table class="table table-hover">
-     <thead>
-      <tr>
-       <th class="bg-primary">部署</th>
-       <th class="bg-primary">ユーザー名</th>
-       <th class="bg-primary">状態</th>
-   </tr>
-</thead>
-
-<tbody>
-    @foreach($users as $user)
+  @include('partial.alert')
+  <div class="border-bottom"><h2>{{date('Y年n月', strtotime($month.'01'))}}分 勤務予定データ作成<small> - ユーザー選択</small></h2></div>
+  @if(!empty($users))
+  <table class="table table-hover">
+   <thead>
     <tr>
-       <td>{{$user->division_name}}</td>
-       <td><a href="{{route('app::roster::work_plan::list', ['month'=>$month, 'id'=>$user->user_id])}}">{{$user->last_name}} {{$user->first_name}}<small>さん</small></a></td>
-       <td>
-        @if($cnt[$user->user_id] > 0) <span class="label label-success">データ登録済み</span>
-        @else                         <span class="label label-default">データ未登録</span> @endif
-    </td>
+     <th class="bg-primary">部署</th>
+     <th class="bg-primary text-left">ユーザー名</th>
+     <th class="bg-primary">状態</th>
+   </tr>
+ </thead>
+
+ <tbody>
+  @foreach($users as $user)
+  <tr>
+   <td>{{$user->division_name}}</td>
+   <td class="text-left">
+    <a href="{{route('app::roster::work_plan::list', ['month'=>$month, 'id'=>$user->user_id])}}">
+      @include('partial.avatar', ['avatar' => $user->user_icon, 'size' => '40px',])
+      {{$user->last_name}} {{$user->first_name}}<small>さん</small>
+    </a>
+  </td>
+  <td>
+    @if($cnt[$user->user_id] > 0) <span class="label label-success">データ登録済み</span>
+    @else                         <span class="label label-default">データ未登録</span> @endif
+  </td>
 </tr>
 @endforeach
 </tbody>
@@ -47,25 +52,25 @@
 @endif
 
 <div class="text-right">
-    <div class="btn-group">
-        <a href="{{route('app::roster::work_plan::index')}}" class="btn btn-primary btn-sm" style="min-width: 125px;">
-            <span class="glyphicon glyphicon-backward" aria-hidden="true"></span> 戻る
-        </a>
-        <span></span>
-        <a
-        href="{{route('app::roster::work_plan::division', ['month'=>$prev])}}"
-        class="btn btn-warning btn-sm"
-        style="min-width: 125px;"
-        ></span><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> 前月へ</a>
-        </span>
-        <a
-        href="{{route('app::roster::work_plan::division', ['month'=>$next])}}"
-        class="btn btn-success btn-sm"
-        style="min-width: 125px;"
-        ></span>翌月へ <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></a>
-        </div>
+  <div class="btn-group">
+    <a href="{{route('app::roster::work_plan::index')}}" class="btn btn-primary btn-sm" style="min-width: 125px;">
+      <span class="glyphicon glyphicon-backward" aria-hidden="true"></span> 戻る
+    </a>
+    <span></span>
+    <a
+    href="{{route('app::roster::work_plan::division', ['month'=>$prev])}}"
+    class="btn btn-warning btn-sm"
+    style="min-width: 125px;"
+    ></span><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> 前月へ</a>
+  </span>
+  <a
+  href="{{route('app::roster::work_plan::division', ['month'=>$next])}}"
+  class="btn btn-success btn-sm"
+  style="min-width: 125px;"
+  ></span>翌月へ <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></a>
+  </div>
 
-    </div>
+</div>
 </div>
 @endsection
 

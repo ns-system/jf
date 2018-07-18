@@ -25,10 +25,13 @@
     </thead>
     <tbody>
       @foreach($unchecked as $un)
-       <?php $week = date('w', strtotime($un->entered_on)); ?>
+      <?php $week = date('w', strtotime($un->entered_on)); ?>
       <tr @if($week == 0) class="bg-danger" @elseif($week == 6) class="bg-info" @endif>
         <th class="bg-primary" rowspan="5">
-          <p>{{ $un->laraveluser->last_name }}さん</p>
+          <p>
+            @include('partial.avatar', ['avatar' => $un->laraveluser->user_icon, 'size' => '40px',])
+            {{ $un->laraveluser->last_name }} {{ $un->laraveluser->first_name }}さん
+          </p>
           <p @if($week == 0) class="text-danger-light" @elseif($week == 6) class="text-info-light" @endif>{{ $un->entered_on }}<br>（{{ $jp_week[$week] }}）</p>
         </th>
         <th class="bg-primary">状態</th>

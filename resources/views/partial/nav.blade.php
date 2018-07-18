@@ -41,7 +41,9 @@
                 @if(Auth::check())
                 <li>
                     <a href="{{route('app::user::show', ['id'=>\Auth::user()->id])}}" style="margin: 10px 0; font-size: 80%">
-                        <img class="cover img-thumbnail" @if(\Auth::user()->user_icon != '') src="{{asset('/user_icon/' . \Auth::user()->user_icon)}}" @else src="{{asset('/user_icon/unset.png')}}" @endif>
+
+                        @include('partial.avatar', ['avatar'=>\Auth::user()->user_icon, 'size'=>'48px'])
+{{--                         <img class="cover img-thumbnail" @if(\Auth::user()->user_icon != '') src="{{asset('/user_icon/' . \Auth::user()->user_icon)}}" @else src="{{asset('/user_icon/unset.png')}}" @endif> --}}
                         {{Auth::user()->last_name}} {{Auth::user()->first_name}}<small>さん</small>
                     </a>
                 </li>

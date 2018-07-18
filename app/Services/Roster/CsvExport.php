@@ -245,6 +245,9 @@ class CsvExport
             $date = date('Y-m-d', strtotime($input['max_date']));
             $rosters->where('rosters.entered_on', '<=', $date);
         }
+        if (!empty($input['staff_number'])) {
+            $rosters->where('roster_users.staff_number', $input['staff_number']);
+        }
         return $rosters;
     }
 

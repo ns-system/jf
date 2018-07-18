@@ -50,7 +50,11 @@
 
                         <label><small>ユーザー名（姓）</small></label>
                         <div class="form-group">
-                            <input type="text" class="form-control input-sm" name="name" @if(!empty($search['name'])) value="{{$search['name']}}" @endif placeholder="入力されて文字を含むユーザーを検索します。">
+                            <input type="text" class="form-control input-sm" name="name" @if(!empty($search['name'])) value="{{$search['name']}}" @endif placeholder="入力されている文字を含むユーザーを検索します。">
+                        </div>
+                        <label><small>社員番号</small></label>
+                        <div class="form-group">
+                            <input type="number" class="form-control input-sm" name="staff_number" @if(!empty($search['staff_number'])) value="{{$search['staff_number']}}" @endif placeholder="社員番号から検索します。">
                         </div>
 
                         <label><small>部署</small></label>
