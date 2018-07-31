@@ -148,7 +148,7 @@ input[type=file]{display: none;}
 input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
 .padding-sm, .padding-sm th, .padding-sm td { padding: 2px !important; }
 
-.loading { opacity: 0.05; }
+.loading { opacity: 0; }
 .loader {
   border: 16px solid #18bc9c; /* Light grey */
   border-top: 16px solid #2c3e50; /* Blue */
@@ -288,23 +288,22 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
     <script type="text/javascript">
       // ロード完了：正常時
       $(document).ready(function () {
-        setTimeout(function() {
-        $("#app").removeClass('loading', 200)
-        $("#loader").fadeOut(200, function () { $(this).remove() })
-      }, 200)
+        setTimeout(function() { finishLoading() }, 200)
       })
       // 5秒待ってもロードできない場合
-      setTimeout(function () {
-        $("#app").removeClass('loading', 200)
-        $("#loader").fadeOut(200, function () { $(this).remove() })
-      }, 5000)
+      setTimeout(function () { finishLoading() }, 5000)
 
       $(window).bind('beforeunload', function (e) {
         $("#app").addClass('loading')
-        console.log('load')
         $('body').prepend('<div class="loader loader-pos"></div>')
+        setTimeout(function () { finishLoading() }, 1000)
         // $("#loader").fadeOut(200, function () { $(this).remove() })
       })
+
+      function finishLoading () {
+        $("#app").removeClass('loading', 200)
+        $(".loader").fadeOut(200, function () { $(this).remove() })
+      }
     </script>
   </div>
 </body>
