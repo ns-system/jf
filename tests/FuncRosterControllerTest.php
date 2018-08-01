@@ -96,7 +96,7 @@ class FuncRosterControllerTest extends TestCase
         $this->actingAs(static::$normal_user)
                 ->visit('/app/roster/calendar/201712')
                 ->post('/app/roster/calendar/plan/edit/201712/' . $roster[0]->id, array_merge($this->calender_plan_post_dummy_data, ["plan_rest_reason_id" => "", '_token' => csrf_token()]))
-                ->assertRedirectedTo('/app/roster/calendar/201712')
+                ->assertRedirectedTo('/app/roster/calendar/201712?position=0')
         ;
 
         $entry_plan = \App\Roster::where('id', $roster[0]->id)->first();
@@ -145,7 +145,7 @@ class FuncRosterControllerTest extends TestCase
         $this->actingAs(static::$normal_user)
                 ->visit('/app/roster/calendar/201712')
                 ->post('/app/roster/calendar/actual/edit/201712/' . $roster[0]->id, array_merge($this->calender_actual_post_dummy_data, ['_token' => csrf_token()]))
-                ->assertRedirectedTo('/app/roster/calendar/201712')
+                ->assertRedirectedTo('/app/roster/calendar/201712?position=0')
         ;
         $entry_plan   = \App\Roster::where('id', $roster[0]->id)->first();
         $this->assertEquals(0, $unentry_plan->is_actual_entry);
@@ -192,7 +192,7 @@ class FuncRosterControllerTest extends TestCase
         $this->actingAs(static::$normal_user)
                 ->visit('/app/roster/calendar/201712')
                 ->post('/app/roster/calendar/actual/edit/201712/' . $roster[0]->id, array_merge($this->calender_actual_post_dummy_data, ['_token' => csrf_token(), "actual_rest_reason_id" => 1]))
-                ->assertRedirectedTo('/app/roster/calendar/201712')
+                ->assertRedirectedTo('/app/roster/calendar/201712?position=0')
         ;
         $entry_plan   = \App\Roster::where('id', $roster[0]->id)->first();
         $this->assertEquals(0, $unentry_plan->is_actual_entry);
@@ -235,7 +235,7 @@ class FuncRosterControllerTest extends TestCase
         $this->actingAs(static::$normal_user)
                 ->visit('/app/roster/calendar/201712')
                 ->post('/app/roster/calendar/plan/edit/201712/' . $roster[0]->id, array_merge($this->calender_plan_post_dummy_data, ["plan_rest_reason_id" => "", '_token' => csrf_token()]))
-                ->assertRedirectedTo('/app/roster/calendar/201712')
+                ->assertRedirectedTo('/app/roster/calendar/201712?position=0')
         ;
         
 
@@ -250,7 +250,7 @@ class FuncRosterControllerTest extends TestCase
                     "actual_work_type_id"    => 1,
                     "actual_overtime_reason" => "a"
                                 ], ['_token' => csrf_token()]))
-                ->assertRedirectedTo('/app/roster/calendar/201712')
+                ->assertRedirectedTo('/app/roster/calendar/201712?position=0')
         ;
         
 

@@ -93,7 +93,6 @@ class IndexController extends Controller
 
     private function getRosterChiefNotice($users)
     {
-
         $cnt = \App\Roster::where(function ($query) use ($users) {
             foreach ($users as $user_id) {
                 $query->orWhere('user_id', $user_id);

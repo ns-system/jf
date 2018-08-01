@@ -71,7 +71,7 @@ form { margin: 0; }
 small, .text-sm {font-size: 80% !important;}
 .margin-0{margin: 0 !important;}
 .va-middle,.va-middle *{vertical-align: middle !important;}
-.margin-bottom{margin-bottom: 10px;}
+.margin-bottom, .mb { margin-bottom: 10px; }
 p{margin: 3px 0;}
 input[type=file]{display: none;}
 .max-width-100{max-width: 100px; width: 100%;}
@@ -296,7 +296,7 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
       $(window).bind('beforeunload', function (e) {
         $("#app").addClass('loading')
         $('body').prepend('<div class="loader loader-pos"></div>')
-        setTimeout(function () { finishLoading() }, 1000)
+        setTimeout(function () { finishLoading() }, 3000)
         // $("#loader").fadeOut(200, function () { $(this).remove() })
       })
 

@@ -62,7 +62,7 @@ class RosterAcceptController extends Controller
         $user_id          = \Auth::user()->id;
         $date             = new \DateTime();
         $current_month_id = $date->format('Ym');
-        $last_month_id    = $date->modify('-1 month')->format('Ym');
+        $last_month_id    = $date->modify('last day of previous month')->format('Ym');
 
         $rosters = \App\ControlDivision::join('sinren_db.sinren_divisions', 'sinren_divisions.division_id', '=', 'control_divisions.division_id')
             ->join('sinren_db.sinren_users', 'sinren_divisions.division_id', '=', 'sinren_users.division_id')
@@ -86,8 +86,9 @@ class RosterAcceptController extends Controller
             ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = false and is_actual_reject = false) or null) as 実績未承認'))
             ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
             ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
-            ->get();
-
+//            ->toSql();
+        ->get();
+//        dd($rosters);
         $rows = [];
         foreach ($rosters as $roster) {
             $rows[$roster->division_id][$roster->month_id] = $roster->toArray();
@@ -127,6 +128,7 @@ class RosterAcceptController extends Controller
             //            'actual_entry'  => $actual_entry,
             'months' => $months,
         ];
+//        dd($rows);
         return view('roster.app.accept.index', $params);
     }
 

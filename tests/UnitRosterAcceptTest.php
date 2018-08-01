@@ -20,13 +20,15 @@ class UnitRosterAcceptTest extends TestCase
     protected $after;
     protected $ids;
 
-    private function setReflection($class, $function_name) {
+    private function setReflection($class, $function_name)
+    {
         $s = new \ReflectionMethod($class, $function_name);
         $s->setAccessible(true);
         return $s;
     }
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
         \App\ControlDivision::truncate();
         \App\SinrenUser::truncate();
@@ -38,7 +40,7 @@ class UnitRosterAcceptTest extends TestCase
 
         $users = [];
         for ($i = 0; $i < 4; $i++) {
-            $user    = factory(\App\User::class)->create();
+            $user = factory(\App\User::class)->create();
             \App\SinrenUser::create(['user_id' => $user->id, 'division_id' => $i + 1,]);
             \App\Division::create(['division_id' => $i + 1, 'division_name' => "division_{$i}"]);
             $users[] = $user;
@@ -55,7 +57,8 @@ class UnitRosterAcceptTest extends TestCase
         \App\SinrenUser::create(['user_id' => $this->chief_user->id, 'division_id' => 1,]);
     }
 
-    private function createRoster($plan_or_actual = 'plan') {
+    private function createRoster($plan_or_actual = 'plan')
+    {
         $month     = ($plan_or_actual == 'plan') ? self::PLAN_MONTH : self::ACTUAL_MONTH;
         $is_actual = ($plan_or_actual == 'plan') ? false : true;
         $array_id  = [$this->user_1->id, $this->user_2->id, $this->another_div_user->id, $this->chief_user->id,];
@@ -78,11 +81,13 @@ class UnitRosterAcceptTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系_責任者IDが見つからない() {
+    public function 異常系_責任者IDが見つからない()
+    {
         try {
             new RosterAccept(0);
             $this->fail('エラー：例外が発生しませんでした。');
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             $this->assertEquals('No query results for model [App\User].', $e->getMessage());
         }
     }
@@ -90,18 +95,21 @@ class UnitRosterAcceptTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系_勤務データが見つからない() {
+    public function 異常系_勤務データが見つからない()
+    {
         $s = new RosterAccept($this->chief_user->id);
         try {
             $s->updateRoster([]);
             $this->fail('エラー：例外が発生しませんでした。');
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             $this->assertEquals('勤務データIDがセットされていないようです。', $e->getMessage());
         }
         try {
             $s->updateRoster(['id' => ['not found', 'not found',]]);
             $this->fail('エラー：例外が発生しませんでした。');
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             $this->assertEquals('No query results for model [App\Roster].', $e->getMessage());
         }
     }
@@ -109,12 +117,14 @@ class UnitRosterAcceptTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系_責任者の管轄部署がない() {
+    public function 異常系_責任者の管轄部署がない()
+    {
         \App\ControlDivision::truncate();
         try {
             new RosterAccept($this->chief_user->id);
             $this->fail('エラー：例外が発生しませんでした。');
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             $this->assertEquals('責任者の管轄部署が存在しません。', $e->getMessage());
         }
     }
@@ -154,7 +164,8 @@ class UnitRosterAcceptTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系_予定データの更新に成功する() {
+    public function 正常系_予定データの更新に成功する()
+    {
         \App\Roster::truncate();
         $this->createRoster('plan');
         $roster   = [
@@ -171,7 +182,7 @@ class UnitRosterAcceptTest extends TestCase
             'plan_reject' => [$array_id[0] => 'NG_1', $array_id[1] => '', $array_id[2] => 'NG_2', $array_id[3] => ''],
         ];
 
-        $s   = new RosterAccept($this->chief_user->id);
+        $s = new RosterAccept($this->chief_user->id);
         $s->updateRoster($inputs);
         $res = [
             \App\Roster::where(['entered_on' => self::PLAN_MONTH . '01', 'user_id' => $this->user_1->id])->firstOrFail(),
@@ -207,7 +218,8 @@ class UnitRosterAcceptTest extends TestCase
     /**
      * @tests
      */
-    public function 正常系_実績データの更新に成功する() {
+    public function 正常系_実績データの更新に成功する()
+    {
         \App\Roster::truncate();
         $this->createRoster('actual');
         $roster   = [
@@ -224,7 +236,7 @@ class UnitRosterAcceptTest extends TestCase
             'actual_reject' => [$array_id[0] => 'NG_1', $array_id[1] => '', $array_id[2] => 'NG_2', $array_id[3] => ''],
         ];
 
-        $s   = new RosterAccept($this->chief_user->id);
+        $s = new RosterAccept($this->chief_user->id);
         $s->updateRoster($inputs);
         $res = [
             \App\Roster::where(['entered_on' => self::ACTUAL_MONTH . '01', 'user_id' => $this->user_1->id])->firstOrFail(),
@@ -260,7 +272,8 @@ class UnitRosterAcceptTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系_予定データ更新に失敗する() {
+    public function 異常系_予定データ更新に失敗する()
+    {
         \App\Roster::truncate();
 
         $array    = [
@@ -273,15 +286,17 @@ class UnitRosterAcceptTest extends TestCase
         $ref      = $this->setReflection($s, 'updatePlan');
 
         try {
-            $ref->invoke($s, $roster_1, [], $roster_1->id, true);
+            $ref->invoke($s, $roster_1, [], $roster_1->id, true, false);
             $this->fail('エラー：例外が発生しませんでした。');
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             $this->assertEquals("{$roster_1->entered_on}の予定データが入力されていないようです。", $e->getMessage());
         }
         try {
-            $ref->invoke($s, $roster_2, [], $roster_2->id, true);
+            $ref->invoke($s, $roster_2, [], $roster_2->id, true, false);
             $this->fail('エラー：例外が発生しませんでした。');
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             $this->assertEquals("すでに{$roster_2->entered_on}のデータは承認されています。", $e->getMessage());
         }
     }
@@ -289,7 +304,8 @@ class UnitRosterAcceptTest extends TestCase
     /**
      * @tests
      */
-    public function 異常系_実績データ更新に失敗する() {
+    public function 異常系_実績データ更新に失敗する()
+    {
         \App\Roster::truncate();
 
         $array    = [
@@ -306,27 +322,31 @@ class UnitRosterAcceptTest extends TestCase
         $ref      = $this->setReflection($s, 'updateActual');
 
         try {
-            $ref->invoke($s, $roster_1, [], $roster_1->id, true);
+            $ref->invoke($s, $roster_1, [], $roster_1->id, true, false);
             $this->fail('エラー：例外が発生しませんでした。');
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             $this->assertEquals("{$roster_1->entered_on}の予定データが入力されていないようです。", $e->getMessage());
         }
         try {
-            $ref->invoke($s, $roster_2, [], $roster_2->id, true);
+            $ref->invoke($s, $roster_2, [], $roster_2->id, true, false);
             $this->fail('エラー：例外が発生しませんでした。');
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             $this->assertEquals("{$roster_2->entered_on}の予定データが承認されていないようです。先に予定の承認を行ってください。", $e->getMessage());
         }
         try {
-            $ref->invoke($s, $roster_3, [], $roster_3->id, true);
+            $ref->invoke($s, $roster_3, [], $roster_3->id, true, false);
             $this->fail('エラー：例外が発生しませんでした。');
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             $this->assertEquals("{$roster_3->entered_on}の実績データが入力されていないようです。", $e->getMessage());
         }
         try {
-            $ref->invoke($s, $roster_4, [], $roster_4->id, true);
+            $ref->invoke($s, $roster_4, [], $roster_4->id, true, false);
             $this->fail('エラー：例外が発生しませんでした。');
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             $this->assertEquals("すでに{$roster_4->entered_on}のデータは承認されています。", $e->getMessage());
         }
     }

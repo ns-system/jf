@@ -23,28 +23,27 @@ class RosterWorkPlan
 
     private function edit($roster, $input, $user_id, $key_date, $chief_id)
     {
-//         すでに入力済みなら更新を行わない
-//        if ($roster->is_plan_entry || $roster->is_actual_entry)
+        // すでに入力済みなら更新を行わない
         // 20180713 条件変更
         if ($roster->is_plan_accept || $roster->is_actual_accept) {
             return false;
         }
 
-        $rest    = (empty($input['rest'][$key_date])) ? null : \App\Rest::where('rest_reason_id', $input['rest'][$key_date])->first();
-        $is_rest = (!empty($rest)) ? true : false;
+        $rest_id      = (!empty($input['rest'][$key_date])) ? $input['rest'][$key_date] : false;
+        $work_type_id = ($input['work_type'][$key_date]) ? $input['work_type'][$key_date] : false;
+        $rest         = empty($rest_id) ? null : \App\Rest::where('rest_reason_id', $rest_id)->first();
+        $is_holyday   = (!$rest_id && !$work_type_id) ? true : false;
 
-//        dd($input, $key_date, $rest);
-        $is_short_time = (!empty($rest) && ($rest->rest_reason_name === '遅刻' || $rest->rest_reason_name === '早退')) ? true : false;
-//        dd($is_rest, $is_short_time);
+        // 2018-07-31 完全オフ（土日祝日）以外は全て勤務形態の入力を必須とする
+        if (!$is_holyday && empty($work_type_id)) {
+            throw new \Exception("{$key_date}の勤務形態を入力してください。");
+        }
+
+        $is_short_time = ($rest_id && ($rest->rest_reason_name === '遅刻' || $rest->rest_reason_name === '早退')) ? true : false;
         // 予定勤務形態
-//        $roster->plan_work_type_id = (!empty($input['work_type'][$key_date])) ? $input['work_type'][$key_date] : 0;
-        $roster->plan_work_type_id = (!$is_rest || $is_short_time) ? $input['work_type'][$key_date] : 0;
+        $roster->plan_work_type_id = (!$is_holyday) ? $work_type_id : 0;
         // 予定休暇理由
-        $roster->plan_rest_reason_id = ($is_rest) ? $input['rest'][$key_date] : 0;
-//        if (!empty($input['rest'][$key_date]))
-//        {
-//            $roster->plan_rest_reason_id = $input['rest'][$key_date];
-//        }
+        $roster->plan_rest_reason_id = ($rest_id) ? $input['rest'][$key_date] : 0;
         // 勤務日
         $roster->entered_on = $key_date;
         // 非登録者ID
@@ -56,8 +55,8 @@ class RosterWorkPlan
             $roster->edit_user_id = $chief_id;
         }
         $roster->save();
-        if (env('APP_DEBUG'))
-            \Log::debug(['is_rest' => $is_rest, 'is_short_time' => $is_short_time, $roster->toArray()]);
+//        if (env('APP_DEBUG'))
+//            \Log::debug(['is_rest' => $rest_id, 'is_short_time' => $is_short_time, $roster->toArray()]);
         return true;
     }
 

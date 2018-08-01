@@ -196,8 +196,8 @@ class RosterChiefController extends Controller
             'this_month'    => $date->format('Y年n月'),
             'user_count'    => $user_count,
             'entered_users' => $entered_users,
-            'next_month'    => $next->modify('+1 month')->format('Ym'),
-            'before_month'  => $before->modify('-1 month')->format('Ym'),
+            'next_month'    => $next->modify('last day of +1 month')->format('Ym'),
+            'before_month'  => $before->modify('last day of previous month')->format('Ym'),
         ];
         return view('roster.chief.calendar', $params);
     }

@@ -232,7 +232,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
                     "actual_overtime_reason"     => "実残業理由",
                     "actual_accept"              => "1"
                 ])
-                ->assertRedirectedTo('/admin/roster/csv/list/201712')
+                ->assertRedirectedTo('/admin/roster/csv/search/201712?')
         ;
         $changed_roster = \App\Roster::find($roster->id);
         $this->assertEquals($changed_roster->id, $roster->id);
@@ -297,7 +297,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
                     "actual_overtime_reason"     => "実残業理由",
                     "actual_accept"              => "0"
                 ])
-                ->assertRedirectedTo('/admin/roster/csv/list/201712')
+                ->assertRedirectedTo('/admin/roster/csv/search/201712?')
         ;
         $changed_roster = \App\Roster::find($roster->id);
         $this->assertEquals($changed_roster->id, $roster->id);
@@ -361,7 +361,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
                     "actual_overtime_reason"     => "実残業理由",
                     "actual_accept"              => "-1"
                 ])
-                ->assertRedirectedTo('/admin/roster/csv/list/201712')
+                ->assertRedirectedTo('/admin/roster/csv/search/201712?')
         ;
         $changed_roster = \App\Roster::find($roster->id);
         $this->assertEquals($changed_roster->id, $roster->id);
@@ -425,7 +425,7 @@ class FuncRosterCsvExportControllerTest extends TestCase
                     "actual_overtime_reason"     => "実残業理由",
                     "actual_accept"              => "2"
                 ])
-                ->assertRedirectedTo('/admin/roster/csv/list/201712')
+                ->assertRedirectedTo('/admin/roster/csv/search/201712?')
         ;
         $changed_roster = \App\Roster::find($roster->id);
         $this->assertEquals($changed_roster->id, $roster->id);

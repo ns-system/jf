@@ -118,7 +118,7 @@ class RosterCsvExportController extends Controller
     {
         $d       = new \DateTime();
         $current = $d->format('Ym');
-        $past    = $d->modify('-1 month')->format('Ym');
+        $past    = $d->modify('last day of previous month')->format('Ym');
 
         $summary = \App\Roster::groupBy('month_id')
             ->whereBetween('month_id', [$past, $current])
@@ -358,8 +358,8 @@ class RosterCsvExportController extends Controller
         $dt            = (!empty($ym)) ? new \DateTime($ym . '01') : new \DateTime();
         $rows          = $this->getEnteredUsers($dt->format('Ym'));
         $current_month = $dt->format('Ym');
-        $last_month    = $dt->modify('-1 month')->format('Ym');
-        $next_month    = $dt->modify('+2 month')->format('Ym');
+        $last_month    = $dt->modify('last day of previous month')->format('Ym');
+        $next_month    = $dt->modify('last day of +2 month')->format('Ym');
         return view('roster.admin.csv.entered_users', [
             'ym'         => $current_month,
             'rows'       => $rows,

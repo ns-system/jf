@@ -25,3 +25,4 @@ config/database.php
 config/app.php
 config/import_config.json
 public/manuals/*
+!public/manuals/images

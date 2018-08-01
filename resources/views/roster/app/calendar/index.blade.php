@@ -47,6 +47,7 @@
             <li>一度承認されたデータは修正することができません。</li>
           </ul>
         </small>
+        @include('roster.app.calendar.partial.manual')
       </div>
 
     </div>
@@ -231,9 +232,9 @@
     var start_time = target.find('*[name=actual_start_time] option:selected').val();
     var end_hour   = target.find('*[name=actual_end_hour]   option:selected').val();
     var end_time   = target.find('*[name=actual_end_time]   option:selected').val();
-    console.log(work_name, start_hour, start_time, end_hour, end_time);
+    // console.log(work_name, start_hour, start_time, end_hour, end_time);
     if(!work_name.match(/休日出勤/)){
-      console.log('['+work_name+']');
+      // console.log('['+work_name+']');
       return true;
     }
     if(!start_hour || !start_time || !end_hour || !end_time){
@@ -251,5 +252,30 @@
 
     return true;
   }
+
+  function setRestReason (rest_id, type_id, id) {
+    let type = $('#actual-work-type-id-' + id)
+    let rest = $('#actual-rest-reason-id-' + id)
+    type.val(type.attr('data-default'))
+    rest.val(rest.attr('data-default'))
+    if (type_id !== 0)
+      type.val(type_id)
+    if (rest_id !== 0)
+      rest.val(rest_id)
+    return false
+  }
+
+  function checkActual (id) {
+    let is_holiday = checkHolidayWork('actual-time-' + id)
+    let type = $('#actual-work-type-id-' + id)
+    let rest = $('#actual-rest-reason-id-' + id)
+    console.log(type.val())
+    if (!type.val() || type.val() == 0) {
+      alert("実勤務形態が入力されていないようです。\n休暇の場合、「休暇」を選択してください。")
+      return false
+    }
+    return true
+  }
+
 </script>
 @endsection
