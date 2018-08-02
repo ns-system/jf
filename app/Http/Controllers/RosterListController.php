@@ -9,7 +9,8 @@ use App\Http\Controllers\Controller;
 class RosterListController extends Controller
 {
 
-    public function is_valid_division($id) {
+    public function is_valid_division($id)
+    {
         $user_id  = \Auth::user()->id;
         $tmp_div  = \App\Division::where('division_id', '=', $id)->first();
         $tmp_divs = \App\ControlDivision::join('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')->where('user_id', '=', $user_id)->get();
@@ -18,8 +19,7 @@ class RosterListController extends Controller
 //        var_dump("{$div} <=> {$id}");
 //        exit();
         foreach ($divs as $div) {
-            if ($div->division_id == $id)
-            {
+            if ($div->division_id == $id) {
                 return true;
             }
         }
@@ -44,18 +44,17 @@ class RosterListController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function index()
+    {
         $user_id = \Auth::user()->id;
         $user    = \App\SinrenUser::user($user_id)->first();
-        if (empty($user))
-        {
+        if (empty($user)) {
             \Session::flash('warn_message', "先にユーザー登録を行ってください。");
             return redirect()->route('app::roster::user::show', ['id' => $user_id]);
         }
 
         $id = $user->division_id;
-        if (!$this->is_valid_division($id))
-        {
+        if (!$this->is_valid_division($id)) {
             \Session::flash('warn_message', "許可されていない部署を閲覧しようとしました。");
             return redirect(route('index'));
         }
@@ -66,9 +65,9 @@ class RosterListController extends Controller
         return view('roster.app.divisions.index', ['this_month' => $max, 'divs' => $divs, 'id' => $id]);
     }
 
-    public function show($div, $ym) {
-        if (!$this->is_valid_division($div))
-        {
+    public function show($div, $ym)
+    {
+        if (!$this->is_valid_division($div)) {
             \Session::flash('warn_message', "許可されていない部署を閲覧しようとしました。");
             return redirect(route('index'));
         }
@@ -94,14 +93,14 @@ class RosterListController extends Controller
         foreach ($rs as $r) {
             $rests[$r->rest_reason_id] = $r->rest_reason_name;
         }
-        $users    = \DB::connection('mysql_sinren')
-                ->table('sinren_users')
-                ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
-                ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-                ->where('sinren_users.division_id', '=', $div)
-                ->where('roster_users.is_chief', '=', false)
-                ->get()
-        ;
+        $users = \DB::connection('mysql_sinren')
+            ->table('sinren_users')
+            ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
+            ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+            ->where('sinren_users.division_id', '=', $div)
+            ->where('roster_users.is_chief', '=', false)
+            ->where('users.retirement', false)
+            ->get();
 //        var_dump($rows);
         $obj      = new \App\Services\Roster\Calendar();
         $cal      = $obj->setId($ym)->makeCalendar();
@@ -109,18 +108,17 @@ class RosterListController extends Controller
         $calendar = [];
         foreach ($cal as $c) {
             $rows = \App\Roster::where('entered_on', '=', $c['date'])
-                    ->join('sinren_db.sinren_users', 'rosters.user_id', '=', 'sinren_users.user_id')
-                    ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
-                    ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
-                    ->where('sinren_users.division_id', '=', $div)
-                    ->get()
-            ;
+                ->join('sinren_db.sinren_users', 'rosters.user_id', '=', 'sinren_users.user_id')
+                ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+                ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
+                ->where('sinren_users.division_id', '=', $div)
+                ->where('users.retirement', false)
+                ->get();
             $tmp  = [];
             foreach ($rows as $r) {
                 $tmp[$r->user_id] = $r;
             }
-            if (!empty($tmp))
-            {
+            if (!empty($tmp)) {
                 $c['data'] = $tmp;
             }
             $calendar[] = $c;
@@ -130,16 +128,16 @@ class RosterListController extends Controller
         $next  = date('Ym', strtotime($d . ' +1 month'));
         $param = [
 //            'rows'     => $rows,
-            'rows'     => $calendar,
-            'users'    => $users,
-            'rests'    => $rests,
-            'ym'       => $ym,
-            'div'      => $div,
-            'div_name' => $div_name,
-            'date'     => $date,
-            'types'    => $types,
-            'prev'     => $prev,
-            'next'     => $next,
+'rows'     => $calendar,
+'users'    => $users,
+'rests'    => $rests,
+'ym'       => $ym,
+'div'      => $div,
+'div_name' => $div_name,
+'date'     => $date,
+'types'    => $types,
+'prev'     => $prev,
+'next'     => $next,
         ];
         return view('roster.app.divisions.list', $param);
     }

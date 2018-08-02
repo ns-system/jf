@@ -87,7 +87,7 @@ class RosterAcceptController extends Controller
             ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
             ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
 //            ->toSql();
-        ->get();
+            ->get();
 //        dd($rosters);
         $rows = [];
         foreach ($rosters as $roster) {
@@ -146,6 +146,7 @@ class RosterAcceptController extends Controller
             ->where('sinren_users.user_id', '<>', \Auth::user()->id)
             ->where('R_USER.is_administrator', '=', false)
             ->where('R_USER.is_chief', '=', false)
+            ->where('users.retirement', false)
             ->get();
 
         $rows = (empty($user_id)) ? [] : $this->getCalendar($ym, $user_id, $is_show_all);
@@ -228,6 +229,7 @@ class RosterAcceptController extends Controller
             ->leftJoin('sinren_db.sinren_divisions', 'S_USER.division_id', '=', 'sinren_divisions.division_id')
             ->leftJoin('laravel_db.users', 'rosters.user_id', '=', 'users.id')
             ->select(\DB::raw('*, rosters.id as key_id'))
+            ->where('users.retirement', false)
             ->where('R_USER.user_id', '=', $user_id)
             ->where('rosters.entered_on', '>=', $first_day)
             ->where('rosters.entered_on', '<=', $last_day);

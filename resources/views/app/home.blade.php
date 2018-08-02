@@ -20,32 +20,19 @@
     @include('partial.alert')
     <div class="well" style="padding: 0;">
       @include('auth.partial.notification')
-  </div>
-  <div class="row">
-      @if($is_chief)
-      <div class="col-md-4">
-        @include('roster.home_notice.chief')
     </div>
-    @endif
-    <div class="col-md-4">
-        @include('roster.home_notice.user')
-    </div>
-    <div class="col-md-4">
-        @include('roster.home_notice.chief_log')
+    <div class="row">
+      <div class="col-md-8">@include('roster.home_notice.not_accept')</div>
+
+{{--       @if($is_chief)<div class="col-md-4">@include('roster.home_notice.chief')</div>@endif --}}
+      {{-- <div class="col-md-4">@include('roster.home_notice.user')</div> --}}
+      <div class="col-md-4">@include('roster.home_notice.chief_log')</div>
+
+      <div class="col-md-12">@include('partial.entered_users_chart', ['rows'=>$rows, 'height'=>'300'])</div>
     </div>
 
-    <div class="col-md-12 well">
-        <h2 class="border-bottom">入力状況</h2>
-        @if(!empty($rows) && !$rows->isEmpty())
-        @include('partial.entered_users_chart', ['rows'=>$rows, 'height'=>'300'])
-        @else
-        <b class="text-danger">データが見つかりませんでした。</b>
-        @endif
-    </div>
-</div>
-
-{{--     <h1>main content</h1> --}}
-</div><!-- .container-fluid -->
+    {{--     <h1>main content</h1> --}}
+  </div><!-- .container-fluid -->
 </div>
 @endsection
 

@@ -31,10 +31,13 @@
     </th>
     <td class="va-middle text-left">
       @if(!empty($r->staff_number))
-      {{--                 <p>{{$r->staff_number}}</p> --}}
       @else <p class="text-danger"><a href="{{route('admin::roster::index', ['system'=>'Roster','category'=>'RosterUser'])}}"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> 職員番号が登録されていません</a></p> @endif
       <p>{{$r->division_name}}</p>
-      <p><b>{{$r->staff_number}} : </b>{{$r->last_name}} {{$r->first_name}}<small>さん</small></p>
+      <p>
+        <b>{{$r->staff_number}} : </b>
+        @include('partial.retirement', ['retirement'=>$r->retirement]){{$r->last_name}} {{$r->first_name}}<small>さん</small><br>
+        @if($r->retirement) <small class="text-danger">退職済み</small> @endif
+      </p>
     </td>
     {{-- 予定状態ラベル --}}
     <td>

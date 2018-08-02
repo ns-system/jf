@@ -1,11 +1,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
-
-<div class="col-md-6">
-  <canvas id="plan-summary"></canvas>
+@if(!empty($rows) && !$rows->isEmpty())
+<div class="col-md-12 well">
+  <h2 class="border-bottom">入力状況</h2>
+  <div class="col-md-6">
+    <canvas id="plan-summary"></canvas>
+  </div>
+  <div class="col-md-6">
+    <canvas id="actual-summary"></canvas>
+  </div>
 </div>
-<div class="col-md-6">
-  <canvas id="actual-summary"></canvas>
-</div>
+@endif
 
 <script type="text/javascript">
   var bg  = ['rgba({{ $colors['承認'] }}, 0.4)','rgba({{ $colors['未承認'] }}, 0.4)','rgba({{ $colors['却下'] }}, 0.4)','rgba({{ $colors['未入力'] }}, 0.4)',];

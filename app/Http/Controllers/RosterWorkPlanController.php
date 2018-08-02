@@ -46,6 +46,7 @@ class RosterWorkPlanController extends Controller
 //                ->where('roster_users.user_id', '<>', \Auth::user()->id)
             ->where('roster_users.is_administrator', '<>', true)
             ->where('roster_users.is_chief', '<>', true)
+            ->where('users.retirement', false)
             ->orderBy('sinren_users.division_id', 'asc')
             ->get();
         foreach ($users as $user) {

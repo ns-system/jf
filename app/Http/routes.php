@@ -11,20 +11,36 @@
   |
  */
 
+//Route::get('/test', function () {
+//    $s = new \App\Services\Roster\RosterUnaccept();
+//    $s->firstDay('2018-06-01')->lastDay('2018-06-30')->chiefId(3)->get();
+//});
+
+Route::get('/send-roster-mail/{roster_id}', function ($roster_id) {
+    try {
+        Queue::push(new \App\Jobs\Roster\NotAccept((int) $roster_id));
+    }
+    catch (\Throwable $e) {
+        \Log::error([$e->getMessage(),$e->getTraceAsString()]);
+        return response()->json(['送信失敗'], 409);
+    }
+    return ['message' => '送信完了！'];
+});
+
 Route::Controller('/auth', 'Auth\AuthController');
 Route::controller('/password', 'Auth\PasswordController');
 Route::get('/permission_error', ['as' => 'permission_error', 'uses' => 'IndexController@permissionError']);
 
 Route::resource('/notifications', 'NotificationController');
 Route::get('/', ['as' => 'index', 'uses' => 'IndexController@show']);
-Route::get('/home', function() {
+Route::get('/home', function () {
     return redirect('/');
 });
 
-Route::get('/email', function() {
+Route::get('/email', function () {
     return view('emails.sample_email_form');
 });
-Route::post('/email/send', function() {
+Route::post('/email/send', function () {
     $addr = \Input::only('addr');
     Queue::push(new \App\Jobs\SampleMailJob($addr));
     echo 'At ' . date('Y-m-d H:i:s') . ', mail send.';
@@ -36,19 +52,19 @@ Route::post('/email/send', function() {
  * Prefix     : /admin
  * As         : admin::
  */
-Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], function() {
+Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], function () {
     /**
      * Role       : super_user
      * Middleware : super_user
      * Prefix     : /super_user
      * As         : super::
      */
-    Route::group(['middleware' => 'super_user', 'prefix' => '/super_user', 'as' => 'super::'], function() {
+    Route::group(['middleware' => 'super_user', 'prefix' => '/super_user', 'as' => 'super::'], function () {
         /**
          * Prefix     : /user
          * As         : user::
          */
-        Route::group(['prefix' => '/user', 'as' => 'user::'], function() {
+        Route::group(['prefix' => '/user', 'as' => 'user::'], function () {
             Route::get('/', ['as' => 'show', 'uses' => 'SuperUserController@show']);
             Route::get('/search', ['as' => 'search', 'uses' => 'SuperUserController@search']);
             Route::get('/{id}', ['as' => 'detail', 'uses' => 'SuperUserController@user']);
@@ -57,7 +73,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
         /**
          * As         : term
          */
-        Route::group(['prefix' => '/term', 'as' => 'term::'], function() {
+        Route::group(['prefix' => '/term', 'as' => 'term::'], function () {
             Route::get('/counts', ['as' => 'count', 'uses' => 'ProcessStatusController@showCount']);
             Route::get('/amounts', ['as' => 'amounts', 'uses' => 'ProcessStatusController@setDepositAmounts']);
             Route::get('/delete_list/{id}', ['as' => 'delete_list', 'uses' => 'ProcessStatusController@deleteList']);
@@ -74,7 +90,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
          * Prefix     : /month
          * As         : month::
          */
-        Route::group(['prefix' => '/month', 'as' => 'month::'], function() {
+        Route::group(['prefix' => '/month', 'as' => 'month::'], function () {
             Route::get('/', ['as' => 'show', 'uses' => 'ProcessStatusController@index']);
             Route::post('/publish/{id}', ['as' => 'publish', 'uses' => 'ProcessStatusController@publish']);
             Route::post('/create', ['as' => 'create', 'uses' => 'ProcessStatusController@create']);
@@ -105,7 +121,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
          * Prefix     : /config
          * As         : config::
          */
-        Route::group(['prefix' => '/config', 'as' => 'config::'], function() {
+        Route::group(['prefix' => '/config', 'as' => 'config::'], function () {
 //            Route::get('/{system}/',                   ['as' => 'home',    'uses'=>'SuisinAdminController@index']);
             Route::get('/{system}/{category}', ['as' => 'index', 'uses' => 'SuisinAdminController@show']);
             Route::get('/{system}/{category}/export', ['as' => 'export', 'uses' => 'SuisinAdminController@export']);
@@ -116,7 +132,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
          * Prefix     : /zenon_table
          * As         : zenon_table::
          */
-        Route::group(['prefix' => '/zenon_table', 'as' => 'zenon_table::'], function() {
+        Route::group(['prefix' => '/zenon_table', 'as' => 'zenon_table::'], function () {
 //            Route::get('/{system}/',                   ['as' => 'home',    'uses'=>'SuisinAdminController@index']);
             Route::get('/', ['as' => 'index', 'uses' => 'DeleteColumnController@index']);
             Route::post('/delete', ['as' => 'delete', 'uses' => 'DeleteColumnController@delete']);
@@ -127,7 +143,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
      * Prefix     : /suisin
      * As         : suisin::
      */
-    Route::group(['middleware' => 'suisin_admin', 'prefix' => '/suisin', 'as' => 'suisin::'], function() {
+    Route::group(['middleware' => 'suisin_admin', 'prefix' => '/suisin', 'as' => 'suisin::'], function () {
         Route::get('/config/{system}/', ['as' => 'home', 'uses' => 'SuisinAdminController@index']);
         Route::get('/config/{system}/{category}', ['as' => 'index', 'uses' => 'SuisinAdminController@show']);
         Route::get('/config/{system}/{category}/export', ['as' => 'export', 'uses' => 'SuisinAdminController@export']);
@@ -142,25 +158,25 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin', 'as' => 'admin::'], 
  * Prefix     : /app
  * As         : app::
  */
-Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], function() {
+Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], function () {
     /**
      * Role       : auth
      * Prefix     : /roster
      * As         : roster::
      */
-    Route::group(['prefix' => '/roster', 'as' => 'roster::'], function() {
+    Route::group(['prefix' => '/roster', 'as' => 'roster::'], function () {
         /**
          * Role       : auth
          * Prefix     : /user
          * As         : user::
          */
-        Route::group(['prefix' => '/user', 'as' => 'user::'], function() {
+        Route::group(['prefix' => '/user', 'as' => 'user::'], function () {
             Route::get('/', ['as' => 'show', 'uses' => 'RosterUserController@index']);
             Route::post('/edit/{id}', ['as' => 'edit', 'uses' => 'RosterUserController@edit']);
         });
     });
 
-    Route::group(['as' => 'nikocale::', 'prefix' => '/nikocale', 'middleware' => 'nikocale'], function() {
+    Route::group(['as' => 'nikocale::', 'prefix' => '/nikocale', 'middleware' => 'nikocale'], function () {
         Route::get('/index/{monthly_id?}', ['as' => 'index', 'uses' => 'NikocaleController@index']);
         Route::post('/store/{user_id}/{entered_on}', ['as' => 'store', 'uses' => 'NikocaleController@store']);
 //        Route::post('/update/{id}',                   ['as' => 'update',  'uses' => 'NikocaleController@update']);
@@ -168,25 +184,25 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
     });
 });
 
-Route::get('/strlen/{str?}{start?}{end?}', function() {
+Route::get('/strlen/{str?}{start?}{end?}', function () {
     var_dump(\Input::all());
     $input = \Input::all();
     $tmp   = $input['str'];
     $buf   = substr($tmp, 0, -3);
     var_dump($buf);
-    $buf   = substr($tmp, $input['start'], $input['end']);
+    $buf = substr($tmp, $input['start'], $input['end']);
     var_dump($buf);
     echo $buf;
 });
 
-Route::get('/info', function() {
+Route::get('/info', function () {
     phpinfo();
 });
-Route::get('/phpmyadmin', function() {
+Route::get('/phpmyadmin', function () {
     return Redirect::to('http://cvs.phpmyadmin');
 });
 
-Route::any('/test/file_upload', function() {
+Route::any('/test/file_upload', function () {
     $file = \Request::file('file');
     var_dump($file->getClientOriginalExtension());
     return $file;

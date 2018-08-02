@@ -1,8 +1,8 @@
-<div class="text-right" style="margin-bottom: 65px;">
+<div class="text-right" style="margin-bottom: 10px;">
     <form class="form-inline input-sm" role="form" method="GET" action="">
 
         <div class="text-right" style="margin-bottom: 10px;">
-            {!! $users->appends($params)->render() !!}
+            {{-- {!! $users->appends($params)->render() !!} --}}
         </div>
 
         <div class="form-group">

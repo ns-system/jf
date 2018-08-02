@@ -21,26 +21,34 @@ class IndexController extends Controller
         $is_chief      = false;
         $notifications = \App\Notification::with('user')->deadline(date('Y-m-d'))->orderBy('created_at', 'desc')->take(5)->get();
 
-
+        // 1.ユーザー認証されていない
         if (!\Auth::check()) {
             return view('auth.login', ['notifications' => $notifications]);
         }
         $user       = \Auth::user();
         $roster_log = $this->getRosterUserLog($user->id);
 
+
+        // 2.スーパーユーザーである
         if ($user->is_super_user) {
             $new_users = $this->getNewUser();
             return view('admin.home', ['new_users' => $new_users, 'notifications' => $notifications, 'is_chief' => $is_chief]);
         }
         $roster = \App\RosterUser::user($user->id);
+        // 3.勤怠管理の管理者である
         if ($roster->exists() && $roster->first()->is_administrator) {
             return view('admin.home', ['new_users' => $new_users, 'notifications' => $notifications, 'is_chief' => $is_chief]);
         }
+
+        // 4.勤怠管理が登録されていない
         if (!$roster->exists()) {
             return view('app.home', ['rows' => null, 'notifications' => $notifications, 'is_chief' => $is_chief]);
         }
 
         $roster_user = $roster->first();
+        $not_accept  = new \App\Services\Roster\RosterNotAccept();
+        $not_accept->monthId((int) date('Ym'), 2)->beforeToday();
+//        $not_accept->monthId((int) date("Ym"));
 
         $cu       = \App\ControlDivision::where('control_divisions.user_id', $user->id)
             ->join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
@@ -58,11 +66,13 @@ class IndexController extends Controller
             $users[$div]['count'] = $r;
         }
         $roster_chief_cnt = $users;
-//        \Log::debug(['roster_chief_cnt' => $roster_chief_cnt]);
-        $roster_user_cnt = $this->getRosterUserNotice($user->id, date('Y-m-d'));
+        $roster_user_cnt  = $this->getRosterUserNotice($user->id, date('Y-m-d'));
 
         $s    = new \App\Http\Controllers\RosterCsvExportController();
         $rows = $s->getEnteredUsers();
+
+        $not_accepts = ($is_chief) ? $not_accept->chiefId($roster_user->user_id)->get() : $not_accept->userId(\Auth::user()->id)->get();
+//        dd($not_accepts);
 
         $params = ['roster_chief_cnt' => $roster_chief_cnt,
                    'roster_user_cnt'  => $roster_user_cnt,
@@ -70,8 +80,10 @@ class IndexController extends Controller
                    'roster_log'       => $roster_log,
                    'is_chief'         => $is_chief,
                    'rows'             => $rows,
+                   'not_accepts'      => $not_accepts,
                    'colors'           => self::COLORS,
         ];
+        // 5.勤怠管理に登録されている一般 or 責任者ユーザーである
         return view('app.home', $params);
     }
 
@@ -158,6 +170,7 @@ class IndexController extends Controller
             ->where('roster_users.is_administrator', '!=', true)
             ->where('roster_users.is_chief', '!=', true)
             ->where('rosters.is_plan_entry', true)
+            ->where('users.retirement', false)
             ->take(60)
 //                ->groupBy('users.id')
 //                ->groupBy('entered_on')

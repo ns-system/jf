@@ -11,12 +11,12 @@
   </title>
 
   {{--     <link rel="stylesheet" href="https://nkmr6194.github.io/Umi/css/bootstrap.css"></link> --}}
-
   <link href="https://fonts.googleapis.com/earlyaccess/mplus1p.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/earlyaccess/sawarabimincho.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/earlyaccess/sawarabigothic.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/earlyaccess/notosansjapanese.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/t/bs-3.3.6/jqc-1.12.0,dt-1.10.11/datatables.min.css"/> 
 
   <link href="{{ asset('/css/bootstrap.css') }}" rel="stylesheet" />
   <link href="{{ asset('/css/bootstrap.min.css') }}" rel="stylesheet" />
@@ -132,12 +132,12 @@ input[type=file]{display: none;}
   cursor: pointer;
   transition: 0.4s;
 }
-.brand-logo{    background-image: url({{asset('/logos/logo_02.png')}}); width: 200px; height: 33px; margin-bottom: 0px; }
-.official-logo{ background-image: url({{asset('/logos/official.png')}}); width: 90px; height: 30px; }
-.gw-logo{       background-image: url({{asset('/logos/groupware.png')}}); width: 120px; height: 30px; }
-.brand-logo:hover{    background-image: url({{asset('/logos/logo_02_hover.png')}}); }
-.official-logo:hover{ background-image: url({{asset('/logos/official_hover.png')}}); }
-.gw-logo:hover{       background-image: url({{asset('/logos/groupware_hover.png')}}); }
+.brand-logo{    background-image: url({{ asset('/logos/logo_02.png') }}); width: 200px; height: 33px; margin-bottom: 0px; }
+.official-logo{ background-image: url({{ asset('/logos/official.png') }}); width: 90px; height: 30px; }
+.gw-logo{       background-image: url({{ asset('/logos/groupware.png') }}); width: 120px; height: 30px; }
+.brand-logo:hover{    background-image: url({{ asset('/logos/logo_02_hover.png') }}); }
+.official-logo:hover{ background-image: url({{ asset('/logos/official_hover.png') }}); }
+.gw-logo:hover{       background-image: url({{ asset('/logos/groupware_hover.png') }}); }
 
 .alert-fixed { width: 300px; padding: 10px; padding-right: 30px; font-size: 80%; z-index: 2; left: 20px; position: fixed; bottom: 40px; margin-bottom: 0; max-height: 400px; overflow-y: scroll; };
 .margin-bottom{margin-bottom: 10px;}
@@ -158,6 +158,7 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
   animation: spin 2s linear infinite;
 }
 .loader-pos { left: 0; right: 0; top: 0; bottom: 0; margin: auto; position: fixed; }
+.pointer { cursor: pointer; }
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
@@ -194,10 +195,22 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
     @section('footer')
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
     <script src="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    {{-- <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script> --}}
+    <script src="{{ asset('/js/dataTables.bootstrap.min.js') }}"></script>
+
+
 
     <script src="{{asset('/js/js.cookie.js')}}"></script>
 
     <script type="text/javascript">
+      jQuery(function ($) {
+        $.extend($.fn.dataTable.defaults, {
+          language : {
+            url : "http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"
+          }
+        })
+      })
       $(function () {
         $('.modal-content').draggable();
         $('[data-toggle="tooltip"]').tooltip();
@@ -289,6 +302,10 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
       // ロード完了：正常時
       $(document).ready(function () {
         setTimeout(function() { finishLoading() }, 200)
+        $('.table-sortable').DataTable({
+          lengthMenu: [25, 50, 100, 200],
+          displayLength: 25,
+        })
       })
       // 5秒待ってもロードできない場合
       setTimeout(function () { finishLoading() }, 5000)

@@ -14,26 +14,27 @@ class RosterChiefController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function index()
+    {
         $divs = \App\ControlDivision::joinUsers(\Auth::user()->id)->get();
         $rows = \DB::connection('mysql_sinren')
-                ->table('sinren_users')
-                ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
-                ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
-                ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-                ->select(\DB::raw('*, roster_users.id as key_id, sinren_users.user_id as user_id, roster_users.created_at as create_time, roster_users.updated_at as update_time'))
-                ->where(function($query) use ($divs) {
-                    foreach ($divs as $d) {
-                        $query->orWhere('sinren_users.division_id', '=', $d->division_id);
-                    }
-                })
-                ->where('users.is_super_user', '<>', true)
-                ->where('roster_users.is_administrator', '<>', true)
-                // 本当は自分自身も対象外にするべきでは？
-                ->orderBy('sinren_users.division_id', 'asc')
-                ->orderBy('users.id', 'asc')
-                ->paginate(25)
-        ;
+            ->table('sinren_users')
+            ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+            ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
+            ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+            ->select(\DB::raw('*, roster_users.id as key_id, sinren_users.user_id as user_id, roster_users.created_at as create_time, roster_users.updated_at as update_time'))
+            ->where(function ($query) use ($divs) {
+                foreach ($divs as $d) {
+                    $query->orWhere('sinren_users.division_id', '=', $d->division_id);
+                }
+            })
+            ->where('users.is_super_user', '<>', true)
+            ->where('roster_users.is_administrator', '<>', true)
+            ->where('users.retirement', false)
+            // 本当は自分自身も対象外にするべきでは？
+            ->orderBy('sinren_users.division_id', 'asc')
+            ->orderBy('users.id', 'asc')
+            ->paginate(25);
 //        var_dump($rows);
         return view('roster.app.chief.index', ['rows' => $rows]);
     }
@@ -41,11 +42,12 @@ class RosterChiefController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int                      $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Chief $request, $user_id, $roster_user_id) {
+    public function update(Chief $request, $user_id, $roster_user_id)
+    {
         $in          = $request->input();
         $roster_user = \App\RosterUser::find($roster_user_id);
         try {
@@ -57,12 +59,12 @@ class RosterChiefController extends Controller
             $div = \App\SinrenUser::where('user_id', '=', $user_id)->first();
             // 現在の管轄部署を一旦クリアする
             \App\ControlDivision::user($user_id)->delete();
-            if ($in['proxy'] == true && $in['active'] == true)
-            {
+            if ($in['proxy'] == true && $in['active'] == true) {
                 // 責任者代理が有効なときのみ改めて管轄部署を追加する
                 \App\ControlDivision::create(['user_id' => $user_id, 'division_id' => $div->division_id]);
             }
-        } catch (\Exception $exc) {
+        }
+        catch (\Exception $exc) {
             \Session::flash('danger_message', $exc->getMessage());
             return back();
         }
@@ -74,7 +76,8 @@ class RosterChiefController extends Controller
                 'result'      => $in,
             ];
             $this->dispatch(new \App\Jobs\Roster\EditNotice($res));
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             \Session::flash('danger_message', $e->getMessage());
             return back();
         }
@@ -85,7 +88,8 @@ class RosterChiefController extends Controller
         return redirect(route('app::roster::chief::index'));
     }
 
-    private function makeCalendar($month, $rosters) {
+    private function makeCalendar($month, $rosters)
+    {
         $str  = date('Y-m-01', strtotime($month));
         $date = new \DateTimeImmutable($str . ' 00:00:00');
         $day  = (int) $date->format('w');
@@ -96,17 +100,15 @@ class RosterChiefController extends Controller
         $frm  = ['day' => '', 'key' => '', 'holiday' => '', 'data' => []];
 
         $holidays = \App\Holiday::whereBetween('holiday', [$date->format('Y-m-01'), $date->format('Y-m-t')])
-                ->get()
-                ->keyBy('holiday')
-                ->toArray()
-        ;
+            ->get()
+            ->keyBy('holiday')
+            ->toArray();
         for ($i = $day; $i > 0; --$i) {
             $rows[$week][] = $frm;
         }
 
         for ($i = 1; $i <= $max; ++$i) {
-            if ($day > 6)
-            {
+            if ($day > 6) {
                 ++$week;
                 $day = 0;
             }
@@ -127,50 +129,50 @@ class RosterChiefController extends Controller
         return $rows;
     }
 
-    private function getRosterUser($user_id) {
+    private function getRosterUser($user_id)
+    {
         $users = \App\ControlDivision::join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
-                ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-                ->where('control_divisions.user_id', $user_id)
-                ->where('roster_users.is_administrator', '!=', true)
-                ->where('roster_users.is_chief', '!=', true)
-                ->get(['sinren_users.user_id'])
-        ;
+            ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+            ->where('control_divisions.user_id', $user_id)
+            ->where('roster_users.is_administrator', '!=', true)
+            ->where('roster_users.is_chief', '!=', true)
+            ->get(['sinren_users.user_id']);
         \Log::debug($users->toArray());
         return $users;
 //        dd($users->toArray());
     }
 
-    public function calendarIndex($month = null) {
+    public function calendarIndex($month = null)
+    {
         $date    = (!empty($month)) ? new \DateTime($month . '01') : new \DateTime();
         $user_id = \Auth::user()->id;
 
         $users = $this->getRosterUser($user_id);
         $rows  = \App\Roster::whereBetween('rosters.entered_on', [$date->format('Y-m-01'), $date->format('Y-m-t')])
-                ->where(function($query)use($users) {
-                    foreach ($users as $user) {
-                        $query->orWhere('rosters.user_id', $user->user_id);
-                    }
-                })
-                ->groupBy('entered_on')
-                ->select(\DB::raw("entered_on, count(*) as total"))
-                ->addSelect(\DB::raw("count(if(is_plan_entry = true, 1, null)) as pEntry"))
-                ->addSelect(\DB::raw("count(if(is_actual_entry = true, 1, null)) as aEntry"))
-                ->addSelect(\DB::raw("count(if(is_plan_accept = true, 1, null)) as pAccept"))
-                ->addSelect(\DB::raw("count(if(is_actual_accept = true, 1, null)) as aAccept"))
-                ->get()
-                ->keyBy('entered_on')
-                ->toArray()
-        ;
+            ->where(function ($query) use ($users) {
+                foreach ($users as $user) {
+                    $query->orWhere('rosters.user_id', $user->user_id);
+                }
+            })
+            ->groupBy('entered_on')
+            ->select(\DB::raw("entered_on, count(*) as total"))
+            ->addSelect(\DB::raw("count(if(is_plan_entry = true, 1, null)) as pEntry"))
+            ->addSelect(\DB::raw("count(if(is_actual_entry = true, 1, null)) as aEntry"))
+            ->addSelect(\DB::raw("count(if(is_plan_accept = true, 1, null)) as pAccept"))
+            ->addSelect(\DB::raw("count(if(is_actual_accept = true, 1, null)) as aAccept"))
+            ->get()
+            ->keyBy('entered_on')
+            ->toArray();
 
         $eu = \App\Roster::whereBetween('rosters.entered_on', [$date->format('Y-m-01'), $date->format('Y-m-t')])
-                ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
-                ->where(function($query)use($users) {
-                    foreach ($users as $user) {
-                        $query->orWhere('rosters.user_id', $user->user_id);
-                    }
-                })
-                ->get(['entered_on', 'first_name', 'last_name', 'is_plan_entry', 'is_actual_entry', 'is_plan_accept', 'is_actual_accept', 'is_plan_reject', 'is_actual_reject'])
-//                ->toSql()
+            ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
+            ->where(function ($query) use ($users) {
+                foreach ($users as $user) {
+                    $query->orWhere('rosters.user_id', $user->user_id);
+                }
+            })
+            ->where('users.retirement', false)
+            ->get(['entered_on', 'first_name', 'last_name', 'is_plan_entry', 'is_actual_entry', 'is_plan_accept', 'is_actual_accept', 'is_plan_reject', 'is_actual_reject'])//                ->toSql()
         ;
 //                dd($eu->toArray());
         $entered_users = [];
@@ -180,12 +182,11 @@ class RosterChiefController extends Controller
         \Log::debug(['entered_users' => $entered_users]);
 
         $user_count = \App\ControlDivision::join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
-                ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-                ->where('control_divisions.user_id', $user_id)
-                ->where('roster_users.is_administrator', '!=', true)
-                ->where('roster_users.is_chief', '!=', true)
-                ->count()
-        ;
+            ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+            ->where('control_divisions.user_id', $user_id)
+            ->where('roster_users.is_administrator', '!=', true)
+            ->where('roster_users.is_chief', '!=', true)
+            ->count();
 
         $calendar = $this->makeCalendar($date->format('Y-m-d'), $rows);
         $next     = (!empty($month)) ? new \DateTime($month . '01') : new \DateTime();

@@ -198,14 +198,18 @@ class RosterCsvExportController extends Controller
         $rests    = $this->getRest();
         $types    = $this->getType();
         $divs     = \App\Division::orderBy('division_id')->get();
-        $params   = [
-            'rosters'  => $rosters,
-            'ym'       => $ym,
-            'types'    => $types,
-            'rests'    => $rests,
-            'calendar' => $calendar,
-            'divs'     => $divs,
-            'search'   => null,
+
+        $s           = new \App\Services\Roster\RosterNotAccept();
+        $not_accepts = $s->monthId((int) $ym)->beforeToday()->get();
+        $params      = [
+            'rosters'     => $rosters,
+            'ym'          => $ym,
+            'types'       => $types,
+            'rests'       => $rests,
+            'calendar'    => $calendar,
+            'divs'        => $divs,
+            'not_accepts' => $not_accepts,
+            'search'      => null,
         ];
 
         return view('roster.admin.csv.list', $params);
@@ -404,6 +408,10 @@ class RosterCsvExportController extends Controller
 
         return $query->get();
 //        return view('roster.admin.csv.entered_users', ['ym' => $dt->format('Ym'), 'rows' => $query->get(), 'colors' => self::COLORS]);
+    }
+
+    public function sendEmail (int $roster_id) {
+
     }
 
 }
