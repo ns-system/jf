@@ -22,9 +22,13 @@
       @include('auth.partial.notification')
     </div>
     <div class="row">
-      <div class="col-md-8">@if(!empty($not_accepts)) @include('roster.home_notice.not_accept') @endif</div>
+      <div class="col-md-8">
+        @if($not_accepts->count() > 0) @include('roster.home_notice.not_accept') @else
+        <div class="alert alert-warning" role="alert">未入力・未承認はありません。</div>
+        @endif
+      </div>
 
-{{--       @if($is_chief)<div class="col-md-4">@include('roster.home_notice.chief')</div>@endif --}}
+      {{--       @if($is_chief)<div class="col-md-4">@include('roster.home_notice.chief')</div>@endif --}}
       {{-- <div class="col-md-4">@include('roster.home_notice.user')</div> --}}
       <div class="col-md-4">@include('roster.home_notice.chief_log')</div>
 

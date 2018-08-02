@@ -125,7 +125,7 @@ class RosterNotAccept
             //            'rosters.is_actual_accept',
         ];
 
-        $having = "(week != 0 and week != 6 and holiday_name is null)     and (plan != actual or is_plan_entry = false) or " .
+        $having = "(week != 0 and week != 6 and holiday_name is null)     and (plan != '承認済み' or actual != '承認済み') or " .
                   "(week =  0 or  week =  6 or  holiday_name is not null) and (plan != actual)";
         foreach ($columns as $column) {
             $this->query->addSelect(\DB::raw($column));
