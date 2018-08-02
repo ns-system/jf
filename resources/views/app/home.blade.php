@@ -22,7 +22,7 @@
       @include('auth.partial.notification')
     </div>
     <div class="row">
-      <div class="col-md-8">@include('roster.home_notice.not_accept')</div>
+      <div class="col-md-8">@if(!empty($not_accepts)) @include('roster.home_notice.not_accept') @endif</div>
 
 {{--       @if($is_chief)<div class="col-md-4">@include('roster.home_notice.chief')</div>@endif --}}
       {{-- <div class="col-md-4">@include('roster.home_notice.user')</div> --}}
