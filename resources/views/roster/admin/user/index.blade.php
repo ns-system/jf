@@ -47,7 +47,7 @@
           <td>{{ $user->last_name_kana }} {{ $user->first_name_kana }}</td>
           <td>
             <p>{{$user->division_name}}</p>
-            <p><a href="{{route('app::roster::user::show', ['id'=>$user->user_id])}}">変更する</a></p>
+            <p><a href="{{route('app::roster::user::show', ['id'=>$user->user_id])}}" target="_blank">変更する</a></p>
           </td>
           <td>
             @if(is_null($user->is_administrator)) <p><span class="label label-default">未登録</span></p>
@@ -69,7 +69,7 @@
             @endif
             @else <p><span class="label label-primary">一般ユーザー</span></p>
             @endif
-            <p><a href="{{route('admin::roster::user::show', ['id'=>$user->user_id])}}">変更する</a></p>
+            <p><a href="{{route('admin::roster::user::show', ['id'=>$user->user_id])}}" target="_blank">変更する</a></p>
           </td>
           <td class="text-left">
             @if(!empty($controls))
