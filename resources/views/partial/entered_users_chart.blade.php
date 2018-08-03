@@ -103,7 +103,7 @@
   }
 
   function edit () {
-    console.log('edit',plan, plan.data)
+    // console.log('edit',plan, plan.data)
     plan.data.labels = labels
     plan.data.datasets[0].data = p1
     plan.data.datasets[1].data = p2
@@ -120,12 +120,12 @@
 
   function getChart () {
     let month_id = getMonth('YYYYMM')
-    console.log(month_id)
+    // console.log(month_id)
     $('.chart-wrap').addClass('disabled')
     $('.progress').show()
     let params = { url : '/home/chart', type : 'GET', data : { month_id : month_id } }
     $.ajax(params)
-    .done((res) => {
+    .done(function (res) {
       p1 = res.p1
       p2 = res.p2
       p3 = res.p3
@@ -139,7 +139,7 @@
       $('.chart-wrap').removeClass('disabled')
       $('.progress').hide()
     })
-    .fail((e) => {
+    .fail(function (e) {
       $('.chart-wrap').removeClass('disabled')
       $('.progress').hide()
       alert('エラーが発生しました。')
@@ -147,13 +147,13 @@
   }
 
   $(document).ready(function () {
-    console.log('ready')
+    // console.log('ready')
     $('#month').html(getMonth("YYYY年MM月分"))
     getChart()
   })
 
   function drawChart () {
-    console.log('draw')
+    // console.log('draw')
     if (plan)
       plan.destroy()
     if (actual)

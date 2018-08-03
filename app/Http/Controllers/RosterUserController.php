@@ -158,7 +158,8 @@ class RosterUserController extends Controller
             ->leftJoin('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
             ->leftJoin('laravel_db.users', 'roster_users.user_id', '=', 'users.id')
             ->where('users.id', '=', $id)
-            ->where(['users.retirement'=> false,'users.roster_hidden'=>false])
+            // ここは除外しない
+            // ->where(['users.retirement'=> false,'users.roster_hidden'=>false])
             ->first();
 //        dd($user);
         // 管轄部署情報の取得

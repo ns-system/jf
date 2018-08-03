@@ -19,7 +19,7 @@
 @section('content')
 <div class="col-md-10">
     @include('partial.alert')
-    <div class="border-bottom"><h2>勤怠管理システム ユーザー情報変更 <small> - {{$user->last_name}} {{$user->first_name}}さん</small></h2></div>
+    <div class="border-bottom"><h2>勤怠管理システム ユーザー情報変更 <small> - {{ $user->last_name }} {{ $user->first_name }}さん</small></h2></div>
 
     <div class="col-md-8 col-md-offset-2">
         <div class="panel panel-primary">

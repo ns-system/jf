@@ -53,13 +53,13 @@ $week = ['日','月','火','水','木','金','土',];
       type : 'GET',
     }
     $.ajax(params)
-    .done((res) => {
-      console.log(res)
+    .done(function (res) {
+      // console.log(res)
       $('#msg-' + roster_id).html(res.message).removeClass('text-danger').addClass('text-success').show()
     })
-    .fail((e) => {
+    .fail(function (e) {
       let msg = (e && e.responseJSON && e.responseJSON[0]) ? e.responseJSON[0] : ''
-      console.log(e, msg)
+      // console.log(e, msg)
       $('#msg-' + roster_id).html(msg).removeClass('text-success').addClass('text-danger').show()
     })
     $(document).ready(function () {
