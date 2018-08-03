@@ -221,7 +221,7 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
 
         $(document).bind("ajaxSend", function(c, xhr) {
           $(window).bind( 'beforeunload', function() {
-            alert('abort');
+            // alert('abort');
             xhr.abort();
           })
         });
