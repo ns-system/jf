@@ -44,7 +44,7 @@
 
     <div class="checkbox">
       <label class="text-warning">
-        <input type="checkbox" name="hidden" value="1" @if($user->hidden) checked @endif>
+        <input type="checkbox" name="hidden" value="1" @if($user->roster_hidden) checked @endif>
         <b>勤怠管理を行わない</b>
       </label>
     </div>
