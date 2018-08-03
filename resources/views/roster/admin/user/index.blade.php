@@ -30,8 +30,9 @@
       <thead>
         <tr>
           <th class="bg-primary">#</th>
-          <th class="bg-primary">名前</th>
-          <th class="bg-primary">名前</th>
+          <th class="bg-primary">状態</th>
+          <th class="bg-primary text-left">名前</th>
+          <th class="bg-primary text-left">なまえ</th>
           <th class="bg-primary">部署</th>
           <th class="bg-primary">ユーザー区分</th>
           <th class="bg-primary">管轄部署</th>
@@ -42,9 +43,13 @@
         <tr class="va-middle">
           <th class="bg-primary">{{ $key + 1 }}</th>
           <td>
-            @include('partial.retirement', ['retirement'=>$user->retirement,'hidden'=>$user->roster_hidden]){{$user->last_name}} {{$user->first_name}} <small>さん</small>
+            @include('partial.retirement', ['retirement'=>$user->retirement,'hidden'=>$user->roster_hidden])
+            @if($user->retirement) [退職済み] @endif @if($user->roster_hidden) [勤怠除外] @endif
           </td>
-          <td>{{ $user->last_name_kana }} {{ $user->first_name_kana }}</td>
+          <td class="text-left">
+            {{$user->last_name}} {{$user->first_name}} <small>さん</small>
+          </td>
+          <td class="text-left">{{ $user->last_name_kana }} {{ $user->first_name_kana }}</td>
           <td>
             <p>{{$user->division_name}}</p>
             <p><a href="{{route('app::roster::user::show', ['id'=>$user->user_id])}}" target="_blank">変更する</a></p>

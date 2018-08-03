@@ -102,6 +102,8 @@ class RosterCsvExportController extends Controller
     public function index()
     {
         $months  = \App\Roster::groupBy('month_id')
+            ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
+            ->where(['users.retirement' => false, 'users.roster_hidden' => false])
             ->select(\DB::raw('COUNT(*) as cnt, month_id'))
             ->orderBy('month_id', 'desc')
             ->where('month_id', '<>', 0)
@@ -385,7 +387,7 @@ class RosterCsvExportController extends Controller
             ->leftJoin('sinren_db.sinren_users', 'sinren_users.user_id', '=', 'users.id')
             ->leftJoin('sinren_db.sinren_divisions', 'sinren_divisions.division_id', '=', 'sinren_users.division_id')
             ->whereBetween('rosters.entered_on', $date)
-            ->where(['users.retirement'=>false, 'users.roster_hidden'=>false])
+            ->where(['users.retirement' => false, 'users.roster_hidden' => false])
             ->groupBy('users.id')
             ->select('users.id as id', 'first_name', 'last_name', 'sinren_divisions.division_name', 'sinren_divisions.division_id')
             ->addSelect(\DB::raw('count((is_plan_entry = false) or null)                                                            as 予定未入力'))
@@ -411,7 +413,8 @@ class RosterCsvExportController extends Controller
 //        return view('roster.admin.csv.entered_users', ['ym' => $dt->format('Ym'), 'rows' => $query->get(), 'colors' => self::COLORS]);
     }
 
-    public function sendEmail (int $roster_id) {
+    public function sendEmail(int $roster_id)
+    {
 
     }
 
