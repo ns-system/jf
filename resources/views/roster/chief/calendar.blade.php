@@ -37,9 +37,11 @@
       {{-- {{ dd($calendar) }} --}}
       <table class="table table-hover">
         <thead>
-          @foreach($jp_week as $w => $week)
-          <th class="bg-primary"><span @if($w == 0) class="text-danger-light" @elseif($w == 6) class="text-info-light" @endif>{{ $week }}</span></th>
-          @endforeach
+          <tr>
+            @foreach($jp_week as $w => $week)
+            <th class="bg-primary"><span @if($w == 0) class="text-danger-light" @elseif($w == 6) class="text-info-light" @endif>{{ $week }}</span></th>
+            @endforeach
+          </tr>
         </thead>
         <tbody>
           @if(count($entered_users) == 0)

@@ -1,5 +1,3 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
-<!DOCTYPE html>
 
 @extends('layout')
 
@@ -7,6 +5,7 @@
 
 @section('header')
 @parent
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
 @section('brand', '勤怠管理システム')
 @endsection
 
@@ -39,11 +38,11 @@
 
           <div class="row">
             <div class="col-md-6">
-              <p class="border-bottom"><small><b>予定</small></b></p>
+              <p class="border-bottom"><small><b>予定</b></small></p>
               <canvas id="plan-{{ $d->division_id }}-{{$m->month_id}}" style="height: 300px;"></canvas>
             </div>
             <div class="col-md-6">
-              <p class="border-bottom"><small><b>実績</small></b></p>
+              <p class="border-bottom"><small><b>実績</b></small></p>
               <canvas id="actual-{{ $d->division_id }}-{{$m->month_id}}" style="margin-left: -30px;"></canvas>
             </div>
           </div>

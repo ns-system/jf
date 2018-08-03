@@ -160,8 +160,8 @@
       actual.destroy()
     var p   = document.getElementById('plan-summary').getContext('2d')
     var a   = document.getElementById('actual-summary').getContext('2d')
-    p.canvas.height = 500
-    a.canvas.height = 500
+    p.canvas.height = {{ $height or 500 }}
+    a.canvas.height = {{ $height or 500 }}
     plan    = new Chart(p, dataset)
     actual  = new Chart(a, dataset)
     edit()

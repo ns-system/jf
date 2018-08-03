@@ -56,7 +56,7 @@
 
                 <div class="col-md-12">
                     <div class="text-right" style="margin-top: 10px;">
-                        <button type="submit"　name="btn_name" id="btn_name" class="btn-primary btn-sm btn">変更する</button>
+                        <button type="submit" name="btn_name" id="btn_name" class="btn-primary btn-sm btn">変更する</button>
                     </div>
                 </div>
             </div>

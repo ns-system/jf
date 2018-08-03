@@ -14,9 +14,9 @@
 </div>
 @endsection
 
-<div style="margin-top: 100px;"></div>
 
 @section('content')
+<div style="margin-top: 100px;"></div>
 <div class="col-md-10">
     <div class="container-fluid">
         @include('partial.alert')

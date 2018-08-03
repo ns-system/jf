@@ -21,14 +21,15 @@
 
   <table class="table table-hover">
     <thead>
-      <th class="bg-primary">作成日</th>
-      <th class="bg-primary">公開期限</th>
-      <th class="bg-primary">作成者</th>
-      <th class="bg-primary">カテゴリー</th>
-      <th class="bg-primary">内容</th>
-      <th class="bg-primary"></th>
-      <th class="bg-primary"></th>
-
+      <tr>
+        <th class="bg-primary">作成日</th>
+        <th class="bg-primary">公開期限</th>
+        <th class="bg-primary">作成者</th>
+        <th class="bg-primary">カテゴリー</th>
+        <th class="bg-primary">内容</th>
+        <th class="bg-primary"></th>
+        <th class="bg-primary"></th>
+      </tr>
     </thead>
     <tbody>
       @foreach($rows as $r)

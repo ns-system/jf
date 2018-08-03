@@ -5,7 +5,7 @@
 
     <div class="form-group">
         <select name="super" class="form-control input-sm">
-            <option value="" 　@if($super === '') selected="selected" @endif>全て</option>
+            <option value=""  @if($super === '') selected="selected" @endif>全て</option>
             <option value="0" @if($super === '0') selected="selected" @endif>一般ユーザー</option>
             <option value="1" @if($super === '1') selected="selected" @endif>スーパーユーザー</option>
         </select>
@@ -21,7 +21,7 @@
 
     <div class="form-group">
         <select name="roster" class="form-control input-sm">
-            <option value=""　 @if($roster === '') selected="selected" @endif>全て（勤怠）</option>
+            <option value=""  @if($roster === '') selected="selected" @endif>全て（勤怠）</option>
             <option value="0" @if($roster === '0') selected="selected" @endif>一般</option>
             <option value="1" @if($roster === '1') selected="selected" @endif>管理</option>
         </select>

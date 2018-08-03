@@ -1,14 +1,14 @@
 @if (Session::has('flash_message') > 0 || (isset($info_message) && $info_message != null))
 <div class="alert alert-success alert-dismissible fade in" rore="alert">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <p>
+    <div>
         <p>
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
             <strong>成功：要修正</strong>
         </p>
         <span>{{Session::get('flash_message')}}</span>
         @if(isset($info_message) && $info_message != null) <span>{{$info_message}}</span> @endif
-    </p>
+    </div>
 </div>
 @endif
 
@@ -16,28 +16,28 @@
 @if (Session::has('success_message') > 0 || (isset($success_message) && $success_message != null))
 <div class="alert alert-success alert-dismissible fade in alert-fixed" rore="alert">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <p>
+    <div>
         <p>
             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
             <strong>成功：</strong>
         </p>
         <span>{{Session::get('success_message')}}</span>
         @if(isset($success_message) && $success_message != null) <span>{{$success_message}}</span> @endif
-    </p>
+    </div>
 </div>
 @endif
 
 @if (Session::has('info_message') > 0 || (isset($info_message) && $info_message != null))
 <div class="alert alert-info alert-dismissible fade in alert-fixed" rore="alert">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <p>
+    <div>
         <p>
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
             <strong>情報：</strong>
         </p>
         <span>{{Session::get('info_message')}}</span>
         @if(isset($info_message) && $info_message != null) <span>{{$info_message}}</span> @endif
-    </p>
+    </div>
 </div>
 @endif
 
