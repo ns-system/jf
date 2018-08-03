@@ -176,11 +176,11 @@ class Calendar
         $roster->actual_overtime_start_time = $start_time;
         $roster->actual_overtime_end_time   = $end_time;
         $roster->save();
-        if (env('APP_DEBUG')) {
-            \Log::info('actual edit :');
-            \Log::info(['start_time' => $start_time, 'end_time' => $end_time]);
-            \Log::info(['is_rest' => $is_rest, 'is_short_time' => $is_short_time, $roster->toArray(),]);
-        }
+        // if (env('APP_DEBUG')) {
+        //     \Log::info('actual edit :');
+        //     \Log::info(['start_time' => $start_time, 'end_time' => $end_time]);
+        //     \Log::info(['is_rest' => $is_rest, 'is_short_time' => $is_short_time, $roster->toArray(),]);
+        // }
     }
 
     public function delete($id)

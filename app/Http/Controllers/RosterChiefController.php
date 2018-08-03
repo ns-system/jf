@@ -140,7 +140,7 @@ class RosterChiefController extends Controller
             ->where('roster_users.is_chief', '!=', true)
             ->select(\DB::raw('sinren_users.user_id, concat(users.last_name, " ", users.first_name) as name'))
             ->get();
-        \Log::debug($users->toArray());
+        // \Log::debug($users->toArray());
         return $users;
 //        dd($users->toArray());
     }
@@ -181,7 +181,7 @@ class RosterChiefController extends Controller
         foreach ($eu as $e) {
             $entered_users[$e->entered_on][] = $e;
         }
-        \Log::debug(['entered_users' => $entered_users]);
+        // \Log::debug(['entered_users' => $entered_users]);
 
         $user_count = $this->getRosterUser($user_id)->count();
 

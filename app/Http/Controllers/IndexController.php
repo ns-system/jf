@@ -206,8 +206,8 @@ class IndexController extends Controller
             ->get()
             ->chunk(5)//                ->toArray()
         ;
-        if (env("APP_DEBUG"))
-            \Log::debug($rows->toArray());
+        // if (env("APP_DEBUG"))
+        //     \Log::debug($rows->toArray());
 //        dd($rows);
         return $rows;
     }

@@ -85,7 +85,7 @@ class NotAccept extends Job implements SelfHandling, ShouldQueue
             $names[]  = $r->chief_name;
         }
 
-        \Log::debug([$emails, $names]);
+        // \Log::debug([$emails, $names]);
 
         \Mail::send('emails.roster.not_accept', ['row' => $rows[0], 'names' => $names], function ($message) use ($emails) {
             foreach ($emails as $key => $email) {
