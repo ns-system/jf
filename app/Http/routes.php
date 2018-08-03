@@ -16,6 +16,7 @@
 //    $s->firstDay('2018-06-01')->lastDay('2018-06-30')->chiefId(3)->get();
 //});
 
+// API
 Route::get('/send-roster-mail/{roster_id}', function ($roster_id) {
     try {
         Queue::push(new \App\Jobs\Roster\NotAccept((int) $roster_id));
@@ -27,6 +28,9 @@ Route::get('/send-roster-mail/{roster_id}', function ($roster_id) {
     return ['message' => '送信完了！'];
 });
 
+Route::get('/home/chart','IndexController@getHomeChart');
+
+// Route
 Route::Controller('/auth', 'Auth\AuthController');
 Route::controller('/password', 'Auth\PasswordController');
 Route::get('/permission_error', ['as' => 'permission_error', 'uses' => 'IndexController@permissionError']);

@@ -32,7 +32,7 @@
       {{-- <div class="col-md-4">@include('roster.home_notice.user')</div> --}}
       <div class="col-md-4">@include('roster.home_notice.chief_log')</div>
 
-      <div class="col-md-12">@include('partial.entered_users_chart', ['rows'=>$rows, 'height'=>'300'])</div>
+      <div class="col-md-12">@include('partial.entered_users_chart', ['height'=>'300'])</div>
     </div>
 
     {{--     <h1>main content</h1> --}}

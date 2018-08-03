@@ -385,6 +385,7 @@ class RosterCsvExportController extends Controller
             ->leftJoin('sinren_db.sinren_users', 'sinren_users.user_id', '=', 'users.id')
             ->leftJoin('sinren_db.sinren_divisions', 'sinren_divisions.division_id', '=', 'sinren_users.division_id')
             ->whereBetween('rosters.entered_on', $date)
+            ->where(['users.retirement'=>false, 'users.roster_hidden'=>false])
             ->groupBy('users.id')
             ->select('users.id as id', 'first_name', 'last_name', 'sinren_divisions.division_name', 'sinren_divisions.division_id')
             ->addSelect(\DB::raw('count((is_plan_entry = false) or null)                                                            as 予定未入力'))

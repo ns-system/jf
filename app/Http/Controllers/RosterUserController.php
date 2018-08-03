@@ -48,7 +48,9 @@ class RosterUserController extends Controller
 
     public function edit($user_id, RosterUser $request)
     {
-        $u = \Auth::user();
+        $u     = \Auth::user();
+        $input = $request->input();
+//        dd($input);
         $r = \App\RosterUser::user($u->id)->first();
         if ($u->id != $user_id && !$u->is_super_user && (empty($r) || !$r->is_administrator)) {
             return redirect()->route('permission_error');
@@ -57,20 +59,22 @@ class RosterUserController extends Controller
         $roster = \App\RosterUser::firstOrNew(['user_id' => $user_id]);
         $sinren = \App\SinrenUser::firstOrNew(['user_id' => $user_id]);
 
+        // 信連ユーザー登録
         $sinren->user_id = $user_id;
         if (empty($sinren->division_id) || $u->is_super_user || $r->is_administrator) {
-            $sinren->division_id = $request['division_id'];
+            $sinren->division_id = $input['division_id'];
         }
-//        dd($request->input());
-        $user->retirement = (!empty($request->input()['retirement'])) ? true : false;
-        $user->save();
-//        dd($user);
         $sinren->save();
 
-        \DB::connection('mysql_roster')->transaction(function () use ($user_id, $roster, $request) {
+        // 退職フラグ 秘匿フラグ
+        $user->retirement    = (!empty($input['retirement'])) ? true : false;
+        $user->roster_hidden = (!empty($input['hidden'])) ? true : false;
+        $user->save();
+
+        \DB::connection('mysql_roster')->transaction(function () use ($user_id, $roster, $input) {
             $roster->user_id      = $user_id;
-            $roster->work_type_id = $request['work_type_id'];
-            if (empty($request['work_type_id']) && $request['is_chief']) {
+            $roster->work_type_id = $input['work_type_id'];
+            if (empty($input['work_type_id']) && $request['is_chief']) {
                 $roster->work_type_id = 0;
             }
             $roster->save();
@@ -154,7 +158,7 @@ class RosterUserController extends Controller
             ->leftJoin('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
             ->leftJoin('laravel_db.users', 'roster_users.user_id', '=', 'users.id')
             ->where('users.id', '=', $id)
-            ->where('users.retirement', false)
+            ->where(['users.retirement'=> false,'users.roster_hidden'=>false])
             ->first();
 //        dd($user);
         // 管轄部署情報の取得

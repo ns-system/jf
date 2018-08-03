@@ -133,10 +133,13 @@ class RosterChiefController extends Controller
     {
         $users = \App\ControlDivision::join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
             ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+            ->join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
+            ->where(['users.retirement' => false, 'users.roster_hidden' => false])
             ->where('control_divisions.user_id', $user_id)
             ->where('roster_users.is_administrator', '!=', true)
             ->where('roster_users.is_chief', '!=', true)
-            ->get(['sinren_users.user_id']);
+            ->select(\DB::raw('sinren_users.user_id, concat(users.last_name, " ", users.first_name) as name'))
+            ->get();
         \Log::debug($users->toArray());
         return $users;
 //        dd($users->toArray());
@@ -168,10 +171,9 @@ class RosterChiefController extends Controller
             ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
             ->where(function ($query) use ($users) {
                 foreach ($users as $user) {
-                    $query->orWhere('rosters.user_id', $user->user_id);
+                    $query->orWhere('rosters.user_id', $user->user_id)->where(['users.retirement' => false, 'users.roster_hidden' => false]);
                 }
             })
-            ->where('users.retirement', false)
             ->get(['entered_on', 'first_name', 'last_name', 'is_plan_entry', 'is_actual_entry', 'is_plan_accept', 'is_actual_accept', 'is_plan_reject', 'is_actual_reject'])//                ->toSql()
         ;
 //                dd($eu->toArray());
@@ -181,12 +183,7 @@ class RosterChiefController extends Controller
         }
         \Log::debug(['entered_users' => $entered_users]);
 
-        $user_count = \App\ControlDivision::join('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
-            ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-            ->where('control_divisions.user_id', $user_id)
-            ->where('roster_users.is_administrator', '!=', true)
-            ->where('roster_users.is_chief', '!=', true)
-            ->count();
+        $user_count = $this->getRosterUser($user_id)->count();
 
         $calendar = $this->makeCalendar($date->format('Y-m-d'), $rows);
         $next     = (!empty($month)) ? new \DateTime($month . '01') : new \DateTime();

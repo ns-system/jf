@@ -21,7 +21,7 @@ class ControlDivision extends Model
         return $query->leftJoin('sinren_db.sinren_users', 'control_divisions.division_id', '=', 'sinren_users.division_id')
             ->leftJoin('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
             ->where('control_divisions.user_id', '=', $user_id)
-            ->where('users.retirement', false);
+            ->where(['users.retirement'=> false,'users.roster_hidden'=>false]);
     }
 
     public function scopeJoinDivisions($query)

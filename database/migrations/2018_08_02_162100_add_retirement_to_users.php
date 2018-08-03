@@ -15,6 +15,9 @@ class AddRetirementToUsers extends Migration
             if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'retirement')) {
                 $table->boolean("retirement")->index()->after('is_super_user');
             }
+            if (!Schema::connection($this->connect)->hasColumn($this->tableName, 'roster_hidden')) {
+                $table->boolean("roster_hidden")->index()->after('retirement');
+            }
         });
     }
 
@@ -23,6 +26,9 @@ class AddRetirementToUsers extends Migration
         Schema::connection($this->connect)->table($this->tableName, function (Blueprint $table) {
             if (Schema::connection($this->connect)->hasColumn($this->tableName, 'retirement')) {
                 $table->dropColumn("retirement");
+            }
+            if (Schema::connection($this->connect)->hasColumn($this->tableName, 'roster_hidden')) {
+                $table->dropColumn("roster_hidden");
             }
         });
     }

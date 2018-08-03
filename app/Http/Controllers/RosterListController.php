@@ -99,7 +99,7 @@ class RosterListController extends Controller
             ->join('roster_db.roster_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
             ->where('sinren_users.division_id', '=', $div)
             ->where('roster_users.is_chief', '=', false)
-            ->where('users.retirement', false)
+            ->where(['users.retirement'=> false,'users.roster_hidden'=>false])
             ->get();
 //        var_dump($rows);
         $obj      = new \App\Services\Roster\Calendar();
@@ -112,7 +112,7 @@ class RosterListController extends Controller
                 ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
                 ->join('laravel_db.users', 'rosters.user_id', '=', 'users.id')
                 ->where('sinren_users.division_id', '=', $div)
-                ->where('users.retirement', false)
+                ->where(['users.retirement'=> false,'users.roster_hidden'=>false])
                 ->get();
             $tmp  = [];
             foreach ($rows as $r) {

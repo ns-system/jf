@@ -68,8 +68,8 @@ class IndexController extends Controller
         $roster_chief_cnt = $users;
         $roster_user_cnt  = $this->getRosterUserNotice($user->id, date('Y-m-d'));
 
-        $s    = new \App\Http\Controllers\RosterCsvExportController();
-        $rows = $s->getEnteredUsers();
+//        $s    = new \App\Http\Controllers\RosterCsvExportController();
+//        $rows = $s->getEnteredUsers();
 
         $not_accepts = ($is_chief) ? $not_accept->chiefId($roster_user->user_id)->get() : $not_accept->userId(\Auth::user()->id)->get();
 //        dd($not_accepts);
@@ -79,12 +79,40 @@ class IndexController extends Controller
                    'notifications'    => $notifications,
                    'roster_log'       => $roster_log,
                    'is_chief'         => $is_chief,
-                   'rows'             => $rows,
+                   //                   'rows'             => $rows,
                    'not_accepts'      => $not_accepts,
                    'colors'           => self::COLORS,
         ];
         // 5.勤怠管理に登録されている一般 or 責任者ユーザーである
         return view('app.home', $params);
+    }
+
+    public function getHomeChart()
+    {
+        $s     = new \App\Http\Controllers\RosterCsvExportController();
+        $in    = \Input::get();
+        $rows  = $s->getEnteredUsers($in['month_id']);
+        $names = [];
+        $p1    = [];
+        $p2    = [];
+        $p3    = [];
+        $p4    = [];
+        $a1    = [];
+        $a2    = [];
+        $a3    = [];
+        $a4    = [];
+        foreach ($rows as $r) {
+            $names[] = "{$r->last_name} {$r->first_name}さん";
+            $p1[]    = $r->予定承認済;
+            $p2[]    = $r->予定未承認;
+            $p3[]    = $r->予定却下;
+            $p4[]    = $r->予定未入力;
+            $a1[]    = $r->実績承認済;
+            $a2[]    = $r->実績未承認;
+            $a3[]    = $r->実績却下;
+            $a4[]    = $r->実績未入力;
+        }
+        return ['names' => $names, 'p1' => $p1, 'p2' => $p2, 'p3' => $p3, 'p4' => $p4, 'a1' => $a1, 'a2' => $a2, 'a3' => $a3, 'a4' => $a4];
     }
 
     public function permissionError()
@@ -170,7 +198,7 @@ class IndexController extends Controller
             ->where('roster_users.is_administrator', '!=', true)
             ->where('roster_users.is_chief', '!=', true)
             ->where('rosters.is_plan_entry', true)
-            ->where('users.retirement', false)
+            ->where(['users.retirement' => false, 'users.roster_hidden' => false])
             ->take(60)
 //                ->groupBy('users.id')
 //                ->groupBy('entered_on')

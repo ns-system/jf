@@ -42,7 +42,7 @@
         <tr class="va-middle">
           <th class="bg-primary">{{ $key + 1 }}</th>
           <td>
-            @include('partial.retirement', ['retirement'=>$user->retirement]){{$user->last_name}} {{$user->first_name}} <small>さん</small>
+            @include('partial.retirement', ['retirement'=>$user->retirement,'hidden'=>$user->roster_hidden]){{$user->last_name}} {{$user->first_name}} <small>さん</small>
           </td>
           <td>{{ $user->last_name_kana }} {{ $user->first_name_kana }}</td>
           <td>

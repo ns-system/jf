@@ -245,7 +245,7 @@ class CsvExport
         if (!empty($input['staff_number'])) {
             $rosters->where('roster_users.staff_number', $input['staff_number']);
         }
-        return $rosters;
+        return $rosters->where(['USER.retirement'=>false,'USER.roster_hidden'=>false]);
     }
 
     public function makeExportData($input)

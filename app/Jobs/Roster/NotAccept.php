@@ -65,7 +65,7 @@ class NotAccept extends Job implements SelfHandling, ShouldQueue
             ->join('roster_db.roster_users', 'chief_users.id', '=', 'roster_users.user_id')
             ->join('laravel_db.users', 'users.id', '=', 'rosters.user_id')
             ->where('rosters.id', $this->roster_id)
-            ->where('users.retirement', false)
+            ->where(['users.retirement'=> false,'users.roster_hidden'=>false])
             ->whereRaw('(roster_users.is_chief = true or (roster_users.is_proxy = true and roster_users.is_proxy_active = true))');
 
 

@@ -40,7 +40,15 @@
         <b>このユーザーは退職済みです</b>
       </label>
     </div>
-    <p class="text-warning"><small>退職済みにすると一般ユーザーからは一切の情報が見えなくなります。<br>責任者の場合、承認できなくなります。</small></p>
+    <p class="text-warning"><small>退職済みにすると一般ユーザーからは一切の情報が見えなくなります。責任者の場合、承認できなくなります。</small></p>
+
+    <div class="checkbox">
+      <label class="text-warning">
+        <input type="checkbox" name="hidden" value="1" @if($user->hidden) checked @endif>
+        <b>勤怠管理を行わない</b>
+      </label>
+    </div>
+    <p class="text-warning"><small>チェックを入れると勤怠管理の予定データ作成画面に表示されなくなります。</small></p>
     @endif
     <p class="text-right"><button type="submit" class="btn btn-primary" name="submit">更新する</button></p>
 

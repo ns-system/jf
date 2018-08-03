@@ -11,7 +11,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header bg-primary-important">
-          <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+          <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
           <h4 class="modal-title">予定入力フォーム <small> - {{$r->entered_on}}</small></h4>
         </div>
         <div class="modal-body" style="color: #444;">
@@ -99,6 +99,12 @@
         </div>
         <div class="modal-footer">
           <div class="col-md-10 col-md-offset-1 text-right">
+            <p class="text-left">
+                <small class="helpBlock text-warning">
+                予定と実績勤務形態が違う場合、予定は変更せず、実績の方を変更してください。<br>
+                <i>ex.)早出の予定だったが実際は一般だった場合、予定→早出で申請、実績→通常で申請</i>
+            </small>
+            </p>
             <button type="submit" class="btn btn-success pos-btn">更新する</button>
           </div>
         </div>

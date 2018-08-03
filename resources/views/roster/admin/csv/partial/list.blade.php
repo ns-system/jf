@@ -35,7 +35,7 @@
       <p>{{$r->division_name}}</p>
       <p>
         <b>{{$r->staff_number}} : </b>
-        @include('partial.retirement', ['retirement'=>$r->retirement]){{$r->last_name}} {{$r->first_name}}<small>さん</small><br>
+        @include('partial.retirement', ['retirement'=>$r->retirement, 'hidden'=>$r->roster_hidden]){{$r->last_name}} {{$r->first_name}}<small>さん</small><br>
         @if($r->retirement) <small class="text-danger">退職済み</small> @endif
       </p>
     </td>

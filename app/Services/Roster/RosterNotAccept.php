@@ -20,7 +20,7 @@ class RosterNotAccept
             ->join('roster_db.rosters', 'sinren_users.user_id', '=', 'rosters.user_id')
             ->join('sinren_db.control_divisions', 'sinren_users.division_id', '=', 'control_divisions.division_id')
             ->leftJoin('sinren_db.holidays', 'rosters.entered_on', '=', 'holidays.holiday')
-            ->where('users.retirement', false)
+            ->where(['users.retirement'=> false,'users.roster_hidden'=>false])
             ->groupBy('rosters.id')
             ->orderBy('entered_on');
 
