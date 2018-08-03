@@ -150,19 +150,36 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; }
 
 .loading { opacity: 0; }
 .loader {
-  border: 16px solid #18bc9c; /* Light grey */
-  border-top: 16px solid #2c3e50; /* Blue */
-  border-radius: 50%;
+/*  border: 16px solid #18bc9c;
+  border-top: 16px solid #2c3e50;
+  border-radius: 50%;*/
   width: 120px;
   height: 120px;
-  animation: spin 2s linear infinite;
+  animation: moves 3s linear infinite;
+}
+.loader {
+    background-image: url({{ asset('/rainbo.png') }});
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 .loader-pos { left: 0; right: 0; top: 0; bottom: 0; margin: auto; position: fixed; }
 .pointer { cursor: pointer; }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0%   { transform: translateY(0px); }
+  100% { transform: translateY(360px); }
+}
+
+@keyframes moves {
+    0%   { transform: translateY(0px); }
+    5%   { transform: translateY(-10px); }
+    10%  { transform: translateY(0px); }
+    15%  { transform: translateY(-15px); }
+    20%  { transform: translateY(0px); }
+    70%  { transform: rotateY(0deg); }
+    75%  { transform: rotateZ(5deg); }
+    80%  { transform: rotateY(0deg); }
+    100% { transform: rotateY(0deg); }
 }
 
 </style>

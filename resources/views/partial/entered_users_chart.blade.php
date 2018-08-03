@@ -111,13 +111,13 @@
   function editMonth (operand) {
     lastMonth = month.setMonth(month.getMonth() + operand)
     month = new Date(lastMonth)
-    $('#month').html(getMonth("YYYY年MM月分"))
+    $('#month').html(getMonth("YYYY年M月分"))
     getChart()
   }
 
   function getMonth (format) {
     let m = ('0' + (month.getMonth() + 1)).slice(-2)
-    return format.replace('YYYY', month.getFullYear()).replace('MM', m)
+    return format.replace('YYYY', month.getFullYear()).replace('MM', m).replace('M', m * 1)
   }
 
   function edit () {
@@ -166,7 +166,7 @@
 
   $(document).ready(function () {
     // console.log('ready')
-    $('#month').html(getMonth("YYYY年MM月分"))
+    $('#month').html(getMonth("YYYY年M月分"))
     getChart()
   })
 
