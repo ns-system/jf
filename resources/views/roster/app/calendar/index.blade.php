@@ -13,6 +13,61 @@
 }
 /*    .small{ font-weight: bolder; }*/
 </style>
+
+<script type="text/javascript">
+  function checkHolidayWork(id){
+    var target = $('#' + id);
+    var work_name  = target.find('*[name=actual_work_type_id] option:selected').text();
+
+    var start_hour = target.find('*[name=actual_start_hour] option:selected').val();
+    var start_time = target.find('*[name=actual_start_time] option:selected').val();
+    var end_hour   = target.find('*[name=actual_end_hour]   option:selected').val();
+    var end_time   = target.find('*[name=actual_end_time]   option:selected').val();
+    // console.log(work_name, start_hour, start_time, end_hour, end_time);
+    if(!work_name.match(/休日出勤/)){
+      // console.log('['+work_name+']');
+      return true;
+    }
+    if(!start_hour || !start_time || !end_hour || !end_time){
+      return true;
+    }
+
+    var start = new Date(2000, 0, 1, start_hour, start_time);
+    var end   = new Date(2000, 0, 1, end_hour, end_time);
+    var diff  = end.getTime() - start.getTime();
+    var hour  = diff / (1000*60*60);
+
+    if(hour < 8){
+      return confirm("休日出勤かつ勤務時間が８時間以下の場合、休憩時間を差し引いた時間を入力する必要があります。\n現在入力されている時間は休憩時間を差し引いた時間ですか？");
+    }
+
+    return true;
+  }
+
+  function setRestReason (rest_id, type_id, id) {
+    let type = $('#actual-work-type-id-' + id)
+    let rest = $('#actual-rest-reason-id-' + id)
+    type.val(type.attr('data-default'))
+    rest.val(rest.attr('data-default'))
+    if (type_id !== 0)
+      type.val(type_id)
+    if (rest_id !== 0)
+      rest.val(rest_id)
+    return false
+  }
+
+  function checkActual (id) {
+    let is_holiday = checkHolidayWork('actual-time-' + id)
+    let type = $('#actual-work-type-id-' + id)
+    let rest = $('#actual-rest-reason-id-' + id)
+    console.log(type.val())
+    if (!type.val() || type.val() == 0) {
+      alert("実勤務形態が入力されていないようです。\n休暇の場合、「休暇」を選択してください。")
+      return false
+    }
+    return true
+  }
+</script>
 @endsection
 @section('sidebar')
 <div class="col-md-2">
@@ -162,7 +217,7 @@
             @if(!empty($r->plan_overtime_start_time) &&
             !empty($r->plan_overtime_end_time))     <p class="small" id="plan_overtime_end_time_{{$r->id}}">{{date('G:i', strtotime($r->plan_overtime_start_time))}} ～ {{date('G:i', strtotime($r->plan_overtime_end_time))}}</p> @endif
             @if(!empty($r->plan_rest_reason_id))        <p class="small" id="plan_rest_reason_id_{{$r->id}}">{{$rests[$r->plan_rest_reason_id]}}</p> @endif
-            @if(!empty($r->plan_overtime_reason))       <p class="small"id="plan_overtime_reason_{{$r->id}}">{{$r->plan_overtime_reason}}</p> @endif
+            @if(!empty($r->plan_overtime_reason))       <p class="small" id="plan_overtime_reason_{{$r->id}}">{{$r->plan_overtime_reason}}</p> @endif
 
             {{-- Actual --}}
             @if($r->is_actual_entry)
@@ -219,63 +274,10 @@
       });
     });
   })
-  $(document).on('click', '.pos-btn', e => {
+  $(document).on('click', '.pos-btn', function (e) {
     var pos = $(document).scrollTop()
     $('.myposition').val(pos).attr('value', pos)
   })
-
-  function checkHolidayWork(id){
-    var target = $('#' + id);
-    var work_name  = target.find('*[name=actual_work_type_id] option:selected').text();
-
-    var start_hour = target.find('*[name=actual_start_hour] option:selected').val();
-    var start_time = target.find('*[name=actual_start_time] option:selected').val();
-    var end_hour   = target.find('*[name=actual_end_hour]   option:selected').val();
-    var end_time   = target.find('*[name=actual_end_time]   option:selected').val();
-    // console.log(work_name, start_hour, start_time, end_hour, end_time);
-    if(!work_name.match(/休日出勤/)){
-      // console.log('['+work_name+']');
-      return true;
-    }
-    if(!start_hour || !start_time || !end_hour || !end_time){
-      return true;
-    }
-
-    var start = new Date(2000, 0, 1, start_hour, start_time);
-    var end   = new Date(2000, 0, 1, end_hour, end_time);
-    var diff  = end.getTime() - start.getTime();
-    var hour  = diff / (1000*60*60);
-
-    if(hour < 8){
-      return confirm("休日出勤かつ勤務時間が８時間以下の場合、休憩時間を差し引いた時間を入力する必要があります。\n現在入力されている時間は休憩時間を差し引いた時間ですか？");
-    }
-
-    return true;
-  }
-
-  function setRestReason (rest_id, type_id, id) {
-    let type = $('#actual-work-type-id-' + id)
-    let rest = $('#actual-rest-reason-id-' + id)
-    type.val(type.attr('data-default'))
-    rest.val(rest.attr('data-default'))
-    if (type_id !== 0)
-      type.val(type_id)
-    if (rest_id !== 0)
-      rest.val(rest_id)
-    return false
-  }
-
-  function checkActual (id) {
-    let is_holiday = checkHolidayWork('actual-time-' + id)
-    let type = $('#actual-work-type-id-' + id)
-    let rest = $('#actual-rest-reason-id-' + id)
-    console.log(type.val())
-    if (!type.val() || type.val() == 0) {
-      alert("実勤務形態が入力されていないようです。\n休暇の場合、「休暇」を選択してください。")
-      return false
-    }
-    return true
-  }
 
 </script>
 @endsection
