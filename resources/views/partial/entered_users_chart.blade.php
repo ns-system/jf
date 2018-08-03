@@ -4,26 +4,44 @@
 .disabled   { opacity: 0.3; }
 .progress   { position: absolute; width: 100%; z-index: 1; }
 </style>
-<div class="col-md-12 well">
-  <h2 class="border-bottom">
+
+
+<div class="panel panel-default" id="chart-collapse">
+  <div class="panel-heading">
     <b class="text-success pointer" onclick="editMonth(-1)"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></b>
-    入力状況 - <small id="month"></small>
+    <span class="pointer" data-toggle="collapse" data-parent="chart-collapse" data-target="#chart-collapse-body">
+      入力状況 - <small id="month"></small>
+    </span>
     <b class="text-success pointer" onclick="editMonth(+1)"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></b>
-  </h2>
-  <div class="chart-wrap">
-    <div class="progress" style="display: none;"><div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" style="width: 100%;"></div></div>
-    <div class="col-md-6">
-      <canvas id="plan-summary"></canvas>
-    </div>
-    <div class="col-md-6">
-      <canvas id="actual-summary"></canvas>
+  </div>
+  <div class="panel-collapse collapse in" id="chart-collapse-body">
+    <div class="panel-body">
+      <div class="chart-wrap">
+        <div class="progress" style="display: none;"><div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" style="width: 100%;"></div></div>
+        <div class="col-md-6">
+          <canvas id="plan-summary"></canvas>
+        </div>
+        <div class="col-md-6">
+          <canvas id="actual-summary"></canvas>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <script type="text/javascript">
-  var bg  = ['rgba({{ $colors['承認'] }}, 0.4)','rgba({{ $colors['未承認'] }}, 0.4)','rgba({{ $colors['却下'] }}, 0.4)','rgba({{ $colors['未入力'] }}, 0.4)',]
-  var bdr = ['rgb({{ $colors['承認'] }})','rgb({{ $colors['未承認'] }})','rgb({{ $colors['却下'] }})','rgb({{ $colors['未入力'] }})',]
+  var bg  = {
+    default : 'rgba(200, 200, 200, 0.4)',
+    warning : 'rgba(218, 131, 0, 0.4)',
+    danger  : 'rgba(206, 51, 35, 0.4)',
+    success : 'rgba(0, 163, 131, 0.4)',
+  }
+  var bdr = {
+    default : 'rgb(200, 200, 200)',
+    warning : 'rgb(218, 131, 0)',
+    danger  : 'rgb(206, 51, 35)',
+    success : 'rgb(0, 163, 131)',
+  }
   var p1 = []
   var p2 = []
   var p3 = []
@@ -45,29 +63,29 @@
       {
         label           : '承認済',
         data            : p1,
-        backgroundColor : 'rgba({{ $colors['承認'] }}, 0.4)',
-        borderColor     : 'rgb({{ $colors['承認'] }})',
+        backgroundColor : bg.success,
+        borderColor     : bdr.success,
         borderWidth     : 1,
       },
       {
         label           : '未承認',
         data            : p2,
-        backgroundColor : 'rgba({{ $colors['未承認'] }}, 0.4)',
-        borderColor     : 'rgb({{ $colors['未承認'] }})',
+        backgroundColor : bg.warning,
+        borderColor     : bdr.warning,
         borderWidth     : 1,
       },
       {
         label           : '却下',
         data            : p3,
-        backgroundColor : 'rgba({{ $colors['却下'] }}, 0.4)',
-        borderColor     : 'rgb({{ $colors['却下'] }})',
+        backgroundColor : bg.danger,
+        borderColor     : bdr.danger,
         borderWidth     : 1,
       },
       {
         label           : '未入力',
         data            : p4,
-        backgroundColor : 'rgba({{ $colors['未入力'] }}, 0.4)',
-        borderColor     : 'rgb({{ $colors['未入力'] }})',
+        backgroundColor : bg.default,
+        borderColor     : bdr.default,
         borderWidth     : 1,
       },
 

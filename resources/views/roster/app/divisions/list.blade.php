@@ -19,6 +19,7 @@
     <div class="border-bottom">
         <h2>{{$div_name}} <small> - {{$date}}</small></h2>
     </div>
+    <div class="col-md-12">@include('partial.entered_users_chart')</div>
     <div class="text-right col-md-12">
         <div data-spy="affix" data-offset="100" style="right: 30px; top: 120px; margin-bottom: 10px;">
             <div class="btn-group">
