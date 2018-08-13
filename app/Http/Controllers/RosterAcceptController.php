@@ -140,14 +140,33 @@ class RosterAcceptController extends Controller
         $status      = (empty($input['status']) || $input['status'] === 'all') ? 'all' : 'part';
         $is_show_all = ($status === 'all') ? true : false;
 
+        $divs = \App\SinrenUser::leftJoin('sinren_db.control_divisions', 'sinren_users.user_id', '=', 'control_divisions.user_id')
+            ->where('sinren_users.user_id', '=', \Auth::user()->id)
+            ->select(\DB::raw('sinren_users.division_id as user_division_id, control_divisions.division_id as control_division_id'))
+            ->get();
+
+        $division_id = [];
+        foreach ($divs as $div) {
+            $division_id[] = empty($div->control_division_id) ? $div->user_division_id : $div->control_division_id;
+        }
+
         $users = \App\SinrenUser::join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
             ->join('roster_db.roster_users as R_USER', 'users.id', '=', 'R_USER.user_id')
-            ->where('sinren_users.division_id', '=', $div)
+//            ->where('sinren_users.division_id', '=', $div)
+            ->where(function ($query) use ($division_id) {
+                foreach ($division_id as $id) {
+                    $query->orWhere(function ($query) use ($id) {
+                        $query->orWhere('sinren_users.division_id', '=', $id);
+                    });
+                }
+            })
             ->where('sinren_users.user_id', '<>', \Auth::user()->id)
             ->where('R_USER.is_administrator', '=', false)
             ->where('R_USER.is_chief', '=', false)
-            ->where(['users.retirement'=> false,'users.roster_hidden'=>false])
+            ->where(['users.retirement' => false, 'users.roster_hidden' => false])
+            ->select(\DB::raw('*, sinren_users.division_id as division_id'))
             ->get();
+
 
         $rows = (empty($user_id)) ? [] : $this->getCalendar($ym, $user_id, $is_show_all);
 
@@ -229,7 +248,7 @@ class RosterAcceptController extends Controller
             ->leftJoin('sinren_db.sinren_divisions', 'S_USER.division_id', '=', 'sinren_divisions.division_id')
             ->leftJoin('laravel_db.users', 'rosters.user_id', '=', 'users.id')
             ->select(\DB::raw('*, rosters.id as key_id'))
-            ->where(['users.retirement'=> false,'users.roster_hidden'=>false])
+            ->where(['users.retirement' => false, 'users.roster_hidden' => false])
             ->where('R_USER.user_id', '=', $user_id)
             ->where('rosters.entered_on', '>=', $first_day)
             ->where('rosters.entered_on', '<=', $last_day);

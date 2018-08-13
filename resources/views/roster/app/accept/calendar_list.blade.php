@@ -37,7 +37,7 @@
           <li><a href="{{route_with_query('app::roster::accept::calendar', ['ym'=>$ym, 'div'=>$div])}}">未承認のみ</a></li>
           @foreach($users as $i => $u)
           <li data-name="{{ $u->last_name }} {{ $u->first_name }}" @if(!empty($user_id) && ($u->user_id == $user_id)) class="active" @endif>
-            <a href="{{route_with_query('app::roster::accept::calendar', ['ym'=>$ym, 'div'=>$div, 'user'=>$u->user_id], ['status' => $status])}}">
+            <a href="{{route_with_query('app::roster::accept::calendar', ['ym'=>$ym, 'div'=>$u->division_id, 'user'=>$u->user_id], ['status' => $status])}}">
               @include('partial.avatar', ['avatar' => $u->user_icon, 'size' => '40px',])
               {{$u->last_name}} {{ $u->first_name }} <small>さん</small>
             </a>
