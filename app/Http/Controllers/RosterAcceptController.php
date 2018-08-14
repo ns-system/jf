@@ -150,6 +150,8 @@ class RosterAcceptController extends Controller
             $division_id[] = empty($div->control_division_id) ? $div->user_division_id : $div->control_division_id;
         }
 
+        $div = \App\SinrenUser::where('user_id',\AUth::user()->id)->first()->division_id;
+
         $users = \App\SinrenUser::join('laravel_db.users', 'sinren_users.user_id', '=', 'users.id')
             ->join('roster_db.roster_users as R_USER', 'users.id', '=', 'R_USER.user_id')
 //            ->where('sinren_users.division_id', '=', $div)
