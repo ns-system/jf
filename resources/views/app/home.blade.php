@@ -23,7 +23,7 @@
     </div>
     <div class="row">
       <div class="col-md-8">
-        @if($not_accepts->count() > 0) @include('roster.home_notice.not_accept') @else
+        @if(!empty($not_accepts) && $not_accepts->count() > 0) @include('roster.home_notice.not_accept') @else
         <div class="alert alert-warning" role="alert">未入力・未承認はありません。</div>
         @endif
       </div>
