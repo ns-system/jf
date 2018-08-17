@@ -160,7 +160,7 @@
     .fail(function (e) {
       $('.chart-wrap').removeClass('disabled')
       $('.progress').hide()
-      $('.chart-collapse')remove()
+      $('.chart-collapse').remove()
       // alert('エラーが発生しました。')
     })
   }
