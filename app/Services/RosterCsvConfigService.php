@@ -20,8 +20,8 @@ class RosterCsvConfigService
 
     public function getDivision() {
         $params      = [
-            'object' => '\App\Division',
-            'join'   => [],
+            'object'        => '\App\Division',
+            'join'          => [],
             'display'       => [
                 'title' => '部署マスタ',
                 'route' => $this->route . '/Division',
@@ -40,6 +40,16 @@ class RosterCsvConfigService
             'table_orders'  => [
                 'division_id' => 'asc',
             ],
+            'table_search'  => [
+                /**
+                 * key         = インプットフォーム名
+                 * column_name = クエリ検索時のカラム名
+                 * display     = ラベル名
+                 * type        = 型（string型のみlike検索）
+                 */
+                'division_id'   => ['column_name' => 'division_id', 'display' => '部署コード', 'type' => 'integer'],
+                'division_name' => ['column_name' => 'division_name', 'display' => '部署名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'division_id',
@@ -52,7 +62,7 @@ class RosterCsvConfigService
             ],
             'import'        => [
                 'table_columns' => [
-                    /* display_flag, kanji_name, [format], [class] */
+                    /* POST_flag, kanji_name, [format], [class] */
                     [1, 'division_id', '部署コード'],
                     [1, 'division_name', '部署名', 'class' => 'text-left'],
                 ],
@@ -75,8 +85,8 @@ class RosterCsvConfigService
 
     public function getWorkType() {
         $params      = [
-            'object' => '\App\WorkType',
-            'join'   => [],
+            'object'        => '\App\WorkType',
+            'join'          => [],
             'display'       => [
                 'title' => '勤務時間マスタ',
                 'route' => $this->route . '/WorkType',
@@ -97,6 +107,12 @@ class RosterCsvConfigService
             'table_orders'  => [
                 'work_type_id' => 'asc',
             ],
+            'table_search'  => [
+                'work_type_id'    => ['column_name' => 'work_type_id', 'display' => '勤務形態コード', 'type' => 'integer'],
+                'work_type_name'  => ['column_name' => 'work_type_name', 'display' => '勤務形態名', 'type' => 'string'],
+                'work_start_time' => ['column_name' => 'work_start_time', 'display' => '勤務開始時間', 'type' => 'string'],
+                'work_end_time'   => ['column_name' => 'work_end_time', 'display' => '勤務終了時間', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'work_type_id',
@@ -113,7 +129,7 @@ class RosterCsvConfigService
             ],
             'import'        => [
                 'table_columns' => [
-                    /* display_flag, kanji_name, [format], [class] */
+                    /* POST_flag, kanji_name, [format], [class] */
                     [1, 'work_type_id', '勤務形態コード',],
                     [1, 'work_type_name', '勤務形態名', 'class' => 'text-left'],
                     [1, 'work_start_time', '勤務開始時間', 'class' => 'text-left'],
@@ -142,13 +158,13 @@ class RosterCsvConfigService
 
     public function getRest() {
         $params      = [
-            'object'  => '\App\Rest',
-            'display' => [
+            'object'        => '\App\Rest',
+            'display'       => [
                 'title' => '休暇マスタ',
                 'route' => $this->route . '/Rest',
                 'h2'    => '休暇マスタ',
             ],
-            'join'    => [],
+            'join'          => [],
             'table_columns' => [
                 ['row' => [['rest_reason_id', '休暇理由コード',]]],
                 ['row' => [['rest_reason_name', '休暇理由名', 'class' => 'text-left']]],
@@ -162,6 +178,10 @@ class RosterCsvConfigService
             'table_orders'  => [
                 'rest_reason_id' => 'asc',
             ],
+            'table_search'  => [
+                'rest_reason_id'   => ['column_name' => 'rest_reason_id', 'display' => '休暇理由コード', 'type' => 'integer'],
+                'rest_reason_name' => ['column_name' => 'rest_reason_name', 'display' => '休暇理由名', 'type' => 'string'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'rest_reason_id',
@@ -174,7 +194,7 @@ class RosterCsvConfigService
             ],
             'import'        => [
                 'table_columns' => [
-                    /* display_flag, kanji_name, [format], [class] */
+                    /* POST_flag, kanji_name, [format], [class] */
                     [1, 'rest_reason_id', '休暇理由コード',],
                     [1, 'rest_reason_name', '休暇理由名', 'class' => 'text-left'],
                 ],
@@ -214,6 +234,10 @@ class RosterCsvConfigService
                     ]
                 ],
             ],
+            'table_search'  => [
+                'holiday'      => ['column_name' => 'holiday', 'display' => '祝日', 'type' => 'string'],
+                'holiday_name' => ['column_name' => 'holiday_name', 'display' => '祝日名', 'type' => 'string'],
+            ],
             'table_orders'  => [
                 'holiday' => 'desc',
             ],
@@ -229,7 +253,7 @@ class RosterCsvConfigService
             ],
             'import'        => [
                 'table_columns' => [
-                    /* display_flag, kanji_name, [format], [class] */
+                    /* POST_flag, kanji_name, [format], [class] */
                     [1, 'holiday', '祝日',],
                     [1, 'holiday_name', '祝日名', 'class' => 'text-left'],
                 ],
@@ -266,7 +290,7 @@ class RosterCsvConfigService
             'table_columns' => [
                 ['row' => [['user_id', 'ユーザーID',]]],
                 ['row' => [['division_name', '部署名',]]],
-                ['row' => [['name', 'ユーザー名',]]],
+                ['row' => [['last_name', '姓'], ['first_name', '名']]],
                 ['row' => [['staff_number', '職員番号',]]],
                 ['row' =>
                     [
@@ -279,26 +303,35 @@ class RosterCsvConfigService
                 'sinren_users.division_id' => 'asc',
                 'roster_users.user_id'     => 'asc',
             ],
+            'table_search'  => [
+                'division_name' => ['column_name' => 'sinren_divisions.division_name', 'display' => '部署名', 'type' => 'string'],
+                'last_name'     => ['column_name' => 'users.last_name', 'display' => '姓', 'type' => 'string'],
+                'first_name'    => ['column_name' => 'users.first_name', 'display' => '名', 'type' => 'string'],
+                'staff_number'  => ['column_name' => 'staff_number', 'display' => '職員番号', 'type' => 'integer'],
+            ],
             'csv'           => [
                 'columns'       => [
                     'roster_users.user_id',
                     'sinren_divisions.division_name',
-                    'users.name',
+                    'users.last_name',
+                    'users.first_name',
                     'roster_users.staff_number',
                 ],
                 'kanji_columns' => [
                     'ユーザーID',
                     '部署名',
-                    'ユーザー名',
+                    '姓',
+                    '名',
                     '職員番号',
                 ],
             ],
             'import'        => [
                 'table_columns' => [
-                    /* display_flag, kanji_name, [format], [class] */
+                    /* POST_flag, kanji_name, [format], [class] */
                     [1, 'user_id', 'ユーザーID',],
-                    [1, 'division_name', '部署名',],
-                    [1, 'name', 'ユーザー名',],
+                    [0, 'division_name', '部署名',],
+                    [0, 'last_name', '姓',],
+                    [0, 'first_name', '名',],
                     [1, 'staff_number', '職員番号', 'class' => 'text-left'],
                 ],
                 'rules'         => [

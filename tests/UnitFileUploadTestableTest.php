@@ -9,20 +9,17 @@ class UnitFileUploadTestableTest extends TestCase
 {
 
     use FileTestable;
+    use \App\Services\Traits\Testing\DbDisconnectable;
 
     protected $s;
 
-    public function __construct() {
-        $this->s = $this->getMockForTrait(FileTestable::class);
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
-    /**
-     * @tests
-     */
-    public function 正常系_パラメーターにトークンを付与() {
-        $res_1 = $this->s->addToken(['name' => 'test user', 'age' => 20]);
-        $this->assertEquals(count($res_1), 3);
-        $this->assertFalse(empty($res_1['_token']));
+    public function __construct() {
+        $this->s = $this->getMockForTrait(FileTestable::class);
     }
 
     /**
@@ -69,18 +66,6 @@ class UnitFileUploadTestableTest extends TestCase
         $this->s->createCsvFile($empty_file, $csv_datas);
         $this->assertTrue(file_exists($path . $empty_file));
         $this->assertThat(filesize($path . $empty_file), $this->greaterThan(0));
-    }
-
-    /**
-     * @tests
-     */
-    public function 正常系_ファイル削除ができる() {
-        $path       = storage_path() . '/tests/';
-        $empty_file = 'delete_file.csv';
-        $this->s->createCsvFile($empty_file);
-        $this->s->unlinkFile($path . $empty_file);
-
-        $this->assertFalse(file_exists($path . $empty_file));
     }
 
 }

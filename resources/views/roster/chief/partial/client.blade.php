@@ -2,7 +2,7 @@
 
 <div class="panel panel-primary">
 	<div class="panel-heading">
-	<p>{{$row->name}}さん <small>（{{$row->entered_on}}）</small></p>
+	<p>{{$row->last_name}}さん <small>（{{$row->entered_on}}）</small></p>
 
 	</div>
 	<div class="panel-body small" style="height: 150px; overflow-y: scroll;">

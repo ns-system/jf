@@ -15,7 +15,7 @@
 
 {{-- @section('sidebar')
 <div class="col-md-2">
-    @include('admin.sidebar.sidebar')
+    @include('partial.check_sidebar')
 </div>
 @endsection --}}
 
@@ -81,7 +81,8 @@ function redirectTo(){
             var s = data['status'];
             if(s['is_copy_end'] == true){
                 // redirect
-                location.href = "{{route('admin::super::month::import_confirm', ['id'=>$id, 'job_id'=>$job_id])}}";
+                alert('ファイルアップロード処理は正常に終了しました。');
+                location.href = "{{route('admin::super::month::show')}}";
             }else if(s['is_copy_error'] == true){
                 // Error
 //                alert('処理に失敗しました。最初から処理を行ってください。');

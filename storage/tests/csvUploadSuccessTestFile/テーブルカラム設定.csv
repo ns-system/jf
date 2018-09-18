@@ -1,0 +1,10 @@
+フォーマットID,連番,カラム名,日本語カラム名,データ型
+2,1, columnname1,japanesecolumnname1,integer
+2,2, columnname2,japanesecolumnname2,integer
+2,3, columnname3,japanesecolumnname3,integer
+2,4, columnname4,japanesecolumnname4,integer
+2,5, columnname5,japanesecolumnname5,integer
+2,6, columnname6,japanesecolumnname6,integer
+2,7, columnname7,japanesecolumnname7,double
+2,8, columnname8,japanesecolumnname8,integer
+2,9, columnname9,japanesecolumnname9,integer

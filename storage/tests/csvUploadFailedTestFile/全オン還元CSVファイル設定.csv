@@ -1,0 +1,7 @@
+No,識別子,全オンデータ種類,全オンデータ名,開始カラム位置,終了カラム位置,カラム長,目安還元日,サイクル,データベース名,テーブル名,共通テーブル名,累積フラグ,口座変換フラグ,処理フラグ,テーブル分割フラグ,全オンフォーマットID,変換口座カラム名,変換科目カラム名
+1,identifier1,1,zenondataname1,0,189,190,referencereturndate1,M,zenon_data_db,customer_information_files,,1,0,1,0,1,,
+2,,2,,0,179,230,referencereturndate2,M,zenon_data_db,common_account_ledgers,,1,,1,1,2,account_number,subject_code
+3,identifier3,3,zenondataname3,180,229,230,referencereturndate3,M,zenon_data_db,futsu_account_ledgers,,1,1,1,1,,account_number,subject_code
+4,identifier4,,zenondataname4,0,,253,referencereturndate4,M,zenon_data_db,,,1,1,1,1,3,account_number,subject_code
+5,identifier5,5,zenondataname5,,252,253,,M,zenon_data_db,toza_account_ledgers,,1,1,1,1,3,account_number,subject_code
+6,identifier6,6,zenondataname6,0,179,199,referencereturndate6,M,zenon_data_db,common_account_ledgers,,1,,1,1,4,account_number,

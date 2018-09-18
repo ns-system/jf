@@ -12,58 +12,40 @@
 
 @section('sidebar')
 <div class="col-md-2">
-    @include('admin.sidebar.sidebar')
+  @include('partial.check_sidebar')
 </div>
 @endsection
 
-<div style="margin-top: 100px;"></div>
 
 
 @section('content')
+<div style="margin-top: 100px;"></div>
 <div class="col-md-10">
-    <div class="container-fluid">
-        @include('partial.alert')
-        <div class="border-bottom"><h2>処理状況確認 <small> - {{date('Y年n月分', strtotime($id.'01'))}} （{{$count}}件）</small></h2></div>
+  <div class="container-fluid">
+    @include('partial.alert')
+    <div class="border-bottom"><h2>処理状況確認 <small> - {{date('Y年n月分', strtotime($id.'01'))}} （{{$count}}件）</small></h2></div>
 
 
-        <div data-spy="affix" style="top: 100px; right: 30px;" data-offset-top="110">
-            <div class="text-right" style="margin-bottom: 10px;">
-                @if(isset($parameters))    {!! $rows->appends($parameters)->render() !!}
-                @elseif(!$rows->isEmpty()) {!! $rows->render() !!} @endif
-            </div>
-            <div class="text-right">
-                <div class="btn-group">
-                    <a href="{{route('admin::super::month::export', ['id'=>$id])}}" class="btn btn-primary btn-sm">処理リスト</a>
-                    <a href="{{route('admin::super::month::export_nothing', ['id'=>$id])}}" class="btn btn-warning btn-sm">処理不能リスト</a>
-                    <button class="btn btn-success btn-sm"  data-toggle="modal" data-target="#search">検索する</button>
-                </div>
-            </div>
+    <div data-spy="affix" style="top: 100px; right: 30px;" data-offset-top="110">
+      <div class="text-right" style="margin-bottom: 10px;">
+        @if(isset($parameters))    {!! $rows->appends($parameters)->render() !!}
+        @elseif(!$rows->isEmpty()) {!! $rows->render() !!} @endif
+      </div>
+      <div class="text-right">
+        <div class="btn-group">
+          <a href="{{route('admin::super::month::export', ['id'=>$id])}}" class="btn btn-primary btn-sm">処理リスト</a>
+          <a href="{{route('admin::super::month::export_nothing', ['id'=>$id])}}" class="btn btn-warning btn-sm">処理不能リスト</a>
+          <button class="btn btn-success btn-sm"  data-toggle="modal" data-target="#search">検索する</button>
         </div>
+      </div>
+    </div>
 
-        @include('admin.month.partial.status_search_form')
-        @include('admin.month.partial.status_list')
-    </div><!-- .container-fluid -->
+    @include('admin.month.partial.status_search_form')
+    @include('admin.month.partial.status_list')
+  </div><!-- .container-fluid -->
 </div>
 @endsection
 
 @section('footer')
 @parent
-<script type="text/javascript">
-$(function(){
-
-// 	$('.btn input:checked').each(function(){
-// 		var btn = $(this).parent('.btn');
-// //		console.log(btn.html());
-// 			btn.removeClass('btn-default').addClass('btn-primary');
-// 	});
-
-// 	$('.btn-group .btn').click(function(){
-// 		var obj = $(this).siblings();
-// 		obj.each(function(){
-// 			$(this).removeClass('btn-primary').addClass('btn-default');
-// 		});
-// 		$(this).removeClass('btn-default').addClass('btn-primary');
-// 	});
-});
-</script>
 @endsection

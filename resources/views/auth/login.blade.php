@@ -6,20 +6,20 @@
 @parent
 @section('brand', 'ＪＦマリンバンク')
 <style type="text/css">
-    body{
-        background: #44A08D;  /* fallback for old browsers */
-        background: -webkit-linear-gradient(to right, #44A08D, #093637);  /* Chrome 10-25, Safari 5.1-6 */
-        background: linear-gradient(to right, #44A08D, #093637); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+body{
+    background: #44A08D;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #44A08D, #093637);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #44A08D, #093637); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
-        background: #41295a;  /* fallback for old browsers */
-        background: -webkit-linear-gradient(to right, #2F0743, #41295a);  /* Chrome 10-25, Safari 5.1-6 */
-        background: linear-gradient(to right, #2F0743, #41295a); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: #41295a;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #2F0743, #41295a);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #2F0743, #41295a); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
-        background: #141E30;  /* fallback for old browsers */
-        background: -webkit-linear-gradient(to right, #243B55, #141E30);  /* Chrome 10-25, Safari 5.1-6 */
-        background: linear-gradient(to right, #243B55, #141E30); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: #141E30;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #243B55, #141E30);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #243B55, #141E30); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
-    }
+}
 </style>
 @endsection
 
@@ -33,8 +33,12 @@
             @include('partial.alert')
         </div>
     </div>
-    
-    <div clas="row">
+
+    <div style="background: rgba(255,255,255,0.1); border-radius: 2px; border: 1px solid #999; margin-bottom: 20px;">
+        @include('auth.partial.notification', ['dark' => true])
+    </div>
+
+    <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <!-- タブ・メニュー -->
             <ul class="nav nav-tabs">
@@ -45,7 +49,7 @@
             <!-- タブ内容 -->
             <div class="tab-content" style="margin-top: 20px;">
                 <div class="tab-pane active" id="login-form">
-                    <div style="background: rgba(255,255,255,0.1); padding: 30px 0px; border-radius: 2px; border: 1px solid #999;">
+                    <div style="background: rgba(255,255,255,0.1); padding: 30px 0px; border-radius: 2px; border: 1px solid #999; margin-bottom: 20px;">
                         @include('auth.partial.login_form')
                     </div>
                 </div>
@@ -55,6 +59,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 

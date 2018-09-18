@@ -14,7 +14,7 @@ class ProcessStatusService
     // 似たようなことでJoinしてる。臭い。
     public function setRows($id) {
         $rows       = \App\ZenonMonthlyStatus::month($id)
-                ->join('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
+                ->leftJoin('zenon_data_csv_files', 'zenon_data_monthly_process_status.zenon_data_csv_file_id', '=', 'zenon_data_csv_files.id')
                 ->leftJoin('zenon_data_types', 'zenon_data_csv_files.zenon_data_type_id', '=', 'zenon_data_types.id')
                 ->select(\DB::raw('*, zenon_data_monthly_process_status.updated_at AS process_updated_at'))
         ;

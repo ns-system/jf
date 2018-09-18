@@ -9,6 +9,7 @@ class UnitImportZenonDataServiceTest extends TestCase
 {
 
     use FileTestable;
+    use \App\Services\Traits\Testing\DbDisconnectable;
 
     protected $s;
     protected $param;
@@ -81,6 +82,11 @@ class UnitImportZenonDataServiceTest extends TestCase
                 echo $exc->getMessage();
             }
         }
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     public function __construct() {
@@ -219,6 +225,19 @@ class UnitImportZenonDataServiceTest extends TestCase
     /**
      * @test
      */
+    public function 異常系_分割チェック処理時に失敗() {
+        try {
+            $s = $this->setReflection('checkSplitRow');
+            $s->invoke($this->s, 2, 4, "テストの");
+            $this->fail("予期しないエラーです。");
+        } catch (\Exception $e) {
+            $this->assertEquals("分割時にテストの配列長が一致しませんでした。（想定：2 実際：4）", $e->getMessage());
+        }
+    }
+
+    /**
+     * @test
+     */
     public function 正常系_タイムスタンプをセットできる() {
         $rows      = ['key_1' => 1];
         $timestamp = date('Y-m-d H:i:s');
@@ -237,24 +256,119 @@ class UnitImportZenonDataServiceTest extends TestCase
     /**
      * @test
      */
-    public function 正常系_列セット_分割あり() {
-        $rows              = [
-            ['split_key' => 'key_1', 'user_name' => 'test user_1', 'created_on' => '2017-07-01', 'is_administrator' => true, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 1234567,],
-            ['split_key' => 'key_2', 'user_name' => 'test user_2', 'created_on' => '2017-08-21', 'is_administrator' => false, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 2345678901,],
+    public function 正常系_列セット_貯金口座の分割あり() {
+        $rows     = [
+            [
+                'subject_code'       => 1,
+                'account_number'     => 1234567,
+                'contract_number'    => 1,
+                'split_key'          => 'key_1',
+                'user_name'          => 'test user_1',
+                'created_on'         => '2017-07-01',
+                'is_administrator'   => true,
+                'id'                 => null,
+                'monthly_id'         => 201707,
+                'key_account_number' => 1234567,
+            ],
+            [
+                'subject_code'       => 4,
+                'account_number'     => 2345678901,
+                'contract_number'    => 5,
+                'split_key'          => 'key_2',
+                'user_name'          => 'test user_2',
+                'created_on'         => '2017-08-21',
+                'is_administrator'   => false,
+                'id'                 => null,
+                'monthly_id'         => 201707,
+                'key_account_number' => 2345678901,
+            ],
         ];
-        $expect_1          = [
-            ['is_administrator' => true, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 1234567, 'split_key' => 'key_1',],
-            ['is_administrator' => false, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 2345678901, 'split_key' => 'key_2',],
+        $expect_1 = [
+            ['subject_code' => 1, 'account_number' => 1234567, 'contract_number' => 1, 'split_key' => 'key_1', 'user_name' => 'test user_1', 'created_on' => '2017-07-01',],
+            ['subject_code' => 4, 'account_number' => 2345678901, 'contract_number' => 5, 'split_key' => 'key_2', 'user_name' => 'test user_2', 'created_on' => '2017-08-21',],
         ];
-        $split_key_configs = ['split_foreign_key_1' => 'split_key', 'split_foreign_key_2' => 'key_account_number'];
-        $result_1          = [];
+        $expect_2 = [
+            ['is_administrator' => true, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 1234567, 'subject_code' => 1, 'account_number' => 1234567, 'contract_number' => 1,],
+            ['is_administrator' => false, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 2345678901, 'subject_code' => 4, 'account_number' => 2345678901, 'contract_number' => 5,],
+        ];
+
+//        $split_key_configs = ['split_foreign_key_1' => 'split_key', 'split_foreign_key_2' => 'key_account_number'];
+        $result_1 = [];
+        $result_2 = [];
         foreach ($rows as $r) {
             $this->s->setRow($r);
-            $s          = $this->setReflection('splitRow');
-            $s->invoke($this->s, true, 3, 5, $split_key_configs);
-            $result_1[] = $this->s->getRow();
+            $s1 = $this->setReflection('splitRow');
+            $s1->invoke($this->s, true, 0, 5, 10);
+            $s2 = $this->setReflection('setCommonLedgerKeys');
+            $s2->invoke($this->s, true, false);
+            try {
+                $result_1[] = $this->s->getCommonRow();
+                $result_2[] = $this->s->getSeparateRow();
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
         }
         $this->assertEquals($expect_1, $result_1);
+        $this->assertEquals($expect_2, $result_2);
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_列セット_融資口座の分割あり() {
+        $rows     = [
+            [
+                'subject_code'        => 1,
+                'loan_account_number' => 1234567,
+                'contract_number'     => 1,
+                'split_key'           => 'key_1',
+                'user_name'           => 'test user_1',
+                'created_on'          => '2017-07-01',
+                'is_administrator'    => true,
+                'id'                  => null,
+                'monthly_id'          => 201707,
+                'key_account_number'  => 1234567,
+            ],
+            [
+                'subject_code'        => 4,
+                'loan_account_number' => 2345678901,
+                'contract_number'     => 5,
+                'split_key'           => 'key_2',
+                'user_name'           => 'test user_2',
+                'created_on'          => '2017-08-21',
+                'is_administrator'    => false,
+                'id'                  => null,
+                'monthly_id'          => 201707,
+                'key_account_number'  => 2345678901,
+            ],
+        ];
+        $expect_1 = [
+            ['subject_code' => 1, 'loan_account_number' => 1234567, 'contract_number' => 1, 'split_key' => 'key_1', 'user_name' => 'test user_1', 'created_on' => '2017-07-01',],
+            ['subject_code' => 4, 'loan_account_number' => 2345678901, 'contract_number' => 5, 'split_key' => 'key_2', 'user_name' => 'test user_2', 'created_on' => '2017-08-21',],
+        ];
+        $expect_2 = [
+            ['is_administrator' => true, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 1234567, 'loan_account_number' => 1234567,],
+            ['is_administrator' => false, 'id' => null, 'monthly_id' => 201707, 'key_account_number' => 2345678901, 'loan_account_number' => 2345678901,],
+        ];
+
+//        $split_key_configs = ['split_foreign_key_1' => 'split_key', 'split_foreign_key_2' => 'key_account_number'];
+        $result_1 = [];
+        $result_2 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s1 = $this->setReflection('splitRow');
+            $s1->invoke($this->s, true, 0, 5, 10);
+            $s2 = $this->setReflection('setCommonLedgerKeys');
+            $s2->invoke($this->s, false, true);
+            try {
+                $result_1[] = $this->s->getCommonRow();
+                $result_2[] = $this->s->getSeparateRow();
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+        }
+        $this->assertEquals($expect_1, $result_1);
+        $this->assertEquals($expect_2, $result_2);
     }
 
     /**
@@ -301,6 +415,131 @@ class UnitImportZenonDataServiceTest extends TestCase
             $this->fail('例外発生なし');
         } catch (\Exception $e) {
             $this->assertEquals("配列切り落としの指定は開始位置 < 終了位置となるように指定してください。", $e->getMessage());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_為替取引ファイルのATM番号を抽出してカラムに入れる() {
+        $rows     = [
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => 'ATMﾌﾘｺﾐ',
+                'exchange_telegram_8_8' => 'ATM Number',
+            ],
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => '',
+                'exchange_telegram_8_8' => '',
+            ],
+        ];
+        $expect_1 = [
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => 'ATMﾌﾘｺﾐ',
+                'exchange_telegram_8_8' => 'ATM Number',
+                'atm_number'            => 'ATM Number',
+            ],
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => '',
+                'exchange_telegram_8_8' => '',
+                'atm_number'            => '',
+            ]
+        ];
+        $result_1 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2 = $this->setReflection('separateAtmNumber');
+            $s2->invoke($this->s, 'M0014');
+            try {
+                $result_1[] = $this->s->getRow();
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+        }
+        $this->assertEquals($expect_1, $result_1);
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_為替取引ファイル以外のATM番号を抽出しない() {
+        $rows     = [
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => 'ATMﾌﾘｺﾐ',
+                'exchange_telegram_8_8' => 'ATM Number',
+            ],
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => '',
+                'exchange_telegram_8_8' => '',
+            ],
+        ];
+        $expect_1 = [
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => 'ATMﾌﾘｺﾐ',
+                'exchange_telegram_8_8' => 'ATM Number',
+            ],
+            [
+                'subject_code'          => 1,
+                'loan_account_number'   => 1234567,
+                'contract_number'       => 1,
+                'exchange_telegram_7'   => '',
+                'exchange_telegram_8_8' => '',
+            ]
+        ];
+        $result_1 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2 = $this->setReflection('separateAtmNumber');
+            $s2->invoke($this->s, 'M0015');
+            try {
+                $result_1[] = $this->s->getRow();
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+        }
+        $this->assertEquals($expect_1, $result_1);
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_為替取引ファイルのATM番号を抽出時にエラーとなる() {
+        $rows = [
+            [
+                'subject_code'        => 1,
+                'loan_account_number' => 1234567,
+                'contract_number'     => 1,
+            ],
+        ];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2 = $this->setReflection('separateAtmNumber');
+            try {
+                $s2->invoke($this->s, 'M0014');
+                $this->fail('予期しないエラーです。');
+            } catch (\Exception $e) {
+                $this->assertEquals("カラム名 'exchange_telegram_7' もしくは 'exchange_telegram_8_8' が見つかりませんでした。", $e->getMessage());
+            }
         }
     }
 
@@ -411,6 +650,7 @@ class UnitImportZenonDataServiceTest extends TestCase
             'cycle'                 => 'M',
             'database_name'         => 'zenon_data_db',
             'table_name'            => 'deposit_term_ledgers',
+            'common_table_name'     => '',
             'is_cumulative'         => 1,
             'is_account_convert'    => 1,
             'is_process'            => 1,
@@ -524,7 +764,7 @@ class UnitImportZenonDataServiceTest extends TestCase
         try {
             $s->invoke($this->s, 'mysql_zenon', 'not_exist_table_name');
             $this->fail('例外発生なし');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertEquals("ベーステーブルが存在しないようです。（テーブル名：not_exist_table_name）", $e->getMessage());
         }
     }
@@ -551,6 +791,138 @@ class UnitImportZenonDataServiceTest extends TestCase
         ;
         $result_1        = $this->s->uploadToDatabase($zenon_monthly, $csv_file_object, 201009);
         $this->assertEquals("ベーステーブルが存在しないようです。（テーブル名：not_exist_table_name）", $result_1['reason']);
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_口座預入番号を分割できる() {
+        $rows     = [
+            [
+                'subject_code'               => 1,
+                'account_and_deposit_number' => '1234567890123',
+            ],
+            [
+                'subject_code'               => 4,
+                'account_and_deposit_number' => '1234567890123',
+            ],
+        ];
+        $expect_1 = [
+            [
+                'subject_code'               => 1,
+                'account_and_deposit_number' => '1234567890123',
+                'account_number'             => 1234567890,
+                'deposit_number'             => 123,
+            ],
+            [
+                'subject_code'               => 4,
+                'account_and_deposit_number' => '1234567890123',
+                'account_number'             => 1234567890,
+                'deposit_number'             => 123,
+            ]
+        ];
+        $result_1 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2         = $this->setReflection('splitAccountAndDepositNumber');
+            $s2->invoke($this->s, 1);
+            $result_1[] = $this->s->getRow();
+        }
+        $this->assertEquals($expect_1, $result_1);
+    }
+
+    /**
+     * @test
+     */
+    public function 正常系_口座預入番号分割_対象外ファイル() {
+        $rows     = [
+            [
+                'subject_code'               => 1,
+                'account_and_deposit_number' => '1234567890123',
+            ],
+            [
+                'subject_code'               => 4,
+                'account_and_deposit_number' => '1234567890123',
+            ],
+        ];
+        $expect_1 = [
+            [
+                'subject_code'               => 1,
+                'account_and_deposit_number' => '1234567890123',
+            ],
+            [
+                'subject_code'               => 4,
+                'account_and_deposit_number' => '1234567890123',
+            ]
+        ];
+        $result_1 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2         = $this->setReflection('splitAccountAndDepositNumber');
+            $s2->invoke($this->s, 0);
+            $result_1[] = $this->s->getRow();
+        }
+        $this->assertEquals($expect_1, $result_1);
+    }
+
+    /**
+     * @test
+     */
+    public function 異常系_口座預入番号分割_対象なのに口座預入番号がセットされていない() {
+        $rows     = [
+            [
+                'subject_code' => 1,
+                'number'       => '1234567890123',
+            ],
+            [
+                'subject_code' => 4,
+                'number'       => '1234567890123',
+            ],
+        ];
+        $result_1 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2 = $this->setReflection('splitAccountAndDepositNumber');
+
+            try {
+                $s2->invoke($this->s, 1);
+                $result_1[] = $this->s->getRow();
+                $this->fail("予期しないエラー");
+            } catch (\Exception $e) {
+                $this->assertEquals('口座預入番号がセットされていないようです。', $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function 異常系_口座預入番号分割_対象に既に口座番号か預入番号がセットされている() {
+        $rows     = [
+            [
+                'subject_code'   => 1,
+                'account_number' => 1234567890,
+                'number'         => '1234567890123',
+            ],
+            [
+                'subject_code'   => 4,
+                'deposit_number' => 123,
+                'number'         => '1234567890123',
+            ],
+        ];
+        $result_1 = [];
+        foreach ($rows as $r) {
+            $this->s->setRow($r);
+            $s2 = $this->setReflection('splitAccountAndDepositNumber');
+
+            try {
+                $s2->invoke($this->s, 1);
+                $result_1[] = $this->s->getRow();
+                $this->fail("予期しないエラー");
+            } catch (\Exception $e) {
+                $this->assertEquals('既に口座番号もしくは預入番号がセットされているようです。', $e->getMessage());
+            }
+        }
     }
 
 }

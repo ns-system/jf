@@ -7,10 +7,17 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class UnitDataUsableTest extends TestCase
 {
 
+    use \App\Services\Traits\Testing\DbDisconnectable;
+
     protected $s;
 
     public function __construct() {
         $this->s = $this->getMockForTrait(\App\Services\Traits\DateUsable::class);
+    }
+
+    public function tearDown() {
+        $this->disconnect();
+        parent::tearDown();
     }
 
     private function setReflection($function_name) {
@@ -176,13 +183,13 @@ class UnitDataUsableTest extends TestCase
         $date_6 = null;
         $date_7 = '00000000';
 
-        $res_1 = $this->s->setDate($date_1);
-        $res_2 = $this->s->setDate($date_2);
-        $res_3 = $this->s->setDate($date_3);
-        $res_4 = $this->s->setDate($date_4);
-        $res_5 = $this->s->setDate($date_5);
-        $res_6 = $this->s->setDate($date_6);
-        $res_7 = $this->s->setDate($date_7);
+        $res_1 = $this->s->setDate($date_1)->getDate();
+        $res_2 = $this->s->setDate($date_2)->getDate();
+        $res_3 = $this->s->setDate($date_3)->getDate();
+        $res_4 = $this->s->setDate($date_4)->getDate();
+        $res_5 = $this->s->setDate($date_5)->getDate();
+        $res_6 = $this->s->setDate($date_6)->getDate();
+        $res_7 = $this->s->setDate($date_7)->getDate();
 
         $this->assertEquals($res_1->format('Y-m-d H:i:s'), '2017-02-27 12:13:14');
         $this->assertEquals($res_2->format('Y-m-d H:i:s'), '2017-02-27 00:00:00');
@@ -201,13 +208,13 @@ class UnitDataUsableTest extends TestCase
         $date_2 = '20172';
 
         try {
-            $res_1 = $this->s->setDate($date_1);
+            $this->s->setDate($date_1);
             $this->fail('例外発生なし');
         } catch (\Exception $e) {
             $this->assertEquals("日付型以外のものが指定されました。（引数：2017-022-27）", $e->getMessage());
         }
         try {
-            $res_2 = $this->s->setDate($date_2);
+            $this->s->setDate($date_2);
             $this->fail('例外発生なし');
         } catch (\Exception $e) {
             $this->assertEquals("文字数が日付型と一致しませんでした。（引数：20172）", $e->getMessage());

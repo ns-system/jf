@@ -1,21 +1,23 @@
-<div  id="error-list-box">
-    <small>
+
+<div class="alert alert-danger alert-dismissible fade in alert-fixed" rore="alert" style="right: 20px; left: auto; display: none;">
+    <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+    </button>
         <strong class="text-danger"  id="danger-list-title"  style="display: none;">警告：</strong>
         <ul class="text-danger-light" id="danger-list"></ul>
-
         <strong class="text-warning" id="warning-list-title" style="display: none;">注意：</strong>
-        <ul class="text-warning-light" id="warning-list"></ul>
+        <ul class="text-warning-light" id="warning-list" style="margin-bottom: 0;"></ul>
 
-    </small>
 </div>
-<button class="btn btn-primary btn-xs" id="error-box-list-visiblity" data-visible="true">表示／非表示</button>
+{{-- <button class="btn btn-primary btn-xs" id="error-box-list-visiblity" data-visible="true">表示／非表示</button> --}}
 
 <style type="text/css">
-#error-list-box{
+/*#error-list-box{
     width: 400px;
     position: fixed;
     background: rgba(0, 0, 0, 0.8);
-    padding: 10px 20px;
+    padding: 5px 20px;
+    padding-bottom: 24px;
     border-radius: 3px;
     box-shadow: 0 0 3px rgba(0,0,0,0.8);
     right: 30px;
@@ -32,7 +34,7 @@
 }
 #error-list-box::-webkit-scrollbar{
     width: 0;
-}
+}*/
 </style>
 
 <script type="text/javascript">
@@ -43,12 +45,12 @@
  * 配列で引き渡す場合、必ず連想配列のキーに'error_message'を指定すること
  * JSON形式くらいしか想定してません
  */
-function setErrorList(error_messages){
+ function setErrorList(error_messages){
     $('#warning-list').html('');
     var error_counter = 0;
 
     if(error_messages['danger_message']){
-//        console.log('1st');
+        // console.log('1st');
         $('#danger-list-title').show();
         $('#danger-list').append('<li>'+error_messages['danger_message']+'</li>');
         error_counter++;
@@ -60,7 +62,7 @@ function setErrorList(error_messages){
     }
 
     $.each(error_messages, function(array_key, array_val){
-//        console.log('2nd');
+        // console.log('2nd');
         if($.isPlainObject(error_messages[array_key])){
             $.each(error_messages[array_key], function(key, val){
                 if(key == 'danger_message' && val){
@@ -77,9 +79,10 @@ function setErrorList(error_messages){
         }
     });
 
-    if($('#error-box-list-visiblity').attr('data-visible') == 'true' && error_counter > 0){
+    // if($('#error-box-list-visiblity').attr('data-visible') == 'true' && error_counter > 0){
+    if(error_counter > 0){
         $('#error-list-box').show();
-        $('#error-box-list-visiblity').show();
+    //     $('#error-box-list-visiblity').show();
     }
 }
 

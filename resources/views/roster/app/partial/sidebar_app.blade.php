@@ -1,7 +1,6 @@
 <div class="nav nav-pills nav-stacked list-group">
     <a role="presentation" class="list-group-item collapse bg-primary-important" data-toggle="collapse" href="#roster" style="color: #fff;"><span class="caret"></span> メニュー</a>
     <div class="collapse" id="roster">
-
         <a
             role="presentation"
             class="list-group-item collapse"

@@ -12,7 +12,8 @@ class Plan extends Request
      *
      * @return bool
      */
-    public function authorize() {
+    public function authorize()
+    {
         return true;
     }
 
@@ -21,7 +22,8 @@ class Plan extends Request
      *
      * @return array
      */
-    public function rules() {
+    public function rules()
+    {
         $input = \Input::all();
 //        var_dump($input);
 //        exit();
@@ -29,25 +31,28 @@ class Plan extends Request
 //            'entered_on' => 'required|date',
         ];
 
-        if (empty($input['plan_rest_reason_id']))
-        {
+        if (empty($input['plan_rest_reason_id'])) {
             $rules['plan_start_hour'] = 'required|integer|min:0|max:23';
             $rules['plan_start_time'] = 'required|integer|min:0|max:55';
             $rules['plan_end_hour']   = 'required|integer|min:0|max:23';
             $rules['plan_end_time']   = 'required|integer|min:0|max:55';
         }
+        $rules['plan_overtime_reason'] = (!empty($input['plan_overtime_reason'])) ? 'string|max:20' : '';
+//        dd($rules);
 //        var_dump($rules);
 //        exit();
         return $rules;
     }
 
-    public function attributes() {
+    public function attributes()
+    {
         return [
-            'entered_on' => '入力日',
-            'plan_start_hour' => '開始時間',
-            'plan_start_time' => '開始時間',
-            'plan_end_hour'   => '終了時間',
-            'plan_end_time'   => '終了時間',
+            'entered_on'           => '入力日',
+            'plan_start_hour'      => '開始時間',
+            'plan_start_time'      => '開始時間',
+            'plan_end_hour'        => '終了時間',
+            'plan_end_time'        => '終了時間',
+            'plan_overtime_reason' => '予定残業理由',
         ];
     }
 

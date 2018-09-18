@@ -37,22 +37,43 @@ trait TypeConvertable
                 return round((double) $column, 0);
 
             case 'date':
-                if (!$this->isDate($column))
+                if (empty($column))
+                {
+                    return null;
+                }
+                if ($this->isDate($column))
+                {
+                    $obj = $this->setDate($column)->getDate();
+                    return (empty($obj)) ? null : $obj->format('Y-m-d');
+                }
+
+                $y = substr($column, 0, 4);
+                if ($y < '1900' || $y > '2500')
                 {
                     throw new \Exception("値が日付型ではありません。（引数：'{$column}'）");
                 }
-                $obj   = $this->setDate($column);
+                $tmp_col = (!$this->isDate($column)) ? $y . '0101' : $column;
+                $obj     = $this->setDate($tmp_col)->getDate();
                 return (empty($obj)) ? null : $obj->format('Y-m-d');
             case 'time':
+                if (empty($column))
+                {
+                    return null;
+                }
+
                 $times = $this->setTime($column);
                 $time  = "{$times['hour']}:{$times['min']}:{$times['sec']}";
                 return $time;
             case 'dateTime':
+                if (empty($column))
+                {
+                    return null;
+                }
                 if (!$this->isDate($column))
                 {
                     throw new \Exception("値が日付時刻型ではありません。（引数：'{$column}'）");
                 }
-                $obj = $this->setDate($column);
+                $obj = $this->setDate($column)->getDate();
                 return (empty($obj)) ? null : $obj->format('Y-m-d H:i:s');
             case 'boolean':
                 return ($column === 'false') ? false : (bool) $column;
@@ -66,14 +87,21 @@ trait TypeConvertable
 //        var_dump($types);
 //        var_dump($rows);
 
+        $i = 1;
         foreach ($rows as $key => $column) {
             if (!array_key_exists($key, $types))
             {
                 $tmp_rows[$key] = $column;
                 continue;
             }
-//            var_dump($key);
-            $tmp_rows[$key] = $this->convertType($types[$key], $column, $is_ceil);
+            try {
+                $tmp_rows[$key] = $this->convertType($types[$key], $column, $is_ceil);
+            } catch (\Exception $exc) {
+                echo $exc->getMessage() . PHP_EOL;
+                echo "カラム名：'{$key}', 型：'{$types[$key]}', カラム位置：'{$i}'" . PHP_EOL;
+                throw $exc;
+            }
+            $i++;
         }
 //        var_dump($tmp_rows);
         return $tmp_rows;

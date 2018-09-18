@@ -15,6 +15,7 @@ class TableEditService
 
     protected $page_generate_parameter_array;
     protected $model;
+    protected $plane_model;
     protected $html_titles;
     protected $top_page_table_settings;
     protected $raw_csv_en_columns;
@@ -25,6 +26,7 @@ class TableEditService
     protected $validate_rules  = [];
     protected $csv_file_name   = '';
     protected $csv_file_object;
+    protected $serach_columns;
 
     /**
      * URL上のパラメータクエリから情報を取得して設定ファイルを作成するメソッド。
@@ -51,9 +53,7 @@ class TableEditService
 //            throw new \Exception("設定ファイルが見つかりませんでした。");
 //        }
         $this->setModel($parameter['object'], (
-                isset($parameter['join'])) ? $parameter['join'] : [],
-                $parameter['table_orders'],
-                (isset($parameter['as'])) ? $parameter['as'] : null
+                isset($parameter['join'])) ? $parameter['join'] : [], $parameter['table_orders'], (isset($parameter['as'])) ? $parameter['as'] : null
         );
         $this->model_name              = $parameter['object'];
         $this->html_titles             = $parameter['display'];
@@ -62,6 +62,7 @@ class TableEditService
         $this->csv_en_columns          = $this->convertCsvEnColumnToKey($parameter['csv']['columns']);
         $this->csv_jp_columns          = $parameter['csv']['kanji_columns'];
         $this->import_settings         = $parameter['import'];
+        $this->serach_columns          = (isset($parameter['table_search'])) ? $parameter['table_search'] : [];
 
         return $this;
     }
@@ -80,6 +81,36 @@ class TableEditService
         return $keys;
     }
 
+    public function searchModel(array $inputs) {
+        if (empty($inputs))
+        {
+            return $this;
+        }
+        $columns = $this->serach_columns;
+        foreach ($inputs as $id => $value) {
+            if ($value == '')
+            {
+                continue;
+            }
+            try {
+                $type = $columns[$id]['type'];
+                $key  = $columns[$id]['column_name'];
+            } catch (\Exception $exc) {
+                continue;
+            }
+
+            if ($type === 'string')
+            {
+                $this->model->where($key, 'like', "%{$value}%");
+            }
+            else
+            {
+                $this->model->where($key, '=', $value);
+            }
+        }
+        return $this;
+    }
+
     /**
      * モデル名からインスタンスを生成し、結合・並び替えを行うメソッド
      * @param string $model_name   : モデル名。
@@ -90,7 +121,8 @@ class TableEditService
      *                               データベースの値を利用する場合は必ずget()すること。
      */
     private function setModel(string $model_name, array $join_settings, array $table_orders, $as) {
-        $model = new $model_name;
+        $model             = new $model_name;
+        $this->plane_model = new $model_name;
         if (!$this->isArrayEmpty($join_settings))
         {
             foreach ($join_settings as $join) {
@@ -115,6 +147,10 @@ class TableEditService
         $this->model = $model;
     }
 
+    public function getPlaneModel() {
+        return $this->plane_model;
+    }
+
     public function getModel() {
         return $this->model;
     }
@@ -125,6 +161,10 @@ class TableEditService
 
     public function getImportSettings() {
         return $this->import_settings;
+    }
+
+    public function getSerachColumns() {
+        return $this->serach_columns;
     }
 
     public function getExportRows() {
@@ -273,13 +313,27 @@ class TableEditService
             {
                 continue;
             }
-            if(count($keys) !== count($line)){
-                throw new \Exception("CSVファイル列数が一致しませんでした。（想定：".count($keys)."列 実際：".count($line)."列）");
+            if (count($keys) !== count($line))
+            {
+                throw new \Exception("CSVファイル列数が一致しませんでした。（想定：" . count($keys) . "列 実際：" . count($line) . "列）");
             }
 //            var_dump(count($keys), count($line));
 //            dd($line);
             $tmp_row    = array_combine($keys, $line);
             $csv_rows[] = $this->convertTypes($convert_rules, $tmp_row);
+        }
+
+        /*
+         * 全てのPOST数をカウントし、上限を超えていたらエラーを投げる
+         * 上限はphp.ini -> max_input_varsで調整可能
+         * counts関数の第二引数にCOUNT_RECURSIVEを与えることで再帰的に要素数を取得する
+         * そのため、配列の一次元目をマイナスしてPOSTの数として揃えている
+         */
+        $posts_count = count($csv_rows, COUNT_RECURSIVE) - count($csv_rows);
+        $max_posts   = (int) ini_get('max_input_vars');
+        if ($posts_count > $max_posts)
+        {
+            throw new \Exception("一度に取り込めるデータ件数をオーバーしました。フィールド数が" . number_format($max_posts) . "を超えないように調整してください。（フィールド数：" . number_format($posts_count) . "）");
         }
         return $csv_rows;
     }
@@ -308,17 +362,18 @@ class TableEditService
     /**
      * POSTされた値をデータベースに反映させるメソッド。POSTした値は[カラム名][カウントアップ]となっているので、
      * メソッド内で置換している。
+     * -> 2018-01-29修正：
+     *     POSTしたファイルをそのまま反映するように修正。ジョブ化。
      * @param array $raw_input_rows : POSTされた生の配列。2次元配列を想定。
      * @return array                : INSERTした件数、UPDATEした件数を配列で返す。
      */
     public function uploadToDatabase(array $raw_input_rows/* , string $connection */): array {
-        $tmp_rows      = $this->swapPostColumnAndRow($raw_input_rows);
+//        $tmp_rows      = $this->swapPostColumnAndRow($raw_input_rows);
         $convert_rules = $this->makeCsvValueConvertType($this->import_settings['types'], $this->csv_en_columns);
-        $input_rows    = $this->convertTypes($convert_rules, $tmp_rows);
+        $input_rows    = $this->convertTypes($convert_rules, $raw_input_rows);
         $raw_keys      = $this->import_settings['keys'];
         $primary_key   = (is_array($raw_keys)) ? $raw_keys : [$raw_keys];
 
-//        $insert_and_update_count = \DB::connection($connection)->transaction(function() use($input_rows, $primary_key, $convert_rules) {
         // HACK: tosite DBの場所によって貼るトランザクション変えるの面倒くさいからコントローラーでやって(´・ω・`)
         $insert_count = 0;
         $update_count = 0;

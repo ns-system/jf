@@ -8,10 +8,13 @@
 @endsection
 
 @section('sidebar')
+
 <div class="col-md-2">
-    @include('admin.sidebar.sidebar')
+
+    @include('partial.check_sidebar')
 </div>
 @endsection
+
 
 
 @section('content')
@@ -54,13 +57,13 @@
         });
 });
 
-function checkFile(){
-    var trg = $('#file')[0].files[0];
-    if(trg != null){
-        return true;
+    function checkFile(){
+        var trg = $('#file')[0].files[0];
+        if(trg != null){
+            return true;
+        }
+        alert('ファイルがセットされていません。');
+        return false;
     }
-    alert('ファイルがセットされていません。');
-    return false;
-}
 </script>
 @endsection

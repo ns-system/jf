@@ -99,7 +99,8 @@ trait JobStatusUsable
     public function createJobStatus() {
         $job              = \App\JobStatus::create(['is_copy_start' => true]);
         $this->job_status = $job;
-        return $this;
+//        return $this;
+        return $job;
     }
 
     public function setJobStatus($id) {
@@ -176,6 +177,12 @@ trait JobStatusUsable
             $r->save();
         }
         return $this;
+    }
+
+    public function resetJobStatus($job_status) {
+        foreach ($job_status as $job) {
+            $job->is_import = false;
+        }
     }
 
 }

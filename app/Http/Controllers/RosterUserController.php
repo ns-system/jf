@@ -10,157 +10,214 @@ use App\Http\Controllers\Controller;
 class RosterUserController extends Controller
 {
 
-    public function index() {
-        $id     = \Auth::user()->id;
-//        $user   = \App\RosterUser::where('user_id', '=', $id)->get();
-        $divs   = \App\Division::orderBy('division_id', 'asc')->get();
-        $types  = \App\WorkType::orderBy('work_type_id', 'asc')->get();
-        $suisin = \App\SinrenUser::where('user_id', '=', $id);
-        $roster = \App\RosterUser::where('user_id', '=', $id);
-//        var_dump($suisin);
+    public function index($user_id)
+    {
+        // 自分自身もしくは管理ユーザーで入った場合のみ処理を通す
+        $u        = \Auth::user();
+        $r        = \App\RosterUser::user($u->id)->first();
+        $is_admin = ($u->is_super_user || (!empty($r) && $r->is_administrator)) ? true : false;
 
-        if (!$suisin->exists())
-        {
-            $div_id = '';
-        }
-        else
-        {
-            $div_id = $suisin->first()->division_id;
+
+        if ($u->id != $user_id && !$is_admin) {
+            return redirect()->route('permission_error');
         }
 
-        if (!$roster->exists())
-        {
-            $type_id = '';
+        $divs  = \App\Division::orderBy('division_id', 'asc')->get();
+        $types = \App\WorkType::workTypeList()->get();
+        $user  = \App\User::where('users.id', '=', $user_id)
+            ->leftJoin('sinren_db.sinren_users', 'users.id', '=', 'sinren_users.user_id')
+            ->leftJoin('roster_db.roster_users', 'users.id', '=', 'roster_users.user_id')
+            ->select(\DB::raw('*, users.id as id, sinren_users.id as sinren_id, roster_users.id as roster_id'))
+            ->first();
+        // $not_register = (empty($user) || empty($user->user_id) || empty($user->sinren_id) || empty($user->roster_id)) ? true : false;
+        $not_register = (empty($user) || empty($user->division_id)) ? true : false;
+        if (!empty($user->is_administrator) && $user->is_administrator == true) {
+            $not_register = false;
         }
-        else
-        {
-            $type_id = $roster->first()->work_type_id;
-        }
-
-//        var_dump($type_id);
-
 
         $params = [
-            'id'      => $id,
-            'divs'    => $divs,
-            'types'   => $types,
-            'div_id'  => $div_id,
-            'type_id' => $type_id,
-///            'warn_message' => $warn_message,
+            'id'           => $user_id,
+            'divs'         => $divs,
+            'types'        => $types,
+            'user'         => $user,
+            'is_admin'     => $is_admin,
+            'not_register' => $not_register,
         ];
         return view('roster.app.user.index', $params);
     }
 
-    public function edit($id, RosterUser $request) {
-        $roster = \App\RosterUser::firstOrNew(['user_id' => $id]);
-        $sinren = \App\SinrenUser::firstOrNew(['user_id' => $id]);
+    public function edit($user_id, RosterUser $request)
+    {
+        $u     = \Auth::user();
+        $input = $request->input();
+//        dd($input);
+        $r = \App\RosterUser::user($u->id)->first();
+        if ($u->id != $user_id && !$u->is_super_user && (empty($r) || !$r->is_administrator)) {
+            return redirect()->route('permission_error');
+        }
+        $user   = \App\User::find($user_id);
+        $roster = \App\RosterUser::firstOrNew(['user_id' => $user_id]);
+        $sinren = \App\SinrenUser::firstOrNew(['user_id' => $user_id]);
 
-        $sinren->user_id     = $id;
-        $sinren->division_id = $request['division_id'];
+        // 信連ユーザー登録
+        $sinren->user_id = $user_id;
+        if (empty($sinren->division_id) || $u->is_super_user || $r->is_administrator) {
+            $sinren->division_id = $input['division_id'];
+        }
         $sinren->save();
 
-        $roster->user_id      = $id;
-        $roster->work_type_id = $request['work_type_id'];
-        $roster->save();
-        \Session::flash('flash_message', 'ユーザーの更新が完了しました。');
+        // 退職フラグ 秘匿フラグ
+        $user->retirement    = (!empty($input['retirement'])) ? true : false;
+        $user->roster_hidden = (!empty($input['hidden'])) ? true : false;
+        $user->save();
+
+        \DB::connection('mysql_roster')->transaction(function () use ($user_id, $roster, $input) {
+            $roster->user_id      = $user_id;
+            $roster->work_type_id = $input['work_type_id'];
+            if (empty($input['work_type_id']) && $request['is_chief']) {
+                $roster->work_type_id = 0;
+            }
+            $roster->save();
+        });
+
+        // 責任者フラグが立っておらず、申請があった場合はメール通知を行う
+        if (!$roster->is_chief && $request['is_chief']) {
+            $this->dispatch(new \App\Jobs\Roster\ChiefNotice($user_id));
+        }
+        \Session::flash('success_message', 'ユーザーの更新が完了しました。');
         return back();
     }
 
-    public function indexAdmin() {
-        $users = \DB::connection('mysql_roster')
-                ->table('roster_users')
-                ->join('sinren_db.sinren_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-                ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
-                ->join('laravel_db.users', 'roster_users.user_id', '=', 'users.id')
-                ->orderBy('sinren_divisions.division_id', 'asc')
-                ->orderBy('users.id', 'asc')
-        ;
-//        var_dump($users->first());
+    public function indexAdmin()
+    {
+        $params = \Input::get();
+        // ユーザー情報の取得
+        $tmp_users = \App\User::leftJoin('sinren_db.sinren_users', 'users.id', '=', 'sinren_users.user_id')
+            ->leftJoin('roster_db.roster_users', 'users.id', '=', 'roster_users.user_id')
+            ->leftJoin('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+            ->select(\DB::raw('*, users.id as user_id'))
+            ->orderBy('sinren_divisions.division_id', 'desc')
+            ->orderBy('users.id', 'asc');
+        $users     = $this->selectRosterUsers($params, $tmp_users);
 
+        // 管轄部署情報の取得
         $controls = \DB::connection('mysql_sinren')
-                ->table('control_divisions')
-                ->join('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')
-                ->select(\DB::raw('control_divisions.id AS id, control_divisions.user_id AS user_id, control_divisions.division_id AS division_id, sinren_divisions.division_name AS division_name'))
-                ->get()
-//                ->toArray()
-        ;
-//        var_dump($controls);
-
-        return view('roster.admin.user.index', ['users' => $users->paginate(25), 'controls' => $controls]);
+            ->table('control_divisions')
+            ->join('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')
+            ->select(\DB::raw('control_divisions.id AS id, control_divisions.user_id AS user_id, control_divisions.division_id AS division_id, sinren_divisions.division_name AS division_name'))
+            ->get();
+        // 部署情報の取得
+        $divs = \App\Division::orderBy('division_id', 'asc')->get();
+//        dd($divs);
+        return view('roster.admin.user.index', ['users' => $users->get(), 'controls' => $controls, 'divs' => $divs, 'params' => $params]);
     }
 
-    public function showAdmin($id) {
-//        echo $id;
-        $user = \DB::connection('mysql_roster')
-                ->table('roster_users')
-                ->join('sinren_db.sinren_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
-                ->join('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
-                ->join('laravel_db.users', 'roster_users.user_id', '=', 'users.id')
-                ->where('users.id', '=', $id)
-                ->first()
-        ;
-//        var_dump($user);
+    private function selectRosterUsers($params, $users)
+    {
+        if (isset($params['user_state'])) {
+            if ($params['user_state'] == '1') {
+                $users->where('roster_users.is_administrator', '<>', true)
+                    ->where('roster_users.is_chief', '<>', true)
+                    ->where('roster_users.is_proxy', '<>', true);
+            } elseif ($params['user_state'] == '2') {
+                $users->where('roster_users.is_chief', '=', true);
+            } elseif ($params['user_state'] == '3') {
+                $users->where('roster_users.is_proxy', '=', true);
+            } elseif ($params['user_state'] == '4') {
+                $users->whereNull('roster_users.is_administrator');
+            }
+        }
+        if (!empty($params['last_name'])) {
+            $users->where('users.last_name', 'like', "%{$params['last_name']}%");
+        }
+        if (!empty($params['division_id'])) {
+            $users->where('sinren_users.division_id', '=', $params['division_id']);
+        }
+        return $users;
+    }
 
+    public function showAdmin($id)
+    {
+        // ユーザーが存在しなければエラー
+        if (empty(\App\user::find($id))) {
+            \Session::flash('warn_message', 'ユーザーが存在しません。');
+            return redirect()->route('permission_error');
+        }
+
+        // 勤怠管理ユーザー情報が登録されていなければ登録ページへリダイレクト
+        $u = \App\RosterUser::user($id)->first();
+        if (empty($u)) {
+            \Session::flash('warn_message', '先にユーザー登録をしてください。');
+            return redirect()->route('app::roster::user::show', ['id' => $id]);
+        }
+
+        // ユーザー情報の取得
+        $user = \DB::connection('mysql_roster')
+            ->table('roster_users')
+            ->leftJoin('sinren_db.sinren_users', 'sinren_users.user_id', '=', 'roster_users.user_id')
+            ->leftJoin('sinren_db.sinren_divisions', 'sinren_users.division_id', '=', 'sinren_divisions.division_id')
+            ->leftJoin('laravel_db.users', 'roster_users.user_id', '=', 'users.id')
+            ->where('users.id', '=', $id)
+            // ここは除外しない
+            // ->where(['users.retirement'=> false,'users.roster_hidden'=>false])
+            ->first();
+//        dd($user);
+        // 管轄部署情報の取得
         $controls = \DB::connection('mysql_sinren')
-                ->table('control_divisions')
-                ->join('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')
-                ->select(\DB::raw('control_divisions.id AS id, control_divisions.user_id AS user_id, control_divisions.division_id AS division_id, sinren_divisions.division_name AS division_name'))
-                ->where('user_id', '=', $id)
-                ->get()
-        ;
+            ->table('control_divisions')
+            ->join('sinren_db.sinren_divisions', 'control_divisions.division_id', '=', 'sinren_divisions.division_id')
+            ->select(\DB::raw('control_divisions.id AS id, control_divisions.user_id AS user_id, control_divisions.division_id AS division_id, sinren_divisions.division_name AS division_name'))
+            ->where('user_id', '=', $id)
+            ->get();
         $divs     = \App\Division::orderBy('division_id', 'asc')->get();
-//        var_dump($controls);
-//        var_dump($divs);
         return view('roster.admin.user.detail', ['user' => $user, 'controls' => $controls, 'divs' => $divs, 'id' => $id]);
     }
 
-    public function editAdmin(AdminChief $request) {
-//        var_dump(\Input::get());
-        $id = $request['id'];
-        if ($request['is_chief'] || $request['is_proxy'])
-        {
+    public function editAdmin(AdminChief $request, $user_id)
+    {
+        try {
+            $user = \App\RosterUser::where('user_id', '=', $user_id)->firstOrFail();
+        }
+        catch (\Exception $e) {
+            \Session::flash('warn_message', 'ユーザーが登録されていないようです。');
+            return back();
+        }
+        if ($request['is_chief'] || $request['is_proxy']) {
             foreach ($request['control_division'] as $div) {
-                $ctrl              = \App\ControlDivision::firstOrNew(['user_id' => $id, 'division_id' => $div]);
-                $ctrl->user_id     = $id;
+                if (empty($div)) {
+                    continue;
+                }
+                $ctrl              = \App\ControlDivision::firstOrNew(['user_id' => $user_id, 'division_id' => $div]);
+                $ctrl->user_id     = $user_id;
                 $ctrl->division_id = $div;
                 $ctrl->save();
             }
-        }
-        else
-        {
-            $ctrls = \App\ControlDivision::where('user_id', '=', $id)->get();
+        } else {
+            $ctrls = \App\ControlDivision::where('user_id', '=', $user_id)->get();
             foreach ($ctrls as $ctrl) {
                 $ctrl->delete();
             }
         }
 
-        $user = \App\RosterUser::where('user_id', '=', $id)->first();
-        if ($user == null)
-        {
-            \Session::flash('warn_message', 'ユーザーが登録されていないようです。');
-            return back();
-        }
         $user->is_chief        = (int) $request['is_chief'];
         $user->is_proxy        = (int) $request['is_proxy'];
         $user->is_proxy_active = (int) $request['is_proxy_active'];
         $user->save();
 
-//        exit();
-        \Session::flash('flash_message', 'ユーザーの更新が完了しました。');
+        \Session::flash('success_message', 'ユーザーの更新が完了しました。');
         return redirect(route('admin::roster::user::index'));
     }
 
-    public function deleteAdmin($id) {
+    public function deleteAdmin($id)
+    {
         $validate = \Validator::make(['id' => $id], ['id' => 'required|exists:mysql_sinren.control_divisions,id']);
-        if ($validate->fails())
-        {
-            
+        if ($validate->fails()) {
+            return back()->withErrors($validate);
         }
         $ctrl = \App\ControlDivision::find($id);
-//        var_dump($ctrl);
 
         $ctrl->delete();
-        \Session::flash('flash_message', '管轄店舗を削除しました。');
+        \Session::flash('success_message', '管轄店舗を削除しました。');
         return back();
     }
 

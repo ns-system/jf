@@ -115,7 +115,7 @@ class WorkTypeController extends Controller
                 [1, 'work_end_time', '勤務終了時間', 'class' => 'text-left'],
             ],
         ];
-        \Session::flash('flash_message', 'CSVデータの取り込みが完了しました。');
+        \Session::flash('success_message', 'CSVデータの取り込みが完了しました。');
         return view('roster.admin.import', ['rows' => $datas, 'configs' => $configs]);
     }
 
@@ -146,7 +146,7 @@ class WorkTypeController extends Controller
         ;
 //        var_dump($cnt);
 //        exit();
-        \Session::flash('flash_message', ($cnt['insert_count'] + $cnt['update_count']) . "件の処理が終了しました。（新規：{$cnt['insert_count']}件，更新：{$cnt['update_count']}件）");
+        \Session::flash('success_message', ($cnt['insert_count'] + $cnt['update_count']) . "件の処理が終了しました。（新規：{$cnt['insert_count']}件，更新：{$cnt['update_count']}件）");
         return \Redirect::to(url('/admin/' . $this->route));
     }
 

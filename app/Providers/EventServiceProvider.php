@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 
 class EventServiceProvider extends ServiceProvider
 {
+
     /**
      * アプリケーションのイベントリスナーのマップ
      *
@@ -16,6 +17,12 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\SomeEvent' => [
             'App\Listeners\EventListener',
         ],
+//        'event.name'           => [
+//            'EventListener',
+//        ],
+//        'illuminate.query'     => [// 追加
+//            'App\Services\SqlTracker',
+//        ],
     ];
 
     /**
@@ -24,10 +31,10 @@ class EventServiceProvider extends ServiceProvider
      * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @return void
      */
-    public function boot(DispatcherContract $events)
-    {
+    public function boot(DispatcherContract $events) {
         parent::boot($events);
 
         //
     }
+
 }

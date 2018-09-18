@@ -40,15 +40,23 @@ use AuthenticatesAndRegistersUsers,
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data) {
-        return Validator::make($data, [
-//                    'name'     => 'required|max:255',
-                    'first_name'      => 'required|max:255',
-                    'last_name'       => 'required|max:255',
-                    'first_name_kana' => 'required|max:255',
-                    'last_name_kana'  => 'required|max:255',
-                    'email'           => 'required|email|max:255|unique:users',
-                    'password'        => 'required|confirmed|min:6',
-        ]);
+        $rules = [
+            'first_name'      => 'required|max:255',
+            'last_name'       => 'required|max:255',
+            'first_name_kana' => 'required|max:255',
+            'last_name_kana'  => 'required|max:255',
+            'email'           => 'required|email|max:255|unique:users',
+            'password'        => 'required|confirmed|min:6',
+        ];
+        $attr  = [
+            'first_name'      => '名',
+            'last_name'       => '姓',
+            'first_name_kana' => '名（かな）',
+            'last_name_kana'  => '姓（かな）',
+            'email'           => 'メールアドレス',
+            'password'        => 'パスワード',
+        ];
+        return Validator::make($data, $rules, [], $attr);
     }
 
     /**
