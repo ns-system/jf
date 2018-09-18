@@ -43,7 +43,6 @@ class Kernel extends HttpKernel
         'roster_proxy' => \App\Http\Middleware\RosterProxyMiddleware::class,
         'roster_chief' => \App\Http\Middleware\RosterChiefMiddleware::class,
         'suisin'       => \App\Http\Middleware\SuisinMiddleware::class,
-        'nikocale'     => \App\Http\Middleware\NikocaleUserMiddleware::class,
     ];
 
 }

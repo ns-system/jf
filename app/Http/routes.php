@@ -179,13 +179,6 @@ Route::group(['middleware' => 'auth', 'prefix' => '/app', 'as' => 'app::'], func
             Route::post('/edit/{id}', ['as' => 'edit', 'uses' => 'RosterUserController@edit']);
         });
     });
-
-    Route::group(['as' => 'nikocale::', 'prefix' => '/nikocale', 'middleware' => 'nikocale'], function () {
-        Route::get('/index/{monthly_id?}', ['as' => 'index', 'uses' => 'NikocaleController@index']);
-        Route::post('/store/{user_id}/{entered_on}', ['as' => 'store', 'uses' => 'NikocaleController@store']);
-//        Route::post('/update/{id}',                   ['as' => 'update',  'uses' => 'NikocaleController@update']);
-        Route::get('/destroy/{id}', ['as' => 'destroy', 'uses' => 'NikocaleController@destroy']);
-    });
 });
 
 Route::get('/strlen/{str?}{start?}{end?}', function () {

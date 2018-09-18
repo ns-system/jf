@@ -20,12 +20,6 @@ trait DbDisconnectable
         }
 
         try {
-            \DB::disconnect('nikocale_db');
-        } catch (\Exception $exc) {
-            echo $msg;
-        }
-
-        try {
             \DB::disconnect('suisin_db');
         } catch (\Exception $exc) {
             echo $msg;
