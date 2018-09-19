@@ -153,7 +153,7 @@
       a3 = res.a3
       a4 = res.a4
       labels = res.names
-      drawChart()
+      // drawChart()
       $('.chart-wrap').removeClass('disabled')
       $('.progress').hide()
     })
@@ -167,6 +167,7 @@
 
   $(document).ready(function () {
     // console.log('ready')
+    alert("api")
     $('#month').html(getMonth("YYYY年M月分"))
     getChart()
   })

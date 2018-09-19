@@ -101,6 +101,9 @@ class IndexController extends Controller
         $a2    = [];
         $a3    = [];
         $a4    = [];
+        if (empty($rows)) {
+            return [];
+        }
         foreach ($rows as $r) {
             $names[] = "{$r->last_name} {$r->first_name}さん";
             $p1[]    = $r->予定承認済;

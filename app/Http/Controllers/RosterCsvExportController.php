@@ -378,6 +378,7 @@ class RosterCsvExportController extends Controller
 
     public function getEnteredUsers($ym = '')
     {
+        echo 1111;
         $dt   = (!empty($ym)) ? new \DateTime($ym . '01') : new \DateTime();
         $id   = \Auth::user()->id;
         $user = \App\User::find($id)->RosterUser($id);
@@ -398,15 +399,17 @@ class RosterCsvExportController extends Controller
             ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = false and is_actual_reject = false) or null) as 実績未承認'))
             ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_reject = true) or null)                               as 実績却下'))
             ->addSelect(\DB::raw('count((is_actual_entry = true and is_actual_accept = true) or null)                               as 実績承認済'))
-            ->orderBy('sinren_divisions.division_id');
-
-        if (!$user->is_super_user && !$user->is_administrator) {
+            ->orderBy('sinren_divisions.division_id')
+        ;
+        if (!empty($user) && !$user->is_super_user && !$user->is_administrator) {
             $div = ($user->is_chief) ? \App\ControlDivision::where('user_id', $id)->get() : \App\SinrenUser::where('user_id', $id)->get();
             $query->where(function ($query) use ($div) {
                 foreach ($div as $d) {
                     $query->orWhere('sinren_users.division_id', $d->division_id);
                 }
             });
+        } else {
+            return null;
         }
 
         return $query->get();
