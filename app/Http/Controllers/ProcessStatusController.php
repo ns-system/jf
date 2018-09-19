@@ -393,8 +393,9 @@ class ProcessStatusController extends Controller
 
     public function dispatchCopyJob($id) {
         $job = $this->service->createJobStatus();
+        $user = \Auth::user();
         try {
-            $this->dispatch(new \App\Jobs\Suisin\CsvFileCopy($id, $job->id));
+            $this->dispatch(new \App\Jobs\Suisin\CsvFileCopy($id, $job->id, $user->email));
         } catch (\Exception $e) {
             \Session::flash('danger_message', $e->getMessage());
             return back();

@@ -18,16 +18,18 @@ class CsvFileCopy extends Job implements SelfHandling, ShouldQueue
 
     protected $ym;
     protected $job_id;
+    protected $email;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($id, $job_id) {
+    public function __construct($id, $job_id, $email) {
         //
         $this->ym     = $id;
         $this->job_id = $job_id;
+        $this->email  = $email;
     }
 
     /**
@@ -36,7 +38,6 @@ class CsvFileCopy extends Job implements SelfHandling, ShouldQueue
      * @return void
      */
     public function handle() {
-
         try {
             echo '==== CsvFileCopy ====' . PHP_EOL;
             echo '[start : ' . date('Y-m-d H:i:s') . ']' . PHP_EOL;
@@ -52,11 +53,20 @@ class CsvFileCopy extends Job implements SelfHandling, ShouldQueue
                         ->setDirectoryPath($accumulation_dir_path)
                         ->copyCsvFile()
                         ->tableTemplateCreation()
+                        ->getIgnoreList()
                 // ->registrationCsvFileToDatabase()
                 ;
                 $copy_csv_file_service->tempFileErase();
-                $copy_csv_file_service->outputForJsonFile($ignore_and_not_exist_file_lists['ignore'], storage_path() . '/jsonlogs', $this->ym . '_ignore_file_list.json');
-                $copy_csv_file_service->outputForJsonFile($ignore_and_not_exist_file_lists['not_exist'], storage_path() . '/jsonlogs', $this->ym . '_not_exist_file_list.json');
+                $copy_csv_file_service->outputForJsonFile(
+                    $ignore_and_not_exist_file_lists['ignore'], 
+                    storage_path() . '/jsonlogs', 
+                    $this->ym . '_ignore_file_list.json'
+                );
+                $copy_csv_file_service->outputForJsonFile(
+                    $ignore_and_not_exist_file_lists['not_exist'], 
+                    storage_path() . '/jsonlogs', 
+                    $this->ym . '_not_exist_file_list.json'
+                );
             } catch (\Exception $e) {
                 $job->is_copy_error = true;
                 $job->save();
@@ -64,11 +74,13 @@ class CsvFileCopy extends Job implements SelfHandling, ShouldQueue
                 $job->is_copy_end = true;
                 $job->save();
             }
-            $this->sendSuccessMessage('CSVファイルアップロード処理', $this->email);
+            $email = $this->email;
+            $this->sendSuccessMessage('CSVファイルアップロード処理', $email);
             echo '[end   : ' . date('Y-m-d H:i:s') . ']' . PHP_EOL;
         } catch (\Throwable $e) {
-            echo '[error : ' . date('Y-m-d H:i:s') . ' ]' . PHP_EOL;
-            $this->sendErrorMessage($e, $this->email);
+            echo '[error : ' . date('Y-m-d H:i:s') . ']' . PHP_EOL;
+            $email = $this->email;
+            $this->sendErrorMessage($e, $email);
             throw $e;
         }
     }

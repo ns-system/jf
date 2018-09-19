@@ -80,6 +80,9 @@ class CopyCsvFileService
         return $this;
     }
 
+    public function getIgnoreList () {
+        return $this->ignore_file;
+    }
     private function createDirectory($path) {
         if (!file_exists($path))
         {
