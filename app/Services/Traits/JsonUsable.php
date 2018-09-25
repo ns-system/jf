@@ -50,8 +50,6 @@ trait JsonUsable
         {
             $this->setFilePath($path, $name);
         }
-//        $json_path = $this->file_path;
-
         $json_output_path = $this->file_path;
         $plane_text       = null;
         $existing_data    = [];
@@ -60,10 +58,6 @@ trait JsonUsable
             $plane_text    = file_get_contents($json_output_path);
             $existing_data = $this->getJsonFile();
         }
-//        else
-//        {
-//            exec(escapeshellcmd("sudo touch {$json_output_path}"));
-//        }
         $plane_text = str_replace(']', '', str_replace('[', '', $plane_text));
         if ((!empty($plane_text)) && empty($existing_data))
         {

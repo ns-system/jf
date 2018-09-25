@@ -2,7 +2,6 @@
 @section('title', 'CSVアップロード処理')
 
 @section('header')
-@parent
 @section('brand', '')
 @endsection
 
