@@ -167,7 +167,6 @@
 
   $(document).ready(function () {
     // console.log('ready')
-    alert("api")
     $('#month').html(getMonth("YYYY年M月分"))
     getChart()
   })
