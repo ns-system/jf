@@ -138,7 +138,6 @@
 
   function getChart () {
     let month_id = getMonth('YYYYMM')
-    // console.log(month_id)
     $('.chart-wrap').addClass('disabled')
     $('.progress').show()
     let params = { url : '/home/chart', type : 'GET', data : { month_id : month_id } }
@@ -153,7 +152,7 @@
       a3 = res.a3
       a4 = res.a4
       labels = res.names
-      // drawChart()
+      drawChart()
       $('.chart-wrap').removeClass('disabled')
       $('.progress').hide()
     })
