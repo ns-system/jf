@@ -378,7 +378,6 @@ class RosterCsvExportController extends Controller
 
     public function getEnteredUsers($ym = '')
     {
-        echo 1111;
         $dt   = (!empty($ym)) ? new \DateTime($ym . '01') : new \DateTime();
         $id   = \Auth::user()->id;
         $user = \App\User::find($id)->RosterUser($id);
