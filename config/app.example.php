@@ -127,6 +127,7 @@ return [
          * debug-tools
          */
         Barryvdh\Debugbar\ServiceProvider::class,
+        Arcanedev\LogViewer\LogViewerServiceProvider::class,
         /*
          * laravel-excel
          */
