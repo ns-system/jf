@@ -6,7 +6,7 @@
     "type" : "project",
     "require" : {
         "php" : ">=5.5.9",
-        "laravel/framework" : "5.2.*",
+        "laravel/framework" : "5.3.*",
         "maatwebsite/excel" : "~2.1.0",
         "doctrine/dbal" : "^2.5"
     },
@@ -17,8 +17,8 @@
         "phpspec/phpspec" : "~2.1",
         "laravel/homestead" : "^8.6",
         "barryvdh/laravel-debugbar" : "^2.4",
-        "symfony/dom-crawler": "~3.0",
-        "symfony/css-selector": "~3.0"
+        "symfony/dom-crawler": "3.1.*",
+        "symfony/css-selector": "3.1.*"
     },
     "autoload" : {
         "classmap" : [
