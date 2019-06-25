@@ -1,20 +1,8 @@
 <?php
 
-/*
-  |--------------------------------------------------------------------------
-  | アプリケーションのルート
-  |--------------------------------------------------------------------------
-  |
-  | ここでアプリケーションのルートを全て登録することが可能です。
-  | 簡単です。ただ、Laravelへ対応するURIと、そのURIがリクエスト
-  | されたときに呼び出されるコントローラを指定してください。
-  |
- */
-
-//Route::get('/test', function () {
-//    $s = new \App\Services\Roster\RosterUnaccept();
-//    $s->firstDay('2018-06-01')->lastDay('2018-06-30')->chiefId(3)->get();
-//});
+if (version_compare(PHP_VERSION, '7.2.0', '>=')) {
+    error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
+}
 
 // API
 Route::get('/send-roster-mail/{roster_id}', function ($roster_id) {

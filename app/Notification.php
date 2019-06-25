@@ -16,7 +16,7 @@ class Notification extends Model
     }
 
     public function scopeDeadline($query, $deadline) {
-        $query->where('deadline', '>=', $deadline);
+        return $query->where('deadline', '>=', $deadline);
     }
 
 }
