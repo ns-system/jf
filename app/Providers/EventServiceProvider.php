@@ -17,12 +17,6 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\SomeEvent' => [
             'App\Listeners\EventListener',
         ],
-//        'event.name'           => [
-//            'EventListener',
-//        ],
-//        'illuminate.query'     => [// 追加
-//            'App\Services\SqlTracker',
-//        ],
     ];
 
     /**
@@ -31,10 +25,8 @@ class EventServiceProvider extends ServiceProvider
      * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @return void
      */
-    public function boot(DispatcherContract $events) {
-        parent::boot($events);
-
-        //
+    public function boot() {
+        parent::boot();
     }
 
 }

@@ -23,10 +23,8 @@ class RouteServiceProvider extends ServiceProvider
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function boot(Router $router) {
-        //
-
-        parent::boot($router);
+    public function boot() {
+        parent::boot();
     }
 
     /**
@@ -37,9 +35,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map(Router $router) {
         $router->group(['namespace' => $this->namespace], function ($router) {
-            require app_path('Http/routes.php');
-            require app_path('Http/user_routes.php');
-            require app_path('Http/roster_routes.php');
+            require base_path('routes/routes.php');
+            require base_path('routes/user_routes.php');
+            require base_path('routes/roster_routes.php');
         });
     }
 

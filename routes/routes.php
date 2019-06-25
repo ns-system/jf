@@ -3,6 +3,8 @@
 if (version_compare(PHP_VERSION, '7.2.0', '>=')) {
     error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
 }
+Auth::routes();
+Route::get('/logout', 'Auth\LoginController@logout');
 
 // API
 Route::get('/send-roster-mail/{roster_id}', function ($roster_id) {
@@ -19,8 +21,8 @@ Route::get('/send-roster-mail/{roster_id}', function ($roster_id) {
 Route::get('/home/chart','IndexController@getHomeChart');
 
 // Route
-Route::Controller('/auth', 'Auth\AuthController');
-Route::controller('/password', 'Auth\PasswordController');
+Route::Resource('/auth', 'Auth\AuthController');
+Route::Resource('/password', 'Auth\PasswordController');
 Route::get('/permission_error', ['as' => 'permission_error', 'uses' => 'IndexController@permissionError']);
 
 Route::resource('/notifications', 'NotificationController');
