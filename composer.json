@@ -6,7 +6,7 @@
     "type" : "project",
     "require" : {
         "php" : ">=5.5.9",
-        "laravel/framework" : "5.1.*",
+        "laravel/framework" : "5.5.*",
         "maatwebsite/excel" : "~2.1.0",
         "doctrine/dbal" : "^2.5",
         "arcanedev/log-viewer": "4.2"
